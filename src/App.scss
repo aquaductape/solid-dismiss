@@ -404,8 +404,7 @@ button {
 
 .split-view {
   display: grid;
-  grid-template-columns: 1fr 750px;
-  column-gap: 150px;
+  grid-template-columns: 1fr;
 }
 
 .code-editor {
@@ -416,4 +415,10 @@ button {
   overflow: auto;
 }
 .basic-dropdown {
+}
+
+@media (min-width: 900px) {
+  .split-view {
+    grid-template-columns: 1fr 750px;
+  }
 }
