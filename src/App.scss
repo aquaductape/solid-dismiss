@@ -408,17 +408,27 @@ button {
 }
 
 .code-editor {
+  font-size: 14px;
+  max-height: 75vh;
   padding: 0px 30px;
   border-radius: 10px;
   background: var(--code-bg);
   color: var(--code-text);
   overflow: auto;
 }
+.section {
+  margin-bottom: 30vh;
+}
 .basic-dropdown {
 }
 
 @media (min-width: 900px) {
   .split-view {
-    grid-template-columns: 1fr 750px;
+    grid-template-columns: 1fr minmax(500px, 750px);
+    column-gap: 100px;
+  }
+
+  .code-editor {
+    font-size: 18px;
   }
 }

@@ -98,6 +98,8 @@ const Dismiss: Component<{
   let closeBtnsAdded = false;
   let menuDropdownAdded = false;
   let menuBtnId = "";
+  let addedFocusOutAppEvents = false;
+  let prevFocusedEl: HTMLElement | null = null;
 
   const [maskActive, setMaskActive] = createSignal(false);
 
@@ -164,18 +166,16 @@ const Dismiss: Component<{
     props.setToggle(!toggleVal);
   };
 
-  let addedEvents = false;
-  let prevFocusedEl: HTMLElement | null = null;
-
   const onClickDocument = (e: MouseEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
 
+    console.log("click out");
     if (prevFocusedEl) {
       prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
     }
     prevFocusedEl = null;
     props.setToggle(false);
-    addedEvents = false;
+    addedFocusOutAppEvents = false;
   };
 
   const onFocusFromOutsideAppOrTab = (e: FocusEvent) => {
@@ -183,28 +183,22 @@ const Dismiss: Component<{
 
     props.setToggle(false);
     prevFocusedEl = null;
-    addedEvents = false;
+    addedFocusOutAppEvents = false;
     document.removeEventListener("click", onClickDocument);
   };
 
   const onFocusOutContainer = (e: FocusEvent) => {
-    e.stopImmediatePropagation();
-    // console.log(e.currentTarget, e.target);
+    if (focusOnLeave) {
+      e.stopImmediatePropagation();
+    }
+
     if (!e.relatedTarget) {
-      if (addedEvents) return;
-      addedEvents = true;
+      if (addedFocusOutAppEvents) return;
+      addedFocusOutAppEvents = true;
       prevFocusedEl = e.target as HTMLElement;
-      document.addEventListener(
-        "click",
-        (e) => {
-          if (containerEl.contains(e.target as HTMLElement)) return;
-          props.setToggle(false);
-          addedEvents = false;
-        },
-        {
-          once: true,
-        }
-      );
+      document.addEventListener("click", onClickDocument, {
+        once: true,
+      });
       prevFocusedEl.addEventListener("focus", onFocusFromOutsideAppOrTab, {
         once: true,
       });

@@ -31,7 +31,7 @@ const NestedDropdown = () => {
   });
 
   return (
-    <div>
+    <div class="section">
       <h2>Nested Dropdowns</h2>
       <div class="split-view">
         <_NestedDropdown />

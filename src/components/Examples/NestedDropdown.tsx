@@ -11,7 +11,6 @@ const Dropdown = () => {
       toggle={toggle}
       setToggle={setToggle}
       menuDropdown={ref}
-      focusOnLeave="menuButton"
     >
       <button class="btn-primary btn-nested">
         {toggle() ? "Opened" : "Nested Dropdown"}

@@ -37,7 +37,7 @@ const BasicDropdown = () => {
   });
 
   return (
-    <div class="basic-dropdown">
+    <div class="section">
       <h2>Basic Dropdown</h2>
 
       <div class="split-view">
