@@ -436,3 +436,12 @@ button {
     font-size: 18px;
   }
 }
+
+#main {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+  padding: 10px;
+  color: #000;
+}

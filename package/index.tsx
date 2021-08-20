@@ -11,10 +11,6 @@ import {
   createUniqueId,
 } from "solid-js";
 
-const html = document.querySelector("html")!;
-html.style.cursor = "pointer";
-html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
-
 const Dismiss: Component<{
   /**
    * sets id attribute for root component
@@ -177,14 +173,15 @@ const Dismiss: Component<{
       menuBtnKeyupTabFired = false;
       return;
     }
+    document.getElementById("main")!.textContent = `${
+      e.relatedTarget
+    } ${Date.now()}`;
 
     if (!e.relatedTarget) {
       if (addedFocusOutAppEvents) return;
       addedFocusOutAppEvents = true;
       prevFocusedEl = e.target as HTMLElement;
-      document.addEventListener("click", onClickDocument, {
-        once: true,
-      });
+      document.addEventListener("click", onClickDocument);
       return;
     }
 
