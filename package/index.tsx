@@ -296,7 +296,7 @@ const Dismiss: Component<{
 
   const queryFocusableMenuDropdownElement = () => {
     return containerEl.querySelector(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, details, [contentEditable=true], [tabindex]:not([tabindex="-1"])'
     ) as HTMLElement;
   };
 
