@@ -99,6 +99,7 @@ const Dismiss: Component<{
   let menuDropdownAdded = false;
   let menuBtnId = "";
   let addedFocusOutAppEvents = false;
+  let menuBtnKeyupTabFired = false;
   let prevFocusedEl: HTMLElement | null = null;
 
   const [maskActive, setMaskActive] = createSignal(false);
@@ -168,6 +169,10 @@ const Dismiss: Component<{
 
   const onBlurMenuButton = (e: FocusEvent) => {
     if (!props.toggle()) return;
+    if (menuBtnKeyupTabFired) {
+      menuBtnKeyupTabFired = false;
+      return;
+    }
 
     if (!e.relatedTarget) {
       if (addedFocusOutAppEvents) return;
@@ -184,6 +189,28 @@ const Dismiss: Component<{
     props.setToggle(false);
   };
 
+  const onKeydownMenuButton = (e: KeyboardEvent) => {
+    if (!props.toggle()) return;
+    if (e.key === "Tab" && e.shiftKey) {
+      props.setToggle(false);
+      menuBtnKeyupTabFired = true;
+      menuBtnEl.removeEventListener("keydown", onKeydownMenuButton);
+      menuBtnEl.removeEventListener("blur", onBlurMenuButton);
+      return;
+    }
+    if (e.key !== "Tab") return;
+    menuBtnKeyupTabFired = true;
+    e.preventDefault();
+    const el = queryFocusableMenuDropdownElement();
+    if (el) {
+      el.focus();
+    } else {
+      containerEl.focus();
+    }
+    menuBtnEl.removeEventListener("keydown", onKeydownMenuButton);
+    menuBtnEl.removeEventListener("blur", onBlurMenuButton);
+  };
+
   const onClickDocument = (e: MouseEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
     if (prevFocusedEl) {
@@ -197,7 +224,6 @@ const Dismiss: Component<{
   const onFocusFromOutsideAppOrTab = (e: FocusEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
 
-    console.log(e);
     props.setToggle(false);
     prevFocusedEl = null;
     addedFocusOutAppEvents = false;
@@ -266,6 +292,12 @@ const Dismiss: Component<{
     props.setToggle(false);
     // runDelegateFocus();
     setTabIndexOfFocusTraps("-1");
+  };
+
+  const queryFocusableMenuDropdownElement = () => {
+    return containerEl.querySelector(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    ) as HTMLElement;
   };
 
   const queryElement = (
@@ -360,9 +392,16 @@ const Dismiss: Component<{
     menuDropdownAdded = false;
   };
 
+  const onFocusMenuButton = () => {
+    clearTimeout(timeoutId!);
+    menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
+    menuBtnEl.addEventListener("blur", onBlurMenuButton);
+  };
+
   onMount(() => {
     menuBtnEl = queryElement(menuButton, "menuButton");
     menuBtnEl.addEventListener("click", onClickMenuButton);
+    menuBtnEl.addEventListener("focus", onFocusMenuButton);
     menuBtnId = menuBtnEl.id;
     menuBtnEl.setAttribute("type", "button");
     expandToggle(props.toggle());
@@ -396,7 +435,6 @@ const Dismiss: Component<{
         expandToggle(toggle);
 
         if (toggle) {
-          menuBtnEl.addEventListener("blur", onBlurMenuButton, { once: true });
           addCloseButtons();
           addMenuDropdownEl();
           runFocusOnActive();
