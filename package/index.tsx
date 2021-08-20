@@ -394,6 +394,7 @@ const Dismiss: Component<{
   };
 
   const onFocusMenuButton = () => {
+    document.getElementById("main")!.textContent = `added blur ${Date.now()}`;
     clearTimeout(timeoutId!);
     menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
     menuBtnEl.addEventListener("blur", onBlurMenuButton);
