@@ -196,7 +196,7 @@ const Dismiss: Component<{
       props.setToggle(false);
       menuBtnKeyupTabFired = true;
       menuBtnEl.removeEventListener("keydown", onKeydownMenuButton);
-      menuBtnEl.removeEventListener("blur", onBlurMenuButton);
+      // menuBtnEl.removeEventListener("blur", onBlurMenuButton);
       return;
     }
     if (e.key !== "Tab") return;
@@ -209,7 +209,7 @@ const Dismiss: Component<{
       containerEl.focus();
     }
     menuBtnEl.removeEventListener("keydown", onKeydownMenuButton);
-    menuBtnEl.removeEventListener("blur", onBlurMenuButton);
+    // menuBtnEl.removeEventListener("blur", onBlurMenuButton);
   };
 
   const onClickDocument = (e: MouseEvent) => {
