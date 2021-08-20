@@ -3,18 +3,21 @@ import { createSignal, Show, createEffect } from "solid-js";
 
 const Dropdown = () => {
   const [toggle, setToggle] = createSignal(false);
+  const ref: any = { menuDropdown: null };
 
   return (
     <Dismiss
       class="nested-dropdown-container"
       toggle={toggle}
       setToggle={setToggle}
+      menuDropdown={ref}
+      focusOnLeave="menuButton"
     >
       <button class="btn-primary btn-nested">
         {toggle() ? "Opened" : "Nested Dropdown"}
       </button>
       <Show when={toggle()}>
-        <div class="nested-dropdown" tabindex="-1">
+        <div class="nested-dropdown" tabindex="-1" ref={ref.menuDropdown}>
           <h3>Nested Dropdown Text</h3>
           <Dropdown />
           <Dropdown />

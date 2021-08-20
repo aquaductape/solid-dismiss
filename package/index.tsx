@@ -86,6 +86,7 @@ const Dismiss: Component<{
     focusOnActive,
     escapeKey,
     closeButton,
+    children,
   } = props;
   let closeBtn: HTMLElement[] = [];
   let menuDropdownEl: HTMLElement | null = null;
@@ -108,6 +109,7 @@ const Dismiss: Component<{
 
     const el = queryElement(focusOnLeave);
     if (el) {
+      // console.log({ el });
       el.focus();
     }
   };
@@ -162,8 +164,55 @@ const Dismiss: Component<{
     props.setToggle(!toggleVal);
   };
 
+  let addedEvents = false;
+  let prevFocusedEl: HTMLElement | null = null;
+
+  const onClickDocument = (e: MouseEvent) => {
+    if (containerEl.contains(e.target as HTMLElement)) return;
+
+    if (prevFocusedEl) {
+      prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
+    }
+    prevFocusedEl = null;
+    props.setToggle(false);
+    addedEvents = false;
+  };
+
+  const onFocusFromOutsideAppOrTab = (e: FocusEvent) => {
+    if (containerEl.contains(e.target as HTMLElement)) return;
+
+    props.setToggle(false);
+    prevFocusedEl = null;
+    addedEvents = false;
+    document.removeEventListener("click", onClickDocument);
+  };
+
   const onFocusOutContainer = (e: FocusEvent) => {
+    e.stopImmediatePropagation();
+    // console.log(e.currentTarget, e.target);
+    if (!e.relatedTarget) {
+      if (addedEvents) return;
+      addedEvents = true;
+      prevFocusedEl = e.target as HTMLElement;
+      document.addEventListener(
+        "click",
+        (e) => {
+          if (containerEl.contains(e.target as HTMLElement)) return;
+          props.setToggle(false);
+          addedEvents = false;
+        },
+        {
+          once: true,
+        }
+      );
+      prevFocusedEl.addEventListener("focus", onFocusFromOutsideAppOrTab, {
+        once: true,
+      });
+      return;
+    }
+
     const newTimeout = window.setTimeout(() => {
+      console.log("focusout");
       props.setToggle(false);
 
       if (props.setFocus) {
@@ -267,7 +316,6 @@ const Dismiss: Component<{
     if (!closeButton) return;
     if (!closeBtnsAdded) return;
 
-    console.log("remove");
     closeBtnsAdded = false;
     closeBtn.forEach((el) => {
       el.removeEventListener("click", onClickCloseButton);
@@ -320,7 +368,9 @@ const Dismiss: Component<{
             containerEl.style.pointerEvents = "all";
           } else {
             runFocusOnLeave();
-            document.documentElement.style.pointerEvents = "";
+            if (dismissStack.length <= 1) {
+              document.documentElement.style.pointerEvents = "";
+            }
             containerEl.style.pointerEvents = "";
           }
         }
@@ -369,6 +419,7 @@ const Dismiss: Component<{
       classList={props.classList || {}}
       onFocusIn={onFocusInContainer}
       onFocusOut={onFocusOutContainer}
+      onBlur={() => console.log("onBlur")}
       tabindex="-1"
       ref={containerEl}
     >
@@ -379,6 +430,7 @@ const Dismiss: Component<{
           ref={maskEl}
         ></div>
       )}
+      {children}
       {focusOnLeave && (
         <div
           tabindex="-1"
@@ -388,7 +440,6 @@ const Dismiss: Component<{
           ref={focusTrapEl1}
         ></div>
       )}
-      {props.children}
       {focusOnLeave && (
         <div
           tabindex="-1"
