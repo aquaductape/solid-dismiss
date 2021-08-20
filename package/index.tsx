@@ -168,6 +168,12 @@ const Dismiss: Component<{
 
   const onClickDocument = (e: MouseEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
+    // if (
+    //   (e.target as HTMLElement).closest(
+    //     "[data-solid-dismiss-dropdown-container]"
+    //   )
+    // )
+    // return;
 
     console.log("click out");
     if (prevFocusedEl) {
