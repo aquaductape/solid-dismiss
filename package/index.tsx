@@ -11,6 +11,10 @@ import {
   createUniqueId,
 } from "solid-js";
 
+const html = document.querySelector("html")!;
+html.style.cursor = "pointer";
+html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
+
 const Dismiss: Component<{
   /**
    * sets id attribute for root component
