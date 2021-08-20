@@ -81,13 +81,13 @@
 
 html {
   color-scheme: var(--color-scheme);
+  cursor: pointer;
 }
 
 body {
   font-size: 18px;
   background: var(--bg);
   color: var(--text);
-  cursor: pointer;
 }
 
 a {
