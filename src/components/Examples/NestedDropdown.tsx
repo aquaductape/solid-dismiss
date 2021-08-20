@@ -19,6 +19,12 @@ const Dropdown = () => {
       <Show when={toggle()}>
         <div class="nested-dropdown" tabindex="-1" ref={ref.menuDropdown}>
           <h3>Nested Dropdown Text</h3>
+          <input type="text" />
+          <select name="" id="">
+            <option value="car">car</option>
+            <option value="rat">rat</option>
+            <option value="cat">cat</option>
+          </select>
           <Dropdown />
           <Dropdown />
           <Dropdown />
