@@ -16,7 +16,6 @@
   --dropdown-bg: #f3effd;
   --color-scheme: light;
   --nav-item-bg: var(--main-grey);
-  --code-bg: #e2e1f5;
   --code-actual-text: #000000;
   --code-bg: #e2e1f5;
   --code-text: var(--code-actual-text);
@@ -26,6 +25,7 @@
   --token-boolean: #c428e7;
   --token-function: #cd02c5;
   --token-string: #0000c6;
+  --token-attr-value: #0000c6;
   --token-class-name: #db29b5;
   --token-attr-name: #3500e7;
   --token-tag: #1d1dac;
@@ -35,44 +35,45 @@
   --token-comment: #8a9fb5;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --main-blue: #2a398b;
-    --secondary-blue: #4088d3;
-    --dark-blue: #1f2b6e;
-    --hovered-blue: #26245e;
-    --main-grey: #a4a0bc;
-    --secondary-grey: #c7caee;
-    --dark-grey: #87839e;
-    --hovered-grey: #6b6780;
-    --focus: #fff;
-    --focus-blur: #625cff;
-    --focus-blur-spread: 2px;
-    --logo-shadow: drop-shadow(-1px 2px 0px #000);
-    --bg: #201d26;
-    --text: #cfcfcf;
-    --dropdown-bg: #2c2835;
-    --color-scheme: dark;
-    --nav-item-bg: #000;
-    --code-bg: #252436;
-    --code-actual-text: #d5dbff;
-    --code-text: var(--code-actual-text);
-    --token-keyword: #7777ca;
-    --token-punctuation: #58a6da;
-    --token-operator: #8f389f;
-    --token-boolean: #c428e7;
-    --token-function: #cd02c5;
-    --token-string: #3e3ef6;
-    --token-class-name: #ff00c9;
-    --token-attr-name: #825dff;
-    --token-tag: #7a7ac0;
-    --token-plain-text: #a0b6d4;
-    --token-script: var(--code-actual-text);
-    --token-language-javascript: #000;
-    --token-comment: #4a6078;
-  }
-  // 0 0 12px 2px var(--focus-blur)
-}
+// @media (prefers-color-scheme: dark) {
+//   :root {
+//     --main-blue: #2a398b;
+//     --secondary-blue: #4088d3;
+//     --dark-blue: #1f2b6e;
+//     --hovered-blue: #26245e;
+//     --main-grey: #a4a0bc;
+//     --secondary-grey: #c7caee;
+//     --dark-grey: #87839e;
+//     --hovered-grey: #6b6780;
+//     --focus: #fff;
+//     --focus-blur: #625cff;
+//     --focus-blur-spread: 2px;
+//     --logo-shadow: drop-shadow(-1px 2px 0px #000);
+//     --bg: #201d26;
+//     --text: #cfcfcf;
+//     --dropdown-bg: #2c2835;
+//     --color-scheme: dark;
+//     --nav-item-bg: #000;
+//     --code-bg: #252436;
+//     --code-actual-text: #d5dbff;
+//     --code-text: var(--code-actual-text);
+//     --token-keyword: #7777ca;
+//     --token-punctuation: #58a6da;
+//     --token-operator: #8f389f;
+//     --token-boolean: #c428e7;
+//     --token-function: #cd02c5;
+//     --token-string: #498cff;
+//     --token-attr-value: #498cff;
+//     --token-class-name: #ff00c9;
+//     --token-attr-name: #825dff;
+//     --token-tag: #8181cd;
+//     --token-plain-text: #a0b6d4;
+//     --token-script: var(--code-actual-text);
+//     --token-language-javascript: #000;
+//     --token-comment: #4a6078;
+//   }
+//   // 0 0 12px 2px var(--focus-blur)
+// }
 
 * {
   box-sizing: border-box;
@@ -264,7 +265,7 @@ button {
 .dropdown,
 .nested-dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% - 15px);
   left: 0;
   text-align: center;
   width: 300px;
@@ -418,6 +419,9 @@ button {
 }
 .section {
   margin-bottom: 30vh;
+  .btn-primary {
+    margin-bottom: 20px;
+  }
 }
 .basic-dropdown {
 }

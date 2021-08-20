@@ -1,4 +1,5 @@
 import {
+  Show,
   Accessor,
   onMount,
   createEffect,
@@ -18,10 +19,9 @@ const Dismiss: Component<{
   class?: string;
   classList?: { [key: string]: boolean };
   /**
-   * Default: root component element queries first `<button>` element
    * css selector, queried from document, to get menu button element. Or pass JSX element
    */
-  menuButton?: string | JSX.Element;
+  menuButton: string | JSX.Element;
   /**
    * Default: root component element queries the second child element
    * css selector, queried from document, to get menu dropdown element. Or pass JSX element
@@ -166,16 +166,26 @@ const Dismiss: Component<{
     props.setToggle(!toggleVal);
   };
 
+  const onBlurMenuButton = (e: FocusEvent) => {
+    if (!props.toggle()) return;
+
+    if (!e.relatedTarget) {
+      if (addedFocusOutAppEvents) return;
+      addedFocusOutAppEvents = true;
+      prevFocusedEl = e.target as HTMLElement;
+      document.addEventListener("click", onClickDocument, {
+        once: true,
+      });
+      return;
+    }
+
+    removeOutsideFocusEvents();
+    if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
+    props.setToggle(false);
+  };
+
   const onClickDocument = (e: MouseEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
-    // if (
-    //   (e.target as HTMLElement).closest(
-    //     "[data-solid-dismiss-dropdown-container]"
-    //   )
-    // )
-    // return;
-
-    console.log("click out");
     if (prevFocusedEl) {
       prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
     }
@@ -187,10 +197,18 @@ const Dismiss: Component<{
   const onFocusFromOutsideAppOrTab = (e: FocusEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
 
+    console.log(e);
     props.setToggle(false);
     prevFocusedEl = null;
     addedFocusOutAppEvents = false;
     document.removeEventListener("click", onClickDocument);
+  };
+
+  const removeOutsideFocusEvents = () => {
+    if (!prevFocusedEl) return;
+    prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
+    document.removeEventListener("click", onClickDocument);
+    prevFocusedEl = null;
   };
 
   const onFocusOutContainer = (e: FocusEvent) => {
@@ -260,16 +278,16 @@ const Dismiss: Component<{
     if (inputElement === "menuDropdown") {
       return menuDropdownEl!;
     }
-    if (inputElement == null && type === "menuButton") {
-      return menuBtnEl || (containerEl.querySelector("button") as HTMLElement);
-    }
     if (inputElement == null && type === "menuDropdown") {
-      return menuDropdownEl || (containerEl.children[1] as HTMLElement);
+      if (!containerEl) return null as any;
+      return menuDropdownEl || (containerEl.children[0] as HTMLElement);
     }
     if (typeof inputElement === "string" && type === "menuButton") {
+      if (!containerEl) return null as any;
       return containerEl.querySelector(inputElement) as HTMLElement;
     }
     if (typeof inputElement === "string" && type === "closeButton") {
+      if (!containerEl) return null as any;
       return containerEl.querySelector(inputElement) as HTMLElement;
     }
     if (typeof inputElement === "string") {
@@ -378,6 +396,7 @@ const Dismiss: Component<{
         expandToggle(toggle);
 
         if (toggle) {
+          menuBtnEl.addEventListener("blur", onBlurMenuButton, { once: true });
           addCloseButtons();
           addMenuDropdownEl();
           runFocusOnActive();
@@ -388,6 +407,7 @@ const Dismiss: Component<{
           dismissStack.push({ setToggle: props.setToggle, menuBtnEl });
           setTabIndexOfFocusTraps("0");
         } else {
+          removeOutsideFocusEvents();
           removeMenuDropdownEl();
           removeCloseButtons();
           setTabIndexOfFocusTraps("-1");
@@ -409,47 +429,49 @@ const Dismiss: Component<{
     menuBtnEl.removeEventListener("click", onClickMenuButton);
     removeCloseButtons();
     removeMenuDropdownEl();
+    removeOutsideFocusEvents();
   });
 
   return (
-    <div
-      id={id}
-      class={props.class}
-      data-solid-dismiss-dropdown-container
-      classList={props.classList || {}}
-      onFocusIn={onFocusInContainer}
-      onFocusOut={onFocusOutContainer}
-      onBlur={() => console.log("onBlur")}
-      tabindex="-1"
-      ref={containerEl}
-    >
-      {maskActive() && (
-        <div
-          style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: none; z-index: -1;"
-          onClick={onClickMask}
-          ref={maskEl}
-        ></div>
-      )}
-      {children}
-      {focusOnLeave && (
-        <div
-          tabindex="-1"
-          onFocus={onFocusTraps}
-          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
-          aria-hidden="true"
-          ref={focusTrapEl1}
-        ></div>
-      )}
-      {focusOnLeave && (
-        <div
-          tabindex="-1"
-          onFocus={onFocusTraps}
-          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
-          aria-hidden="true"
-          ref={focusTrapEl2}
-        ></div>
-      )}
-    </div>
+    <Show when={props.toggle()}>
+      <div
+        id={id}
+        class={props.class}
+        data-solid-dismiss-dropdown-container
+        classList={props.classList || {}}
+        onFocusIn={onFocusInContainer}
+        onFocusOut={onFocusOutContainer}
+        tabindex="-1"
+        ref={containerEl}
+      >
+        {maskActive() && (
+          <div
+            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: none; z-index: -1;"
+            onClick={onClickMask}
+            ref={maskEl}
+          ></div>
+        )}
+        {children}
+        {focusOnLeave && (
+          <div
+            tabindex="-1"
+            onFocus={onFocusTraps}
+            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
+            aria-hidden="true"
+            ref={focusTrapEl1}
+          ></div>
+        )}
+        {focusOnLeave && (
+          <div
+            tabindex="-1"
+            onFocus={onFocusTraps}
+            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
+            aria-hidden="true"
+            ref={focusTrapEl2}
+          ></div>
+        )}
+      </div>
+    </Show>
   );
 };
 

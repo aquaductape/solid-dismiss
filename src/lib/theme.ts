@@ -16,6 +16,23 @@ type IDark = {
   "--dropdown-bg": "#2c2835";
   "--color-scheme": "dark";
   "--nav-item-bg": "#000";
+  "--code-bg": "#252436";
+  "--code-actual-text": "#d5dbff";
+  "--code-text": "var(--code-actual-text)";
+  "--token-keyword": "#7777ca";
+  "--token-punctuation": "#58a6da";
+  "--token-operator": "#b117ce";
+  "--token-boolean": "#c428e7";
+  "--token-function": "#cd02c5";
+  "--token-string": "#498cff";
+  "--token-attr-value": "#498cff";
+  "--token-class-name": "#ff00c9";
+  "--token-attr-name": " #9777ff";
+  "--token-tag": "#8181cd";
+  "--token-plain-text": "#a0b6d4";
+  "--token-script": "var(--code-actual-text)";
+  "--token-language-javascript": "#000";
+  "--token-comment": "#4a6078";
 };
 type ILight = {
   "--main-blue": "#142cb0";
@@ -35,6 +52,23 @@ type ILight = {
   "--dropdown-bg": "#f3effd";
   "--color-scheme": "light";
   "--nav-item-bg": "var(--main-grey)";
+  "--code-actual-text": "#000000";
+  "--code-bg": "#e2e1f5";
+  "--code-text": "var(--code-actual-text)";
+  "--token-keyword": "#4141ab";
+  "--token-punctuation": "#196191";
+  "--token-operator": "#8f389f";
+  "--token-boolean": "#c428e7";
+  "--token-function": "#cd02c5";
+  "--token-string": "#0000c6";
+  "--token-attr-value": "#0000c6";
+  "--token-class-name": "#db29b5";
+  "--token-attr-name": "#3500e7";
+  "--token-tag": "#1d1dac";
+  "--token-plain-text": "#304463";
+  "--token-script": "var(--code-actual-text)";
+  "--token-language-javascript": "#000";
+  "--token-comment": "#8a9fb5";
 };
 type IThemeConfig = {
   dark: IDark;
@@ -59,6 +93,23 @@ export const themeConfig: IThemeConfig = {
     "--dropdown-bg": "#2c2835",
     "--color-scheme": "dark",
     "--nav-item-bg": "#000",
+    "--code-bg": "#252436",
+    "--code-actual-text": "#d5dbff",
+    "--code-text": "var(--code-actual-text)",
+    "--token-keyword": "#7777ca",
+    "--token-punctuation": "#58a6da",
+    "--token-operator": "#b117ce",
+    "--token-boolean": "#c428e7",
+    "--token-function": "#cd02c5",
+    "--token-string": "#498cff",
+    "--token-attr-value": "#498cff",
+    "--token-class-name": "#ff00c9",
+    "--token-attr-name": " #9777ff",
+    "--token-tag": "#8181cd",
+    "--token-plain-text": "#a0b6d4",
+    "--token-script": "var(--code-actual-text)",
+    "--token-language-javascript": "#000",
+    "--token-comment": "#4a6078",
   },
   light: {
     "--main-blue": "#142cb0",
@@ -78,6 +129,23 @@ export const themeConfig: IThemeConfig = {
     "--dropdown-bg": "#f3effd",
     "--color-scheme": "light",
     "--nav-item-bg": "var(--main-grey)",
+    "--code-actual-text": "#000000",
+    "--code-bg": "#e2e1f5",
+    "--code-text": "var(--code-actual-text)",
+    "--token-keyword": "#4141ab",
+    "--token-punctuation": "#196191",
+    "--token-operator": "#8f389f",
+    "--token-boolean": "#c428e7",
+    "--token-function": "#cd02c5",
+    "--token-string": "#0000c6",
+    "--token-attr-value": "#0000c6",
+    "--token-class-name": "#db29b5",
+    "--token-attr-name": "#3500e7",
+    "--token-tag": "#1d1dac",
+    "--token-plain-text": "#304463",
+    "--token-script": "var(--code-actual-text)",
+    "--token-language-javascript": "#000",
+    "--token-comment": "#8a9fb5",
   },
 };
 export const changeTheme = (inputTheme: string) => {

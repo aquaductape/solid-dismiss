@@ -1,14 +1,17 @@
 import Dismiss from "../../../package/index";
-import { createSignal, Show } from "solid-js";
+import { createSignal } from "solid-js";
 // ...
 
 const Dropdown = () => {
   const [toggle, setToggle] = createSignal(false);
+  let btnEl!: HTMLButtonElement;
 
   return (
-    <Dismiss toggle={toggle} setToggle={setToggle}>
-      <button class="btn-primary">Dropdown</button>
-      <Show when={toggle()}>
+    <>
+      <button class="btn-primary" ref={btnEl}>
+        Dropdown
+      </button>
+      <Dismiss menuButton={btnEl} toggle={toggle} setToggle={setToggle}>
         <ul class="dropdown">
           <li>
             <a href="javascript:void(0);">cat</a>
@@ -23,8 +26,8 @@ const Dropdown = () => {
             <a href="javascript:void(0);">bird</a>
           </li>
         </ul>
-      </Show>
-    </Dismiss>
+      </Dismiss>
+    </>
   );
 };
 

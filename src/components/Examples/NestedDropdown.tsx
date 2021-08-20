@@ -1,22 +1,18 @@
 import Dismiss from "../../../package/index";
-import { createSignal, Show, createEffect } from "solid-js";
+import { createSignal, Show } from "solid-js";
 
 const Dropdown = () => {
   const [toggle, setToggle] = createSignal(false);
-  const ref: any = { menuDropdown: null };
+  // const ref: any = { menuDropdown: null };
+  let btnEl!: HTMLButtonElement;
 
   return (
-    <Dismiss
-      class="nested-dropdown-container"
-      toggle={toggle}
-      setToggle={setToggle}
-      menuDropdown={ref}
-    >
-      <button class="btn-primary btn-nested">
+    <>
+      <button class="btn-primary btn-nested" ref={btnEl}>
         {toggle() ? "Opened" : "Nested Dropdown"}
       </button>
-      <Show when={toggle()}>
-        <div class="nested-dropdown" tabindex="-1" ref={ref.menuDropdown}>
+      <Dismiss menuButton={btnEl} toggle={toggle} setToggle={setToggle}>
+        <div class="nested-dropdown">
           <h3>Nested Dropdown Text</h3>
           <input type="text" />
           <select name="" id="">
@@ -24,12 +20,14 @@ const Dropdown = () => {
             <option value="rat">rat</option>
             <option value="cat">cat</option>
           </select>
-          <Dropdown />
-          <Dropdown />
-          <Dropdown />
+          <Show when={toggle()}>
+            <Dropdown />
+            <Dropdown />
+            <Dropdown />
+          </Show>
         </div>
-      </Show>
-    </Dismiss>
+      </Dismiss>
+    </>
   );
 };
 

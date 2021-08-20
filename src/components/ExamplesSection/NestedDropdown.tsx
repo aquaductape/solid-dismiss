@@ -34,7 +34,9 @@ const NestedDropdown = () => {
     <div class="section">
       <h2>Nested Dropdowns</h2>
       <div class="split-view">
-        <_NestedDropdown />
+        <div>
+          <_NestedDropdown />
+        </div>
         <div class="code-editor" ref={codeEl}></div>
       </div>
     </div>

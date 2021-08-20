@@ -41,7 +41,9 @@ const BasicDropdown = () => {
       <h2>Basic Dropdown</h2>
 
       <div class="split-view">
-        <Dropdown></Dropdown>
+        <div>
+          <Dropdown></Dropdown>
+        </div>
         <div class="code-editor" ref={codeEl}></div>
       </div>
     </div>
