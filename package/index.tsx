@@ -159,6 +159,8 @@ const Dismiss: Component<{
   };
 
   const onClickMenuButton = () => {
+    document.getElementById("main")!.textContent = `added click ${Date.now()}`;
+    clearTimeout(timeoutId!);
     clearTimeout(timeoutId!);
     timeoutId = null;
 
