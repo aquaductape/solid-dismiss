@@ -8,7 +8,7 @@ const Dropdown = () => {
 
   return (
     <>
-      <button class="btn-primary" ref={btnEl}>
+      <button type="button" class="btn-primary" ref={btnEl}>
         Dropdown
       </button>
       <Dismiss menuButton={btnEl} toggle={toggle} setToggle={setToggle}>
