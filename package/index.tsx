@@ -189,7 +189,7 @@ const Dismiss: Component<{
     if (!e.relatedTarget) {
       if (addedFocusOutAppEvents) return;
       addedFocusOutAppEvents = true;
-      prevFocusedEl = e.target as HTMLElement;
+      // prevFocusedEl = e.target as HTMLElement;
       document.addEventListener("click", onClickDocument, { once: true });
       return;
     }
