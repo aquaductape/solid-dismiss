@@ -7,12 +7,17 @@ const Dropdown = () => {
   let btnEl!: HTMLButtonElement;
 
   return (
-    <>
+    <div style="position: relative">
       <button class="btn-primary btn-nested" ref={btnEl}>
         {toggle() ? "Opened" : "Nested Dropdown"}
       </button>
-      <Dismiss menuButton={btnEl} toggle={toggle} setToggle={setToggle}>
-        <div class="nested-dropdown">
+      <Dismiss
+        class="nested-dropdown"
+        menuButton={btnEl}
+        toggle={toggle}
+        setToggle={setToggle}
+      >
+        <div>
           <h3>Nested Dropdown Text</h3>
           <input type="text" />
           <select name="" id="">
@@ -27,7 +32,7 @@ const Dropdown = () => {
           </Show>
         </div>
       </Dismiss>
-    </>
+    </div>
   );
 };
 

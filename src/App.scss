@@ -95,20 +95,20 @@ a {
 }
 
 /* Optional */
-[data-solid-dismiss-dropdown-container] {
-  position: relative;
-  width: -moz-fit-content;
-  height: -moz-fit-content;
-  width: fit-content;
-  height: fit-content;
-}
-
-/* Support Edge Legacy */
-@supports (-ms-ime-align: auto) {
-  [data-solid-dismiss-dropdown-container] {
-    display: inline-block;
-  }
-}
+// [data-solid-dismiss-dropdown-container] {
+//   position: relative;
+//   width: -moz-fit-content;
+//   height: -moz-fit-content;
+//   width: fit-content;
+//   height: fit-content;
+// }
+//
+// /* Support Edge Legacy */
+// @supports (-ms-ime-align: auto) {
+//   [data-solid-dismiss-dropdown-container] {
+//     display: inline-block;
+//   }
+// }
 
 a,
 button {
