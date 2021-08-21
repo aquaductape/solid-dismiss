@@ -568,13 +568,13 @@ function userAgent(pattern: RegExp) {
   }
 }
 
-const IOS = userAgent(/iP(ad|od|hone)/i);
-const IOS13 =
+const iOS = userAgent(/iP(ad|od|hone)/i);
+const iOS13 =
   typeof window !== "undefined"
-    ? IOS && "download" in document.createElement("a")
-    : undefined;
+    ? iOS && "download" in document.createElement("a")
+    : null;
 
-if (IOS && !IOS13) {
+if (iOS && !iOS13) {
   const html = document.querySelector("html")!;
   html.style.cursor = "pointer";
   html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
