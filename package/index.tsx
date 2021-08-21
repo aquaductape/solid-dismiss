@@ -166,6 +166,8 @@ const Dismiss: Component<{
     const toggleVal = props.toggle();
 
     props.setToggle(!toggleVal);
+    menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
+    menuBtnEl.addEventListener("blur", onBlurMenuButton);
   };
 
   const onBlurMenuButton = (e: FocusEvent) => {
@@ -393,8 +395,6 @@ const Dismiss: Component<{
 
   const onFocusMenuButton = () => {
     clearTimeout(timeoutId!);
-    menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
-    menuBtnEl.addEventListener("blur", onBlurMenuButton);
   };
 
   onMount(() => {
