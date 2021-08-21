@@ -13,8 +13,9 @@ import {
 import { removeKeyFromStore, updateStore } from "../src/components/iOSDebugger";
 
 // Safari iOS notes
-// buttons can't receive focus on tap, only through `focus` method
-// blur (tested so far on only buttons) will fire even on tapping same focused button
+// buttons can't receive focus on tap, only through invoking `focus()` method
+// blur (tested so far on only buttons) will fire even on tapping same focused button (which would be invoked `focus()` )
+// For Nested Dropdowns. Since button has to be refocused, when nested button(1) is tapped, it also triggers focusout container(1) for some reason
 
 const Dismiss: Component<{
   /**
@@ -186,6 +187,8 @@ const Dismiss: Component<{
       return;
     }
 
+    console.log("onBlurMenuButton" + menuBtnId);
+
     if (!e.relatedTarget) {
       // if (addedFocusOutAppEvents) return;
       // addedFocusOutAppEvents = true;
@@ -230,6 +233,7 @@ const Dismiss: Component<{
   };
 
   const onClickDocument = (e: MouseEvent) => {
+    console.log("onClickDocument" + menuBtnId);
     if (containerEl.contains(e.target as HTMLElement)) return;
     if (prevFocusedEl) {
       prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
@@ -556,5 +560,24 @@ const dismissStack: {
   setToggle: (v: boolean) => void;
   menuBtnEl: HTMLElement;
 }[] = [];
+
+function userAgent(pattern: RegExp) {
+  // @ts-ignore
+  if (typeof window !== "undefined" && window.navigator) {
+    return !!(/*@__PURE__*/ navigator.userAgent.match(pattern));
+  }
+}
+
+const IOS = userAgent(/iP(ad|od|hone)/i);
+const IOS13 =
+  typeof window !== "undefined"
+    ? IOS && "download" in document.createElement("a")
+    : undefined;
+
+if (IOS && !IOS13) {
+  const html = document.querySelector("html")!;
+  html.style.cursor = "pointer";
+  html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
+}
 
 export default Dismiss;
