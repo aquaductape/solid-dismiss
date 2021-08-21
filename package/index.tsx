@@ -296,6 +296,11 @@ const Dismiss: Component<{
     clearTimeout(containerFocusTimeoutId!);
     containerFocusTimeoutId = null;
 
+    updateStore(
+      `setToggle from onFocusInContainer ${menuBtnId}`,
+      `toggle ${props.toggle()}, ${Date.now()}`
+    );
+
     if (props.setFocus) {
       props.setFocus(true);
     }
@@ -497,6 +502,7 @@ const Dismiss: Component<{
     removeOutsideFocusEvents();
     removeKeyFromStore(`onClickBtn ${menuBtnId}`);
     removeKeyFromStore(`setToggle from onClickDocument ${menuBtnId}`);
+    removeKeyFromStore(`setToggle from onFocusInContainer ${menuBtnId}`);
   });
 
   return (
