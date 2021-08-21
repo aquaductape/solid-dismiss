@@ -18,7 +18,6 @@ const App: Component = () => {
         {/* <NestedDropdown></NestedDropdown>
         <DropdownWidget></DropdownWidget> */}
       </main>
-      <div id="main"></div>
     </>
   );
 };

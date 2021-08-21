@@ -159,8 +159,8 @@ const Dismiss: Component<{
   };
 
   const onClickMenuButton = () => {
-    menuBtnEl.focus();
     clearTimeout(timeoutId!);
+    menuBtnEl.focus();
     timeoutId = null;
 
     const toggleVal = props.toggle();
@@ -174,9 +174,6 @@ const Dismiss: Component<{
       menuBtnKeyupTabFired = false;
       return;
     }
-    document.getElementById("main")!.textContent = `${
-      e.relatedTarget
-    } ${Date.now()}`;
 
     if (!e.relatedTarget) {
       if (addedFocusOutAppEvents) return;
@@ -197,7 +194,7 @@ const Dismiss: Component<{
       props.setToggle(false);
       menuBtnKeyupTabFired = true;
       menuBtnEl.removeEventListener("keydown", onKeydownMenuButton);
-      // menuBtnEl.removeEventListener("blur", onBlurMenuButton);
+      menuBtnEl.removeEventListener("blur", onBlurMenuButton);
       return;
     }
     if (e.key !== "Tab") return;
@@ -210,7 +207,7 @@ const Dismiss: Component<{
       containerEl.focus();
     }
     menuBtnEl.removeEventListener("keydown", onKeydownMenuButton);
-    // menuBtnEl.removeEventListener("blur", onBlurMenuButton);
+    menuBtnEl.removeEventListener("blur", onBlurMenuButton);
   };
 
   const onClickDocument = (e: MouseEvent) => {
@@ -395,7 +392,6 @@ const Dismiss: Component<{
   };
 
   const onFocusMenuButton = () => {
-    document.getElementById("main")!.textContent = `added blur ${Date.now()}`;
     clearTimeout(timeoutId!);
     menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
     menuBtnEl.addEventListener("blur", onBlurMenuButton);
@@ -521,14 +517,5 @@ const dismissStack: {
   setToggle: (v: boolean) => void;
   menuBtnEl: HTMLElement;
 }[] = [];
-
-const userAgent = (pattern: RegExp) => {
-  // @ts-ignore
-  if (typeof window !== "undefined" && window.navigator) {
-    return !!(/*@__PURE__*/ navigator.userAgent.match(pattern));
-  }
-};
-
-export const IOS = userAgent(/iP(ad|od|hone)/i);
 
 export default Dismiss;
