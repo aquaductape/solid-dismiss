@@ -1,16 +1,26 @@
 import { Show, For } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createStore, produce } from "solid-js/store";
 
 const [store, setStore] = createStore<{ [key: string]: any }>({});
 export const updateStore = (key: string, value: string) => {
-  const obj: any = {};
-  obj[key] = value;
-  setStore(JSON.parse(JSON.stringify({ ...store, ...obj })));
+  // console.log(newStore);
+  setStore(
+    produce((s) => {
+      // @ts-ignore
+      s[key] = value;
+    })
+  );
 };
 export const removeKeyFromStore = (key: string) => {
-  const newStore = JSON.parse(JSON.stringify(store));
-  delete newStore[key];
-  setStore(JSON.parse(JSON.stringify({ ...store })));
+  // const newStore = JSON.parse(JSON.stringify(store));
+  // delete newStore[key];
+  // console.log(newStore);
+  setStore(
+    produce((s) => {
+      // @ts-ignore
+      delete s[key];
+    })
+  );
 };
 
 const IOSDebugger = () => {
