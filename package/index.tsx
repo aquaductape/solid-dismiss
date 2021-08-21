@@ -159,6 +159,7 @@ const Dismiss: Component<{
   };
 
   const onClickMenuButton = () => {
+    menuBtnEl.focus();
     clearTimeout(timeoutId!);
     timeoutId = null;
 
@@ -520,5 +521,14 @@ const dismissStack: {
   setToggle: (v: boolean) => void;
   menuBtnEl: HTMLElement;
 }[] = [];
+
+const userAgent = (pattern: RegExp) => {
+  // @ts-ignore
+  if (typeof window !== "undefined" && window.navigator) {
+    return !!(/*@__PURE__*/ navigator.userAgent.match(pattern));
+  }
+};
+
+export const IOS = userAgent(/iP(ad|od|hone)/i);
 
 export default Dismiss;
