@@ -267,6 +267,10 @@ const Dismiss: Component<{
     if (focusOnLeave) {
       e.stopImmediatePropagation();
     }
+    updateStore(
+      `setToggle from onFocusOutContainer ${menuBtnId}`,
+      `toggle ${props.toggle()}, ${Date.now()}`
+    );
 
     if (!e.relatedTarget) {
       if (addedFocusOutAppEvents) return;
