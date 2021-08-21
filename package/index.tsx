@@ -180,27 +180,27 @@ const Dismiss: Component<{
   };
 
   const onBlurMenuButton = (e: FocusEvent) => {
+    if (!props.toggle()) return;
+    if (menuBtnKeyupTabFired) {
+      menuBtnKeyupTabFired = false;
+      return;
+    }
+
+    if (!e.relatedTarget) {
+      if (addedFocusOutAppEvents) return;
+      addedFocusOutAppEvents = true;
+      prevFocusedEl = e.target as HTMLElement;
+      document.addEventListener("click", onClickDocument, { once: true });
+      return;
+    }
+
+    removeOutsideFocusEvents();
+    if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
+    updateStore(
+      `setToggle from onBlurMenuButton  ${menuBtnId}`,
+      `toggle ${props.toggle()}, ${Date.now()}`
+    );
     const run = () => {
-      if (!props.toggle()) return;
-      if (menuBtnKeyupTabFired) {
-        menuBtnKeyupTabFired = false;
-        return;
-      }
-
-      if (!e.relatedTarget) {
-        if (addedFocusOutAppEvents) return;
-        addedFocusOutAppEvents = true;
-        prevFocusedEl = e.target as HTMLElement;
-        document.addEventListener("click", onClickDocument, { once: true });
-        return;
-      }
-
-      removeOutsideFocusEvents();
-      if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
-      updateStore(
-        `setToggle from onBlurMenuButton  ${menuBtnId}`,
-        `toggle ${props.toggle()}, ${Date.now()}`
-      );
       props.setToggle(false);
     };
 
