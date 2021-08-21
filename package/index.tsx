@@ -482,6 +482,7 @@ const Dismiss: Component<{
           removeMenuDropdownEl();
           removeCloseButtons();
           setTabIndexOfFocusTraps("-1");
+          document.removeEventListener("click", onClickDocument);
           if (dismissStack.find((item) => item.menuBtnEl === menuBtnEl)) {
             dismissStack.pop();
           }
