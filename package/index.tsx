@@ -193,7 +193,7 @@ const Dismiss: Component<{
       // if (addedFocusOutAppEvents) return;
       // addedFocusOutAppEvents = true;
       // prevFocusedEl = e.target as HTMLElement;
-      document.addEventListener("click", onClickDocument, { once: true });
+      document.addEventListener("touchend", onClickDocument, { once: true });
       return;
     }
 
@@ -280,7 +280,7 @@ const Dismiss: Component<{
       if (addedFocusOutAppEvents) return;
       addedFocusOutAppEvents = true;
       prevFocusedEl = e.target as HTMLElement;
-      document.addEventListener("click", onClickDocument);
+      document.addEventListener("touchend", onClickDocument);
       prevFocusedEl.addEventListener("focus", onFocusFromOutsideAppOrTab, {
         once: true,
       });
@@ -486,7 +486,7 @@ const Dismiss: Component<{
           removeMenuDropdownEl();
           removeCloseButtons();
           setTabIndexOfFocusTraps("-1");
-          document.removeEventListener("click", onClickDocument);
+          document.removeEventListener("touchend", onClickDocument);
           if (dismissStack.find((item) => item.menuBtnEl === menuBtnEl)) {
             dismissStack.pop();
           }
