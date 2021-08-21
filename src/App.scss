@@ -437,11 +437,16 @@ button {
   }
 }
 
-#main {
+#debugger {
   position: fixed;
   bottom: 0;
   left: 0;
   background: #fff;
   padding: 10px;
   color: #000;
+  max-width: 90vw;
+
+  .list {
+    margin-bottom: 8px;
+  }
 }

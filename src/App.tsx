@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
 import BasicDropdown from "./components/ExamplesSection/BasicDropdown";
 import NestedDropdown from "./components/ExamplesSection/NestedDropdown";
+import IOSDebugger from "./components/iOSDebugger";
 
 const App: Component = () => {
   return (
@@ -18,6 +19,7 @@ const App: Component = () => {
         {/* <NestedDropdown></NestedDropdown>
         <DropdownWidget></DropdownWidget> */}
       </main>
+      <IOSDebugger />
     </>
   );
 };

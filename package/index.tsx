@@ -10,6 +10,7 @@ import {
   on,
   createUniqueId,
 } from "solid-js";
+import { updateStore } from "../src/components/iOSDebugger";
 
 const Dismiss: Component<{
   /**
@@ -164,10 +165,9 @@ const Dismiss: Component<{
     timeoutId = null;
 
     const toggleVal = props.toggle();
+    updateStore("onClickMenuButton", `toggle ${toggleVal}`);
 
     props.setToggle(!toggleVal);
-    menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
-    menuBtnEl.addEventListener("blur", onBlurMenuButton);
   };
 
   const onBlurMenuButton = (e: FocusEvent) => {
@@ -395,6 +395,8 @@ const Dismiss: Component<{
 
   const onFocusMenuButton = () => {
     clearTimeout(timeoutId!);
+    menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
+    menuBtnEl.addEventListener("blur", onBlurMenuButton);
   };
 
   onMount(() => {
