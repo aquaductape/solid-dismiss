@@ -221,6 +221,7 @@ const Dismiss: Component<{
       prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
     }
     prevFocusedEl = null;
+    updateStore(`setToggle from onClickDocument ${menuBtnId}`, `${Date.now()}`);
     props.setToggle(false);
     addedFocusOutAppEvents = false;
   };
@@ -474,6 +475,7 @@ const Dismiss: Component<{
 
     removeOutsideFocusEvents();
     removeKeyFromStore(`onClickBtn ${menuBtnId}`);
+    removeKeyFromStore(`setToggle from onClickDocument ${menuBtnId}`);
   });
 
   return (

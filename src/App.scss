@@ -446,6 +446,8 @@ button {
   color: #000;
   max-width: 90vw;
   z-index: 1000;
+  overflow: auto;
+  max-height: 25vh;
 
   .list {
     margin-bottom: 8px;
