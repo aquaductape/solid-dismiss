@@ -12,6 +12,10 @@ import {
 } from "solid-js";
 import { removeKeyFromStore, updateStore } from "../src/components/iOSDebugger";
 
+// Safari iOS notes
+// buttons can't receive focus on tap, only through `focus` method
+// blur (tested so far on only buttons) will fire even on tapping same focused button
+
 const Dismiss: Component<{
   /**
    * sets id attribute for root component
@@ -105,7 +109,8 @@ const Dismiss: Component<{
 
   const [maskActive, setMaskActive] = createSignal(false);
 
-  let timeoutId: number | null = 0;
+  let containerFocusTimeoutId: number | null = 0;
+  let menuButtonBlurTimeoutId: number | null = 0;
   let init = false;
 
   const runFocusOnLeave = () => {
@@ -160,9 +165,10 @@ const Dismiss: Component<{
   };
 
   const onClickMenuButton = () => {
-    clearTimeout(timeoutId!);
+    clearTimeout(containerFocusTimeoutId!);
+    clearTimeout(menuButtonBlurTimeoutId!);
     menuBtnEl.focus();
-    timeoutId = null;
+    containerFocusTimeoutId = null;
 
     const toggleVal = props.toggle();
     updateStore(
@@ -174,27 +180,31 @@ const Dismiss: Component<{
   };
 
   const onBlurMenuButton = (e: FocusEvent) => {
-    if (!props.toggle()) return;
-    if (menuBtnKeyupTabFired) {
-      menuBtnKeyupTabFired = false;
-      return;
-    }
+    const run = () => {
+      if (!props.toggle()) return;
+      if (menuBtnKeyupTabFired) {
+        menuBtnKeyupTabFired = false;
+        return;
+      }
 
-    if (!e.relatedTarget) {
-      if (addedFocusOutAppEvents) return;
-      addedFocusOutAppEvents = true;
-      prevFocusedEl = e.target as HTMLElement;
-      document.addEventListener("click", onClickDocument, { once: true });
-      return;
-    }
+      if (!e.relatedTarget) {
+        if (addedFocusOutAppEvents) return;
+        addedFocusOutAppEvents = true;
+        prevFocusedEl = e.target as HTMLElement;
+        document.addEventListener("click", onClickDocument, { once: true });
+        return;
+      }
 
-    removeOutsideFocusEvents();
-    if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
-    updateStore(
-      `setToggle from onBlurMenuButton  ${menuBtnId}`,
-      `toggle ${props.toggle()}, ${Date.now()}`
-    );
-    props.setToggle(false);
+      removeOutsideFocusEvents();
+      if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
+      updateStore(
+        `setToggle from onBlurMenuButton  ${menuBtnId}`,
+        `toggle ${props.toggle()}, ${Date.now()}`
+      );
+      props.setToggle(false);
+    };
+
+    menuButtonBlurTimeoutId = window.setTimeout(run);
   };
 
   const onKeydownMenuButton = (e: KeyboardEvent) => {
@@ -279,12 +289,12 @@ const Dismiss: Component<{
         props.setFocus(false);
       }
     });
-    timeoutId = newTimeout;
+    containerFocusTimeoutId = newTimeout;
   };
 
   const onFocusInContainer = () => {
-    clearTimeout(timeoutId!);
-    timeoutId = null;
+    clearTimeout(containerFocusTimeoutId!);
+    containerFocusTimeoutId = null;
 
     if (props.setFocus) {
       props.setFocus(true);
@@ -409,7 +419,7 @@ const Dismiss: Component<{
   };
 
   const onFocusMenuButton = () => {
-    clearTimeout(timeoutId!);
+    clearTimeout(containerFocusTimeoutId!);
     menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
     menuBtnEl.addEventListener("blur", onBlurMenuButton);
   };
