@@ -190,6 +190,10 @@ const Dismiss: Component<{
 
     removeOutsideFocusEvents();
     if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
+    updateStore(
+      `setToggle from onBlurMenuButton  ${menuBtnId}`,
+      `toggle ${props.toggle()}, ${Date.now()}`
+    );
     props.setToggle(false);
   };
 
@@ -232,6 +236,10 @@ const Dismiss: Component<{
   const onFocusFromOutsideAppOrTab = (e: FocusEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
 
+    updateStore(
+      `setToggle from onFocusFromOutsideAppOrTab  ${menuBtnId}`,
+      `toggle ${props.toggle()}, ${Date.now()}`
+    );
     props.setToggle(false);
     prevFocusedEl = null;
     addedFocusOutAppEvents = false;
