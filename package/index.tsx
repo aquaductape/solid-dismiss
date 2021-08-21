@@ -269,7 +269,7 @@ const Dismiss: Component<{
     }
     updateStore(
       `setToggle from onFocusOutContainer ${menuBtnId}`,
-      `toggle ${props.toggle()}, ${Date.now()}`
+      `toggle ${props.toggle()}, ${Date.now()}, addedFocusOutAppEvents ${addedFocusOutAppEvents}`
     );
 
     if (!e.relatedTarget) {
