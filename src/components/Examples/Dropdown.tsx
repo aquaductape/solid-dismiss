@@ -7,7 +7,7 @@ const Dropdown = () => {
   let btnEl!: HTMLButtonElement;
 
   return (
-    <>
+    <div style="position: relative;">
       <button class="btn-primary" ref={btnEl}>
         Dropdown
       </button>
@@ -27,7 +27,7 @@ const Dropdown = () => {
           </li>
         </ul>
       </Dismiss>
-    </>
+    </div>
   );
 };
 
