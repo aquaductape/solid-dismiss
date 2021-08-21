@@ -7,6 +7,11 @@ export const updateStore = (key: string, value: string) => {
   obj[key] = value;
   setStore(JSON.parse(JSON.stringify({ ...store, ...obj })));
 };
+export const removeKeyFromStore = (key: string) => {
+  const newStore = JSON.parse(JSON.stringify(store));
+  delete newStore[key];
+  setStore(JSON.parse(JSON.stringify({ ...store })));
+};
 
 const IOSDebugger = () => {
   return (

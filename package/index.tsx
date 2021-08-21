@@ -10,7 +10,7 @@ import {
   on,
   createUniqueId,
 } from "solid-js";
-import { updateStore } from "../src/components/iOSDebugger";
+import { removeKeyFromStore, updateStore } from "../src/components/iOSDebugger";
 
 const Dismiss: Component<{
   /**
@@ -468,7 +468,9 @@ const Dismiss: Component<{
     menuBtnEl.removeEventListener("click", onClickMenuButton);
     removeCloseButtons();
     removeMenuDropdownEl();
+
     removeOutsideFocusEvents();
+    removeKeyFromStore(`onClickBtn ${menuBtnId}`);
   });
 
   return (
