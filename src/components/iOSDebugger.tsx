@@ -3,7 +3,9 @@ import { createStore } from "solid-js/store";
 
 const [store, setStore] = createStore<{ [key: string]: any }>({});
 export const updateStore = (key: string, value: string) => {
-  setStore(JSON.parse(JSON.stringify({ ...store, key: value })));
+  const obj: any = {};
+  obj[key] = value;
+  setStore(JSON.parse(JSON.stringify({ ...store, ...obj })));
 };
 
 const IOSDebugger = () => {

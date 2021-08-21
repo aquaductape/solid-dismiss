@@ -165,7 +165,7 @@ const Dismiss: Component<{
     timeoutId = null;
 
     const toggleVal = props.toggle();
-    updateStore(`onClickBtn ${menuBtnId}`, `toggle ${toggleVal}`);
+    updateStore(`onClickBtn ${menuBtnId}`, `toggle ${!toggleVal}`);
 
     props.setToggle(!toggleVal);
   };
