@@ -33,6 +33,8 @@
   --token-script: var(--code-actual-text);
   --token-language-javascript: #000;
   --token-comment: #8a9fb5;
+  --inline-code-bg: var(--code-bg);
+  --inline-code-color: #fff;
 }
 
 // @media (prefers-color-scheme: dark) {
@@ -108,12 +110,12 @@ a {
   transition: text-shadow 150ms, transform 150ms;
 
   &:hover {
-    text-shadow: 1px 0px 0px #000;
+    text-shadow: 1px 0px 0px currentColor;
     transform: scale(1.03);
     transform-origin: center;
   }
   &[data-focus-visible-added] {
-    border: 3px solid #000;
+    border: 3px solid var(--inline-code-color);
     box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
   }
 }
@@ -134,7 +136,8 @@ a {
 //   }
 // }
 
-button {
+button,
+.github {
   position: relative;
   outline: none;
 
@@ -202,6 +205,7 @@ button {
 }
 
 .focus-gutter {
+  cursor: auto;
   display: block;
   position: relative;
   width: 15px;
@@ -529,7 +533,8 @@ button {
 
 p {
   & > code {
-    background: #000;
+    background: var(--inline-code-bg);
+    color: var(--inline-code-color);
     padding: 3px;
   }
 }

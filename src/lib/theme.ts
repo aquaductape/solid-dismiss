@@ -33,6 +33,8 @@ type IDark = {
   "--token-script": "var(--code-actual-text)";
   "--token-language-javascript": "#000";
   "--token-comment": "#4a6078";
+  "--inline-code-bg": "var(--code-bg)";
+  "--inline-code-color": "#fff";
 };
 type ILight = {
   "--main-blue": "#142cb0";
@@ -69,6 +71,8 @@ type ILight = {
   "--token-script": "var(--code-actual-text)";
   "--token-language-javascript": "#000";
   "--token-comment": "#8a9fb5";
+  "--inline-code-bg": "var(--code-bg)";
+  "--inline-code-color": "#000";
 };
 type IThemeConfig = {
   dark: IDark;
@@ -110,6 +114,8 @@ export const themeConfig: IThemeConfig = {
     "--token-script": "var(--code-actual-text)",
     "--token-language-javascript": "#000",
     "--token-comment": "#4a6078",
+    "--inline-code-bg": "var(--code-bg)",
+    "--inline-code-color": "#fff",
   },
   light: {
     "--main-blue": "#142cb0",
@@ -146,6 +152,8 @@ export const themeConfig: IThemeConfig = {
     "--token-script": "var(--code-actual-text)",
     "--token-language-javascript": "#000",
     "--token-comment": "#8a9fb5",
+    "--inline-code-bg": "var(--code-bg)",
+    "--inline-code-color": "#000",
   },
 };
 export const changeTheme = (inputTheme: string) => {
