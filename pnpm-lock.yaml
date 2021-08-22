@@ -6,6 +6,7 @@ specifiers:
   focus-visible: ^5.2.0
   prismjs: ^1.24.1
   sass: ^1.38.0
+  simplebar: ^5.3.5
   solid-js: ^1.0.7
   vite: ^2.4.2
   vite-plugin-solid: ^2.0.1
@@ -16,6 +17,7 @@ dependencies:
   focus-visible: 5.2.0
   prismjs: 1.24.1
   sass: 1.38.0
+  simplebar: 5.3.5
   solid-js: 1.1.1
 
 devDependencies:
@@ -320,6 +322,10 @@ packages:
       to-fast-properties: 2.0.0
     dev: true
 
+  /@juggle/resize-observer/3.3.1:
+    resolution: {integrity: sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==}
+    dev: false
+
   /@types/prismjs/1.16.6:
     resolution: {integrity: sha512-dTvnamRITNqNkqhlBd235kZl3KfVJQQoT5jkXeiWSBK7i4/TLKBNLV0S1wOt8gy4E2TY722KLtdmv2xc6+Wevg==}
     dev: false
@@ -381,6 +387,10 @@ packages:
       node-releases: 1.1.75
     dev: true
 
+  /can-use-dom/0.1.0:
+    resolution: {integrity: sha1-IsxKNKCrxDlQ9CxkEQJKP2NmtFo=}
+    dev: false
+
   /caniuse-lite/1.0.30001251:
     resolution: {integrity: sha512-HOe1r+9VkU4TFmnU70z+r7OLmtR+/chB1rdcJUeQlAinjEeb0cKL20tlAtOagNZhbrtLnCvV19B4FmF1rgzl6A==}
     dev: true
@@ -428,6 +438,11 @@ packages:
     dependencies:
       safe-buffer: 5.1.2
     dev: true
+
+  /core-js/3.16.2:
+    resolution: {integrity: sha512-P0KPukO6OjMpjBtHSceAZEWlDD1M2Cpzpg6dBbrjFqFhBHe/BwhxaP820xKOjRn/lZRQirrCusIpLS/n2sgXLQ==}
+    requiresBuild: true
+    dev: false
 
   /debug/4.3.2:
     resolution: {integrity: sha512-mOp8wKcvj7XxC78zLgw/ZA+6TSgkoE2C/ienthhRD298T7UNwAg9diBpLRxC0mOezLl4B0xV7M0cCO6P/O0Xhw==}
@@ -563,6 +578,18 @@ packages:
       minimist: 1.2.5
     dev: true
 
+  /lodash.debounce/4.0.8:
+    resolution: {integrity: sha1-gteb/zCmfEAF/9XiUVMArZyk168=}
+    dev: false
+
+  /lodash.memoize/4.1.2:
+    resolution: {integrity: sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=}
+    dev: false
+
+  /lodash.throttle/4.1.1:
+    resolution: {integrity: sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=}
+    dev: false
+
   /merge-anything/4.0.1:
     resolution: {integrity: sha512-KsFjBYc3juDoHz9Vzd5fte1nqp06H8SQ+yU344Dd0ZunwSgtltnC0kgKds8cbocJGyViLcBQuHkitbDXAqW+LQ==}
     dependencies:
@@ -653,6 +680,17 @@ packages:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
     hasBin: true
     dev: true
+
+  /simplebar/5.3.5:
+    resolution: {integrity: sha512-mcTlXEiva8pSMdNEzeV3C1KyBHk7Sn2Pe46U1Uwo53dCuQqdJIK0bEJrIPs8W4/RqJquKIsC8Y1h7+aqOl8ccA==}
+    dependencies:
+      '@juggle/resize-observer': 3.3.1
+      can-use-dom: 0.1.0
+      core-js: 3.16.2
+      lodash.debounce: 4.0.8
+      lodash.memoize: 4.1.2
+      lodash.throttle: 4.1.1
+    dev: false
 
   /solid-js/0.26.5:
     resolution: {integrity: sha512-cMjxcVoyRBgnfSpwYxXPM5WF800guR+x/01RDBFQjAAkqU7X28GbRkTNKcyQ1KHcFOnzEsG18J+JJ9/PvqyNmw==}

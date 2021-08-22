@@ -90,9 +90,32 @@ body {
   padding-bottom: 500px;
 }
 
+p {
+  line-height: 1.5;
+}
+
 a {
+  display: inline-block;
+  margin-left: -3px;
+  margin-right: -3px;
+  position: relative;
   color: inherit;
   text-decoration: underline;
+  padding: 3px;
+  border: 3px solid transparent;
+  border-radius: 5px;
+  outline: none;
+  transition: text-shadow 150ms, transform 150ms;
+
+  &:hover {
+    text-shadow: 1px 0px 0px #000;
+    transform: scale(1.03);
+    transform-origin: center;
+  }
+  &[data-focus-visible-added] {
+    border: 3px solid #000;
+    box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
+  }
 }
 
 /* Optional */
@@ -111,7 +134,6 @@ a {
 //   }
 // }
 
-a,
 button {
   position: relative;
   outline: none;
@@ -179,6 +201,23 @@ button {
   outline: none;
 }
 
+.focus-gutter {
+  display: block;
+  position: relative;
+  width: 15px;
+  height: 15px;
+  margin-right: 25px;
+  background: #756d9078;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-left: 25px;
+    margin-right: 0;
+  }
+}
+
 .btn-primary {
   background: linear-gradient(
     75deg,
@@ -186,17 +225,18 @@ button {
     var(--secondary-blue) 51%,
     var(--main-blue) 72%
   );
-  box-shadow: 0 7px 0 0 var(--dark-blue);
+  box-shadow: 0 -7px 0 0 var(--dark-blue) inset;
   background-size: 200%;
   background-position: 0%, 0%;
   color: #fff;
   border-radius: 8px;
   padding: 15px 25px;
+  padding-bottom: 22px;
   transition: box-shadow 250ms, background-position 250ms;
 
   &:hover {
     background-position: -30%, 0%;
-    box-shadow: 0 7px 0 0 var(--hovered-blue);
+    box-shadow: 0 -7px 0 0 var(--hovered-blue) inset;
   }
 
   &[data-focus-visible-added] {
@@ -208,7 +248,7 @@ button {
       top: -6px;
       left: -6px;
       width: calc(100% + 6px);
-      height: calc(100% + 7px + 6px);
+      height: calc(100% + 6px);
       border-radius: inherit;
       pointer-events: none;
       background: none;
@@ -225,17 +265,18 @@ button {
     var(--secondary-grey) 51%,
     var(--main-grey) 72%
   );
-  box-shadow: 0 7px 0 0 var(--dark-grey);
+  box-shadow: 0 -7px 0 0 var(--dark-grey) inset;
   background-size: 200%;
   background-position: 0%, 0%;
   color: #000;
   border-radius: 8px;
   padding: 15px 25px;
+  padding-bottom: 22px;
   transition: box-shadow 250ms, background-position 250ms;
 
   &:hover {
     background-position: -30%, 0%;
-    box-shadow: 0 7px 0 0 var(--hovered-grey);
+    box-shadow: 0 -7px 0 0 var(--hovered-grey) inset;
   }
 
   &[data-focus-visible-added] {
@@ -247,7 +288,7 @@ button {
       top: -6px;
       left: -6px;
       width: calc(100% + 6px);
-      height: calc(100% + 7px + 6px);
+      height: calc(100% + 6px);
       border-radius: inherit;
       pointer-events: none;
       background: none;
@@ -255,6 +296,18 @@ button {
       box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
     }
   }
+}
+
+.btn-select {
+  padding: 15px 25px;
+  justify-content: space-between;
+  display: flex;
+  width: 100%;
+  white-space: nowrap;
+  min-width: 200px;
+  border: 2px solid #ababab;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .dropdown-container,
@@ -317,6 +370,7 @@ button {
 
   .btn-secondary {
     padding: 10px 20px;
+    padding-bottom: 17px;
     margin: 10px;
   }
 }
@@ -427,12 +481,25 @@ button {
 .basic-dropdown {
 }
 
+.dropdown-area {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 500px) {
+  .code-editor {
+    font-size: 16px;
+  }
+}
+
 @media (min-width: 900px) {
   .split-view {
-    grid-template-columns: 1fr minmax(500px, 750px);
+    grid-template-columns: 1fr minmax(450px, 750px);
     column-gap: 100px;
   }
+}
 
+@media (min-width: 1300px) {
   .code-editor {
     font-size: 18px;
   }
@@ -452,5 +519,17 @@ button {
 
   .list {
     margin-bottom: 8px;
+  }
+}
+
+.simplebar-scrollbar::before {
+  background-color: rgb(78, 78, 78);
+  background-color: rgb(134, 134, 134);
+}
+
+p {
+  & > code {
+    background: #000;
+    padding: 3px;
   }
 }

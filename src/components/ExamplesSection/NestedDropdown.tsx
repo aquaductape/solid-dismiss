@@ -1,7 +1,9 @@
-import { createSignal, Show, onMount } from "solid-js";
+import { Component, createSignal, Show, onMount } from "solid-js";
 import _NestedDropdown from "../Examples/NestedDropdown";
 
-const NestedDropdown = () => {
+const NestedDropdown: Component<{ focusOnLeave?: boolean }> = ({
+  focusOnLeave,
+}) => {
   let codeEl!: HTMLDivElement;
 
   onMount(() => {
@@ -35,9 +37,24 @@ const NestedDropdown = () => {
       <h2>Nested Dropdowns</h2>
       <div class="split-view">
         <div>
-          <_NestedDropdown />
+          <div class="dropdown-area">
+            <button
+              class="focus-gutter"
+              aria-label="focus gutter, before dropdown button"
+            ></button>
+            <_NestedDropdown focusOnLeave={focusOnLeave} />
+            <button
+              class="focus-gutter"
+              aria-label="focus gutter, after dropdown button"
+            ></button>
+          </div>
         </div>
-        <div class="code-editor" ref={codeEl}></div>
+        <div
+          class="code-editor"
+          data-simplebar
+          data-simplebar-auto-hide="false"
+          ref={codeEl}
+        ></div>
       </div>
     </div>
   );

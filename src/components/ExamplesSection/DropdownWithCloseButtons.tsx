@@ -1,7 +1,6 @@
-import { createSignal, Show, onMount } from "solid-js";
-import Dropdown from "../Examples/Dropdown";
-
-const BasicDropdown = () => {
+import { createSignal, Show, createEffect, onMount } from "solid-js";
+import _DropdownWithCloseButtons from "../Examples/DropdownWithCloseButtons";
+const DropdownWithCloseButtons = () => {
   let codeEl!: HTMLDivElement;
   onMount(() => {
     codeEl.innerHTML = `<pre class=" language-markup" tabindex="0"><code class="  language-tsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -38,8 +37,7 @@ const BasicDropdown = () => {
 
   return (
     <div class="section">
-      <h2>Basic Dropdown</h2>
-
+      <h2>With Close Buttons</h2>
       <div class="split-view">
         <div>
           <div class="dropdown-area">
@@ -47,13 +45,14 @@ const BasicDropdown = () => {
               class="focus-gutter"
               aria-label="focus gutter, before dropdown button"
             ></button>
-            <Dropdown></Dropdown>
+            <_DropdownWithCloseButtons></_DropdownWithCloseButtons>
             <button
               class="focus-gutter"
               aria-label="focus gutter, after dropdown button"
             ></button>
           </div>
         </div>
+
         <div
           class="code-editor"
           data-simplebar
@@ -65,4 +64,4 @@ const BasicDropdown = () => {
   );
 };
 
-export default BasicDropdown;
+export default DropdownWithCloseButtons;

@@ -1,5 +1,5 @@
 import Dismiss from "../../../package/index";
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 // ...
 
 const Dropdown = () => {
@@ -13,18 +13,9 @@ const Dropdown = () => {
       </button>
       <Dismiss menuButton={btnEl} toggle={toggle} setToggle={setToggle}>
         <ul class="dropdown">
-          <li>
-            <a href="javascript:void(0);">cat</a>
-          </li>
-          <li>
-            <a href="javascript:void(0);">dog</a>
-          </li>
-          <li>
-            <a href="javascript:void(0);">fish</a>
-          </li>
-          <li>
-            <a href="javascript:void(0);">bird</a>
-          </li>
+          <li tabindex="0">cat</li>
+          <li tabindex="0">dog</li>
+          <li tabindex="0">fish</li>
         </ul>
       </Dismiss>
     </div>

@@ -1,7 +1,7 @@
 import Dismiss from "../../../package/index";
-import { createSignal, Show } from "solid-js";
+import { Component, createSignal, Show } from "solid-js";
 
-const Dropdown = () => {
+const Dropdown: Component<{ focusOnLeave?: boolean }> = ({ focusOnLeave }) => {
   const [toggle, setToggle] = createSignal(false);
   // const ref: any = { menuDropdown: null };
   let btnEl!: HTMLButtonElement;
@@ -16,6 +16,7 @@ const Dropdown = () => {
         menuButton={btnEl}
         toggle={toggle}
         setToggle={setToggle}
+        focusOnLeave={focusOnLeave ? "menuButton" : undefined}
       >
         <div>
           <h3>Nested Dropdown Text</h3>
@@ -26,9 +27,9 @@ const Dropdown = () => {
             <option value="cat">cat</option>
           </select>
           <Show when={toggle()}>
-            <Dropdown />
-            <Dropdown />
-            <Dropdown />
+            <Dropdown focusOnLeave={focusOnLeave} />
+            <Dropdown focusOnLeave={focusOnLeave} />
+            <Dropdown focusOnLeave={focusOnLeave} />
           </Show>
         </div>
       </Dismiss>
@@ -36,8 +37,10 @@ const Dropdown = () => {
   );
 };
 
-const NestedDropdown = () => {
-  return <Dropdown></Dropdown>;
+const NestedDropdown: Component<{ focusOnLeave?: boolean }> = ({
+  focusOnLeave,
+}) => {
+  return <Dropdown focusOnLeave={focusOnLeave}></Dropdown>;
 };
 
 export default NestedDropdown;

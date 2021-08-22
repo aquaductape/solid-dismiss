@@ -21,6 +21,7 @@
     "focus-visible": "^5.2.0",
     "prismjs": "^1.24.1",
     "sass": "^1.38.0",
+    "simplebar": "^5.3.5",
     "solid-js": "^1.0.7"
   }
 }

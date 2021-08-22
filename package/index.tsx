@@ -12,16 +12,71 @@ import {
 } from "solid-js";
 import { removeKeyFromStore, updateStore } from "../src/components/iOSDebugger";
 
+const getNextFocusableElementAfterMenuButton = (
+  menuButton: HTMLElement,
+  menuDropdown: HTMLElement
+) => {
+  const parent = menuButton.parentElement!;
+  const visitedElement = menuButton;
+
+  const traverseNextSiblingsThenUp = (
+    parent: HTMLElement,
+    visitedElement: HTMLElement
+  ): HTMLElement | null => {
+    let hasPastVisitedElement = false;
+
+    for (const child of parent.children) {
+      if (hasPastVisitedElement) {
+        if (child.matches(focusableSelectors)) return child as HTMLElement;
+        const el = queryFocusableElement({ parent: child });
+        if (el) return el;
+        continue;
+      }
+      if (child === visitedElement) {
+        hasPastVisitedElement = true;
+        continue;
+      }
+      if (child === menuDropdown) {
+        return null;
+      }
+    }
+
+    visitedElement = parent;
+    parent = parent.parentElement!;
+
+    if (!parent) return null;
+
+    return traverseNextSiblingsThenUp(parent, visitedElement);
+  };
+
+  return traverseNextSiblingsThenUp(parent, visitedElement);
+};
+
+const focusableSelectors =
+  'button, [href], input, select, textarea, details, [contentEditable=true], [tabindex]:not([tabindex="-1"])';
+
+const queryFocusableElement = ({
+  parent,
+}: {
+  parent: Element | HTMLElement;
+}) => {
+  return parent.querySelector(focusableSelectors) as HTMLElement;
+};
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
 // blur (tested so far on only buttons) will fire even on tapping same focused button (which would be invoked `focus()` )
 // For Nested Dropdowns. Since button has to be refocused, when nested button(1) is tapped, it also triggers focusout container(1) for some reason
 
+/**
+ *
+ * Handles "click outside" behavior for button dropdown pairings. Closing is triggered by click/focus outside of dropdown element or pressing "Escape" key.
+ */
 const Dismiss: Component<{
   /**
    * sets id attribute for root component
    */
   id?: string;
+  ref?: JSX.Element;
   class?: string;
   classList?: { [key: string]: boolean };
   /**
@@ -44,15 +99,6 @@ const Dismiss: Component<{
     | JSX.Element
     | { [key: string]: string | JSX.Element }
     | (string | JSX.Element)[];
-  /**
-   * css selector, queried from document, to get modal element. Or pass JSX element
-   */
-  modal?: string | JSX.Element;
-
-  /**
-   * sets `focusTrap` to `true` and `delegateFocus` to menuButton element
-   */
-  useModal?: boolean;
   focusTrap?: boolean;
   /**
    * Default: focus remains on `menuButton`
@@ -76,13 +122,23 @@ const Dismiss: Component<{
    * An example would be to emulate native <select> element behavior, set which sets focus to menu button after dismiss.
    */
   focusOnLeave?: "menuButton" | string | JSX.Element;
+  /**
+   * Default: `false`
+   *
+   * When `true`, after focusing within menu dropdown, if focused back to menu button via keyboard (Tab key), the menu dropdown will close.
+   */
+  closeWhenMenuButtonIsTabbed?: boolean;
+  /**
+   * Default: `true`
+   *
+   * When `false`, it indicates that the dropdown element is in a different location. This means that the dropdown is outside of the natural tabindex order. Therefore, when the last interactive element inside menu dropdown is focused out via Tab key, the next focusable element after the menu button is queried and then focused on.
+   *
+   * This query only runs if the user clicked the menu button then interacted dropdown via click, then decided to blur outside the dropdown via Tab key.
+   */
+  withinMenuButtonParent?: boolean;
   toggle: Accessor<boolean>;
   setToggle: (v: boolean) => void;
   setFocus?: (v: boolean) => void;
-  /**
-   * default: `true`
-   */
-  escapeKey?: boolean;
 }> = (props) => {
   const {
     id,
@@ -90,9 +146,10 @@ const Dismiss: Component<{
     menuDropdown,
     focusOnLeave,
     focusOnActive,
-    escapeKey,
     closeButton,
     children,
+    closeWhenMenuButtonIsTabbed = false,
+    withinMenuButtonParent = true,
   } = props;
   let closeBtn: HTMLElement[] = [];
   let menuDropdownEl: HTMLElement | null = null;
@@ -107,19 +164,28 @@ const Dismiss: Component<{
   let addedFocusOutAppEvents = false;
   let menuBtnKeyupTabFired = false;
   let prevFocusedEl: HTMLElement | null = null;
+  let nextFocusTargetAfterMenuButton: HTMLElement | null = null;
+  const refCb = (el: HTMLElement) => {
+    if (props.ref) {
+      // @ts-ignore
+      props.ref(el);
+    }
+    containerEl = el as any;
+  };
 
   const [maskActive, setMaskActive] = createSignal(false);
 
   let containerFocusTimeoutId: number | null = 0;
   let menuButtonBlurTimeoutId: number | null = 0;
+  const initDefer = !props.toggle();
   let init = false;
 
   const runFocusOnLeave = () => {
     if (focusOnLeave == null) return;
 
     const el = queryElement(focusOnLeave);
+    console.log({ el });
     if (el) {
-      // console.log({ el });
       el.focus();
     }
   };
@@ -128,6 +194,7 @@ const Dismiss: Component<{
     if (focusOnActive == null) return;
 
     const el = queryElement(focusOnActive);
+    console.log("runfocus", el);
     if (el) {
       el.focus();
     }
@@ -138,7 +205,6 @@ const Dismiss: Component<{
   };
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (escapeKey === false) return;
     if (e.key !== "Escape") return;
     // menuBtnEl.focus();
     // props.setToggle(false);
@@ -162,6 +228,7 @@ const Dismiss: Component<{
 
   const onClickCloseButton = () => {
     // runDelegateFocus();
+    console.log("close");
     props.setToggle(false);
   };
 
@@ -182,12 +249,13 @@ const Dismiss: Component<{
 
   const onBlurMenuButton = (e: FocusEvent) => {
     if (!props.toggle()) return;
+
     if (menuBtnKeyupTabFired) {
       menuBtnKeyupTabFired = false;
       return;
     }
 
-    console.log("onBlurMenuButton" + menuBtnId);
+    // console.log("onBlurMenuButton" + menuBtnId);
 
     if (!e.relatedTarget) {
       // if (addedFocusOutAppEvents) return;
@@ -222,7 +290,7 @@ const Dismiss: Component<{
     if (e.key !== "Tab") return;
     menuBtnKeyupTabFired = true;
     e.preventDefault();
-    const el = queryFocusableMenuDropdownElement();
+    const el = queryFocusableElement({ parent: containerEl });
     if (el) {
       el.focus();
     } else {
@@ -321,20 +389,31 @@ const Dismiss: Component<{
     } else {
       menuBtnEl = menuButton as HTMLElement;
     }
-    focusTrapEl1.setAttribute("tabindex", tabindex);
-    focusTrapEl2.setAttribute("tabindex", tabindex);
+    if (focusTrapEl1) {
+      focusTrapEl1.setAttribute("tabindex", tabindex);
+    }
+    if (focusTrapEl2) {
+      focusTrapEl2.setAttribute("tabindex", tabindex);
+    }
   };
 
-  const onFocusTraps = () => {
+  const onFocusTraps = (type: "first" | "last") => {
+    if (type === "first") {
+      if (closeWhenMenuButtonIsTabbed) {
+        props.setToggle(false);
+      }
+      if (!focusOnLeave) {
+        menuBtnEl.focus();
+      }
+      return;
+    }
+    const el = getNextFocusableElementAfterMenuButton(menuBtnEl, containerEl);
+    if (el) {
+      el.focus();
+    }
     props.setToggle(false);
     // runDelegateFocus();
-    setTabIndexOfFocusTraps("-1");
-  };
-
-  const queryFocusableMenuDropdownElement = () => {
-    return containerEl.querySelector(
-      'button, [href], input, select, textarea, details, [contentEditable=true], [tabindex]:not([tabindex="-1"])'
-    ) as HTMLElement;
+    // setTabIndexOfFocusTraps("-1");
   };
 
   const queryElement = (
@@ -349,7 +428,7 @@ const Dismiss: Component<{
     }
     if (inputElement == null && type === "menuDropdown") {
       if (!containerEl) return null as any;
-      return menuDropdownEl || (containerEl.children[0] as HTMLElement);
+      return menuDropdownEl || containerEl;
     }
     if (typeof inputElement === "string" && type === "menuButton") {
       if (!containerEl) return null as any;
@@ -380,7 +459,8 @@ const Dismiss: Component<{
     const getCloseButton = (closeButton: string | JSX.Element) => {
       if (closeButton == null) return;
 
-      const el = queryElement(closeBtn);
+      const el = queryElement(closeButton, "closeButton");
+      console.log({ el });
 
       if (!el) return;
       closeBtnsAdded = true;
@@ -430,7 +510,9 @@ const Dismiss: Component<{
   };
 
   const onFocusMenuButton = () => {
-    clearTimeout(containerFocusTimeoutId!);
+    if (!closeWhenMenuButtonIsTabbed) {
+      clearTimeout(containerFocusTimeoutId!);
+    }
     menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
     menuBtnEl.addEventListener("blur", onBlurMenuButton);
   };
@@ -447,8 +529,8 @@ const Dismiss: Component<{
       menuBtnEl.id = menuBtnId;
     }
 
-    addCloseButtons();
-    addMenuDropdownEl();
+    // addCloseButtons();
+    // addMenuDropdownEl();
   });
 
   createEffect(
@@ -496,7 +578,7 @@ const Dismiss: Component<{
           }
         }
       },
-      { defer: true }
+      { defer: initDefer }
     )
   );
 
@@ -515,6 +597,13 @@ const Dismiss: Component<{
   return (
     <Show when={props.toggle()}>
       <div
+        tabindex="0"
+        onFocus={() => onFocusTraps("first")}
+        style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
+        aria-hidden="true"
+        ref={focusTrapEl1}
+      ></div>
+      <div
         id={id}
         class={props.class}
         data-solid-dismiss-dropdown-container
@@ -522,7 +611,7 @@ const Dismiss: Component<{
         onFocusIn={onFocusInContainer}
         onFocusOut={onFocusOutContainer}
         tabindex="-1"
-        ref={containerEl}
+        ref={refCb}
       >
         {maskActive() && (
           <div
@@ -532,24 +621,15 @@ const Dismiss: Component<{
           ></div>
         )}
         {children}
-        {focusOnLeave && (
-          <div
-            tabindex="-1"
-            onFocus={onFocusTraps}
-            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
-            aria-hidden="true"
-            ref={focusTrapEl1}
-          ></div>
-        )}
-        {focusOnLeave && (
-          <div
-            tabindex="-1"
-            onFocus={onFocusTraps}
-            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
-            aria-hidden="true"
-            ref={focusTrapEl2}
-          ></div>
-        )}
+        {/* {focusOnLeave && ( */}
+        <div
+          tabindex="0"
+          onFocus={() => onFocusTraps("last")}
+          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
+          aria-hidden="true"
+          ref={focusTrapEl2}
+        ></div>
+        {/* )} */}
       </div>
     </Show>
   );
