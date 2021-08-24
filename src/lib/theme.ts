@@ -3,10 +3,10 @@ type IDark = {
   "--secondary-blue": "#4088d3";
   "--dark-blue": "#1f2b6e";
   "--hovered-blue": "#26245e";
-  "--main-grey": "#a4a0bc";
-  "--secondary-grey": "#c7caee";
-  "--dark-grey": "#87839e";
-  "--hovered-grey": "#6b6780";
+  "--main-grey": "#625e76";
+  "--secondary-grey": "#8184a3";
+  "--dark-grey": "#534f66";
+  "--hovered-grey": "#454157";
   "--focus": "#fff";
   "--focus-blur": "#625cff";
   "--focus-blur-spread": "2px";
@@ -84,10 +84,10 @@ export const themeConfig: IThemeConfig = {
     "--secondary-blue": "#4088d3",
     "--dark-blue": "#1f2b6e",
     "--hovered-blue": "#26245e",
-    "--main-grey": "#a4a0bc",
-    "--secondary-grey": "#c7caee",
-    "--dark-grey": "#87839e",
-    "--hovered-grey": "#6b6780",
+    "--main-grey": "#625e76",
+    "--secondary-grey": "#8184a3",
+    "--dark-grey": "#534f66",
+    "--hovered-grey": "#454157",
     "--focus": "#fff",
     "--focus-blur": "#625cff",
     "--focus-blur-spread": "2px",

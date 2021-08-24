@@ -22,6 +22,7 @@
     "prismjs": "^1.24.1",
     "sass": "^1.38.0",
     "simplebar": "^5.3.5",
-    "solid-js": "^1.0.7"
+    "solid-js": "^1.0.7",
+    "solid-transition-group": "^0.0.8"
   }
 }

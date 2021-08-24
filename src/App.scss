@@ -96,10 +96,21 @@ p {
   line-height: 1.5;
 }
 
-a {
+::selection {
+  background: var(--main-blue);
+  color: #fff;
+}
+::-moz-selection {
+  background: var(--main-blue);
+  color: #fff;
+}
+
+.link {
   display: inline-block;
-  margin-left: -3px;
-  margin-right: -3px;
+  margin-left: -6px;
+  margin-right: -6px;
+  margin-top: -6px;
+  margin-bottom: -6px;
   position: relative;
   color: inherit;
   text-decoration: underline;
@@ -243,6 +254,11 @@ button {
     box-shadow: 0 -7px 0 0 var(--hovered-blue) inset;
   }
 
+  &:active {
+    box-shadow: 0 -0px 0 0 var(--hovered-blue) inset;
+    transition: box-shadow 100ms, background-position 250ms;
+  }
+
   &[data-focus-visible-added] {
     outline: none;
 
@@ -272,7 +288,7 @@ button {
   box-shadow: 0 -7px 0 0 var(--dark-grey) inset;
   background-size: 200%;
   background-position: 0%, 0%;
-  color: #000;
+  color: var(--focus);
   border-radius: 8px;
   padding: 15px 25px;
   padding-bottom: 22px;
@@ -281,6 +297,11 @@ button {
   &:hover {
     background-position: -30%, 0%;
     box-shadow: 0 -7px 0 0 var(--hovered-grey) inset;
+  }
+
+  &:active {
+    box-shadow: 0 -0px 0 0 var(--hovered-grey) inset;
+    transition: box-shadow 100ms, background-position 250ms;
   }
 
   &[data-focus-visible-added] {
@@ -298,6 +319,81 @@ button {
       background: none;
       border: 3px solid var(--focus);
       box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
+    }
+  }
+}
+.wrapper {
+  .s1 + .s2 {
+    background-color: hotpink;
+  }
+}
+
+.btn-fusion {
+  position: relative;
+  display: inline-block;
+  height: 60px;
+  padding: 8px;
+  padding-left: 10px;
+
+  .text-wrapper {
+    position: relative;
+    padding-right: 50px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .contentt {
+    display: inline-block;
+    padding: 8px 5px;
+    background: var(--bg);
+    border-radius: 5px;
+    box-shadow: 0 5px 0 0px var(--dark-grey) inset;
+    pointer-events: all;
+    transition: box-shadow 250ms;
+  }
+
+  .btn-fusion-icon {
+    position: relative;
+    width: 35px;
+    height: 35px;
+    color: #000;
+
+    span {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &:hover {
+    .contentt {
+      box-shadow: 0 5px 0 0px var(--hovered-grey) inset;
+    }
+  }
+
+  .contentt {
+    &:hover {
+      box-shadow: 0 5px 0 0px var(--dark-grey) inset;
+    }
+  }
+
+  .btn-secondary {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 9px;
+  }
+
+  .btn-secondary:active + .text-wrapper {
+    .contentt {
+      box-shadow: 0 0px 0 0px var(--hovered-grey) inset;
     }
   }
 }
@@ -445,9 +541,77 @@ button {
   }
 }
 
+.hero-dropdown {
+  position: absolute;
+  max-width: 350px;
+  width: 80vw;
+  right: 0;
+
+  .gutters {
+    display: flex;
+    justify-content: center;
+
+    .focus-gutter {
+      margin: 0 10px;
+    }
+  }
+
+  .shadow {
+    position: absolute;
+    top: 10px;
+    left: 1px;
+    right: 1px;
+    height: calc(100% - 11px);
+    border-radius: 5px;
+    box-shadow: 0 0 17px 0 #00000085;
+  }
+
+  .hero-dropdown-content {
+    position: relative;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    height: 100%;
+    z-index: 3;
+    padding: 15px;
+    background: #fff;
+  }
+}
+
 .hero {
-  position: relative;
+  display: grid;
+  grid-template-areas:
+    "title title"
+    "content demo"
+    "package package";
+  grid-template-rows: auto 1fr 1fr;
   height: calc(100vh - 60px);
+  gap: 50px;
+
+  .title {
+    grid-area: title;
+    position: relative;
+    margin-top: 10vh;
+    margin-bottom: 5vh;
+
+    h1 {
+      margin: 0;
+    }
+  }
+  .content {
+    grid-area: content;
+    margin: 0;
+  }
+  .demo {
+    grid-area: demo;
+
+    .desktop-content {
+      display: none;
+    }
+  }
+  .package {
+    grid-area: package;
+  }
+
   .logo {
     position: absolute;
     top: 0px;
@@ -493,6 +657,21 @@ button {
 @media (min-width: 500px) {
   .code-editor {
     font-size: 16px;
+  }
+
+  .hero {
+    .demo {
+      .desktop-content {
+        display: inline;
+      }
+      .mobile-content {
+        display: none;
+      }
+    }
+
+    .title {
+      margin-bottom: 0px;
+    }
   }
 }
 

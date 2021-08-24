@@ -66,6 +66,7 @@ const Select = () => {
           <p>
             In this case we're using{" "}
             <a
+              class="link"
               href="https://www.solidjs.com/docs/latest/api#%3Cportal%3E"
               target="_blank"
             >

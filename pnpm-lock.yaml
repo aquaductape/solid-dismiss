@@ -8,6 +8,7 @@ specifiers:
   sass: ^1.38.0
   simplebar: ^5.3.5
   solid-js: ^1.0.7
+  solid-transition-group: ^0.0.8
   vite: ^2.4.2
   vite-plugin-solid: ^2.0.1
 
@@ -19,6 +20,7 @@ dependencies:
   sass: 1.38.0
   simplebar: 5.3.5
   solid-js: 1.1.1
+  solid-transition-group: 0.0.8_solid-js@1.1.1
 
 devDependencies:
   vite: 2.5.0
@@ -706,6 +708,14 @@ packages:
     dependencies:
       solid-js: 1.1.1
     dev: true
+
+  /solid-transition-group/0.0.8_solid-js@1.1.1:
+    resolution: {integrity: sha512-5cS/Ircfs/Y0J00oEToL+MWd9V07KgQlw+qRD8kpd6azb2Ri5SjXg/ocqT8U8Wgdx1VQPx45HyopQN+UumkVGQ==}
+    peerDependencies:
+      solid-js: ^1.0.0
+    dependencies:
+      solid-js: 1.1.1
+    dev: false
 
   /source-map-js/0.6.2:
     resolution: {integrity: sha512-/3GptzWzu0+0MBQFrDKzw/DvvMTUORvgY6k6jd/VS6iCR4RDTKWH6v6WPwQoUO8667uQEf9Oe38DxAYWY5F/Ug==}

@@ -131,6 +131,11 @@ const Dismiss: Component<{
   /**
    * Default: `true`
    *
+   */
+  closeWhenMenuButtonIsClicked?: boolean;
+  /**
+   * Default: `true`
+   *
    * When `false`, it indicates that the dropdown element is in a different location. This means that the dropdown is outside of the natural tabindex order. Therefore, when the last interactive element inside menu dropdown is focused out via Tab key, the next focusable element after the menu button is queried and then focused on.
    *
    * This query only runs if the user clicked the menu button then interacted dropdown via click, then decided to blur outside the dropdown via Tab key.
@@ -149,6 +154,7 @@ const Dismiss: Component<{
     closeButton,
     children,
     closeWhenMenuButtonIsTabbed = false,
+    closeWhenMenuButtonIsClicked = true,
     withinMenuButtonParent = true,
   } = props;
   let closeBtn: HTMLElement[] = [];
@@ -239,10 +245,14 @@ const Dismiss: Component<{
     containerFocusTimeoutId = null;
 
     const toggleVal = props.toggle();
-    updateStore(
-      `onClickBtn ${menuBtnId}`,
-      `toggle ${!toggleVal}, ${Date.now()}`
-    );
+    // updateStore(
+    //   `onClickBtn ${menuBtnId}`,
+    //   `toggle ${!toggleVal}, ${Date.now()}`
+    // );
+    if (!closeWhenMenuButtonIsClicked) {
+      props.setToggle(true);
+      return;
+    }
 
     props.setToggle(!toggleVal);
   };
@@ -621,15 +631,15 @@ const Dismiss: Component<{
           ></div>
         )}
         {children}
-        {/* {focusOnLeave && ( */}
-        <div
-          tabindex="0"
-          onFocus={() => onFocusTraps("last")}
-          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
-          aria-hidden="true"
-          ref={focusTrapEl2}
-        ></div>
-        {/* )} */}
+        {focusOnLeave && withinMenuButtonParent && (
+          <div
+            tabindex="0"
+            onFocus={() => onFocusTraps("last")}
+            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
+            aria-hidden="true"
+            ref={focusTrapEl2}
+          ></div>
+        )}
       </div>
     </Show>
   );
