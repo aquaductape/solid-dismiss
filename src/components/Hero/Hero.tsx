@@ -40,7 +40,7 @@ const Hero = () => {
       </div>
       <p class="content">
         Handle <strong>"click outside"</strong> behavior to close
-        dropdowns/popups for{" "}
+        dropdowns/popups for <br />
         <a class="link" href="https://www.solidjs.com/" target="_blank">
           Solid Framework
         </a>

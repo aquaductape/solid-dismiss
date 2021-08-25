@@ -216,7 +216,7 @@ button {
 }
 
 .focus-gutter {
-  cursor: auto;
+  cursor: pointer;
   display: block;
   position: relative;
   width: 15px;
@@ -583,7 +583,7 @@ button {
     "title title"
     "content demo"
     "package package";
-  grid-template-rows: auto 1fr 1fr;
+  grid-template-rows: auto auto 1fr;
   height: calc(100vh - 60px);
   gap: 50px;
 
