@@ -12,12 +12,17 @@ import {
 } from "solid-js";
 import { removeKeyFromStore, updateStore } from "../src/components/iOSDebugger";
 
-const getNextFocusableElementAfterMenuButton = (
-  menuButton: HTMLElement,
-  menuDropdown: HTMLElement
-) => {
-  const parent = menuButton.parentElement!;
-  const visitedElement = menuButton;
+const getNextFocusableElement = ({
+  activeElement = document.activeElement as HTMLElement,
+  stopAtElement,
+}: {
+  activeElement: HTMLElement;
+  stopAtElement?: HTMLElement;
+}) => {
+  const parent = activeElement.parentElement!;
+  const visitedElement = activeElement;
+
+  if (!visitedElement) return null;
 
   const traverseNextSiblingsThenUp = (
     parent: HTMLElement,
@@ -36,7 +41,7 @@ const getNextFocusableElementAfterMenuButton = (
         hasPastVisitedElement = true;
         continue;
       }
-      if (child === menuDropdown) {
+      if (child === stopAtElement) {
         return null;
       }
     }
@@ -300,7 +305,7 @@ const Dismiss: Component<{
     if (e.key !== "Tab") return;
     menuBtnKeyupTabFired = true;
     e.preventDefault();
-    const el = queryFocusableElement({ parent: containerEl });
+    const el = getNextFocusableElement({ activeElement: focusTrapEl1 });
     if (el) {
       el.focus();
     } else {
@@ -414,10 +419,19 @@ const Dismiss: Component<{
       }
       if (!focusOnLeave) {
         menuBtnEl.focus();
+      } else {
+        const el = queryElement(focusOnLeave);
+        if (el) {
+          el.focus();
+        }
+        props.setToggle(false);
       }
       return;
     }
-    const el = getNextFocusableElementAfterMenuButton(menuBtnEl, containerEl);
+    const el = getNextFocusableElement({
+      activeElement: menuBtnEl,
+      stopAtElement: containerEl,
+    });
     if (el) {
       el.focus();
     }
@@ -607,13 +621,6 @@ const Dismiss: Component<{
   return (
     <Show when={props.toggle()}>
       <div
-        tabindex="0"
-        onFocus={() => onFocusTraps("first")}
-        style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
-        aria-hidden="true"
-        ref={focusTrapEl1}
-      ></div>
-      <div
         id={id}
         class={props.class}
         data-solid-dismiss-dropdown-container
@@ -630,12 +637,26 @@ const Dismiss: Component<{
             ref={maskEl}
           ></div>
         )}
+        <div
+          tabindex="0"
+          onFocus={(e) => {
+            if (
+              e.relatedTarget === menuBtnEl &&
+              e.relatedTarget === containerEl
+            )
+              return;
+            onFocusTraps("first");
+          }}
+          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
+          aria-hidden="true"
+          ref={focusTrapEl1}
+        ></div>
         {children}
         {focusOnLeave && withinMenuButtonParent && (
           <div
             tabindex="0"
             onFocus={() => onFocusTraps("last")}
-            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none;"
+            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
             aria-hidden="true"
             ref={focusTrapEl2}
           ></div>

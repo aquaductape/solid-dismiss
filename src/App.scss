@@ -14,6 +14,13 @@
   --bg: #f3effd;
   --text: #000;
   --dropdown-bg: #f3effd;
+  --dropdown-root-bg: #fff;
+  --dropdown-root-border: #bcb7d4;
+  --dropdown-root-shadow: #22243ab8;
+  --list-item-hover: #dbd8eb;
+  --list-item-active: #3b374c;
+  --select-btn-bg: #b2add0;
+  --select-btn-bg-hover: #9d98bc;
   --color-scheme: light;
   --nav-item-bg: var(--main-grey);
   --code-actual-text: #000000;
@@ -39,42 +46,13 @@
 
 // @media (prefers-color-scheme: dark) {
 //   :root {
-//     --main-blue: #2a398b;
-//     --secondary-blue: #4088d3;
-//     --dark-blue: #1f2b6e;
-//     --hovered-blue: #26245e;
-//     --main-grey: #a4a0bc;
-//     --secondary-grey: #c7caee;
-//     --dark-grey: #87839e;
-//     --hovered-grey: #6b6780;
-//     --focus: #fff;
-//     --focus-blur: #625cff;
-//     --focus-blur-spread: 2px;
-//     --logo-shadow: drop-shadow(-1px 2px 0px #000);
-//     --bg: #201d26;
-//     --text: #cfcfcf;
-//     --dropdown-bg: #2c2835;
-//     --color-scheme: dark;
-//     --nav-item-bg: #000;
-//     --code-bg: #252436;
-//     --code-actual-text: #d5dbff;
-//     --code-text: var(--code-actual-text);
-//     --token-keyword: #7777ca;
-//     --token-punctuation: #58a6da;
-//     --token-operator: #8f389f;
-//     --token-boolean: #c428e7;
-//     --token-function: #cd02c5;
-//     --token-string: #498cff;
-//     --token-attr-value: #498cff;
-//     --token-class-name: #ff00c9;
-//     --token-attr-name: #825dff;
-//     --token-tag: #8181cd;
-//     --token-plain-text: #a0b6d4;
-//     --token-script: var(--code-actual-text);
-//     --token-language-javascript: #000;
-//     --token-comment: #4a6078;
+//     --dropdown-root-bg: #fff;
+//     --dropdown-root-border: #bcb7d4;
+//     --dropdown-root-shadow: #22243ab8;
+//     --list-item-hover: #dbd8eb;
+//     --select-btn-bg: #8e87ad;
+//     --select-btn-bg-hover: #b0aaca;
 //   }
-//   // 0 0 12px 2px var(--focus-blur)
 // }
 
 * {
@@ -86,7 +64,7 @@ html {
 }
 
 body {
-  font-size: 18px;
+  font-size: 16px;
   background: var(--bg);
   color: var(--text);
   padding-bottom: 500px;
@@ -189,7 +167,6 @@ h3 {
 ul {
   padding: 0;
   margin: 0;
-  box-shadow: 0px 2px 5px 0px #000;
 }
 
 li {
@@ -334,15 +311,58 @@ button {
   height: 60px;
   padding: 8px;
   padding-left: 10px;
+  width: 100%;
+
+  .select {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    bottom: 15px;
+    width: 70px;
+    padding-left: 10px;
+    z-index: 2;
+    pointer-events: none;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .btn-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+
+    .selected-icon {
+      padding: 6px;
+      height: 100%;
+    }
+
+    .arrow-container {
+      flex-shrink: 0;
+      width: 15px;
+      padding: 0 2px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-left: 2px solid #00000052;
+    }
+  }
 
   .text-wrapper {
+    display: inline-block;
     position: relative;
+    padding-left: 75px;
     padding-right: 50px;
     pointer-events: none;
+    width: 100%;
     z-index: 1;
   }
 
-  .contentt {
+  .text-scroll-container {
     display: inline-block;
     padding: 8px 5px;
     background: var(--bg);
@@ -350,6 +370,12 @@ button {
     box-shadow: 0 5px 0 0px var(--dark-grey) inset;
     pointer-events: all;
     transition: box-shadow 250ms;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .text-content {
+    white-space: nowrap;
   }
 
   .btn-fusion-icon {
@@ -376,6 +402,12 @@ button {
 
   .contentt {
     &:hover {
+      box-shadow: 0 5px 0 0px var(--dark-grey) inset;
+    }
+  }
+
+  .select:hover ~ .text-wrapper {
+    .contentt {
       box-shadow: 0 5px 0 0px var(--dark-grey) inset;
     }
   }
@@ -585,7 +617,7 @@ button {
     "package package";
   grid-template-rows: auto auto 1fr;
   height: calc(100vh - 60px);
-  gap: 50px;
+  gap: min(50px, 10vw);
 
   .title {
     grid-area: title;
@@ -610,6 +642,7 @@ button {
   }
   .package {
     grid-area: package;
+    min-width: 0;
   }
 
   .logo {
@@ -654,7 +687,16 @@ button {
   align-items: center;
 }
 
+@media (min-width: 350px) {
+  body {
+    font-size: 18px;
+  }
+}
+
 @media (min-width: 500px) {
+  .btn-fusion {
+    width: auto;
+  }
   .code-editor {
     font-size: 16px;
   }
@@ -677,7 +719,7 @@ button {
 
 @media (min-width: 900px) {
   .split-view {
-    grid-template-columns: 1fr minmax(450px, 750px);
+    grid-template-columns: 1fr minmax(420px, 750px);
     column-gap: 100px;
   }
 }

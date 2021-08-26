@@ -51,3 +51,85 @@ export const IconLogo = () => (
     />
   </svg>
 );
+
+export const IconNPM = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="50"
+    height="50"
+    viewBox="0 0 13.229 13.229"
+  >
+    <g stroke-width=".005">
+      <path d="M.53.53H12.7V12.7H.53z" fill="#000" fill-opacity="1" />
+      <path
+        d="M6.573 1.836H1.836v9.556h4.737V4.246h2.41v7.146h2.41V1.836z"
+        fill="#fff"
+      />
+    </g>
+  </svg>
+);
+
+export const IconPNPM = () => (
+  <svg
+    width="50"
+    height="50"
+    viewBox="0 0 13.229 13.229"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <path id="pnpm-d" d="M237.6 95h-50V45h50v50z" />
+      <path id="pnpm-b" d="M182.59 95h-50V45h50v50z" />
+      <path id="pnpm-h" d="M127.59 95h-50V45h50v50z" />
+      <path id="pnpm-a" d="M237.6 150h-50v-50h50v50z" />
+      <path id="pnpm-g" d="M182.59 150h-50v-50h50v50z" />
+      <path id="pnpm-f" d="M182.59 205h-50v-50h50v50z" />
+      <path id="pnpm-c" d="M237.6 205h-50v-50h50v50z" />
+      <path id="pnpm-e" d="M127.59 205h-50v-50h50v50z" />
+    </defs>
+    <g>
+      <g fill="#444" transform="matrix(.07606 0 0 .07606 -5.373 -2.893)">
+        <use width="100%" height="100%" {...{ "xlink:href": "#pnpm-d" }} />
+        <use width="100%" height="100%" {...{ "xlink:href": "#pnpm-b" }} />
+        <use width="100%" height="100%" {...{ "xlink:href": "#pnpm-h" }} />
+        <use width="100%" height="100%" {...{ "xlink:href": "#pnpm-a" }} />
+      </g>
+      <g transform="matrix(.07606 0 0 .07606 -5.373 -2.893)">
+        <use width="100%" height="100%" {...{ "xlink:href": "#pnpm-g" }} />
+        <use width="100%" height="100%" {...{ "xlink:href": "#pnpm-f" }} />
+        <use width="100%" height="100%" {...{ "xlink:href": "#pnpm-c" }} />
+        <use width="100%" height="100%" {...{ "xlink:href": "#pnpm-e" }} />
+      </g>
+    </g>
+  </svg>
+);
+
+export const IconYarn = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="50"
+    height="50"
+    viewBox="0 0 13.229 13.229"
+  >
+    <path
+      d="M11.921 10.27c-.627.149-.944.286-1.72.791a10.32 10.32 0 01-2.537 1.149s-.11.165-.427.239c-.549.133-2.614.247-2.802.25-.506.005-.816-.129-.902-.336-.263-.627.376-.902.376-.902s-.14-.086-.223-.164c-.075-.075-.153-.224-.177-.169-.098.24-.148.823-.411 1.086-.36.364-1.043.243-1.446.031-.443-.235.03-.788.03-.788s-.238.141-.43-.149c-.173-.266-.334-.72-.29-1.281.047-.64.76-1.259.76-1.259s-.125-.944.286-1.913c.373-.881 1.376-1.591 1.376-1.591s-.843-.933-.53-1.772c.205-.548.287-.545.354-.568.235-.09.462-.188.63-.372.843-.91 1.917-.737 1.917-.737s.51-1.549.98-1.247c.145.094.667 1.255.667 1.255s.556-.326.62-.204c.336.654.375 1.905.226 2.665-.25 1.255-.878 1.929-1.128 2.352-.06.098.674.408 1.136 1.69.428 1.171.047 2.155.114 2.265l.015.027s.49.04 1.474-.568c.525-.325 1.149-.69 1.858-.698.686-.01.721.792.204.918z"
+      fill="#000"
+      stroke-width=".039"
+    />
+  </svg>
+);
+
+export const IconArrow = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="50"
+    height="50"
+    viewBox="0 0 13.229 13.229"
+  >
+    <path
+      d="M6.615 10.587L.529 2.642H12.7z"
+      fill="#000"
+      stroke-width="10.858"
+      stroke-linecap="round"
+    />
+  </svg>
+);

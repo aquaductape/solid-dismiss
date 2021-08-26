@@ -14,6 +14,14 @@ type IDark = {
   "--bg": "#201d26";
   "--text": "#cfcfcf";
   "--dropdown-bg": "#2c2835";
+  "--dropdown-root-bg": "#2d2837";
+  "--dropdown-root-border": "#635f75";
+  "--dropdown-root-shadow": "#000";
+  "--list-item-hover": "#3e384a";
+  "--list-item-active": "#ccc6e4";
+  "--list-item-active-txt": "#000";
+  "--select-btn-bg": "#9691ac";
+  "--select-btn-bg-hover": "#b0aaca";
   "--color-scheme": "dark";
   "--nav-item-bg": "#000";
   "--code-bg": "#252436";
@@ -52,6 +60,14 @@ type ILight = {
   "--bg": "#f3effd";
   "--text": "#000";
   "--dropdown-bg": "#f3effd";
+  "--dropdown-root-bg": "#fff";
+  "--dropdown-root-border": "#bcb7d4";
+  "--dropdown-root-shadow": "#22243ab8";
+  "--list-item-hover": "#dbd8eb";
+  "--list-item-active": "#3b374c";
+  "--list-item-active-txt": "#fff";
+  "--select-btn-bg": "#b2add0";
+  "--select-btn-bg-hover": "#9d98bc";
   "--color-scheme": "light";
   "--nav-item-bg": "var(--main-grey)";
   "--code-actual-text": "#000000";
@@ -95,6 +111,14 @@ export const themeConfig: IThemeConfig = {
     "--bg": "#201d26",
     "--text": "#cfcfcf",
     "--dropdown-bg": "#2c2835",
+    "--dropdown-root-bg": "#2d2837",
+    "--dropdown-root-border": "#635f75",
+    "--dropdown-root-shadow": "#000",
+    "--list-item-hover": "#3e384a",
+    "--list-item-active": "#ccc6e4",
+    "--list-item-active-txt": "#000",
+    "--select-btn-bg": "#9691ac",
+    "--select-btn-bg-hover": "#b0aaca",
     "--color-scheme": "dark",
     "--nav-item-bg": "#000",
     "--code-bg": "#252436",
@@ -133,6 +157,14 @@ export const themeConfig: IThemeConfig = {
     "--bg": "#f3effd",
     "--text": "#000",
     "--dropdown-bg": "#f3effd",
+    "--dropdown-root-bg": "#fff",
+    "--dropdown-root-border": "#bcb7d4",
+    "--dropdown-root-shadow": "#22243ab8",
+    "--list-item-hover": "#dbd8eb",
+    "--list-item-active": "#3b374c",
+    "--list-item-active-txt": "#fff",
+    "--select-btn-bg": "#b2add0",
+    "--select-btn-bg-hover": "#9d98bc",
     "--color-scheme": "light",
     "--nav-item-bg": "var(--main-grey)",
     "--code-actual-text": "#000000",
