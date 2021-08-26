@@ -395,19 +395,19 @@ button {
   }
 
   &:hover {
-    .contentt {
+    .text-scroll-container {
       box-shadow: 0 5px 0 0px var(--hovered-grey) inset;
     }
   }
 
-  .contentt {
+  .text-scroll-container {
     &:hover {
       box-shadow: 0 5px 0 0px var(--dark-grey) inset;
     }
   }
 
   .select:hover ~ .text-wrapper {
-    .contentt {
+    .text-scroll-container {
       box-shadow: 0 5px 0 0px var(--dark-grey) inset;
     }
   }
@@ -424,7 +424,7 @@ button {
   }
 
   .btn-secondary:active + .text-wrapper {
-    .contentt {
+    .text-scroll-container {
       box-shadow: 0 0px 0 0px var(--hovered-grey) inset;
     }
   }
@@ -591,10 +591,11 @@ button {
   .shadow {
     position: absolute;
     top: 10px;
-    left: 1px;
-    right: 1px;
-    height: calc(100% - 11px);
-    border-radius: 5px;
+    left: 0px;
+    right: 0px;
+    height: calc(100% - 10px);
+    border-radius: 8px;
+    background: #00000085;
     box-shadow: 0 0 17px 0 #00000085;
   }
 
@@ -634,7 +635,9 @@ button {
     margin: 0;
   }
   .demo {
+    position: relative;
     grid-area: demo;
+    z-index: 5;
 
     .desktop-content {
       display: none;

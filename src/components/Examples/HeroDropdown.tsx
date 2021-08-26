@@ -21,9 +21,10 @@ const HeroDropdown = () => {
       >
         <div className="shadow"></div>
         <div class="hero-dropdown-content">
-          <p>
-            To close: <strong>click</strong> outside, press <code>Esc</code> or
-            press <code>Tab</code> until focus is outside of dropdown
+          <p style="margin-top: 0;">
+            To close: <strong>click</strong> outside, or press <code>Esc</code>{" "}
+            key, or press <code>Tab</code> key until focus is outside of
+            dropdown
           </p>
           <div class="gutters">
             <button className="focus-gutter"></button>
