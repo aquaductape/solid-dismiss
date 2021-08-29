@@ -15,6 +15,7 @@ const HeroDropdown = () => {
       </button>
       <Transition
         onEnter={(el, done) => {
+          (el as HTMLElement).style.transformOrigin = "top right";
           const a = el.animate(
             [
               { transform: "scale(0)", opacity: 0 },
@@ -25,9 +26,11 @@ const HeroDropdown = () => {
               duration: 300,
             }
           );
+
           a.finished.then(done);
         }}
         onExit={(el, done) => {
+          (el as HTMLElement).style.transformOrigin = "top right";
           const a = el.animate(
             [
               { transform: "scale(1)", opacity: 1 },

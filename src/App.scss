@@ -103,7 +103,7 @@ p {
     transform: scale(1.03);
     transform-origin: center;
   }
-  &[data-focus-visible-added] {
+  &:focus {
     border: 3px solid var(--inline-code-color);
     box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
   }
@@ -208,6 +208,22 @@ button {
     margin-left: 25px;
     margin-right: 0;
   }
+
+  &:focus {
+    &:after {
+      position: absolute;
+      content: "";
+      top: -8px;
+      left: -8px;
+      width: calc(100% + 8px + 2px);
+      height: calc(100% + 8px + 2px);
+      border-radius: inherit;
+      pointer-events: none;
+      background: none;
+      border: 3px solid var(--focus);
+      box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
+    }
+  }
 }
 
 .btn-primary {
@@ -236,7 +252,7 @@ button {
     transition: box-shadow 100ms, background-position 250ms;
   }
 
-  &[data-focus-visible-added] {
+  &:focus {
     outline: none;
 
     &:after {
@@ -281,7 +297,7 @@ button {
     transition: box-shadow 100ms, background-position 250ms;
   }
 
-  &[data-focus-visible-added] {
+  &:focus {
     outline: none;
 
     &:after {
@@ -440,6 +456,22 @@ button {
   border: 2px solid #ababab;
   border-radius: 8px;
   margin-bottom: 20px;
+
+  &:focus {
+    &:after {
+      position: absolute;
+      content: "";
+      top: -8px;
+      left: -8px;
+      width: calc(100% + 8px + 2px);
+      height: calc(100% + 8px + 2px);
+      border-radius: inherit;
+      pointer-events: none;
+      background: none;
+      border: 3px solid var(--focus);
+      box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
+    }
+  }
 }
 
 .dropdown-container,
@@ -462,7 +494,7 @@ button {
   z-index: 50;
   outline: none;
 
-  &[data-focus-visible-added] {
+  &:focus {
     outline: none;
 
     &:after {

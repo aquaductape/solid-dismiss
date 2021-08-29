@@ -20,8 +20,8 @@ const Select = () => {
       window.innerWidth - document.documentElement.clientWidth
     );
 
-    document.body.style.marginRight = scrollWidth + "px";
-    document.body.style.overflow = "hidden";
+    // document.body.style.marginRight = scrollWidth + "px";
+    // document.body.style.overflow = "hidden";
 
     const btnBCR = btnEl.getBoundingClientRect();
     menuDropdown.style.position = "absolute";
@@ -75,6 +75,7 @@ const Select = () => {
             toggle={toggle}
             setToggle={setToggle}
             overlay={"clipped"}
+            focusOnLeave="menuButton"
             ref={menuDropdown}
           >
             <ul>

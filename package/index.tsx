@@ -118,21 +118,24 @@ const Dismiss: Component<{
     | JSX.Element
     | { [key: string]: JSX.Element };
   /**
-   * Default: uses browser default when focusing to next element.
+   * Default: uses browser default behavior when focusing to next element.
    *
    * which element, via selector*, to recieve focus after dropdown closes.
    *
    * *selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
    * An example would be to emulate native <select> element behavior, set which sets focus to menu button after dismiss.
+   *
+   *
+   * Note: This won't prevent clicks on other elements that could potentially steal focus. To prevent this, use `overlay` prop.
    */
-  focusOnLeave?: "menuButton" | string | JSX.Element;
+  focusOnLeave?: "menuButton" | string | JSX.Element; // ???
   /**
    * Default: `false`
    *
    * When `true`, after focusing within menu dropdown, if focused back to menu button via keyboard (Tab key), the menu dropdown will close.
    *
-   * If `overlay` is `true`, dropdown will always close when menu button is Tabbed
+   * If `overlay` is `"block"`, dropdown will always close when menu button is Tabbed
    */
   closeWhenMenuButtonIsTabbed?: boolean;
   /**
@@ -142,7 +145,7 @@ const Dismiss: Component<{
    */
   closeWhenMenuButtonIsClicked?: boolean;
   /**
-   * Default `false`
+   * Default `"none"`
    *
    * When prop is `true`, adds root level div that acts as overlay. This removes interaction of the page elements that's underneath the overlay element. Make sure that dropdown lives in the root level and has z-index value in order to be interacted.
    *
@@ -150,16 +153,16 @@ const Dismiss: Component<{
    *
    * Main difference of `true` vs `shallow`, is that the menu button can still be interacted with the cursor, which means that css hover events will fire ect.
    *
-   * When prop is `"clipped"`,
+   * When prop is `"clipped"`, it's similar to `"block"` where it places an element at root document, but creates a "mask" that clips around the menuButton and menuDropdown. This allows menuDropdown to live at menuButton markup context, rather than moving it at top of root document in order to be interacted with.
    */
   overlay?:
-    | boolean
+    | "block"
     | "shallow"
     | "clipped"
     | {
-        position?: "fixed" | "absolute";
         menuButton?: TOverlayClipped;
         menuDropdown?: TOverlayClipped;
+        recalculatePath?: number;
       };
   toggle: Accessor<boolean>;
   setToggle: (v: boolean) => void;
@@ -192,6 +195,8 @@ const Dismiss: Component<{
   let prevFocusedEl: HTMLElement | null = null;
   let nextFocusTargetAfterMenuButton: HTMLElement | null = null;
   let clippedOverlayId = "";
+  let resizeObserver: ResizeObserver | null = null;
+  const viewport = { height: 0, width: 0 };
   const refCb = (el: HTMLElement) => {
     if (props.ref) {
       // @ts-ignore
@@ -200,8 +205,9 @@ const Dismiss: Component<{
     containerEl = el as any;
   };
 
-  let containerFocusTimeoutId: number | null = 0;
-  let menuButtonBlurTimeoutId: number | null = 0;
+  let containerFocusTimeoutId: number | null = null;
+  let menuButtonBlurTimeoutId: number | null = null;
+  let updateOverlayTimeoutId: number | null = null;
   const initDefer = !props.toggle();
   let init = false;
 
@@ -366,7 +372,8 @@ const Dismiss: Component<{
   };
 
   const onFocusOutContainer = (e: FocusEvent) => {
-    if (focusOnLeave) {
+    console.log("runfocusout!!!");
+    if (focusOnLeave || overlay === "block") {
       e.stopImmediatePropagation();
     }
     // updateStore(
@@ -399,6 +406,7 @@ const Dismiss: Component<{
   };
 
   const onFocusInContainer = () => {
+    console.log("focusin");
     clearTimeout(containerFocusTimeoutId!);
     containerFocusTimeoutId = null;
 
@@ -430,6 +438,7 @@ const Dismiss: Component<{
   };
 
   const onFocusTraps = (type: "first" | "last") => {
+    clearTimeout(containerFocusTimeoutId!);
     if (type === "first") {
       if (closeWhenMenuButtonIsTabbed) {
         props.setToggle(false);
@@ -552,6 +561,7 @@ const Dismiss: Component<{
 
   const onFocusMenuButton = () => {
     if (!closeWhenMenuButtonIsTabbed) {
+      console.log("clear!!");
       clearTimeout(containerFocusTimeoutId!);
     }
     menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
@@ -573,31 +583,13 @@ const Dismiss: Component<{
     // addMenuDropdownEl();
   });
 
-  const createClippedShapes = () => {
+  const createClippedPoints = () => {
     menuDropdownEl = queryElement(menuDropdown, "menuDropdown");
-    const overlayClipped = overlay as TOverlayClipped;
-    console.log("createclipped");
-    // overlayClipped.el =
-    // const menuBtnStyles = window.getComputedStyle(menuBtnEl);
-    // const menuDropdownStyles = window.getComputedStyle(menuDropdownEl!);
-    const menuBtnBCR = menuBtnEl.getBoundingClientRect();
-    const menuDropdownBCR = menuDropdownEl.getBoundingClientRect();
-    console.log(menuDropdownEl, menuDropdownBCR);
-    const menuBtnStyle = window.getComputedStyle(menuBtnEl);
-    // 30% 50% => 0.3 * menuBtnBCR.width , 0.5 * menuBtnBCR.height
-    // if height is 58, max radius Y should be 29, since style will get the resolved value rather than the rendered value. Example button with size of 100px/100px, and has border-radius of 200px, 200px won't make a difference since 50px is max value, but resolved value will be 200px.
-    // if single value percentage max value is 50%
 
-    // use pythagorean theorem if to calculate new arc if radius is cut with another element and if radius is the same for x and y value
-    const vpHeight = document.documentElement.clientHeight;
-    const vpWidth = document.documentElement.clientWidth;
-
-    // email to Karissa!!!!!!!!!!!!
     const createPath = (el: HTMLElement) => {
       const parseRadius = (radiusInput: string) => {
         const maxXRadius = bcr.width;
         const maxYRadius = bcr.height;
-        // const isPercent = radiusInput.match("%");
         let splitRadiusStr = radiusInput.split(" ");
         if (splitRadiusStr.length === 1) {
           splitRadiusStr.push(splitRadiusStr[0]);
@@ -669,47 +661,107 @@ const Dismiss: Component<{
       } ${topLeftArc} z `;
     };
 
+    return `M 0,0 H ${viewport.width} V ${viewport.height} H 0 Z ${createPath(
+      menuBtnEl
+    )} ${createPath(menuDropdownEl)}`;
+  };
+
+  const createClippedPath = () => {
     if (!clippedOverlayId) {
       clippedOverlayId = createUniqueId();
     }
-
     return (
       <path
         fill-rule="evenodd"
-        d={`M 0,0 H ${vpWidth} V ${vpHeight} H 0 Z ${createPath(
-          menuBtnEl
-        )} ${createPath(menuDropdownEl)}`}
+        d={createClippedPoints()}
         style="pointer-events: all;"
       />
-    );
+    ) as SVGPathElement;
+  };
+
+  const updateSVG = () => {
+    const svgEl = overlayEl.firstElementChild!;
+    const pathEl = svgEl.querySelector("path")!;
+    viewport.height = document.documentElement.clientHeight;
+    viewport.width = document.documentElement.clientWidth;
+    console.log("updateSVG");
+
+    svgEl.setAttribute("viewBox", `0 0 ${viewport.width} ${viewport.height}`);
+    pathEl.setAttribute("d", createClippedPoints());
+  };
+
+  const updateOverlay = (e?: Event) => {
+    window.clearTimeout(updateOverlayTimeoutId!);
+
+    updateOverlayTimeoutId = window.setTimeout(() => {
+      if (e?.type === "scroll") {
+        const target = e.target as HTMLElement;
+        if (!target.contains(menuBtnEl)) return;
+      }
+
+      console.log("update overlayy!!!");
+      updateSVG();
+    }, 50);
+  };
+
+  const addOverlayEvents = () => {
+    window.addEventListener("scroll", updateOverlay, {
+      capture: true,
+      passive: true,
+    });
+    addResizeEvent();
+  };
+
+  const removeOverlayEvents = () => {
+    window.removeEventListener("scroll", updateOverlay, { capture: true });
+
+    removeResizeEvent();
+  };
+
+  const addResizeEvent = () => {
+    if ("ResizeObserver" in window) {
+      let init = true;
+      resizeObserver = new ResizeObserver(() => {
+        if (init) {
+          init = false;
+          return;
+        }
+        updateOverlay();
+      });
+      resizeObserver.observe(document.body);
+    } else {
+      window.addEventListener("resize", updateOverlay, { passive: true });
+    }
+  };
+
+  const removeResizeEvent = () => {
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+    } else {
+      window.removeEventListener("resize", updateOverlay);
+    }
   };
 
   const mountOverlay = () => {
-    let style =
-      "position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999;";
-    if (overlay === "clipped" || typeof overlay === "object") {
-      if (!clippedOverlayId) {
-        clippedOverlayId = createUniqueId();
-      }
-      if (typeof overlay === "object" && overlay.position === "absolute") {
-        style = `position: absolute; top: ${window.scrollY}px; left: ${window.scrollX}px; width: ${document.documentElement.clientWidth}px; height: ${document.documentElement.clientHeight}px; z-index: 999;`;
-      }
-      style += `pointer-events: none;`;
-    } else {
-      style += "background: none;";
-    }
-    const vpHeight = document.documentElement.clientHeight;
-    const vpWidth = document.documentElement.clientWidth;
+    const style =
+      "position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events:none;";
+
+    viewport.height = document.documentElement.clientHeight;
+    viewport.width = document.documentElement.clientWidth;
+
+    addOverlayEvents();
+
     const child = (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox={`0 0 ${vpWidth} ${vpHeight}`}
+        viewBox={`0 0 ${viewport.width} ${viewport.height}`}
         width="100%"
         height="100%"
         preserveAspectRatio="xMaxYMax slice"
         version="1.1"
       >
-        {createClippedShapes()}
+        {createClippedPath()}
       </svg>
     );
     overlayEl.style.cssText = style;
@@ -729,13 +781,13 @@ const Dismiss: Component<{
           } else {
             menuBtnEl.style.pointerEvents = "";
             console.log("removepointer", dismissStack);
-            runFocusOnLeave();
             if (dismissStack.length <= 1) {
               document.documentElement.style.pointerEvents = "";
             }
             containerEl.style.pointerEvents = "";
           }
         }
+        runFocusOnLeave();
 
         if (overlay === "clipped" || typeof overlay === "object") {
           mountOverlay();
@@ -764,6 +816,7 @@ const Dismiss: Component<{
           removeMenuDropdownEl();
           removeCloseButtons();
           // setTabIndexOfFocusTraps("-1");
+          removeOverlayEvents();
           document.removeEventListener("click", onClickDocument);
           if (dismissStack.find((item) => item.menuBtnEl === menuBtnEl)) {
             dismissStack.pop();
@@ -786,6 +839,7 @@ const Dismiss: Component<{
     removeMenuDropdownEl();
 
     removeOutsideFocusEvents();
+    removeOverlayEvents();
     // removeKeyFromStore(`onClickBtn ${menuBtnId}`);
     // removeKeyFromStore(`setToggle from onClickDocument ${menuBtnId}`);
     // removeKeyFromStore(`setToggle from onFocusInContainer ${menuBtnId}`);
@@ -807,7 +861,7 @@ const Dismiss: Component<{
         onFocusIn={onFocusInContainer}
         onFocusOut={onFocusOutContainer}
         tabindex="-1"
-        style={overlay === true ? "z-index: 1000" : ""}
+        style={overlay === "block" ? "z-index: 1000" : ""}
         ref={refCb}
       >
         {(overlay === "clipped" || typeof overlay === "object") && (
@@ -819,7 +873,7 @@ const Dismiss: Component<{
             ></div>
           </Portal>
         )}
-        {overlay === true && (
+        {overlay === "block" && (
           <Portal>
             <div
               solid-dismiss-overlay={props.id || ""}
@@ -838,11 +892,11 @@ const Dismiss: Component<{
         <div
           tabindex="0"
           onFocus={(e) => {
-            if (
-              e.relatedTarget === menuBtnEl &&
-              e.relatedTarget === containerEl
-            )
-              return;
+            // if (
+            //   e.relatedTarget === menuBtnEl &&
+            //   e.relatedTarget === containerEl
+            // )
+            //   return;
             onFocusTraps("first");
           }}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
