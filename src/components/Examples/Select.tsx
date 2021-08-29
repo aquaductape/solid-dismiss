@@ -1,5 +1,6 @@
+import { Transition } from "solid-transition-group";
 import Dismiss from "../../../package/index";
-import { createSignal, createEffect } from "solid-js";
+import { createSignal, createEffect, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 
 const Select = () => {
@@ -9,6 +10,8 @@ const Select = () => {
 
   createEffect(() => {
     if (!toggle()) return;
+
+    console.log("position dropdown");
 
     const btnBCR = btnEl.getBoundingClientRect();
     menuDropdown.style.position = "absolute";
@@ -20,25 +23,59 @@ const Select = () => {
 
   return (
     <>
-      <button class="btn-select" ref={btnEl}>
+      <button
+        // style="border-bottom-left-radius: 10% 20%; border-bottom-right-radius: 15px; border-top-left-radius: 10px;"
+        onClick={() => setToggle(true)}
+        class="btn-select"
+        ref={btnEl}
+      >
         Select... <span>V</span>
       </button>
       <Portal>
-        <Dismiss
-          menuButton={btnEl}
-          toggle={toggle}
-          setToggle={setToggle}
-          withinMenuButtonParent={false}
-          ref={menuDropdown}
+        <Transition
+          onEnter={(el, done) => {
+            const a = el.animate(
+              [
+                { transform: "scale(0)", opacity: 0 },
+                { transform: "scale(0.5)", opacity: 0 },
+                { transform: "scale(1)", opacity: 1 },
+              ],
+              {
+                duration: 300,
+              }
+            );
+            a.finished.then(done);
+          }}
+          onExit={(el, done) => {
+            const a = el.animate(
+              [
+                { transform: "scale(1)", opacity: 1 },
+                { transform: "scale(0.5)", opacity: 0 },
+                { transform: "scale(0)", opacity: 0 },
+              ],
+              {
+                duration: 300,
+              }
+            );
+            a.finished.then(done);
+          }}
         >
-          <ul>
-            <li tabindex="0">cat</li>
-            <li tabindex="0">dog</li>
-            <li tabindex="0">fish</li>
-            <li tabindex="0">hat</li>
-            <li tabindex="0">car</li>
-          </ul>
-        </Dismiss>
+          <Dismiss
+            menuButton={btnEl}
+            toggle={toggle}
+            setToggle={setToggle}
+            overlay={{ position: "absolute" }}
+            ref={menuDropdown}
+          >
+            <ul>
+              <li tabindex="0">cat</li>
+              <li tabindex="0">dog</li>
+              <li tabindex="0">fish</li>
+              <li tabindex="0">hat</li>
+              <li tabindex="0">car</li>
+            </ul>
+          </Dismiss>
+        </Transition>
       </Portal>
     </>
   );

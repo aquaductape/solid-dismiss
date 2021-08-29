@@ -334,6 +334,7 @@ const Select: Component<{
         toggle={toggle}
         setToggle={setToggle}
         setFocus={setFocus}
+        overlay={"shallow"}
         focusOnLeave={btnEl}
       >
         <ul

@@ -25,6 +25,23 @@ const App: Component = () => {
         <DropdownWidget></DropdownWidget> */}
       </main>
       {/* <IOSDebugger /> */}
+
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="solid-dismiss-svg-a" clipPathUnits="objectBoundingBox">
+            <rect
+              x="0"
+              y="0"
+              width="200"
+              height="57"
+              ry="8"
+              fill="#fff"
+              stroke-linecap="round"
+              stroke-width="2.854"
+            />
+          </clipPath>
+        </defs>
+      </svg>
     </>
   );
 };

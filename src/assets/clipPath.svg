@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="57" version="1.1" viewBox="0 0 52.917 15.081" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <clipPath id="solid-dismiss-svg-a">
+   <rect x="9.006" y="3.665" width="34.905" height="7.751" ry="2.93" fill="#fff" stroke-linecap="round" stroke-width="2.854"/>
+  </clipPath>
+ </defs>
+ <path d="M0 0h52.917v15.081H0z" clip-path="url(#solid-dismiss-svg-a)"/>
+</svg>
