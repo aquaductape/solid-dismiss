@@ -11,7 +11,6 @@ import {
   createUniqueId,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import { removeKeyFromStore, updateStore } from "../src/components/iOSDebugger";
 
 const getNextFocusableElement = ({
   activeElement = document.activeElement as HTMLElement,
@@ -680,7 +679,7 @@ const Dismiss: Component<{
         d={`M 0,0 H ${vpWidth} V ${vpHeight} H 0 Z ${createPath(
           menuBtnEl
         )} ${createPath(menuDropdownEl)}`}
-        style="pointer-events: all; fill: rgba(0, 0, 0, 0.1);"
+        style="pointer-events: all;"
       />
     );
   };

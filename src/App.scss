@@ -508,7 +508,7 @@ button {
 }
 
 .navbar {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
@@ -761,4 +761,8 @@ p {
     color: var(--inline-code-color);
     padding: 3px;
   }
+}
+
+[solid-dismiss-overlay-clipped] path {
+  fill: rgba(0, 0, 0, 0.1);
 }

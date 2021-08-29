@@ -9,9 +9,19 @@ const Select = () => {
   let menuDropdown!: HTMLElement;
 
   createEffect(() => {
-    if (!toggle()) return;
+    if (!toggle()) {
+      document.body.style.marginRight = "";
+      document.body.style.overflow = "";
+      return;
+    }
 
     console.log("position dropdown");
+    const scrollWidth = Math.abs(
+      window.innerWidth - document.documentElement.clientWidth
+    );
+
+    document.body.style.marginRight = scrollWidth + "px";
+    document.body.style.overflow = "hidden";
 
     const btnBCR = btnEl.getBoundingClientRect();
     menuDropdown.style.position = "absolute";
@@ -64,7 +74,7 @@ const Select = () => {
             menuButton={btnEl}
             toggle={toggle}
             setToggle={setToggle}
-            overlay={{ position: "absolute" }}
+            overlay={"clipped"}
             ref={menuDropdown}
           >
             <ul>
