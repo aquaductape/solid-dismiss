@@ -16,6 +16,7 @@ const Dropdown: Component<{ focusOnLeave?: boolean }> = ({ focusOnLeave }) => {
         menuButton={btnEl}
         toggle={toggle}
         setToggle={setToggle}
+        overlay={"clipped"}
         focusOnLeave={focusOnLeave ? "menuButton" : undefined}
       >
         <div>

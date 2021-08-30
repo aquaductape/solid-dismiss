@@ -1,3 +1,4 @@
+import "./browserInfo";
 import {
   Show,
   Accessor,
@@ -11,62 +12,8 @@ import {
   createUniqueId,
 } from "solid-js";
 import { Portal } from "solid-js/web";
+import { getNextFocusableElement, parseValToNum } from "./utils";
 
-const getNextFocusableElement = ({
-  activeElement = document.activeElement as HTMLElement,
-  stopAtElement,
-}: {
-  activeElement: HTMLElement;
-  stopAtElement?: HTMLElement;
-}) => {
-  const parent = activeElement.parentElement!;
-  const visitedElement = activeElement;
-
-  if (!visitedElement) return null;
-
-  const traverseNextSiblingsThenUp = (
-    parent: HTMLElement,
-    visitedElement: HTMLElement
-  ): HTMLElement | null => {
-    let hasPastVisitedElement = false;
-
-    for (const child of parent.children) {
-      if (hasPastVisitedElement) {
-        if (child.matches(focusableSelectors)) return child as HTMLElement;
-        const el = queryFocusableElement({ parent: child });
-        if (el) return el;
-        continue;
-      }
-      if (child === visitedElement) {
-        hasPastVisitedElement = true;
-        continue;
-      }
-      if (child === stopAtElement) {
-        return null;
-      }
-    }
-
-    visitedElement = parent;
-    parent = parent.parentElement!;
-
-    if (!parent) return null;
-
-    return traverseNextSiblingsThenUp(parent, visitedElement);
-  };
-
-  return traverseNextSiblingsThenUp(parent, visitedElement);
-};
-
-const focusableSelectors =
-  'button, [href], input, select, textarea, details, [contentEditable=true], [tabindex]:not([tabindex="-1"])';
-
-const queryFocusableElement = ({
-  parent,
-}: {
-  parent: Element | HTMLElement;
-}) => {
-  return parent.querySelector(focusableSelectors) as HTMLElement;
-};
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
 // blur (tested so far on only buttons) will fire even on tapping same focused button (which would be invoked `focus()` )
@@ -153,16 +100,22 @@ const Dismiss: Component<{
    *
    * Main difference of `true` vs `shallow`, is that the menu button can still be interacted with the cursor, which means that css hover events will fire ect.
    *
-   * When prop is `"clipped"`, it's similar to `"block"` where it places an element at root document, but creates a "mask" that clips around the menuButton and menuDropdown. This allows menuDropdown to live at menuButton markup context, rather than moving it at top of root document in order to be interacted with.
+   * When prop is `"clipped"`, it's similar to `"block"` where it places an element at root document, but creates a "mask" that clips around the menuButton and menuDropdown. This allows menuDropdown to live at menuButton markup context, rather than mounting it at top level of root document in order to be interacted with.
    */
   overlay?:
     | "block"
     | "shallow"
     | "clipped"
     | {
-        menuButton?: TOverlayClipped;
-        menuDropdown?: TOverlayClipped;
-        recalculatePath?: number;
+        clipped: {
+          menuButton?: TOverlayClipped;
+          menuDropdown?: TOverlayClipped;
+          /**
+           * Use this to manually redraw the "mask" that clips around menuButton and menuDropdown, in case mask is not aligned correctly.
+           * Clip automatically redraws when scrolled, or viewport is resized, or animationend end fires on [data-solid-dismiss-dropdown-container] and menuDropdown
+           */
+          redrawClippedPath?: number;
+        };
       };
   toggle: Accessor<boolean>;
   setToggle: (v: boolean) => void;
@@ -215,7 +168,6 @@ const Dismiss: Component<{
     if (focusOnLeave == null) return;
 
     const el = queryElement(focusOnLeave);
-    console.log({ el });
     if (el) {
       el.focus();
     }
@@ -225,7 +177,6 @@ const Dismiss: Component<{
     if (focusOnActive == null) return;
 
     const el = queryElement(focusOnActive);
-    console.log("runfocus", el);
     if (el) {
       el.focus();
     }
@@ -240,7 +191,6 @@ const Dismiss: Component<{
     // menuBtnEl.focus();
     // props.setToggle(false);
     const item = dismissStack.pop();
-    console.log("escape", dismissStack);
     if (item) {
       item.menuBtnEl.focus();
       item.setToggle(false);
@@ -259,7 +209,6 @@ const Dismiss: Component<{
 
   const onClickCloseButton = () => {
     // runDelegateFocus();
-    console.log("close");
     props.setToggle(false);
   };
 
@@ -283,7 +232,6 @@ const Dismiss: Component<{
   };
 
   const onBlurMenuButton = (e: FocusEvent) => {
-    console.log("blurrr");
     if (!props.toggle()) return;
 
     if (menuBtnKeyupTabFired) {
@@ -291,13 +239,14 @@ const Dismiss: Component<{
       return;
     }
 
-    // console.log("onBlurMenuButton" + menuBtnId);
-
     if (!e.relatedTarget) {
       // if (addedFocusOutAppEvents) return;
       // addedFocusOutAppEvents = true;
       // prevFocusedEl = e.target as HTMLElement;
-      document.addEventListener("click", onClickDocument, { once: true });
+      // console.log("adddocuclick");
+      if (overlay !== "clipped") {
+        document.addEventListener("click", onClickDocument, { once: true });
+      }
       return;
     }
 
@@ -337,7 +286,6 @@ const Dismiss: Component<{
   };
 
   const onClickDocument = (e: MouseEvent) => {
-    console.log("onClickDocument" + menuBtnId);
     if (containerEl.contains(e.target as HTMLElement)) return;
     if (prevFocusedEl) {
       prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
@@ -387,7 +335,9 @@ const Dismiss: Component<{
       if (addedFocusOutAppEvents) return;
       addedFocusOutAppEvents = true;
       prevFocusedEl = e.target as HTMLElement;
-      document.addEventListener("click", onClickDocument);
+      if (overlay !== "clipped") {
+        document.addEventListener("click", onClickDocument);
+      }
       prevFocusedEl.addEventListener("focus", onFocusFromOutsideAppOrTab, {
         once: true,
       });
@@ -568,24 +518,9 @@ const Dismiss: Component<{
     menuBtnEl.addEventListener("blur", onBlurMenuButton);
   };
 
-  onMount(() => {
-    menuBtnEl = queryElement(menuButton, "menuButton");
-    menuBtnEl.addEventListener("click", onClickMenuButton);
-    menuBtnEl.addEventListener("focus", onFocusMenuButton);
-    menuBtnId = menuBtnEl.id;
-    expandToggle(props.toggle());
-    if (!menuBtnId) {
-      menuBtnId = createUniqueId();
-      menuBtnEl.id = menuBtnId;
-    }
-
-    // addCloseButtons();
-    // addMenuDropdownEl();
-  });
+  /** Overlay Clipped **/
 
   const createClippedPoints = () => {
-    menuDropdownEl = queryElement(menuDropdown, "menuDropdown");
-
     const createPath = (el: HTMLElement) => {
       const parseRadius = (radiusInput: string) => {
         const maxXRadius = bcr.width;
@@ -623,9 +558,10 @@ const Dismiss: Component<{
       };
 
       const bcr = el.getBoundingClientRect();
-      bcr.x = Math.ceil(bcr.x);
-      bcr.y = Math.ceil(bcr.y);
-      bcr.width = Math.ceil(bcr.width);
+      bcr.x = Math.floor(bcr.x);
+      bcr.y = Math.floor(bcr.y);
+      bcr.width = Math.floor(bcr.width);
+      bcr.height = Math.floor(bcr.height);
       const style = window.getComputedStyle(el);
       const bTopLeftRadius = parseRadius(style.borderTopLeftRadius);
       const bTopRightRadius = parseRadius(style.borderTopRightRadius);
@@ -663,7 +599,7 @@ const Dismiss: Component<{
 
     return `M 0,0 H ${viewport.width} V ${viewport.height} H 0 Z ${createPath(
       menuBtnEl
-    )} ${createPath(menuDropdownEl)}`;
+    )} ${createPath(menuDropdownEl!)}`;
   };
 
   const createClippedPath = () => {
@@ -680,11 +616,11 @@ const Dismiss: Component<{
   };
 
   const updateSVG = () => {
+    if (!overlayEl || !menuDropdownEl || !containerEl) return;
     const svgEl = overlayEl.firstElementChild!;
     const pathEl = svgEl.querySelector("path")!;
     viewport.height = document.documentElement.clientHeight;
     viewport.width = document.documentElement.clientWidth;
-    console.log("updateSVG");
 
     svgEl.setAttribute("viewBox", `0 0 ${viewport.width} ${viewport.height}`);
     pathEl.setAttribute("d", createClippedPoints());
@@ -694,12 +630,17 @@ const Dismiss: Component<{
     window.clearTimeout(updateOverlayTimeoutId!);
 
     updateOverlayTimeoutId = window.setTimeout(() => {
+      if (!props.toggle) return;
       if (e?.type === "scroll") {
         const target = e.target as HTMLElement;
         if (!target.contains(menuBtnEl)) return;
       }
 
-      console.log("update overlayy!!!");
+      if (e?.type === "transitionend" || e?.type === "animationend") {
+        const target = e.target as HTMLElement;
+        if (containerEl !== target || menuDropdownEl !== target) return;
+      }
+
       updateSVG();
     }, 50);
   };
@@ -710,6 +651,8 @@ const Dismiss: Component<{
       passive: true,
     });
     addResizeEvent();
+    containerEl.addEventListener("transitionend", updateOverlay);
+    containerEl.addEventListener("animationend", updateOverlay);
   };
 
   const removeOverlayEvents = () => {
@@ -749,6 +692,7 @@ const Dismiss: Component<{
 
     viewport.height = document.documentElement.clientHeight;
     viewport.width = document.documentElement.clientWidth;
+    menuDropdownEl = queryElement(menuDropdown, "menuDropdown");
 
     addOverlayEvents();
 
@@ -768,6 +712,55 @@ const Dismiss: Component<{
     overlayEl.appendChild(child as HTMLElement);
   };
 
+  const manageDismissStack = (type: "add" | "remove") => {
+    if (type === "add") {
+      const prevStack = dismissStack[dismissStack.length - 1];
+
+      if (prevStack && prevStack.overlayEl) {
+        const path = prevStack.overlayEl!.querySelector(
+          "path"
+        ) as SVGPathElement;
+        path.style.pointerEvents = "none";
+        path.style.fill = "transparent";
+      }
+
+      dismissStack.push({
+        setToggle: props.setToggle,
+        menuBtnEl,
+        overlayEl,
+        containerEl,
+      });
+    }
+
+    if (type === "remove") {
+      const prevStack = dismissStack[dismissStack.length - 2];
+
+      if (prevStack && prevStack.overlayEl) {
+        const path = prevStack.overlayEl!.querySelector(
+          "path"
+        ) as SVGPathElement;
+        path.style.pointerEvents = "all";
+        path.style.fill = "";
+      }
+      dismissStack.pop();
+    }
+  };
+
+  onMount(() => {
+    menuBtnEl = queryElement(menuButton, "menuButton");
+    menuBtnEl.addEventListener("click", onClickMenuButton);
+    menuBtnEl.addEventListener("focus", onFocusMenuButton);
+    menuBtnId = menuBtnEl.id;
+    expandToggle(props.toggle());
+    if (!menuBtnId) {
+      menuBtnId = createUniqueId();
+      menuBtnEl.id = menuBtnId;
+    }
+
+    // addCloseButtons();
+    // addMenuDropdownEl();
+  });
+
   createEffect(
     on(
       props.toggle,
@@ -775,12 +768,10 @@ const Dismiss: Component<{
         if (overlay === "shallow") {
           if (toggle) {
             menuBtnEl.style.pointerEvents = "all";
-            console.log("addpointer", dismissStack);
             document.documentElement.style.pointerEvents = "none";
             containerEl.style.pointerEvents = "all";
           } else {
             menuBtnEl.style.pointerEvents = "";
-            console.log("removepointer", dismissStack);
             if (dismissStack.length <= 1) {
               document.documentElement.style.pointerEvents = "";
             }
@@ -788,10 +779,6 @@ const Dismiss: Component<{
           }
         }
         runFocusOnLeave();
-
-        if (overlay === "clipped" || typeof overlay === "object") {
-          mountOverlay();
-        }
 
         expandToggle(toggle);
 
@@ -803,13 +790,11 @@ const Dismiss: Component<{
             addedKeydownListener = true;
             document.addEventListener("keydown", onKeyDown);
           }
-          dismissStack[dismissStack.length - 1];
-          dismissStack.push({
-            setToggle: props.setToggle,
-            menuBtnEl,
-            containerEl,
-            clipSVG: "",
-          });
+
+          if (overlay === "clipped" || typeof overlay === "object") {
+            mountOverlay();
+          }
+          manageDismissStack("add");
           // setTabIndexOfFocusTraps("0");
         } else {
           removeOutsideFocusEvents();
@@ -818,10 +803,7 @@ const Dismiss: Component<{
           // setTabIndexOfFocusTraps("-1");
           removeOverlayEvents();
           document.removeEventListener("click", onClickDocument);
-          if (dismissStack.find((item) => item.menuBtnEl === menuBtnEl)) {
-            dismissStack.pop();
-            console.log("pop");
-          }
+          manageDismissStack("remove");
           if (dismissStack.length < 1) {
             addedKeydownListener = false;
             document.removeEventListener("keydown", onKeyDown);
@@ -868,6 +850,7 @@ const Dismiss: Component<{
           <Portal>
             <div
               solid-dismiss-overlay-clipped={props.id || ""}
+              solid-dismiss-overlay-clipped-level={dismissStack.length}
               onClick={onClickOverlay}
               ref={overlayEl}
             ></div>
@@ -904,7 +887,7 @@ const Dismiss: Component<{
           ref={focusTrapEl1}
         ></div>
         {children}
-        {(focusOnLeave || overlay === true) && (
+        {(focusOnLeave || overlay === "block") && (
           <div
             tabindex="0"
             onFocus={() => onFocusTraps("last")}
@@ -940,38 +923,7 @@ const dismissStack: {
   setToggle: (v: boolean) => void;
   menuBtnEl: HTMLElement;
   containerEl: HTMLElement;
-  clipSVG: string;
+  overlayEl?: HTMLDivElement;
 }[] = [];
-
-function userAgent(pattern: RegExp) {
-  // @ts-ignore
-  if (typeof window !== "undefined" && window.navigator) {
-    return !!(/*@__PURE__*/ navigator.userAgent.match(pattern));
-  }
-}
-
-const iOS = userAgent(/iP(ad|od|hone)/i);
-const iOS13 =
-  typeof window !== "undefined"
-    ? iOS && "download" in document.createElement("a")
-    : null;
-
-if (iOS && !iOS13) {
-  const html = document.querySelector("html")!;
-  html.style.cursor = "pointer";
-  html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
-}
-
-/**
- *
- * if string, should only have px unit
- */
-const parseValToNum = (value?: string | number) => {
-  if (typeof value === "string") {
-    return Number(value.match(/(.+)(px|%)/)![1])!;
-  }
-
-  return value || 0;
-};
 
 export default Dismiss;

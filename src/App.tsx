@@ -17,7 +17,7 @@ const App: Component = () => {
       <main class="main">
         <Hero />
         <BasicDropdown></BasicDropdown>
-        <NestedDropdown></NestedDropdown>
+        {/* <NestedDropdown></NestedDropdown> */}
         <Select></Select>
         <NestedDropdown focusOnLeave={true}></NestedDropdown>
         <DropdownWithCloseButtons></DropdownWithCloseButtons>

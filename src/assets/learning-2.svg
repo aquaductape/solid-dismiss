@@ -15,7 +15,44 @@
    inkscape:version="1.0.2 (394de47547, 2021-03-26)"
    sodipodi:docname="learning-2.svg">
   <defs
-     id="defs2" />
+     id="defs2">
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask2594">
+      <g
+         id="g2604"
+         transform="translate(9.0072302,11.951137)">
+        <rect
+           style="fill:#ffffff;fill-rule:evenodd;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers fill stroke"
+           id="rect2596"
+           width="237.08476"
+           height="184.76013"
+           x="130.02376"
+           y="-183.75539"
+           ry="5" />
+        <g
+           id="g2602"
+           style="fill:#000000">
+          <rect
+             style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers fill stroke"
+             id="rect2598"
+             width="103.75026"
+             height="32.903694"
+             x="187.97539"
+             y="-142.91838"
+             ry="5" />
+          <rect
+             style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:markers fill stroke"
+             id="rect2600"
+             width="104.07668"
+             height="33.623726"
+             x="189.49379"
+             y="-89.937469"
+             ry="5" />
+        </g>
+      </g>
+    </mask>
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -23,9 +60,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.006456"
-     inkscape:cx="64.942814"
-     inkscape:cy="5.3699431"
+     inkscape:zoom="41.509763"
+     inkscape:cx="75.197857"
+     inkscape:cy="5.5087831"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -67,7 +104,7 @@
      transform="translate(0.5,0.5)">
     <path
        style="fill:#cccccc;stroke:#1a1a1a;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 0,0 H 793.70081 V 150 H 150 H 149 L 129,170 V 180 V 310 H 500 V 150 H 793 V 1110 H 0 Z"
+       d="M -2.4147038,-6.6195508 H 791.28611 V 143.38045 H 147.5853 H 146.5853 L 126.5853,163.38045 V 173.38045 V 303.38045 H 497.5853 V 143.38045 H 790.5853 V 1103.3804 H -2.4147038 Z"
        id="path835"
        sodipodi:nodetypes="cc" />
     <rect
@@ -80,7 +117,7 @@
        ry="5" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 5, 0 h 70 a 5 5 0 0 1 5 5 v 10"
+       d="M 5, 0 h 65 a 10 5 0 0 1 10 5"
        id="path887" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
