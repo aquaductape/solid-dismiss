@@ -752,11 +752,11 @@ const Dismiss: Component<{
 
   const mountOverlayClipped = () => {
     const style =
-      "position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; pointer-events:none;";
+      "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999; pointer-events:none;";
 
     viewport.width = document.documentElement.clientWidth;
     viewport.height = document.documentElement.clientHeight;
-    console.log(overlayEl.clientWidth, overlayEl.clientHeight);
+    // console.log(overlayEl.clientWidth, overlayEl.clientHeight);
     // viewport.width = overlayEl.clientWidth;
     // viewport.height = overlayEl.clientHeight;
     menuDropdownEl = queryElement(menuDropdown, "menuDropdown");
