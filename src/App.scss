@@ -381,9 +381,11 @@ button {
   .text-scroll-container {
     display: inline-block;
     padding: 8px 5px;
+    padding-top: 5px;
+    margin-top: 4px;
     background: var(--bg);
     border-radius: 5px;
-    box-shadow: 0 5px 0 0px var(--dark-grey) inset;
+    box-shadow: 0 -5px 0 0px var(--dark-grey);
     pointer-events: all;
     transition: box-shadow 250ms;
     overflow-x: auto;
@@ -412,19 +414,19 @@ button {
 
   &:hover {
     .text-scroll-container {
-      box-shadow: 0 5px 0 0px var(--hovered-grey) inset;
+      box-shadow: 0 -5px 0 0px var(--hovered-grey);
     }
   }
 
   .text-scroll-container {
     &:hover {
-      box-shadow: 0 5px 0 0px var(--dark-grey) inset;
+      box-shadow: 0 -5px 0 0px var(--dark-grey);
     }
   }
 
   .select:hover ~ .text-wrapper {
     .text-scroll-container {
-      box-shadow: 0 5px 0 0px var(--dark-grey) inset;
+      box-shadow: 0 -5px 0 0px var(--dark-grey);
     }
   }
 
@@ -441,7 +443,7 @@ button {
 
   .btn-secondary:active + .text-wrapper {
     .text-scroll-container {
-      box-shadow: 0 0px 0 0px var(--hovered-grey) inset;
+      box-shadow: 0 0 0 0px var(--hovered-grey);
     }
   }
 }

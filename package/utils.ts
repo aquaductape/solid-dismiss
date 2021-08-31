@@ -31,7 +31,7 @@ export const getNextFocusableElement = ({
       if (hasPastVisitedElement) {
         if (child.matches(focusableSelectors)) return child as HTMLElement;
         const el = queryFocusableElement({ parent: child });
-        if (el) return el;
+        if (el) return el as HTMLElement;
         continue;
       }
       if (child === visitedElement) {
@@ -56,8 +56,15 @@ export const getNextFocusableElement = ({
 
 export const queryFocusableElement = ({
   parent,
+  all = false,
 }: {
   parent: Element | HTMLElement;
+  all?: boolean;
 }) => {
+  if (all) {
+    return parent.querySelectorAll(
+      focusableSelectors
+    ) as NodeListOf<HTMLElement>;
+  }
   return parent.querySelector(focusableSelectors) as HTMLElement;
 };

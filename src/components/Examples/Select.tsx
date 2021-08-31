@@ -74,7 +74,7 @@ const Select = () => {
             menuButton={btnEl}
             toggle={toggle}
             setToggle={setToggle}
-            overlay={"clipped"}
+            overlay={"block"}
             focusOnLeave="menuButton"
             ref={menuDropdown}
           >
