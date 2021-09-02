@@ -49,6 +49,7 @@ const HeroDropdown = () => {
           menuButton={btnEl}
           toggle={toggle}
           setToggle={setToggle}
+          trapFocus
           // closeWhenMenuButtonIsClicked={false}
         >
           <div className="shadow"></div>

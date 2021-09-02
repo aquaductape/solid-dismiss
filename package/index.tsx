@@ -12,11 +12,13 @@ import {
   createUniqueId,
 } from "solid-js";
 import { Portal } from "solid-js/web";
+import { getNextFocusableElement, parseValToNum } from "./utils";
 import {
-  getNextFocusableElement,
-  parseValToNum,
-  queryFocusableElement,
-} from "./utils";
+  dismissStack,
+  addDismissStack,
+  removeDismissStack,
+} from "./dismissStack";
+import { mountOverlayClipped, removeOverlayEvents } from "./clippedOverlay";
 
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
@@ -38,12 +40,12 @@ const Dismiss: Component<{
   /**
    * css selector, queried from document, to get menu button element. Or pass JSX element
    */
-  menuButton: string | JSX.Element;
+  menuButton: string | JSX.Element | (() => JSX.Element);
   /**
    * Default: root component element queries the second child element
    * css selector, queried from document, to get menu dropdown element. Or pass JSX element
    */
-  menuDropdown?: string | JSX.Element | { [key: string]: JSX.Element };
+  menuDropdown?: string | JSX.Element | (() => JSX.Element);
   /**
    * Default: `undefined`
    *
@@ -53,21 +55,23 @@ const Dismiss: Component<{
   closeButton?:
     | string
     | JSX.Element
-    | { [key: string]: string | JSX.Element }
-    | (string | JSX.Element)[];
+    | (string | JSX.Element)[]
+    | (() => JSX.Element)
+    | (() => (string | JSX.Element)[]);
+  /**
+   * Default: `false`
+   *
+   * Focus will remain inside menuDropdown when pressing Tab key
+   */
   trapFocus?: boolean;
   /**
-   * Default: focus remains on `menuButton`
+   * Default: focus remains on `"menuButton"`
    *
    * which element, via selector*, to recieve focus after dropdown opens.
    *
-   * *selector: css string queried from document, or if string value is `"menuDropdown"` uses menuDropdown element (which is the second child of root component element ). If object, will only grab first value
+   * *selector: css string queried from document, or if string value is `"menuDropdown"` uses menuDropdown element (which is the second child of root component element ).
    */
-  focusOnActive?:
-    | "menuDropdown"
-    | string
-    | JSX.Element
-    | { [key: string]: JSX.Element };
+  focusOnActive?: "menuDropdown" | string | JSX.Element | (() => JSX.Element);
   /**
    * Default: uses browser default behavior when focusing to next element.
    *
@@ -77,10 +81,13 @@ const Dismiss: Component<{
    *
    * An example would be to emulate native <select> element behavior, set which sets focus to menu button after dismiss.
    *
-   *
    * Note: This won't prevent clicks on other elements that could potentially steal focus. To prevent this, use `overlay` prop.
    */
-  focusOnLeave?: "menuButton" | string | JSX.Element; // ???
+  focusOnLeave?:
+    | "menuButton"
+    | string
+    | JSX.Element
+    | { el: "menuButton" | string | JSX.Element; preventScroll: boolean };
   /**
    * Default: `false`
    *
@@ -110,7 +117,14 @@ const Dismiss: Component<{
           menuDropdown?: TOverlayClipped;
           /**
            * Use this to manually redraw the "mask" that clips around menuButton and menuDropdown, in case mask is not aligned correctly.
-           * Clip automatically redraws when scrolled, or viewport is resized, or animationend end fires on [data-solid-dismiss-dropdown-container] and menuDropdown
+           *
+           * Clip automatically redraws when below:
+           * 1. parent scrollable container of menuButton/menuDropdown is scrolled.
+           * 2. viewport is resized.
+           * 3. animationend/transitionend fires on [data-solid-dismiss-dropdown-container] and menuDropdown.
+           * 4. menuButton/menuDropdown attributes change or element resized.
+           *
+           * All of the above is debounced 75ms
            */
           redrawClippedPath?: number;
         };
@@ -132,6 +146,7 @@ const Dismiss: Component<{
     overlay = false,
     trapFocus = false,
   } = props;
+  const uniqueId = createUniqueId();
   let closeBtn: HTMLElement[] = [];
   let menuDropdownEl: HTMLElement | null = null;
   let menuBtnEl!: HTMLElement;
@@ -147,10 +162,6 @@ const Dismiss: Component<{
   let menuBtnKeyupTabFired = false;
   let prevFocusedEl: HTMLElement | null = null;
   let nextFocusTargetAfterMenuButton: HTMLElement | null = null;
-  let clippedOverlayId = "";
-  let resizeObserver: ResizeObserver | null = null;
-  let mutationObserver: MutationObserver | null = null;
-  const viewport = { height: 0, width: 0 };
   const refCb = (el: HTMLElement) => {
     if (props.ref) {
       // @ts-ignore
@@ -161,7 +172,6 @@ const Dismiss: Component<{
 
   let containerFocusTimeoutId: number | null = null;
   let menuButtonBlurTimeoutId: number | null = null;
-  let updateOverlayTimeoutId: number | null = null;
   const initDefer = !props.toggle();
   let init = false;
 
@@ -189,27 +199,19 @@ const Dismiss: Component<{
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key !== "Escape") return;
-    // menuBtnEl.focus();
-    // props.setToggle(false);
-    const item = dismissStack.pop();
+    const item = dismissStack[dismissStack.length - 1];
+
     if (item) {
       item.menuBtnEl.focus();
       item.setToggle(false);
     }
-
-    if (dismissStack.length < 1) {
-      addedKeydownListener = false;
-      document.removeEventListener("keydown", onKeyDown);
-    }
   };
 
   const onClickOverlay = () => {
-    // runDelegateFocus();
     props.setToggle(false);
   };
 
   const onClickCloseButton = () => {
-    // runDelegateFocus();
     props.setToggle(false);
   };
 
@@ -220,10 +222,6 @@ const Dismiss: Component<{
     containerFocusTimeoutId = null;
 
     const toggleVal = props.toggle();
-    // updateStore(
-    //   `onClickBtn ${menuBtnId}`,
-    //   `toggle ${!toggleVal}, ${Date.now()}`
-    // );
     if (!closeWhenMenuButtonIsClicked) {
       props.setToggle(true);
       return;
@@ -241,10 +239,6 @@ const Dismiss: Component<{
     }
 
     if (!e.relatedTarget) {
-      // if (addedFocusOutAppEvents) return;
-      // addedFocusOutAppEvents = true;
-      // prevFocusedEl = e.target as HTMLElement;
-      // console.log("adddocuclick");
       if (!overlay) {
         document.addEventListener("click", onClickDocument, { once: true });
       }
@@ -253,10 +247,6 @@ const Dismiss: Component<{
 
     removeOutsideFocusEvents();
     if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
-    // updateStore(
-    //   `setToggle from onBlurMenuButton  ${menuBtnId}`,
-    //   `toggle ${props.toggle()}, ${Date.now()}`
-    // );
     const run = () => {
       props.setToggle(false);
     };
@@ -276,7 +266,7 @@ const Dismiss: Component<{
     if (e.key !== "Tab") return;
     menuBtnKeyupTabFired = true;
     e.preventDefault();
-    const el = getNextFocusableElement({ activeElement: focusTrapEl1 });
+    const el = getNextFocusableElement({ from: focusTrapEl1 });
     if (el) {
       el.focus();
     } else {
@@ -292,10 +282,6 @@ const Dismiss: Component<{
       prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
     }
     prevFocusedEl = null;
-    // updateStore(
-    //   `setToggle from onClickDocument ${menuBtnId}`,
-    //   `toggle ${props.toggle()}, ${Date.now()}`
-    // );
     props.setToggle(false);
     addedFocusOutAppEvents = false;
   };
@@ -303,10 +289,6 @@ const Dismiss: Component<{
   const onFocusFromOutsideAppOrTab = (e: FocusEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
 
-    // updateStore(
-    //   `setToggle from onFocusFromOutsideAppOrTab  ${menuBtnId}`,
-    //   `toggle ${props.toggle()}, ${Date.now()}`
-    // );
     props.setToggle(false);
     prevFocusedEl = null;
     addedFocusOutAppEvents = false;
@@ -325,10 +307,6 @@ const Dismiss: Component<{
     if (focusOnLeave || overlay === "block") {
       e.stopImmediatePropagation();
     }
-    // updateStore(
-    //   `setToggle from onFocusOutContainer ${menuBtnId}`,
-    //   `toggle ${props.toggle()}, ${Date.now()}, addedFocusOutAppEvents ${addedFocusOutAppEvents}`
-    // );
 
     if (!props.toggle()) return;
 
@@ -361,30 +339,8 @@ const Dismiss: Component<{
     clearTimeout(containerFocusTimeoutId!);
     containerFocusTimeoutId = null;
 
-    // updateStore(
-    //   `setToggle from onFocusInContainer ${menuBtnId}`,
-    //   `toggle ${props.toggle()}, ${Date.now()}`
-    // );
-
     if (props.setFocus) {
       props.setFocus(true);
-    }
-  };
-
-  const setTabIndexOfFocusTraps = (tabindex: "0" | "-1") => {
-    if (!focusOnLeave) return;
-    if (typeof menuButton === "string" || menuButton == null) {
-      menuBtnEl = containerEl.querySelector(
-        menuButton ? menuButton : "button"
-      )!;
-    } else {
-      menuBtnEl = menuButton as HTMLElement;
-    }
-    if (focusTrapEl1) {
-      focusTrapEl1.setAttribute("tabindex", tabindex);
-    }
-    if (focusTrapEl2) {
-      focusTrapEl2.setAttribute("tabindex", tabindex);
     }
   };
 
@@ -395,21 +351,22 @@ const Dismiss: Component<{
     clearTimeout(containerFocusTimeoutId!);
 
     if (relatedTarget === containerEl || relatedTarget === menuBtnEl) {
-      const elements = queryFocusableElement({
-        parent: containerEl,
-        all: true,
-      }) as NodeListOf<HTMLElement>;
-      elements[1].focus();
+      const el = getNextFocusableElement({
+        from: focusTrapEl1,
+      })!;
+
+      el.focus();
       return;
     }
 
     if (type === "first") {
       if (trapFocus) {
-        const elements = queryFocusableElement({
-          parent: containerEl,
-          all: true,
-        }) as NodeListOf<HTMLElement>;
-        elements[elements.length - 2].focus();
+        const el = getNextFocusableElement({
+          from: focusTrapEl2,
+          direction: "backwards",
+        })!;
+
+        el.focus();
         return;
       }
 
@@ -430,16 +387,16 @@ const Dismiss: Component<{
     }
 
     if (trapFocus) {
-      const elements = queryFocusableElement({
-        parent: containerEl,
-        all: true,
-      }) as NodeListOf<HTMLElement>;
-      elements[1].focus();
+      const el = getNextFocusableElement({
+        from: focusTrapEl1,
+      })!;
+
+      el.focus();
       return;
     }
 
     const el = getNextFocusableElement({
-      activeElement: menuBtnEl,
+      from: menuBtnEl,
       stopAtElement: containerEl,
     });
     if (el) {
@@ -479,10 +436,17 @@ const Dismiss: Component<{
       return inputElement as HTMLElement;
     }
 
-    for (const key in inputElement as { [key: string]: HTMLElement }) {
-      const item = (inputElement as { [key: string]: HTMLElement })[key];
-      return item;
+    if (typeof inputElement === "function") {
+      const result = inputElement();
+      if (result instanceof Element) {
+        return result as HTMLElement;
+      }
+      if (type === "closeButton") {
+        if (!containerEl) return null as any;
+        return containerEl.querySelector(result) as HTMLElement;
+      }
     }
+
     return null as any;
   };
 
@@ -503,14 +467,28 @@ const Dismiss: Component<{
       closeBtn?.push(el);
     };
 
-    if (!(typeof closeButton === "object")) {
-      getCloseButton(closeButton as any);
+    if (Array.isArray(closeButton)) {
+      closeButton.forEach((item) => {
+        getCloseButton(item);
+      });
+      return;
     }
 
-    for (const key in closeButton as { [key: string]: HTMLElement }) {
-      const item = (closeButton as { [key: string]: HTMLElement })[key];
-      getCloseButton(item);
+    if (typeof closeButton === "function") {
+      const result = closeButton();
+
+      if (Array.isArray(result)) {
+        result.forEach((item) => {
+          getCloseButton(item);
+        });
+        return;
+      }
+
+      getCloseButton(result);
+      return;
     }
+
+    getCloseButton(closeButton);
   };
 
   const removeCloseButtons = () => {
@@ -552,271 +530,6 @@ const Dismiss: Component<{
     menuBtnEl.addEventListener("blur", onBlurMenuButton);
   };
 
-  /** Overlay Clipped **/
-
-  const createClippedPoints = () => {
-    const createPath = (el: HTMLElement) => {
-      const parseRadius = (radiusInput: string) => {
-        const maxXRadius = bcr.width;
-        const maxYRadius = bcr.height;
-        let splitRadiusStr = radiusInput.split(" ");
-        if (splitRadiusStr.length === 1) {
-          splitRadiusStr.push(splitRadiusStr[0]);
-        }
-
-        const radii = splitRadiusStr.map((radius, idx) => {
-          const isPercent = (radius as string).match("%");
-          const isX = idx === 0;
-          let value = parseValToNum(radius);
-
-          if (isPercent) {
-            if (isX) {
-              value = (value / 100) * bcr.width;
-            } else {
-              value = (value / 100) * bcr.height;
-            }
-          }
-
-          if (isX && value > maxXRadius) {
-            value = maxXRadius;
-          }
-
-          if (!isX && value > maxYRadius) {
-            value = maxYRadius;
-          }
-
-          return value;
-        });
-
-        return { x: radii[0], y: radii[1] };
-      };
-
-      const bcr = el.getBoundingClientRect();
-      bcr.x = Math.floor(bcr.x);
-      bcr.y = Math.floor(bcr.y);
-      bcr.width = Math.floor(bcr.width);
-      bcr.height = Math.floor(bcr.height);
-      const style = window.getComputedStyle(el);
-      const bTopLeftRadius = parseRadius(style.borderTopLeftRadius);
-      const bTopRightRadius = parseRadius(style.borderTopRightRadius);
-      const bBottomRightRadius = parseRadius(style.borderBottomRightRadius);
-      const bBottomLeftRadius = parseRadius(style.borderBottomLeftRadius);
-      const topRightArc = bTopRightRadius
-        ? `a ${bTopRightRadius.x} ${bTopRightRadius.y} 0 0 1 ${bTopRightRadius.x} ${bTopRightRadius.y}`
-        : "";
-      const bottomRightArc = bBottomRightRadius
-        ? `a ${bBottomRightRadius.x} ${
-            bBottomRightRadius.y
-          } 0 0 1 ${-bBottomRightRadius.x} ${bBottomRightRadius.y}`
-        : "";
-      const bottomLeftArc = bBottomLeftRadius
-        ? `a ${bBottomLeftRadius.x} ${
-            bBottomLeftRadius.y
-          } 0 0 1 ${-bBottomLeftRadius.x} ${-bBottomLeftRadius.y}`
-        : "";
-      const topLeftArc = bTopLeftRadius
-        ? `a ${bTopLeftRadius.x} ${bTopLeftRadius.y} 0 0 1 ${
-            bTopLeftRadius.x
-          } ${-bTopLeftRadius.y}`
-        : "";
-
-      return `M ${bcr.x + bTopLeftRadius.x}, ${bcr.y} h ${
-        bcr.width - bTopRightRadius.x - bTopLeftRadius.x
-      } ${topRightArc} v ${
-        bcr.height - bBottomRightRadius.y - bTopRightRadius.y
-      } ${bottomRightArc} h ${
-        -bcr.width + bBottomLeftRadius.x + bBottomRightRadius.x
-      } ${bottomLeftArc} v ${
-        -bcr.height + bTopLeftRadius.y + bBottomLeftRadius.y
-      } ${topLeftArc} z `;
-    };
-
-    return `M 0,0 H ${viewport.width} V ${viewport.height} H 0 Z ${createPath(
-      menuBtnEl
-    )} ${createPath(menuDropdownEl!)}`;
-  };
-
-  const createClippedPath = () => {
-    if (!clippedOverlayId) {
-      clippedOverlayId = createUniqueId();
-    }
-    return (
-      <path
-        fill-rule="evenodd"
-        d={createClippedPoints()}
-        style="pointer-events: all;"
-      />
-    ) as SVGPathElement;
-  };
-
-  const updateSVG = () => {
-    if (!overlayEl || !menuDropdownEl || !containerEl) return;
-    const svgEl = overlayEl.firstElementChild!;
-    const pathEl = svgEl.querySelector("path")!;
-    viewport.width = document.documentElement.clientWidth;
-    viewport.height = document.documentElement.clientHeight;
-    // viewport.width = overlayEl.clientWidth;
-    // viewport.height = overlayEl.clientHeight;
-
-    svgEl.setAttribute("viewBox", `0 0 ${viewport.width} ${viewport.height}`);
-    pathEl.setAttribute("d", createClippedPoints());
-  };
-
-  const updateOverlay = (e?: Event) => {
-    window.clearTimeout(updateOverlayTimeoutId!);
-
-    updateOverlayTimeoutId = window.setTimeout(() => {
-      if (!props.toggle) return;
-      if (e?.type === "scroll") {
-        console.log("scrolling!!!");
-        const target = e.target as HTMLElement;
-        if (!target.contains(menuBtnEl)) return;
-      }
-
-      if (e?.type === "transitionend" || e?.type === "animationend") {
-        const target = e.target as HTMLElement;
-        if (containerEl !== target || menuDropdownEl !== target) return;
-      }
-
-      updateSVG();
-    }, 50);
-  };
-
-  const addOverlayEvents = () => {
-    window.addEventListener("scroll", updateOverlay, {
-      capture: true,
-      passive: true,
-    });
-    addResizeEvent();
-    addMutationObserver();
-    containerEl.addEventListener("transitionend", updateOverlay);
-    containerEl.addEventListener("animationend", updateOverlay);
-  };
-
-  const removeOverlayEvents = () => {
-    window.removeEventListener("scroll", updateOverlay, { capture: true });
-
-    removeResizeEvent();
-    removeMutationObserver();
-  };
-
-  const addResizeEvent = () => {
-    if ("ResizeObserver" in window) {
-      let init = true;
-      resizeObserver = new ResizeObserver(() => {
-        if (init) {
-          init = false;
-          return;
-        }
-        console.log("resize!!");
-        updateOverlay();
-      });
-      resizeObserver.observe(document.body);
-      resizeObserver.observe(menuBtnEl);
-      resizeObserver.observe(containerEl);
-      resizeObserver.observe(menuDropdownEl!);
-    } else {
-      window.addEventListener("resize", updateOverlay, { passive: true });
-    }
-  };
-
-  const removeMutationObserver = () => {
-    if (!mutationObserver) return;
-    mutationObserver.disconnect();
-    mutationObserver = null;
-  };
-
-  const addMutationObserver = () => {
-    let init = true;
-    const config = { attributes: true };
-    mutationObserver = new MutationObserver(() => {
-      if (init) {
-        init = false;
-        return;
-      }
-      updateOverlay();
-    });
-    mutationObserver.observe(menuBtnEl, config);
-    mutationObserver.observe(containerEl, config);
-    mutationObserver.observe(menuDropdownEl!, config);
-  };
-
-  const removeResizeEvent = () => {
-    if (resizeObserver) {
-      resizeObserver.disconnect();
-      resizeObserver = null;
-    } else {
-      window.removeEventListener("resize", updateOverlay);
-    }
-  };
-
-  const mountOverlayClipped = () => {
-    const style =
-      "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999; pointer-events:none;";
-
-    viewport.width = document.documentElement.clientWidth;
-    viewport.height = document.documentElement.clientHeight;
-    // console.log(overlayEl.clientWidth, overlayEl.clientHeight);
-    // viewport.width = overlayEl.clientWidth;
-    // viewport.height = overlayEl.clientHeight;
-    menuDropdownEl = queryElement(menuDropdown, "menuDropdown");
-
-    addOverlayEvents();
-
-    const child = (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox={`0 0 ${viewport.width} ${viewport.height}`}
-        width="100%"
-        height="100%"
-        preserveAspectRatio="xMaxYMax slice"
-        version="1.1"
-      >
-        {createClippedPath()}
-      </svg>
-    );
-    overlayEl.style.cssText = style;
-    overlayEl.appendChild(child as HTMLElement);
-  };
-
-  const manageDismissStack = (type: "add" | "remove") => {
-    if (type === "add") {
-      if (isOverlayClipped) {
-        const prevStack = dismissStack[dismissStack.length - 1];
-
-        if (prevStack && prevStack.overlayEl) {
-          const path = prevStack.overlayEl!.querySelector(
-            "path"
-          ) as SVGPathElement;
-          path.style.pointerEvents = "none";
-          path.style.fill = "transparent";
-        }
-      }
-
-      dismissStack.push({
-        setToggle: props.setToggle,
-        menuBtnEl,
-        overlayEl,
-        containerEl,
-      });
-    }
-
-    if (type === "remove") {
-      if (isOverlayClipped) {
-        const prevStack = dismissStack[dismissStack.length - 2];
-
-        if (prevStack && prevStack.overlayEl) {
-          const path = prevStack.overlayEl!.querySelector(
-            "path"
-          ) as SVGPathElement;
-          path.style.pointerEvents = "all";
-          path.style.fill = "";
-        }
-      }
-      dismissStack.pop();
-    }
-  };
-
   onMount(() => {
     menuBtnEl = queryElement(menuButton, "menuButton");
     menuBtnEl.addEventListener("click", onClickMenuButton);
@@ -827,9 +540,6 @@ const Dismiss: Component<{
       menuBtnId = createUniqueId();
       menuBtnEl.id = menuBtnId;
     }
-
-    // addCloseButtons();
-    // addMenuDropdownEl();
   });
 
   createEffect(
@@ -849,19 +559,29 @@ const Dismiss: Component<{
             document.addEventListener("keydown", onKeyDown);
           }
 
+          addDismissStack({
+            id: uniqueId,
+            toggle: props.toggle,
+            setToggle: props.setToggle,
+            containerEl,
+            menuBtnEl,
+            overlayEl,
+            menuDropdownEl: menuDropdownEl!,
+            isOverlayClipped,
+          });
+
           if (isOverlayClipped) {
             mountOverlayClipped();
           }
-          manageDismissStack("add");
-          // setTabIndexOfFocusTraps("0");
         } else {
           removeOutsideFocusEvents();
           removeMenuDropdownEl();
           removeCloseButtons();
-          // setTabIndexOfFocusTraps("-1");
-          removeOverlayEvents();
           document.removeEventListener("click", onClickDocument);
-          manageDismissStack("remove");
+          const stack = removeDismissStack(uniqueId);
+          if (isOverlayClipped) {
+            removeOverlayEvents(stack);
+          }
           if (dismissStack.length < 1) {
             addedKeydownListener = false;
             document.removeEventListener("keydown", onKeyDown);
@@ -879,10 +599,11 @@ const Dismiss: Component<{
     removeMenuDropdownEl();
 
     removeOutsideFocusEvents();
-    removeOverlayEvents();
-    // removeKeyFromStore(`onClickBtn ${menuBtnId}`);
-    // removeKeyFromStore(`setToggle from onClickDocument ${menuBtnId}`);
-    // removeKeyFromStore(`setToggle from onFocusInContainer ${menuBtnId}`);
+    const stack = removeDismissStack(uniqueId);
+    if (isOverlayClipped) {
+      removeOverlayEvents(stack);
+    }
+    console.log("onCleanup");
   });
 
   return (
@@ -903,6 +624,9 @@ const Dismiss: Component<{
         {isOverlayClipped && (
           <Portal>
             <div
+              style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: ${
+                999 + dismissStack.length
+              };`}
               solid-dismiss-overlay-clipped={props.id || ""}
               solid-dismiss-overlay-clipped-level={dismissStack.length}
               onClick={onClickOverlay}
@@ -952,26 +676,15 @@ const Dismiss: Component<{
 type TOverlayClipped = {
   /**
    * pass element that overlay needs to be clipped with.
-   *
    */
   el?: JSX.Element;
   /**
-   * Default: will grap element radius from computing its style
-   *
-   */
-  radius?: number;
-  /**
+   * Default: `undefined`
    * Use custom clipPath instead of using generated one.
    */
   clipPath?: string;
 };
 
 let addedKeydownListener = false;
-const dismissStack: {
-  setToggle: (v: boolean) => void;
-  menuBtnEl: HTMLElement;
-  containerEl: HTMLElement;
-  overlayEl?: HTMLDivElement;
-}[] = [];
 
 export default Dismiss;

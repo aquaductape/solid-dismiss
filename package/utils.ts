@@ -10,14 +10,18 @@ const focusableSelectors =
   'button, [href], input, select, textarea, details, [contentEditable=true], [tabindex]:not([tabindex="-1"])';
 
 export const getNextFocusableElement = ({
-  activeElement = document.activeElement as HTMLElement,
+  from = document.activeElement as HTMLElement,
   stopAtElement,
+  ignoreElement = [],
+  direction = "forwards",
 }: {
-  activeElement: HTMLElement;
+  from: HTMLElement;
   stopAtElement?: HTMLElement;
+  ignoreElement?: HTMLElement[];
+  direction?: "forwards" | "backwards";
 }) => {
-  const parent = activeElement.parentElement!;
-  const visitedElement = activeElement;
+  const parent = from.parentElement!;
+  const visitedElement = from;
 
   if (!visitedElement) return null;
 
@@ -25,21 +29,48 @@ export const getNextFocusableElement = ({
     parent: HTMLElement,
     visitedElement: HTMLElement
   ): HTMLElement | null => {
-    let hasPastVisitedElement = false;
+    let hasPassedVisitedElement = false;
 
-    for (const child of parent.children) {
-      if (hasPastVisitedElement) {
-        if (child.matches(focusableSelectors)) return child as HTMLElement;
-        const el = queryFocusableElement({ parent: child });
-        if (el) return el as HTMLElement;
-        continue;
+    const children = parent.children;
+    const childrenCount = children.length;
+
+    if (direction === "forwards") {
+      for (let i = 0; i < childrenCount; i++) {
+        const child = children[i];
+
+        if (hasPassedVisitedElement) {
+          if (ignoreElement.some((el) => el === child)) continue;
+          if (child.matches(focusableSelectors)) return child as HTMLElement;
+          const el = child.querySelector(focusableSelectors);
+          if (el) return el as HTMLElement;
+          continue;
+        }
+        if (child === visitedElement) {
+          hasPassedVisitedElement = true;
+          continue;
+        }
+        if (child === stopAtElement) {
+          return null;
+        }
       }
-      if (child === visitedElement) {
-        hasPastVisitedElement = true;
-        continue;
-      }
-      if (child === stopAtElement) {
-        return null;
+    } else {
+      for (let i = childrenCount - 1; i >= 0; i--) {
+        const child = children[i];
+
+        if (hasPassedVisitedElement) {
+          if (ignoreElement.some((el) => el === child)) continue;
+          if (child.matches(focusableSelectors)) return child as HTMLElement;
+          const el = inverseQuerySelector(child, focusableSelectors);
+          if (el) return el as HTMLElement;
+          continue;
+        }
+        if (child === visitedElement) {
+          hasPassedVisitedElement = true;
+          continue;
+        }
+        if (child === stopAtElement) {
+          return null;
+        }
       }
     }
 
@@ -54,17 +85,35 @@ export const getNextFocusableElement = ({
   return traverseNextSiblingsThenUp(parent, visitedElement);
 };
 
-export const queryFocusableElement = ({
-  parent,
-  all = false,
-}: {
-  parent: Element | HTMLElement;
-  all?: boolean;
-}) => {
-  if (all) {
-    return parent.querySelectorAll(
-      focusableSelectors
-    ) as NodeListOf<HTMLElement>;
-  }
-  return parent.querySelector(focusableSelectors) as HTMLElement;
+/**
+ *
+ * like querySelector but iterates through children backwards, which results that the selector matches last child first.
+ */
+const inverseQuerySelector = (
+  el: Element,
+  selector: string
+): HTMLElement | null => {
+  let foundElement: HTMLElement | null = null;
+
+  const query = (el: Element) => {
+    const children = el.children;
+    const childrenCount = children.length;
+
+    for (let i = childrenCount - 1; i >= 0; i--) {
+      const child = children[i];
+
+      if (child.matches(selector)) {
+        foundElement = child as HTMLElement;
+        return foundElement;
+      }
+
+      if (foundElement) return foundElement;
+
+      query(child);
+    }
+
+    return null;
+  };
+
+  return query(el);
 };

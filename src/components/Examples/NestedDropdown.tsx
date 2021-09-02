@@ -97,8 +97,8 @@ const Dropdown: Component<{
               </select>
               <Show when={toggle()}>
                 <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
-                <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
-                <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
+                {/* <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
+                <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} /> */}
               </Show>
             </div>
           </Dismiss>
