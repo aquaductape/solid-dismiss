@@ -19,12 +19,10 @@ const App: Component = () => {
         <BasicDropdown></BasicDropdown>
         {/* <NestedDropdown></NestedDropdown> */}
         <Select></Select>
-        {/* <NestedDropdown focusOnLeave={true} overlay="block"></NestedDropdown> */}
+        <NestedDropdown focusOnLeave={true} overlay="block"></NestedDropdown>
         <NestedDropdown focusOnLeave={true} overlay="clipped"></NestedDropdown>
-        {/* <NestedDropdown></NestedDropdown> */}
+        <NestedDropdown></NestedDropdown>
         <DropdownWithCloseButtons></DropdownWithCloseButtons>
-        {/* <NestedDropdown></NestedDropdown>
-        <DropdownWidget></DropdownWidget> */}
       </main>
       {/* <IOSDebugger /> */}
     </>

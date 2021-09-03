@@ -3,9 +3,14 @@ import { createSignal, Show, createEffect } from "solid-js";
 
 const DropdownWithCloseButtons = () => {
   const [toggle, setToggle] = createSignal(false);
-  let bntSaveEl!: HTMLButtonElement;
-  let bntCloseEl!: HTMLButtonElement;
+  const [redrawClippedPath, setRedrawClippedPath] = createSignal(0, {
+    equals: false,
+  });
   let btnEl!: HTMLButtonElement;
+
+  const onClickClose = () => {
+    setToggle(false);
+  };
 
   return (
     <div style="position: relative">
@@ -15,16 +20,16 @@ const DropdownWithCloseButtons = () => {
       <Dismiss
         class="dropdown dropdown-widget"
         menuButton={btnEl}
-        closeButton={() => [bntSaveEl, bntCloseEl]}
+        overlay={{ clipped: { redrawClippedPath } }}
         toggle={toggle}
         setToggle={setToggle}
       >
         <div>
           <h3>Dropdown Text</h3>
-          <button class="btn-secondary" ref={bntSaveEl}>
+          <button class="btn-secondary" onClick={onClickClose}>
             Save
           </button>
-          <button class="btn-secondary" ref={bntCloseEl}>
+          <button class="btn-secondary" onClick={onClickClose}>
             Close
           </button>
         </div>

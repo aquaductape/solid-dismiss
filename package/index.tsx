@@ -18,7 +18,11 @@ import {
   addDismissStack,
   removeDismissStack,
 } from "./dismissStack";
-import { mountOverlayClipped, removeOverlayEvents } from "./clippedOverlay";
+import {
+  mountOverlayClipped,
+  removeOverlayEvents,
+  updateSVG,
+} from "./clippedOverlay";
 
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
@@ -69,25 +73,43 @@ const Dismiss: Component<{
    *
    * which element, via selector*, to recieve focus after dropdown opens.
    *
-   * *selector: css string queried from document, or if string value is `"menuDropdown"` uses menuDropdown element (which is the second child of root component element ).
+   * *selector: css string queried from document, or if string value is `"menuDropdown"` uses menuDropdown element.
    */
   focusOnActive?: "menuDropdown" | string | JSX.Element | (() => JSX.Element);
   /**
-   * Default: uses browser default behavior when focusing to next element.
+   * Default: When Tabbing forwards, focuses on focusable element after menuButton. When Tabbing backwards, focuses on menuButton. When "click", if overlay present, then menuButton will be focused, otherwise user-agent determines which element recieves focus.
    *
-   * which element, via selector*, to recieve focus after dropdown closes.
+   * Which element, via selector*, to recieve focus after dropdown closes.
    *
    * *selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
    * An example would be to emulate native <select> element behavior, set which sets focus to menu button after dismiss.
    *
-   * Note: This won't prevent clicks on other elements that could potentially steal focus. To prevent this, use `overlay` prop.
+   * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
+   *
    */
   focusOnLeave?:
     | "menuButton"
     | string
     | JSX.Element
-    | { el: "menuButton" | string | JSX.Element; preventScroll: boolean };
+    | {
+        /**
+         * focus on element when exiting menuDropdown via tabbing backwards ie "Shift + Tab".
+         */
+        tabBackwards?: "menuButton" | string | JSX.Element;
+        /**
+         * focus on element when exiting menuDropdown via tabbing forwards ie "Tab".
+         */
+        tabForwards?: "menuButton" | string | JSX.Element;
+        /**
+         * focus on element when exiting menuDropdown via click outside dropdown.
+         *
+         * If overlay present, and dropdown closes via click, then menuButton will be focused.
+         *
+         * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
+         */
+        click?: "menuButton" | string | JSX.Element;
+      };
   /**
    * Default: `false`
    *
@@ -104,29 +126,41 @@ const Dismiss: Component<{
   /**
    * Default `"none"`
    *
-   * When prop is `"block"`, adds root level div that acts as overlay. This removes interaction of the page elements that's underneath the overlay element. Make sure that dropdown lives in the root level and has z-index value in order to be interacted.
+   * When prop is `"block"`, adds root level div that acts as overlay. This removes interaction of the page elements that's underneath the overlay element. Make sure that dropdown lives in the root level, one way is to nest this Component inside Solid's {@link https://www.solidjs.com/docs/latest/api#%3Cportal%3E Portal}.
    *
-   * When prop is `"clipped"`, it's similar to `"block"` where it places an element at root document, but creates a "mask" that clips around the menuButton and menuDropdown. This allows menuDropdown to live at menuButton markup context, rather than mounting it at top level of root document in order to be interacted with.
+   * When prop is `"clipped"`, it's similar to `"block"` where it places an element at root document, but creates a "mask"* that clips around the menuButton and menuDropdown. This allows menuDropdown to live anywhere in the document, rather than forced to mounting it at top level of root document in order to be interacted with.
+   *
+   * Note the "mask" is accurate if the menuButton and menuDropdown are rectangle shaped. Border radius are calculated except if menuButton and menuDropdown are intersecting.
    */
   overlay?:
     | "block"
     | "clipped"
     | {
         clipped: {
-          menuButton?: TOverlayClipped;
-          menuDropdown?: TOverlayClipped;
+          menuButton?: () => JSX.Element;
+          menuDropdown?: () => JSX.Element;
           /**
-           * Use this to manually redraw the "mask" that clips around menuButton and menuDropdown, in case mask is not aligned correctly.
+           * Use this to trigger redraw of "mask" that clips around menuButton and menuDropdown, in case mask is not aligned correctly.
            *
-           * Clip automatically redraws when below:
+           * Clip automatically redraws when cases run:
            * 1. parent scrollable container of menuButton/menuDropdown is scrolled.
            * 2. viewport is resized.
            * 3. animationend/transitionend fires on [data-solid-dismiss-dropdown-container] and menuDropdown.
-           * 4. menuButton/menuDropdown attributes change or element resized.
+           * 4. menuButton/menuDropdown resizes or attributes change.
            *
-           * All of the above is debounced 75ms
+           * All of the above is debounced with duration of 75ms
            */
-          redrawClippedPath?: number;
+          redrawClippedPath?: Accessor<number>;
+          /**
+           * Default: creates clipped path calculated on elements' rectangular shape and its border radius
+           *
+           * Use custom clipPath instead of using.
+           *
+           */
+          clipPathSVG?: (props: {
+            overlayEl: HTMLElement;
+            overlaySize: { width: number; height: number };
+          }) => void;
         };
       };
   toggle: Accessor<boolean>;
@@ -175,15 +209,6 @@ const Dismiss: Component<{
   const initDefer = !props.toggle();
   let init = false;
 
-  const runFocusOnLeave = () => {
-    if (focusOnLeave == null) return;
-
-    const el = queryElement(focusOnLeave);
-    if (el) {
-      el.focus();
-    }
-  };
-
   const runFocusOnActive = () => {
     if (focusOnActive == null) return;
 
@@ -208,6 +233,14 @@ const Dismiss: Component<{
   };
 
   const onClickOverlay = () => {
+    if (focusOnLeave) {
+      const el = queryElement(focusOnLeave, "focusOnLeave", "click");
+      if (el) {
+        el.focus();
+      }
+    } else {
+      menuBtnEl.focus();
+    }
     props.setToggle(false);
   };
 
@@ -370,18 +403,23 @@ const Dismiss: Component<{
         return;
       }
 
+      if (focusOnLeave) {
+        const el = queryElement(focusOnLeave, "focusOnLeave", "tabBackwards");
+        if (el) {
+          if (el === menuBtnEl && closeWhenMenuButtonIsTabbed) {
+            props.setToggle(false);
+          }
+          el.focus();
+          props.setToggle(false);
+          return;
+        }
+      }
+
       if (closeWhenMenuButtonIsTabbed) {
         props.setToggle(false);
       }
 
-      if (!focusOnLeave) {
-        menuBtnEl.focus();
-      } else {
-        const el = queryElement(focusOnLeave);
-        if (el) {
-          el.focus();
-        }
-      }
+      menuBtnEl.focus();
 
       return;
     }
@@ -395,21 +433,31 @@ const Dismiss: Component<{
       return;
     }
 
+    if (focusOnLeave) {
+      const el = queryElement(focusOnLeave, "focusOnLeave", "tabForwards");
+      if (el) {
+        el.focus();
+        props.setToggle(false);
+        return;
+      }
+    }
+
     const el = getNextFocusableElement({
       from: menuBtnEl,
-      stopAtElement: containerEl,
+      ignoreElement: [containerEl],
     });
+    console.log(el);
     if (el) {
       el.focus();
     }
+
     props.setToggle(false);
-    // runDelegateFocus();
-    // setTabIndexOfFocusTraps("-1");
   };
 
   const queryElement = (
     inputElement: any,
-    type?: "menuButton" | "menuDropdown" | "closeButton"
+    type?: "menuButton" | "menuDropdown" | "closeButton" | "focusOnLeave",
+    subType?: "tabForwards" | "tabBackwards" | "click"
   ): HTMLElement => {
     if (inputElement === "menuButton") {
       return menuBtnEl;
@@ -445,6 +493,25 @@ const Dismiss: Component<{
         if (!containerEl) return null as any;
         return containerEl.querySelector(result) as HTMLElement;
       }
+    }
+
+    if (type === "focusOnLeave") {
+      if (subType === "tabForwards") {
+        return queryElement(inputElement.tabForwards);
+      }
+      if (subType === "tabBackwards") {
+        return queryElement(inputElement.tabBackwards);
+      }
+      if (subType === "click") {
+        return queryElement(inputElement.click);
+      }
+    }
+
+    if (inputElement == null) return null as any;
+
+    for (const key in inputElement as { [key: string]: any }) {
+      const item = (inputElement as { [key: string]: any })[key];
+      return queryElement(item);
     }
 
     return null as any;
@@ -544,9 +611,9 @@ const Dismiss: Component<{
 
   createEffect(
     on(
-      props.toggle,
-      (toggle) => {
-        runFocusOnLeave();
+      () => !!props.toggle(),
+      (toggle, prevToggle) => {
+        if (toggle === prevToggle) return;
 
         expandToggle(toggle);
 
@@ -591,6 +658,21 @@ const Dismiss: Component<{
       { defer: initDefer }
     )
   );
+
+  if (typeof overlay === "object" && overlay.clipped.redrawClippedPath) {
+    createEffect(
+      on(
+        // @ts-ignore
+        () => props.overlay.clipped.redrawClippedPath(),
+        (result) => {
+          if (result === null || !props.toggle()) return;
+          console.log("run redraw");
+          updateSVG();
+        },
+        { defer: true }
+      )
+    );
+  }
 
   onCleanup(() => {
     document.removeEventListener("keydown", onKeyDown);
@@ -671,18 +753,6 @@ const Dismiss: Component<{
       </div>
     </Show>
   );
-};
-
-type TOverlayClipped = {
-  /**
-   * pass element that overlay needs to be clipped with.
-   */
-  el?: JSX.Element;
-  /**
-   * Default: `undefined`
-   * Use custom clipPath instead of using generated one.
-   */
-  clipPath?: string;
 };
 
 let addedKeydownListener = false;

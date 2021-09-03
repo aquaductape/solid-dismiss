@@ -42,6 +42,7 @@ const DropdownWithCloseButtons = () => {
         <div>
           <div class="dropdown-area">
             <button
+              id="focus-me"
               class="focus-gutter"
               aria-label="focus gutter, before dropdown button"
             ></button>

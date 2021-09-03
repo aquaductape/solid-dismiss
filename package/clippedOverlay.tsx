@@ -359,7 +359,7 @@ const removeMutationObserver = () => {
   mutationObserver = null;
 };
 
-const updateSVG = () => {
+export const updateSVG = () => {
   const { menuDropdownEl, overlayEl, containerEl } =
     dismissStack[dismissStack.length - 1];
 
