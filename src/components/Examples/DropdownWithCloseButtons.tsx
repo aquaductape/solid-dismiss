@@ -1,11 +1,8 @@
 import Dismiss from "../../../package/index";
-import { createSignal, Show, createEffect } from "solid-js";
+import { createSignal } from "solid-js";
 
 const DropdownWithCloseButtons = () => {
   const [toggle, setToggle] = createSignal(false);
-  const [redrawClippedPath, setRedrawClippedPath] = createSignal(0, {
-    equals: false,
-  });
   let btnEl!: HTMLButtonElement;
 
   const onClickClose = () => {
@@ -20,7 +17,6 @@ const DropdownWithCloseButtons = () => {
       <Dismiss
         class="dropdown dropdown-widget"
         menuButton={btnEl}
-        overlay={{ clipped: { redrawClippedPath } }}
         toggle={toggle}
         setToggle={setToggle}
       >

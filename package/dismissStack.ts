@@ -8,6 +8,7 @@ export type TDismissStack = {
   menuDropdownEl: HTMLElement;
   containerEl: HTMLElement;
   overlayEl?: HTMLDivElement;
+  overlay: "block" | "clipped" | false;
   isOverlayClipped: boolean;
 };
 export const dismissStack: TDismissStack[] = [];
@@ -15,7 +16,12 @@ export const dismissStack: TDismissStack[] = [];
 export const addDismissStack = (props: TDismissStack) => {
   const prevStack = dismissStack[dismissStack.length - 1];
 
-  if (prevStack && prevStack.overlayEl && prevStack.isOverlayClipped) {
+  if (
+    prevStack &&
+    prevStack.overlayEl &&
+    prevStack.isOverlayClipped &&
+    props.isOverlayClipped
+  ) {
     const path = prevStack.overlayEl!.querySelector("path") as SVGPathElement;
     path.style.pointerEvents = "none";
     path.style.fill = "transparent";

@@ -13,17 +13,89 @@ const timeoutAmount = 75;
 
 const overlaySize = { height: 0, width: 0 };
 
-const createClippedPoints = () => {
-  const { menuBtnEl, menuDropdownEl } = dismissStack[dismissStack.length - 1];
+const isTopStackOverlayClipped = () =>
+  dismissStack[dismissStack.length - 1].isOverlayClipped;
 
-  const [menuBtnBCR, menuDrodownBCR] = [
-    menuBtnEl.getBoundingClientRect(),
-    menuDropdownEl.getBoundingClientRect(),
-  ];
+const getTopClippedOverlayStack = () => {
+  for (let i = dismissStack.length - 1; i >= 0; i--) {
+    const stack = dismissStack[i];
+    if (stack.isOverlayClipped) {
+      return stack;
+    }
+  }
+  return null;
+};
+
+const getTopClippedOverlayAndNormalElements = () => {
+  const elements: HTMLElement[] = [];
+  for (let i = dismissStack.length - 1; i >= 0; i--) {
+    const stack = dismissStack[i];
+    if (stack.isOverlayClipped) {
+      elements.push(stack.menuBtnEl, stack.menuDropdownEl);
+      return elements;
+    }
+
+    elements.push(stack.menuDropdownEl);
+  }
+
+  return elements;
+};
+
+const createClippedPoints = () => {
+  const elements = getTopClippedOverlayAndNormalElements();
+  const [menuBtnEl, menuDropdownEl] = elements;
+  const bcrs = elements.map((element) => element.getBoundingClientRect());
+  const [menuBtnBCR, menuDrodownBCR] = bcrs;
+
   const [menuBtnStyle, menuDropdownStyle] = [
     window.getComputedStyle(menuBtnEl),
     window.getComputedStyle(menuDropdownEl),
   ];
+  const bgCover = `M 0,0 H ${overlaySize.width} V ${overlaySize.height} H 0 Z`;
+
+  const createOverlappedGroups = (input: DOMRect[]) => {
+    const bcrs: { bcr: DOMRect; id: number | null }[] = input.map((item) => ({
+      bcr: item,
+      id: null,
+    }));
+    const groups: DOMRect[][] = [];
+    let index = 0;
+
+    for (let i = 0; i < bcrs.length; i++) {
+      const itemI = bcrs[i];
+      for (let j = 0; j < bcrs.length; j++) {
+        if (i === j) continue;
+        const itemJ = bcrs[j];
+
+        if (doesOverlap(itemI.bcr, itemJ.bcr)) {
+          const idI = itemI.id;
+          const idJ = itemJ.id;
+
+          if (idI == null && idJ == null) {
+            itemI.id = index;
+            itemJ.id = index;
+            index++;
+            groups.push([itemI.bcr, itemJ.bcr]);
+            continue;
+          }
+
+          if (idI && idJ == null) {
+            groups[idI].push(itemJ.bcr);
+            itemJ.id = idI;
+            continue;
+          }
+
+          if (idJ && idI == null) {
+            groups[idJ].push(itemI.bcr);
+            itemI.id = idJ;
+            continue;
+          }
+        }
+      }
+    }
+
+    return groups;
+  };
 
   const doesOverlap = (bcr1: DOMRect, bcr2: DOMRect) => {
     return (
@@ -126,6 +198,155 @@ const createClippedPoints = () => {
     } ${topLeftArc} z `;
   };
 
+  // make sure to split overlapped shapes into groups if some "overlapped" shapes don't intersect others
+  const createOutlineShape = (bcrs: DOMRect[]) => {
+    // all shapes must overlap
+
+    bcrs.sort((a, b) => {
+      return a.y - b.y;
+    });
+    const root = bcrs[0];
+    let path = `M ${root.top}, ${root.left} H ${root.right}`;
+    let currentDirection: "down" | "up" | "left" | "right" = "down";
+    let currentBCR: DOMRect = root;
+
+    let counter = 0;
+
+    const findIntersectedBCR = (
+      type: "max" | "min",
+      rectType: "left" | "right" | "top" | "bottom",
+      bcrs: DOMRect[],
+      cb: (bcrItem: DOMRect) => boolean
+    ) => {
+      bcrs.sort((a, b) => {
+        let prop = rectType;
+        if (a[prop] === b[prop]) {
+          if (rectType === "top") {
+            return b.right - a.right;
+          }
+
+          if (rectType === "left") {
+            return a.top - b.top;
+          }
+
+          if (rectType === "right") {
+            return b.bottom - a.bottom;
+          }
+
+          if (rectType === "bottom") {
+            return a.left - b.left;
+          }
+        }
+        return type === "max"
+          ? b[rectType] - a[rectType]
+          : a[rectType] - b[rectType];
+      });
+
+      return bcrs.find(cb);
+    };
+
+    const buildOutline = () => {
+      // if (!currentBCR) return;
+      counter++;
+      if (counter >= 1000) {
+        console.warn("infinte!!!");
+        return;
+      }
+
+      let result!: DOMRect;
+
+      if (currentDirection === "down") {
+        const foundBCR = findIntersectedBCR(
+          "min",
+          "top",
+          bcrs,
+          (bcr) =>
+            bcr.top >= currentBCR.top &&
+            bcr.left <= currentBCR.right &&
+            bcr.right >= currentBCR.right &&
+            bcr !== currentBCR
+        );
+
+        result = currentBCR;
+        if (foundBCR) {
+          result = foundBCR;
+          currentBCR = foundBCR;
+        }
+        path += ` V ${result.top}`;
+        currentDirection = "right";
+      }
+
+      if (currentDirection === "right") {
+        const foundBCR = findIntersectedBCR(
+          "min",
+          "left",
+          bcrs,
+          (bcr) =>
+            bcr.left >= currentBCR.left &&
+            bcr.left <= currentBCR.right &&
+            bcr.top <= currentBCR.top &&
+            bcr !== currentBCR
+        );
+        result = currentBCR;
+        if (foundBCR) {
+          result = foundBCR;
+          currentBCR = foundBCR;
+        }
+        path += ` H ${result.left}`;
+        currentDirection = "up";
+      }
+
+      if (currentDirection === "left") {
+        const foundBCR = findIntersectedBCR(
+          "max",
+          "right",
+          bcrs,
+          (bcr) =>
+            bcr.right <= currentBCR.right &&
+            bcr.top <= currentBCR.bottom &&
+            bcr.bottom >= currentBCR.bottom &&
+            bcr !== currentBCR
+        );
+        result = currentBCR;
+        if (foundBCR) {
+          result = foundBCR;
+          currentBCR = foundBCR;
+        }
+        path += ` H ${result.right}`;
+        currentDirection = "down";
+      }
+
+      if (currentDirection === "up") {
+        const foundBCR = findIntersectedBCR(
+          "max",
+          "bottom",
+          bcrs,
+          (bcr) =>
+            bcr.bottom <= currentBCR.bottom &&
+            bcr.right >= currentBCR.left &&
+            bcr.left <= currentBCR.left &&
+            bcr !== currentBCR
+        );
+
+        result = currentBCR;
+        if (foundBCR) {
+          result = foundBCR;
+          currentBCR = foundBCR;
+        }
+        path += ` H ${result.bottom}`;
+        currentDirection = "left";
+      }
+
+      if (result.top === root.top) return;
+
+      buildOutline();
+    };
+
+    buildOutline();
+
+    return path;
+  };
+
   const createOverlappedShape = (bcr1: DOMRect, bcr2: DOMRect) => {
     const x = Math.max(bcr1.x, bcr2.x);
     const y = Math.max(bcr1.y, bcr2.y);
@@ -138,17 +359,24 @@ const createClippedPoints = () => {
   `;
   };
 
-  const bgCover = `M 0,0 H ${overlaySize.width} V ${overlaySize.height} H 0 Z`;
+  //   const isCover = doesCover(menuBtnBCR, menuDrodownBCR);
+  //
+  //   if (isCover) {
+  //     if (isCover.which === "menuButton") {
+  //       return `${bgCover} ${createPath(menuBtnBCR, menuBtnStyle)}`;
+  //     }
+  //     if (isCover.which === "menuDropdown") {
+  //       return `${bgCover} ${createPath(menuDrodownBCR, menuDropdownStyle)}`;
+  //     }
+  //   }
+  if (elements.length > 2) {
+    const groups = createOverlappedGroups(bcrs);
+    let path = "";
+    groups.forEach((group) => {
+      path += " " + createOutlineShape(group);
+    });
 
-  const isCover = doesCover(menuBtnBCR, menuDrodownBCR);
-
-  if (isCover) {
-    if (isCover.which === "menuButton") {
-      return `${bgCover} ${createPath(menuBtnBCR, menuBtnStyle)}`;
-    }
-    if (isCover.which === "menuDropdown") {
-      return `${bgCover} ${createPath(menuDrodownBCR, menuDropdownStyle)}`;
-    }
+    return `${bgCover} ${path}`;
   }
 
   if (doesOverlap(menuBtnBCR, menuDrodownBCR)) {
@@ -175,14 +403,15 @@ const generalOverlay = () => {
   window.clearTimeout(generalTimeoutId!);
 
   generalTimeoutId = window.setTimeout(() => {
-    if (!dismissStack.length) return;
+    if (!dismissStack.length || !isTopStackOverlayClipped()) return;
 
-    const { toggle, containerEl } = dismissStack[dismissStack.length - 1];
+    const stack = getTopClippedOverlayStack()!;
+    const { toggle, containerEl } = stack;
 
     if (!containerEl.isConnected) return;
     if (!toggle()) return;
 
-    updateSVG();
+    updateSVG(stack);
   }, timeoutAmount);
 };
 
@@ -190,10 +419,10 @@ const onAnimationendOverlay = (e: Event) => {
   window.clearTimeout(animationendTimeoutId!);
 
   animationendTimeoutId = window.setTimeout(() => {
-    if (!dismissStack.length) return;
+    if (!dismissStack.length || !isTopStackOverlayClipped()) return;
 
-    const { toggle, containerEl, menuDropdownEl, menuBtnEl } =
-      dismissStack[dismissStack.length - 1];
+    const stack = getTopClippedOverlayStack()!;
+    const { toggle, containerEl, menuDropdownEl, menuBtnEl } = stack;
 
     if (!toggle()) return;
 
@@ -207,7 +436,7 @@ const onAnimationendOverlay = (e: Event) => {
     )
       return;
 
-    updateSVG();
+    updateSVG(stack);
   }, timeoutAmount);
 };
 
@@ -215,10 +444,10 @@ const onTransitionendOverlay = (e: Event) => {
   window.clearTimeout(transitionendTimeoutId!);
 
   transitionendTimeoutId = window.setTimeout(() => {
-    if (!dismissStack.length) return;
+    if (!dismissStack.length || !isTopStackOverlayClipped()) return;
 
-    const { toggle, containerEl, menuDropdownEl, menuBtnEl } =
-      dismissStack[dismissStack.length - 1];
+    const stack = getTopClippedOverlayStack()!;
+    const { toggle, containerEl, menuDropdownEl, menuBtnEl } = stack;
 
     if (!toggle()) return;
 
@@ -232,7 +461,7 @@ const onTransitionendOverlay = (e: Event) => {
     )
       return;
 
-    updateSVG();
+    updateSVG(stack);
   }, timeoutAmount);
 };
 
@@ -240,16 +469,16 @@ const onScrollOverlay = (e: Event) => {
   window.clearTimeout(scrollTimeoutId!);
 
   scrollTimeoutId = window.setTimeout(() => {
-    if (!dismissStack.length) return;
+    if (!dismissStack.length || !isTopStackOverlayClipped()) return;
 
-    const { menuBtnEl, containerEl, toggle } =
-      dismissStack[dismissStack.length - 1];
+    const stack = getTopClippedOverlayStack()!;
+    const { menuBtnEl, containerEl, toggle } = stack;
     if (!toggle()) return;
 
     const target = e.target as HTMLElement;
     if (!(target.contains(menuBtnEl) || target.contains(containerEl))) return;
 
-    updateSVG();
+    updateSVG(stack);
   }, timeoutAmount);
 };
 
@@ -280,7 +509,7 @@ export const removeOverlayEvents = (stack: TDismissStack | undefined) => {
   if (!stack) return;
   const { containerEl, menuBtnEl, menuDropdownEl } = stack;
 
-  if (dismissStack.length < 1) {
+  if (dismissStack.every((stack) => !stack.isOverlayClipped)) {
     console.log("remove ResizeEvent MutationObserver Scroll");
 
     addedScrollEvent = false;
@@ -300,7 +529,7 @@ export const removeOverlayEvents = (stack: TDismissStack | undefined) => {
 
 const addResizeEvent = () => {
   const { containerEl, menuBtnEl, menuDropdownEl } =
-    dismissStack[dismissStack.length - 1];
+    getTopClippedOverlayStack()!;
 
   if ("ResizeObserver" in window) {
     let init = true;
@@ -329,7 +558,7 @@ const removeResizeEvent = () => {
     resizeObserver.disconnect();
     resizeObserver = null;
   } else {
-    if (dismissStack.length <= 1) {
+    if (dismissStack.every((stack) => !stack.isOverlayClipped)) {
       addedScrollEvent = false;
       window.removeEventListener("resize", generalOverlay);
     }
@@ -338,7 +567,7 @@ const removeResizeEvent = () => {
 
 const addMutationObserver = () => {
   const { containerEl, menuBtnEl, menuDropdownEl } =
-    dismissStack[dismissStack.length - 1];
+    getTopClippedOverlayStack()!;
   let init = true;
   const config = { attributes: true };
   mutationObserver = new MutationObserver(() => {
@@ -359,9 +588,9 @@ const removeMutationObserver = () => {
   mutationObserver = null;
 };
 
-export const updateSVG = () => {
+export const updateSVG = (stack?: TDismissStack) => {
   const { menuDropdownEl, overlayEl, containerEl } =
-    dismissStack[dismissStack.length - 1];
+    stack || getTopClippedOverlayStack()!;
 
   if (!overlayEl || !menuDropdownEl || !containerEl) return;
   const svgEl = overlayEl.firstElementChild!;

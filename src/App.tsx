@@ -9,6 +9,7 @@ import NestedDropdown from "./components/ExamplesSection/NestedDropdown";
 import IOSDebugger from "./components/iOSDebugger";
 import DropdownWithCloseButtons from "./components/ExamplesSection/DropdownWithCloseButtons";
 import Select from "./components/ExamplesSection/Select";
+import Mixed from "./components/Examples/Mixed";
 
 const App: Component = () => {
   return (
@@ -21,8 +22,9 @@ const App: Component = () => {
         <Select></Select>
         <NestedDropdown focusOnLeave={true} overlay="block"></NestedDropdown>
         <NestedDropdown focusOnLeave={true} overlay="clipped"></NestedDropdown>
-        <NestedDropdown></NestedDropdown>
+        <NestedDropdown focusOnLeave={true}></NestedDropdown>
         <DropdownWithCloseButtons></DropdownWithCloseButtons>
+        <Mixed />
       </main>
       {/* <IOSDebugger /> */}
     </>

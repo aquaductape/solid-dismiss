@@ -635,6 +635,7 @@ const Dismiss: Component<{
             overlayEl,
             menuDropdownEl: menuDropdownEl!,
             isOverlayClipped,
+            overlay: typeof overlay === "object" ? "clipped" : overlay,
           });
 
           if (isOverlayClipped) {
