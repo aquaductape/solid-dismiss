@@ -13,8 +13,8 @@ const timeoutAmount = 75;
 
 const overlaySize = { height: 0, width: 0 };
 
-const isTopStackOverlayClipped = () =>
-  dismissStack[dismissStack.length - 1].isOverlayClipped;
+const isTopStackOverlayBlock = () =>
+  dismissStack[dismissStack.length - 1].overlay === "block";
 
 const getTopClippedOverlayStack = () => {
   for (let i = dismissStack.length - 1; i >= 0; i--) {
@@ -79,19 +79,25 @@ const createClippedPoints = () => {
             continue;
           }
 
-          if (idI && idJ == null) {
+          if (idI != null && idJ == null) {
             groups[idI].push(itemJ.bcr);
             itemJ.id = idI;
             continue;
           }
 
-          if (idJ && idI == null) {
+          if (idJ != null && idI == null) {
             groups[idJ].push(itemI.bcr);
             itemI.id = idJ;
             continue;
           }
         }
       }
+    }
+    const leftover = bcrs
+      .filter((item) => item.id == null)
+      .map((item) => item.bcr);
+    if (leftover) {
+      groups.push(leftover);
     }
 
     return groups;
@@ -201,13 +207,14 @@ const createClippedPoints = () => {
   // make sure to split overlapped shapes into groups if some "overlapped" shapes don't intersect others
   const createOutlineShape = (bcrs: DOMRect[]) => {
     // all shapes must overlap
+    if (bcrs.length === 1) return createRectangle(bcrs[0]);
 
     bcrs.sort((a, b) => {
       return a.y - b.y;
     });
     const root = bcrs[0];
-    let path = `M ${root.top}, ${root.left} H ${root.right}`;
-    let currentDirection: "down" | "up" | "left" | "right" = "down";
+    let path = `M ${root.left}, ${root.top}`;
+    let currentDirection: "down" | "up" | "left" | "right" = "right";
     let currentBCR: DOMRect = root;
 
     let counter = 0;
@@ -254,97 +261,135 @@ const createClippedPoints = () => {
       }
 
       let result!: DOMRect;
+      let resultValue = 0;
+      let resultPath = "";
 
-      if (currentDirection === "down") {
-        const foundBCR = findIntersectedBCR(
-          "min",
-          "top",
-          bcrs,
-          (bcr) =>
-            bcr.top >= currentBCR.top &&
-            bcr.left <= currentBCR.right &&
-            bcr.right >= currentBCR.right &&
-            bcr !== currentBCR
-        );
+      const run = () => {
+        if (currentDirection === "down") {
+          const foundBCR = findIntersectedBCR(
+            "min",
+            "top",
+            bcrs,
+            (bcr) =>
+              bcr.top >= currentBCR.top &&
+              bcr.left <= currentBCR.right &&
+              bcr.right >= currentBCR.right &&
+              bcr !== currentBCR
+          );
 
-        result = currentBCR;
-        if (foundBCR) {
-          result = foundBCR;
-          currentBCR = foundBCR;
+          result = currentBCR;
+          resultValue = result.bottom;
+          resultPath = ` V ${resultValue}`;
+          currentDirection = "left";
+
+          if (foundBCR) {
+            result = foundBCR;
+            resultValue = result.top;
+            currentBCR = foundBCR;
+            currentDirection = "right";
+            resultPath = ` V ${resultValue}`;
+          }
+
+          return;
         }
-        path += ` V ${result.top}`;
-        currentDirection = "right";
-      }
 
-      if (currentDirection === "right") {
-        const foundBCR = findIntersectedBCR(
-          "min",
-          "left",
-          bcrs,
-          (bcr) =>
-            bcr.left >= currentBCR.left &&
-            bcr.left <= currentBCR.right &&
-            bcr.top <= currentBCR.top &&
-            bcr !== currentBCR
-        );
-        result = currentBCR;
-        if (foundBCR) {
-          result = foundBCR;
-          currentBCR = foundBCR;
+        if (currentDirection === "right") {
+          const foundBCR = findIntersectedBCR(
+            "min",
+            "left",
+            bcrs,
+            (bcr) =>
+              bcr.left >= currentBCR.left &&
+              bcr.left <= currentBCR.right &&
+              bcr.top <= currentBCR.top &&
+              bcr !== currentBCR
+          );
+
+          result = currentBCR;
+          resultValue = result.right;
+          resultPath = ` H ${resultValue}`;
+          currentDirection = "down";
+
+          if (foundBCR) {
+            result = foundBCR;
+            resultValue = result.left;
+            currentBCR = foundBCR;
+            currentDirection = "up";
+            resultPath = ` H ${resultValue}`;
+          }
+          return;
         }
-        path += ` H ${result.left}`;
-        currentDirection = "up";
-      }
 
-      if (currentDirection === "left") {
-        const foundBCR = findIntersectedBCR(
-          "max",
-          "right",
-          bcrs,
-          (bcr) =>
-            bcr.right <= currentBCR.right &&
-            bcr.top <= currentBCR.bottom &&
-            bcr.bottom >= currentBCR.bottom &&
-            bcr !== currentBCR
-        );
-        result = currentBCR;
-        if (foundBCR) {
-          result = foundBCR;
-          currentBCR = foundBCR;
+        if (currentDirection === "left") {
+          const foundBCR = findIntersectedBCR(
+            "max",
+            "right",
+            bcrs,
+            (bcr) =>
+              bcr.right <= currentBCR.right &&
+              bcr.top <= currentBCR.bottom &&
+              bcr.bottom >= currentBCR.bottom &&
+              bcr !== currentBCR
+          );
+          result = currentBCR;
+          resultValue = result.left;
+          resultPath = ` H ${resultValue}`;
+          currentDirection = "up";
+
+          if (foundBCR) {
+            result = foundBCR;
+            resultValue = result.right;
+            currentBCR = foundBCR;
+            currentDirection = "down";
+            resultPath = ` H ${resultValue}`;
+          }
+          return;
         }
-        path += ` H ${result.right}`;
-        currentDirection = "down";
-      }
 
-      if (currentDirection === "up") {
-        const foundBCR = findIntersectedBCR(
-          "max",
-          "bottom",
-          bcrs,
-          (bcr) =>
-            bcr.bottom <= currentBCR.bottom &&
-            bcr.right >= currentBCR.left &&
-            bcr.left <= currentBCR.left &&
-            bcr !== currentBCR
-        );
+        if (currentDirection === "up") {
+          const foundBCR = findIntersectedBCR(
+            "max",
+            "bottom",
+            bcrs,
+            (bcr) =>
+              bcr.bottom <= currentBCR.bottom &&
+              bcr.right >= currentBCR.left &&
+              bcr.left <= currentBCR.left &&
+              bcr !== currentBCR
+          );
 
-        result = currentBCR;
-        if (foundBCR) {
-          result = foundBCR;
-          currentBCR = foundBCR;
+          result = currentBCR;
+          resultValue = result.top;
+          resultPath = ` V ${resultValue}`;
+          currentDirection = "right";
+          if (foundBCR) {
+            result = foundBCR;
+            resultValue = result.bottom;
+            currentBCR = foundBCR;
+            currentDirection = "left";
+            resultPath = ` V ${resultValue}`;
+          }
+          return;
         }
-        path += ` H ${result.bottom}`;
-        currentDirection = "left";
-      }
+      };
 
-      if (result.top === root.top) return;
+      run();
+
+      path += resultPath;
+
+      if (resultValue === root.top && currentDirection === "right") return;
 
       buildOutline();
     };
 
     buildOutline();
+    console.log(path);
 
-    return path;
+    return path + " z";
+  };
+
+  const createRectangle = (bcr: DOMRect) => {
+    return ` M ${bcr.x}, ${bcr.y} H ${bcr.right} V ${bcr.bottom} H ${bcr.x} z`;
   };
 
   const createOverlappedShape = (bcr1: DOMRect, bcr2: DOMRect) => {
@@ -352,9 +397,10 @@ const createClippedPoints = () => {
     const y = Math.max(bcr1.y, bcr2.y);
     const xx = Math.min(bcr1.x + bcr1.width, bcr2.x + bcr2.width) - x;
     const yy = Math.min(bcr1.y + bcr1.height, bcr2.y + bcr2.height) - y;
+
     return `
-        M ${bcr1.x}, ${bcr1.y} H ${bcr1.right} V ${bcr1.bottom} H ${bcr1.x} z
-    M ${bcr2.x}, ${bcr2.y} H ${bcr2.right} V ${bcr2.bottom} H ${bcr2.x} z
+    ${createRectangle(bcr1)}
+        ${createRectangle(bcr2)}
     M ${x}, ${y} h ${xx} v ${yy} h -${xx} z
   `;
   };
@@ -371,6 +417,7 @@ const createClippedPoints = () => {
   //   }
   if (elements.length > 2) {
     const groups = createOverlappedGroups(bcrs);
+    debugger;
     let path = "";
     groups.forEach((group) => {
       path += " " + createOutlineShape(group);
@@ -403,7 +450,7 @@ const generalOverlay = () => {
   window.clearTimeout(generalTimeoutId!);
 
   generalTimeoutId = window.setTimeout(() => {
-    if (!dismissStack.length || !isTopStackOverlayClipped()) return;
+    if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
     const { toggle, containerEl } = stack;
@@ -419,7 +466,7 @@ const onAnimationendOverlay = (e: Event) => {
   window.clearTimeout(animationendTimeoutId!);
 
   animationendTimeoutId = window.setTimeout(() => {
-    if (!dismissStack.length || !isTopStackOverlayClipped()) return;
+    if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
     const { toggle, containerEl, menuDropdownEl, menuBtnEl } = stack;
@@ -444,7 +491,7 @@ const onTransitionendOverlay = (e: Event) => {
   window.clearTimeout(transitionendTimeoutId!);
 
   transitionendTimeoutId = window.setTimeout(() => {
-    if (!dismissStack.length || !isTopStackOverlayClipped()) return;
+    if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
     const { toggle, containerEl, menuDropdownEl, menuBtnEl } = stack;
@@ -469,7 +516,7 @@ const onScrollOverlay = (e: Event) => {
   window.clearTimeout(scrollTimeoutId!);
 
   scrollTimeoutId = window.setTimeout(() => {
-    if (!dismissStack.length || !isTopStackOverlayClipped()) return;
+    if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
     const { menuBtnEl, containerEl, toggle } = stack;
