@@ -1,5 +1,6 @@
 import { dismissStack, TDismissStack } from "./dismissStack";
 import { parseValToNum } from "./utils";
+import { createUniqueId } from "solid-js";
 
 let resizeObserver: ResizeObserver | null = null;
 let mutationObserver: MutationObserver | null = null;
@@ -26,82 +27,19 @@ const getTopClippedOverlayStack = () => {
   return null;
 };
 
-const getTopClippedOverlayAndNormalElements = () => {
-  const elements: HTMLElement[] = [];
-  for (let i = dismissStack.length - 1; i >= 0; i--) {
-    const stack = dismissStack[i];
-    if (stack.isOverlayClipped) {
-      elements.push(stack.menuBtnEl, stack.menuDropdownEl);
-      return elements;
-    }
-
-    elements.push(stack.menuDropdownEl);
-  }
-
-  return elements;
-};
-
 const createClippedPoints = () => {
-  const elements = getTopClippedOverlayAndNormalElements();
-  const [menuBtnEl, menuDropdownEl] = elements;
-  const bcrs = elements.map((element) => element.getBoundingClientRect());
-  const [menuBtnBCR, menuDrodownBCR] = bcrs;
+  const { id, menuBtnEl, menuDropdownEl } = getTopClippedOverlayStack()!;
+  const bcrs = [
+    menuBtnEl.getBoundingClientRect(),
+    menuDropdownEl.getBoundingClientRect(),
+  ];
+  const [menuBtnBCR, menuDropdownBCR] = bcrs;
 
   const [menuBtnStyle, menuDropdownStyle] = [
     window.getComputedStyle(menuBtnEl),
     window.getComputedStyle(menuDropdownEl),
   ];
   const bgCover = `M 0,0 H ${overlaySize.width} V ${overlaySize.height} H 0 Z`;
-
-  const createOverlappedGroups = (input: DOMRect[]) => {
-    const bcrs: { bcr: DOMRect; id: number | null }[] = input.map((item) => ({
-      bcr: item,
-      id: null,
-    }));
-    const groups: DOMRect[][] = [];
-    let index = 0;
-
-    for (let i = 0; i < bcrs.length; i++) {
-      const itemI = bcrs[i];
-      for (let j = 0; j < bcrs.length; j++) {
-        if (i === j) continue;
-        const itemJ = bcrs[j];
-
-        if (doesOverlap(itemI.bcr, itemJ.bcr)) {
-          const idI = itemI.id;
-          const idJ = itemJ.id;
-
-          if (idI == null && idJ == null) {
-            itemI.id = index;
-            itemJ.id = index;
-            index++;
-            groups.push([itemI.bcr, itemJ.bcr]);
-            continue;
-          }
-
-          if (idI != null && idJ == null) {
-            groups[idI].push(itemJ.bcr);
-            itemJ.id = idI;
-            continue;
-          }
-
-          if (idJ != null && idI == null) {
-            groups[idJ].push(itemI.bcr);
-            itemI.id = idJ;
-            continue;
-          }
-        }
-      }
-    }
-    const leftover = bcrs
-      .filter((item) => item.id == null)
-      .map((item) => item.bcr);
-    if (leftover) {
-      groups.push(leftover);
-    }
-
-    return groups;
-  };
 
   const doesOverlap = (bcr1: DOMRect, bcr2: DOMRect) => {
     return (
@@ -175,275 +113,76 @@ const createClippedPoints = () => {
     const bBottomLeftRadius = parseRadius(style.borderBottomLeftRadius, bcr);
 
     const topRightArc = bTopRightRadius
-      ? `a ${bTopRightRadius.x} ${bTopRightRadius.y} 0 0 1 ${bTopRightRadius.x} ${bTopRightRadius.y}`
+      ? `A ${bTopRightRadius.x} ${bTopRightRadius.y} 0 0 1 ${bcr.right} ${
+          bcr.top + bTopRightRadius.y
+        }`
       : "";
     const bottomRightArc = bBottomRightRadius
-      ? `a ${bBottomRightRadius.x} ${
-          bBottomRightRadius.y
-        } 0 0 1 ${-bBottomRightRadius.x} ${bBottomRightRadius.y}`
+      ? `A ${bBottomRightRadius.x} ${bBottomRightRadius.y} 0 0 1 ${
+          -bBottomRightRadius.x + bcr.right
+        } ${bcr.bottom}`
       : "";
     const bottomLeftArc = bBottomLeftRadius
-      ? `a ${bBottomLeftRadius.x} ${
-          bBottomLeftRadius.y
-        } 0 0 1 ${-bBottomLeftRadius.x} ${-bBottomLeftRadius.y}`
+      ? `A ${bBottomLeftRadius.x} ${bBottomLeftRadius.y} 0 0 1 ${bcr.left} ${
+          -bBottomLeftRadius.y + bcr.bottom
+        }`
       : "";
     const topLeftArc = bTopLeftRadius
-      ? `a ${bTopLeftRadius.x} ${bTopLeftRadius.y} 0 0 1 ${
-          bTopLeftRadius.x
-        } ${-bTopLeftRadius.y}`
+      ? `A ${bTopLeftRadius.x} ${bTopLeftRadius.y} 0 0 1 ${
+          bTopLeftRadius.x + bcr.left
+        } ${bcr.top}`
       : "";
 
-    return `M ${bcr.x + bTopLeftRadius.x}, ${bcr.y} h ${
-      bcr.width - bTopRightRadius.x - bTopLeftRadius.x
-    } ${topRightArc} v ${
-      bcr.height - bBottomRightRadius.y - bTopRightRadius.y
-    } ${bottomRightArc} h ${
-      -bcr.width + bBottomLeftRadius.x + bBottomRightRadius.x
-    } ${bottomLeftArc} v ${
-      -bcr.height + bTopLeftRadius.y + bBottomLeftRadius.y
-    } ${topLeftArc} z `;
+    const topCommand = `${bcr.right - bTopRightRadius.x}`;
+    const rightCommand = `${bcr.bottom - bBottomRightRadius.y}`;
+    const bottomCommand = `${bcr.left + bBottomLeftRadius.x}`;
+    const leftCommand = `${bcr.top + bTopLeftRadius.y}`;
+
+    return [
+      `${bgCover} M ${bcr.x + bTopLeftRadius.x}, ${bcr.y} H ${
+        bcr.right - bTopRightRadius.x
+      } ${topRightArc} V ${
+        bcr.bottom - bBottomRightRadius.y
+      } ${bottomRightArc} H ${
+        bcr.left + bBottomLeftRadius.x
+      } ${bottomLeftArc} V ${bcr.top + bTopLeftRadius.y} ${topLeftArc} z `,
+      `M 0, 0 H ${overlaySize.width} V ${overlaySize.height} H ${
+        bcr.left + bBottomRightRadius.x
+      } V ${
+        bcr.bottom
+      } ${bottomLeftArc} V ${leftCommand} ${topLeftArc} H ${topCommand} ${topRightArc} V ${rightCommand} ${bottomRightArc} H ${bottomCommand} V ${
+        overlaySize.height
+      } H 0 z`,
+    ];
   };
 
-  // make sure to split overlapped shapes into groups if some "overlapped" shapes don't intersect others
-  const createOutlineShape = (bcrs: DOMRect[]) => {
-    // all shapes must overlap
-    if (bcrs.length === 1) return createRectangle(bcrs[0]);
-
-    bcrs.sort((a, b) => {
-      return a.y - b.y;
-    });
-    const root = bcrs[0];
-    let path = `M ${root.left}, ${root.top}`;
-    let currentDirection: "down" | "up" | "left" | "right" = "right";
-    let currentBCR: DOMRect = root;
-
-    let counter = 0;
-
-    const findIntersectedBCR = (
-      type: "max" | "min",
-      rectType: "left" | "right" | "top" | "bottom",
-      bcrs: DOMRect[],
-      cb: (bcrItem: DOMRect) => boolean
-    ) => {
-      bcrs.sort((a, b) => {
-        let prop = rectType;
-        if (a[prop] === b[prop]) {
-          if (rectType === "top") {
-            return b.right - a.right;
-          }
-
-          if (rectType === "left") {
-            return a.top - b.top;
-          }
-
-          if (rectType === "right") {
-            return b.bottom - a.bottom;
-          }
-
-          if (rectType === "bottom") {
-            return a.left - b.left;
-          }
-        }
-        return type === "max"
-          ? b[rectType] - a[rectType]
-          : a[rectType] - b[rectType];
-      });
-
-      return bcrs.find(cb);
-    };
-
-    const buildOutline = () => {
-      // if (!currentBCR) return;
-      counter++;
-      if (counter >= 1000) {
-        console.warn("infinte!!!");
-        return;
-      }
-
-      let result!: DOMRect;
-      let resultValue = 0;
-      let resultPath = "";
-
-      const run = () => {
-        if (currentDirection === "down") {
-          const foundBCR = findIntersectedBCR(
-            "min",
-            "top",
-            bcrs,
-            (bcr) =>
-              bcr.top >= currentBCR.top &&
-              bcr.left <= currentBCR.right &&
-              bcr.right >= currentBCR.right &&
-              bcr !== currentBCR
-          );
-
-          result = currentBCR;
-          resultValue = result.bottom;
-          resultPath = ` V ${resultValue}`;
-          currentDirection = "left";
-
-          if (foundBCR) {
-            result = foundBCR;
-            resultValue = result.top;
-            currentBCR = foundBCR;
-            currentDirection = "right";
-            resultPath = ` V ${resultValue}`;
-          }
-
-          return;
-        }
-
-        if (currentDirection === "right") {
-          const foundBCR = findIntersectedBCR(
-            "min",
-            "left",
-            bcrs,
-            (bcr) =>
-              bcr.left >= currentBCR.left &&
-              bcr.left <= currentBCR.right &&
-              bcr.top <= currentBCR.top &&
-              bcr !== currentBCR
-          );
-
-          result = currentBCR;
-          resultValue = result.right;
-          resultPath = ` H ${resultValue}`;
-          currentDirection = "down";
-
-          if (foundBCR) {
-            result = foundBCR;
-            resultValue = result.left;
-            currentBCR = foundBCR;
-            currentDirection = "up";
-            resultPath = ` H ${resultValue}`;
-          }
-          return;
-        }
-
-        if (currentDirection === "left") {
-          const foundBCR = findIntersectedBCR(
-            "max",
-            "right",
-            bcrs,
-            (bcr) =>
-              bcr.right <= currentBCR.right &&
-              bcr.top <= currentBCR.bottom &&
-              bcr.bottom >= currentBCR.bottom &&
-              bcr !== currentBCR
-          );
-          result = currentBCR;
-          resultValue = result.left;
-          resultPath = ` H ${resultValue}`;
-          currentDirection = "up";
-
-          if (foundBCR) {
-            result = foundBCR;
-            resultValue = result.right;
-            currentBCR = foundBCR;
-            currentDirection = "down";
-            resultPath = ` H ${resultValue}`;
-          }
-          return;
-        }
-
-        if (currentDirection === "up") {
-          const foundBCR = findIntersectedBCR(
-            "max",
-            "bottom",
-            bcrs,
-            (bcr) =>
-              bcr.bottom <= currentBCR.bottom &&
-              bcr.right >= currentBCR.left &&
-              bcr.left <= currentBCR.left &&
-              bcr !== currentBCR
-          );
-
-          result = currentBCR;
-          resultValue = result.top;
-          resultPath = ` V ${resultValue}`;
-          currentDirection = "right";
-          if (foundBCR) {
-            result = foundBCR;
-            resultValue = result.bottom;
-            currentBCR = foundBCR;
-            currentDirection = "left";
-            resultPath = ` V ${resultValue}`;
-          }
-          return;
-        }
-      };
-
-      run();
-
-      path += resultPath;
-
-      if (resultValue === root.top && currentDirection === "right") return;
-
-      buildOutline();
-    };
-
-    buildOutline();
-    console.log(path);
-
-    return path + " z";
-  };
-
-  const createRectangle = (bcr: DOMRect) => {
-    return ` M ${bcr.x}, ${bcr.y} H ${bcr.right} V ${bcr.bottom} H ${bcr.x} z`;
-  };
-
-  const createOverlappedShape = (bcr1: DOMRect, bcr2: DOMRect) => {
-    const x = Math.max(bcr1.x, bcr2.x);
-    const y = Math.max(bcr1.y, bcr2.y);
-    const xx = Math.min(bcr1.x + bcr1.width, bcr2.x + bcr2.width) - x;
-    const yy = Math.min(bcr1.y + bcr1.height, bcr2.y + bcr2.height) - y;
-
-    return `
-    ${createRectangle(bcr1)}
-        ${createRectangle(bcr2)}
-    M ${x}, ${y} h ${xx} v ${yy} h -${xx} z
-  `;
-  };
-
-  //   const isCover = doesCover(menuBtnBCR, menuDrodownBCR);
+  //   const isCover = doesCover(menuBtnBCR, menuDropdownBCR);
   //
   //   if (isCover) {
-  //     if (isCover.which === "menuButton") {
-  //       return `${bgCover} ${createPath(menuBtnBCR, menuBtnStyle)}`;
-  //     }
   //     if (isCover.which === "menuDropdown") {
-  //       return `${bgCover} ${createPath(menuDrodownBCR, menuDropdownStyle)}`;
+  //       return {
+  //         menuDropdownPath: `${bgCover} ${
+  //           createPath(menuDropdownBCR, menuDropdownStyle).path
+  //         }`,
+  //       };
   //     }
   //   }
-  if (elements.length > 2) {
-    const groups = createOverlappedGroups(bcrs);
-    debugger;
-    let path = "";
-    groups.forEach((group) => {
-      path += " " + createOutlineShape(group);
-    });
 
-    return `${bgCover} ${path}`;
-  }
-
-  if (doesOverlap(menuBtnBCR, menuDrodownBCR)) {
-    return `${bgCover} ${createOverlappedShape(menuBtnBCR, menuDrodownBCR)}`;
-  }
-
-  return `${bgCover} ${createPath(menuBtnBCR, menuBtnStyle)} ${createPath(
-    menuDrodownBCR,
+  const [menuButtonPath, menuButtonClipPath] = createPath(
+    menuBtnBCR,
+    menuBtnStyle
+  );
+  const [menuDropdownPath, menuDropdownClipPath] = createPath(
+    menuDropdownBCR,
     menuDropdownStyle
-  )}`;
-};
+  );
 
-const createClippedPath = () => {
-  return (
-    <path
-      fill-rule="evenodd"
-      d={createClippedPoints()}
-      style="pointer-events: all;"
-    />
-  ) as SVGPathElement;
+  return {
+    menuButtonClipPath,
+    menuDropdownClipPath,
+    menuButtonPath,
+    menuDropdownPath,
+  };
 };
 
 const generalOverlay = () => {
@@ -545,10 +284,10 @@ export const addOverlayEvents = () => {
   addMutationObserver();
 
   containerEl.addEventListener("transitionend", onTransitionendOverlay);
-  menuBtnEl.addEventListener("transitionend", onTransitionendOverlay);
+  // menuBtnEl.addEventListener("transitionend", onTransitionendOverlay);
   menuDropdownEl.addEventListener("transitionend", onTransitionendOverlay);
   containerEl.addEventListener("animationend", onAnimationendOverlay);
-  menuBtnEl.addEventListener("animationend", onAnimationendOverlay);
+  // menuBtnEl.addEventListener("animationend", onAnimationendOverlay);
   menuDropdownEl.addEventListener("animationend", onAnimationendOverlay);
 };
 
@@ -640,8 +379,14 @@ export const updateSVG = (stack?: TDismissStack) => {
     stack || getTopClippedOverlayStack()!;
 
   if (!overlayEl || !menuDropdownEl || !containerEl) return;
+  const {
+    menuButtonPath,
+    menuDropdownPath,
+    menuButtonClipPath,
+    menuDropdownClipPath,
+  } = createClippedPoints();
   const svgEl = overlayEl.firstElementChild!;
-  const pathEl = svgEl.querySelector("path")!;
+  const pathEl = svgEl.querySelectorAll("path") as NodeListOf<SVGPathElement>;
 
   overlaySize.width = overlayEl.clientWidth;
   overlaySize.height = overlayEl.clientHeight;
@@ -650,17 +395,31 @@ export const updateSVG = (stack?: TDismissStack) => {
     "viewBox",
     `0 0 ${overlaySize.width} ${overlaySize.height}`
   );
-  pathEl.setAttribute("d", createClippedPoints());
+
+  pathEl[0].setAttribute("d", menuDropdownClipPath);
+  pathEl[1].setAttribute("d", menuButtonClipPath);
+  pathEl[2].setAttribute("d", menuButtonPath);
+  pathEl[3].setAttribute("d", menuDropdownPath);
 };
 
 export const mountOverlayClipped = () => {
-  const { overlayEl } = dismissStack[dismissStack.length - 1];
+  const { overlayEl, id } = dismissStack[dismissStack.length - 1];
+  overlaySize.width = overlayEl!.clientWidth;
+  overlaySize.height = overlayEl!.clientHeight;
+
+  const {
+    menuButtonPath,
+    menuDropdownPath,
+    menuButtonClipPath,
+    menuDropdownClipPath,
+  } = createClippedPoints();
   const style = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: ${
     999 + dismissStack.length
   }; pointer-events:none;`;
 
-  overlaySize.width = overlayEl!.clientWidth;
-  overlaySize.height = overlayEl!.clientHeight;
+  const clipPathId = `${id}--overlay--clipped`;
+  const clipPathMenuButtonId = `${clipPathId}--menu--button`;
+  const clipPathMenuDropdownId = `${clipPathId}--menu-dropdown`;
 
   addOverlayEvents();
 
@@ -673,7 +432,25 @@ export const mountOverlayClipped = () => {
       preserveAspectRatio="xMaxYMax slice"
       version="1.1"
     >
-      {createClippedPath()}
+      <defs>
+        <clipPath id={clipPathMenuButtonId} clip-rule="evenodd">
+          <path d={menuDropdownClipPath} />
+        </clipPath>
+        <clipPath id={clipPathMenuDropdownId} clip-rule="evenodd">
+          <path d={menuButtonClipPath} />
+        </clipPath>
+      </defs>
+      <path
+        clip-path={`url(#${clipPathMenuButtonId})`}
+        fill-rule="evenodd"
+        d={menuButtonPath}
+        style="pointer-events: all;"
+      />
+      <path
+        clip-path={`url(#${clipPathMenuDropdownId})`}
+        fill-rule="evenodd"
+        d={menuDropdownPath}
+      />
     </svg>
   );
   overlayEl!.style.cssText = style;
