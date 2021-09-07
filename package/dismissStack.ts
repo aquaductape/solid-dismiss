@@ -22,9 +22,14 @@ export const addDismissStack = (props: TDismissStack) => {
     prevStack.isOverlayClipped &&
     props.isOverlayClipped
   ) {
-    const path = prevStack.overlayEl!.querySelector("path") as SVGPathElement;
-    path.style.pointerEvents = "none";
-    path.style.fill = "transparent";
+    const paths = prevStack.overlayEl!.querySelectorAll(
+      "path"
+    ) as NodeListOf<SVGPathElement>;
+
+    paths.forEach((path) => {
+      path.style.pointerEvents = "none";
+      path.style.fill = "transparent";
+    });
   }
 
   dismissStack.push(props!);
@@ -36,9 +41,13 @@ export const removeDismissStack = (id: string) => {
   const prevStack = dismissStack[foundIdx - 1];
 
   if (prevStack && prevStack.overlayEl && prevStack.isOverlayClipped) {
-    const path = prevStack.overlayEl!.querySelector("path") as SVGPathElement;
-    path.style.pointerEvents = "all";
-    path.style.fill = "";
+    const paths = prevStack.overlayEl!.querySelectorAll(
+      "path"
+    ) as NodeListOf<SVGPathElement>;
+    paths.forEach((path) => {
+      path.style.pointerEvents = "all";
+      path.style.fill = "";
+    });
   }
   const foundStack = dismissStack[foundIdx];
   dismissStack.splice(foundIdx, 1);

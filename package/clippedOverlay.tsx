@@ -28,48 +28,17 @@ const getTopClippedOverlayStack = () => {
 };
 
 const createClippedPoints = () => {
-  const { id, menuBtnEl, menuDropdownEl } = getTopClippedOverlayStack()!;
+  const { menuBtnEl, menuDropdownEl } = getTopClippedOverlayStack()!;
   const bcrs = [
     menuBtnEl.getBoundingClientRect(),
     menuDropdownEl.getBoundingClientRect(),
   ];
   const [menuBtnBCR, menuDropdownBCR] = bcrs;
-
   const [menuBtnStyle, menuDropdownStyle] = [
     window.getComputedStyle(menuBtnEl),
     window.getComputedStyle(menuDropdownEl),
   ];
   const bgCover = `M 0,0 H ${overlaySize.width} V ${overlaySize.height} H 0 Z`;
-
-  const doesOverlap = (bcr1: DOMRect, bcr2: DOMRect) => {
-    return (
-      bcr1.top + bcr1.height > bcr2.top &&
-      bcr1.left + bcr1.width > bcr2.left &&
-      bcr1.bottom - bcr1.height < bcr2.bottom &&
-      bcr1.right - bcr1.width < bcr2.right
-    );
-  };
-
-  const doesCover = (bcr1: DOMRect, bcr2: DOMRect) => {
-    if (
-      bcr1.top <= bcr2.top &&
-      bcr1.left <= bcr2.left &&
-      bcr1.bottom >= bcr2.bottom &&
-      bcr1.right >= bcr2.right
-    ) {
-      return { which: "menuButton" };
-    }
-    if (
-      bcr2.top <= bcr1.top &&
-      bcr2.left <= bcr1.left &&
-      bcr2.bottom >= bcr1.bottom &&
-      bcr2.right >= bcr1.right
-    ) {
-      return { which: "menuDropdown" };
-    }
-
-    return null;
-  };
 
   const parseRadius = (radiusInput: string, bcr: DOMRect) => {
     const maxXRadius = bcr.width;
@@ -155,18 +124,6 @@ const createClippedPoints = () => {
       } H 0 z`,
     ];
   };
-
-  //   const isCover = doesCover(menuBtnBCR, menuDropdownBCR);
-  //
-  //   if (isCover) {
-  //     if (isCover.which === "menuDropdown") {
-  //       return {
-  //         menuDropdownPath: `${bgCover} ${
-  //           createPath(menuDropdownBCR, menuDropdownStyle).path
-  //         }`,
-  //       };
-  //     }
-  //   }
 
   const [menuButtonPath, menuButtonClipPath] = createPath(
     menuBtnBCR,
@@ -295,7 +252,7 @@ export const removeOverlayEvents = (stack: TDismissStack | undefined) => {
   if (!stack) return;
   const { containerEl, menuBtnEl, menuDropdownEl } = stack;
 
-  if (dismissStack.every((stack) => !stack.isOverlayClipped)) {
+  if (!dismissStack.filter((stack) => stack.isOverlayClipped).length) {
     console.log("remove ResizeEvent MutationObserver Scroll");
 
     addedScrollEvent = false;

@@ -647,6 +647,7 @@ const Dismiss: Component<{
           removeCloseButtons();
           document.removeEventListener("click", onClickDocument);
           const stack = removeDismissStack(uniqueId);
+          console.log("on false");
           if (isOverlayClipped) {
             removeOverlayEvents(stack);
           }
