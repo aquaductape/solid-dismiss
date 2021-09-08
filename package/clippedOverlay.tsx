@@ -10,7 +10,9 @@ let transitionendTimeoutId: number | null = null;
 let animationendTimeoutId: number | null = null;
 let addedScrollEvent = false;
 let addedResizeEvent = false;
-const timeoutAmount = 575;
+const timeoutAmount = 75;
+// browsers on smartphones tend to have hide/show navbars that change viewport size
+const resizeTimeoutAmount = 250;
 
 const overlaySize = { height: 0, width: 0 };
 
@@ -160,6 +162,22 @@ const generalOverlay = (e?: Event) => {
   }, timeoutAmount);
 };
 
+const onViewportResizeOverlay = () => {
+  window.clearTimeout(generalTimeoutId!);
+
+  generalTimeoutId = window.setTimeout(() => {
+    if (!dismissStack.length || isTopStackOverlayBlock()) return;
+
+    const stack = getTopClippedOverlayStack()!;
+    const { toggle, containerEl } = stack;
+
+    if (!containerEl.isConnected) return;
+    if (!toggle()) return;
+
+    updateSVG(stack);
+  }, resizeTimeoutAmount);
+};
+
 const onAnimationendOverlay = (e: Event) => {
   window.clearTimeout(animationendTimeoutId!);
 
@@ -294,7 +312,9 @@ const addResizeEvent = () => {
 
   if (!addedResizeEvent) {
     addedResizeEvent = true;
-    window.addEventListener("resize", generalOverlay, { passive: true });
+    window.addEventListener("resize", onViewportResizeOverlay, {
+      passive: true,
+    });
   }
 };
 
@@ -304,7 +324,7 @@ const removeResizeEvent = () => {
     resizeObserver = null;
   }
   addedScrollEvent = false;
-  window.removeEventListener("resize", generalOverlay);
+  window.removeEventListener("resize", onViewportResizeOverlay);
 };
 
 const addMutationObserver = () => {
