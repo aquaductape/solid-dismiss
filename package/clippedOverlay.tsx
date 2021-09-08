@@ -1,7 +1,7 @@
 import { dismissStack, TDismissStack } from "./dismissStack";
 import { parseValToNum } from "./utils";
-import { createUniqueId } from "solid-js";
 
+// downside is when smartphone dynamic navbar(iOS: bottom bar )
 let resizeObserver: ResizeObserver | null = null;
 let mutationObserver: MutationObserver | null = null;
 let generalTimeoutId: number | null = null;
@@ -288,11 +288,11 @@ const addResizeEvent = () => {
     resizeObserver.observe(menuBtnEl);
     resizeObserver.observe(containerEl);
     resizeObserver.observe(menuDropdownEl!);
-  } else {
-    if (!addedResizeEvent) {
-      addedResizeEvent = true;
-      window.addEventListener("resize", generalOverlay, { passive: true });
-    }
+  }
+
+  if (!addedResizeEvent) {
+    addedResizeEvent = true;
+    window.addEventListener("resize", generalOverlay, { passive: true });
   }
 };
 
@@ -300,12 +300,9 @@ const removeResizeEvent = () => {
   if (resizeObserver) {
     resizeObserver.disconnect();
     resizeObserver = null;
-  } else {
-    if (dismissStack.every((stack) => !stack.isOverlayClipped)) {
-      addedScrollEvent = false;
-      window.removeEventListener("resize", generalOverlay);
-    }
   }
+  addedScrollEvent = false;
+  window.removeEventListener("resize", generalOverlay);
 };
 
 const addMutationObserver = () => {
