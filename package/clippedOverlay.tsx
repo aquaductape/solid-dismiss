@@ -142,7 +142,7 @@ const createClippedPoints = () => {
   };
 };
 
-const generalOverlay = () => {
+const generalOverlay = (e?: Event) => {
   window.clearTimeout(generalTimeoutId!);
 
   generalTimeoutId = window.setTimeout(() => {
@@ -153,6 +153,8 @@ const generalOverlay = () => {
 
     if (!containerEl.isConnected) return;
     if (!toggle()) return;
+
+    console.log("resize ", e && e.type);
 
     updateSVG(stack);
   }, timeoutAmount);
