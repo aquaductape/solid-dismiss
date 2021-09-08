@@ -10,7 +10,7 @@ let transitionendTimeoutId: number | null = null;
 let animationendTimeoutId: number | null = null;
 let addedScrollEvent = false;
 let addedResizeEvent = false;
-const timeoutAmount = 75;
+const timeoutAmount = 175;
 
 const overlaySize = { height: 0, width: 0 };
 
