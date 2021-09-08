@@ -10,9 +10,9 @@ let transitionendTimeoutId: number | null = null;
 let animationendTimeoutId: number | null = null;
 let addedScrollEvent = false;
 let addedResizeEvent = false;
-const timeoutAmount = 155;
+const timeoutAmount = 555;
 // browsers on smartphones tend to have hide/show navbars that change viewport size
-const resizeTimeoutAmount = 250;
+const resizeTimeoutAmount = 550;
 
 const overlaySize = { height: 0, width: 0 };
 
