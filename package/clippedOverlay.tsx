@@ -1,7 +1,6 @@
 import { dismissStack, TDismissStack } from "./dismissStack";
 import { parseValToNum } from "./utils";
 
-// downside is when smartphone dynamic navbar(iOS: bottom bar )
 let resizeObserver: ResizeObserver | null = null;
 let mutationObserver: MutationObserver | null = null;
 let generalTimeoutId: number | null = null;
@@ -10,9 +9,9 @@ let transitionendTimeoutId: number | null = null;
 let animationendTimeoutId: number | null = null;
 let addedScrollEvent = false;
 let addedResizeEvent = false;
-const timeoutAmount = 555;
+const timeoutAmount = 75;
 // browsers on smartphones tend to have hide/show navbars that change viewport size
-const resizeTimeoutAmount = 550;
+const resizeTimeoutAmount = 400;
 
 const overlaySize = { height: 0, width: 0 };
 
