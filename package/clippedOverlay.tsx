@@ -10,7 +10,7 @@ let transitionendTimeoutId: number | null = null;
 let animationendTimeoutId: number | null = null;
 let addedScrollEvent = false;
 let addedResizeEvent = false;
-const timeoutAmount = 75;
+const timeoutAmount = 155;
 // browsers on smartphones tend to have hide/show navbars that change viewport size
 const resizeTimeoutAmount = 250;
 
