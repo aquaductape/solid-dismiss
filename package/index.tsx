@@ -77,13 +77,13 @@ const Dismiss: Component<{
    */
   focusOnActive?: "menuDropdown" | string | JSX.Element | (() => JSX.Element);
   /**
-   * Default: When Tabbing forwards, focuses on focusable element after menuButton. When Tabbing backwards, focuses on menuButton. When "click", if overlay present, then menuButton will be focused, otherwise user-agent determines which element recieves focus.
+   * Default: When Tabbing forwards, focuses on focusable element after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click", if overlay present, then menuButton will be focused, otherwise user-agent determines which element recieves focus.
    *
    * Which element, via selector*, to recieve focus after dropdown closes.
    *
    * *selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
-   * An example would be to emulate native <select> element behavior, set which sets focus to menu button after dismiss.
+   * An example would be to emulate native <select> element behavior, set which sets focus to menuButton after dismiss.
    *
    * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
    *
@@ -109,6 +109,14 @@ const Dismiss: Component<{
          * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
          */
         click?: "menuButton" | string | JSX.Element;
+        /**
+         * focus on element when exiting menuDropdown via "Escape" key
+         */
+        escapeKey?: "menuButton" | string | JSX.Element;
+        /**
+         * focus on element when exiting menuDropdown via scrolling, from scrollable container that contains menuButton
+         */
+        scrolling?: "menuButton" | string | JSX.Element;
       };
   /**
    * Default: `false`
@@ -124,13 +132,19 @@ const Dismiss: Component<{
    */
   closeWhenMenuButtonIsClicked?: boolean;
   /**
+   * Default: `false`
+   *
+   * Closes menuDropdown when a scrollable container that contains menuButton is scrolled
+   */
+  closeWhenScrolling?: boolean;
+  /**
    * Default `"none"`
    *
    * When prop is `"block"`, adds root level div that acts as overlay. This removes interaction of the page elements that's underneath the overlay element. Make sure that dropdown lives in the root level, one way is to nest this Component inside Solid's {@link https://www.solidjs.com/docs/latest/api#%3Cportal%3E Portal}.
    *
    * When prop is `"clipped"`, it's similar to `"block"` where it places an element at root document, but creates a "mask"* that clips around the menuButton and menuDropdown. This allows menuDropdown to live anywhere in the document, rather than forced to mounting it at top level of root document in order to be interacted with.
    *
-   * Note the "mask" is accurate if the menuButton and menuDropdown are rectangle shaped. Border radius are calculated except if menuButton and menuDropdown are intersecting.
+   * Note the "mask" is accurate if the menuButton and menuDropdown are rectangular shaped, border radius is also accounted for.
    */
   overlay?:
     | "block"
@@ -157,10 +171,12 @@ const Dismiss: Component<{
            * Use custom clipPath instead of using.
            *
            */
-          clipPathSVG?: (props: {
-            overlayEl: HTMLElement;
-            overlaySize: { width: number; height: number };
-          }) => void;
+          /**
+           * Default: `true`
+           *
+           * If menuButton is partially obscured by other elements (not including menuDropdown) such as Header bar, the clipPath needs to acknowlege it otherwise that element could be interacted with. If the element is not a `<header>` or `<nav>`, the clipped path will not be precise on how much the menuButton is obscured.
+           */
+          detectIfMenuButtonObscured?: boolean;
         };
       };
   toggle: Accessor<boolean>;
@@ -177,6 +193,7 @@ const Dismiss: Component<{
     children,
     closeWhenMenuButtonIsTabbed = false,
     closeWhenMenuButtonIsClicked = true,
+    closeWhenScrolling = false,
     overlay = false,
     trapFocus = false,
   } = props;
@@ -226,21 +243,40 @@ const Dismiss: Component<{
     if (e.key !== "Escape") return;
     const item = dismissStack[dismissStack.length - 1];
 
-    if (item) {
-      item.menuBtnEl.focus();
-      item.setToggle(false);
+    if (!item) return;
+
+    const el =
+      queryElement(focusOnLeave, "focusOnLeave", "escapeKey") || item.menuBtnEl;
+
+    if (el) {
+      el.focus();
+    }
+
+    item.setToggle(false);
+  };
+
+  const onScrollClose = (e: Event) => {
+    const target = e.target as HTMLElement;
+
+    if (target.contains(menuBtnEl)) {
+      props.setToggle(false);
+    }
+
+    const el =
+      queryElement(focusOnLeave, "focusOnLeave", "scrolling") || menuBtnEl;
+
+    if (el) {
+      el.focus();
     }
   };
 
   const onClickOverlay = () => {
-    if (focusOnLeave) {
-      const el = queryElement(focusOnLeave, "focusOnLeave", "click");
-      if (el) {
-        el.focus();
-      }
-    } else {
-      menuBtnEl.focus();
+    const el = queryElement(focusOnLeave, "focusOnLeave", "click") || menuBtnEl;
+
+    if (el) {
+      el.focus();
     }
+
     props.setToggle(false);
   };
 
@@ -403,23 +439,22 @@ const Dismiss: Component<{
         return;
       }
 
-      if (focusOnLeave) {
-        const el = queryElement(focusOnLeave, "focusOnLeave", "tabBackwards");
-        if (el) {
-          if (el === menuBtnEl && closeWhenMenuButtonIsTabbed) {
-            props.setToggle(false);
-          }
-          el.focus();
-          props.setToggle(false);
-          return;
-        }
-      }
-
       if (closeWhenMenuButtonIsTabbed) {
         props.setToggle(false);
+        menuBtnEl.focus();
+        return;
       }
 
-      menuBtnEl.focus();
+      const el =
+        queryElement(focusOnLeave, "focusOnLeave", "tabBackwards") || menuBtnEl;
+
+      if (el) {
+        el.focus();
+      }
+
+      if (el !== menuBtnEl) {
+        props.setToggle(false);
+      }
 
       return;
     }
@@ -433,20 +468,13 @@ const Dismiss: Component<{
       return;
     }
 
-    if (focusOnLeave) {
-      const el = queryElement(focusOnLeave, "focusOnLeave", "tabForwards");
-      if (el) {
-        el.focus();
-        props.setToggle(false);
-        return;
-      }
-    }
+    const el =
+      queryElement(focusOnLeave, "focusOnLeave", "tabForwards") ||
+      getNextFocusableElement({
+        from: menuBtnEl,
+        ignoreElement: [containerEl],
+      });
 
-    const el = getNextFocusableElement({
-      from: menuBtnEl,
-      ignoreElement: [containerEl],
-    });
-    console.log(el);
     if (el) {
       el.focus();
     }
@@ -457,7 +485,12 @@ const Dismiss: Component<{
   const queryElement = (
     inputElement: any,
     type?: "menuButton" | "menuDropdown" | "closeButton" | "focusOnLeave",
-    subType?: "tabForwards" | "tabBackwards" | "click"
+    subType?:
+      | "tabForwards"
+      | "tabBackwards"
+      | "click"
+      | "escapeKey"
+      | "scrolling"
   ): HTMLElement => {
     if (inputElement === "menuButton") {
       return menuBtnEl;
@@ -496,14 +529,19 @@ const Dismiss: Component<{
     }
 
     if (type === "focusOnLeave") {
-      if (subType === "tabForwards") {
-        return queryElement(inputElement.tabForwards);
-      }
-      if (subType === "tabBackwards") {
-        return queryElement(inputElement.tabBackwards);
-      }
-      if (subType === "click") {
-        return queryElement(inputElement.click);
+      if (!inputElement) return null as any;
+
+      switch (subType) {
+        case "tabForwards":
+          return queryElement(inputElement.tabForwards);
+        case "tabBackwards":
+          return queryElement(inputElement.tabBackwards);
+        case "click":
+          return queryElement(inputElement.click);
+        case "escapeKey":
+          return queryElement(inputElement.escapeKey);
+        case "scrolling":
+          return queryElement(inputElement.scrolling);
       }
     }
 
@@ -615,6 +653,13 @@ const Dismiss: Component<{
       (toggle, prevToggle) => {
         if (toggle === prevToggle) return;
 
+        if (closeWhenScrolling) {
+          window.addEventListener("scroll", onScrollClose, {
+            once: true,
+            capture: true,
+          });
+        }
+
         expandToggle(toggle);
 
         if (toggle) {
@@ -636,6 +681,12 @@ const Dismiss: Component<{
             menuDropdownEl: menuDropdownEl!,
             isOverlayClipped,
             overlay: typeof overlay === "object" ? "clipped" : overlay,
+            detectIfMenuButtonObscured:
+              typeof overlay === "object"
+                ? overlay.clipped.detectIfMenuButtonObscured == null
+                  ? true
+                  : overlay.clipped.detectIfMenuButtonObscured
+                : true,
           });
 
           if (isOverlayClipped) {
@@ -669,7 +720,7 @@ const Dismiss: Component<{
         (result) => {
           if (result === null || !props.toggle()) return;
           console.log("run redraw");
-          updateSVG();
+          updateSVG(null, true);
         },
         { defer: true }
       )
@@ -708,7 +759,7 @@ const Dismiss: Component<{
         {isOverlayClipped && (
           <Portal>
             <div
-              style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: ${
+              style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: ${
                 999 + dismissStack.length
               };`}
               solid-dismiss-overlay-clipped={props.id || ""}

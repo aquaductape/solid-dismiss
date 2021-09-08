@@ -28,8 +28,9 @@ const getTopClippedOverlayStack = () => {
   return null;
 };
 
-const createClippedPoints = () => {
-  const { menuBtnEl, menuDropdownEl } = getTopClippedOverlayStack()!;
+const createClippedPoints = (checkMenuButtonIsObscured?: boolean) => {
+  const { menuBtnEl, menuDropdownEl, detectIfMenuButtonObscured } =
+    getTopClippedOverlayStack()!;
   const bcrs = [
     menuBtnEl.getBoundingClientRect(),
     menuDropdownEl.getBoundingClientRect(),
@@ -39,7 +40,42 @@ const createClippedPoints = () => {
     window.getComputedStyle(menuBtnEl),
     window.getComputedStyle(menuDropdownEl),
   ];
+  const navBarBCR = getNavBarIfCoversMenuButton();
   const bgCover = `M 0,0 H ${overlaySize.width} V ${overlaySize.height} H 0 Z`;
+
+  function getNavBarIfCoversMenuButton() {
+    if (!detectIfMenuButtonObscured) return null;
+
+    let element = document.elementFromPoint(
+      menuBtnBCR.x + menuBtnBCR.width / 2,
+      Math.sign(menuBtnBCR.y) === -1 ? 2 : menuBtnBCR.y + 2
+    );
+    if (!element) return null;
+    let navBarElResult = null;
+    let divElResult = null;
+    if (menuBtnEl.contains(element)) return null;
+    console.log({ element });
+
+    while (element) {
+      if (element.tagName === "HEADER" || element.tagName === "NAV") {
+        navBarElResult = element;
+      }
+
+      if (element.tagName === "DIV" && !divElResult) {
+        divElResult = element;
+      }
+
+      element = element?.parentElement!;
+    }
+
+    if (!navBarElResult) {
+      if (!divElResult) return null;
+      return divElResult.getBoundingClientRect();
+    }
+
+    // @ts-ignore
+    return navBarElResult.getBoundingClientRect()!;
+  }
 
   const parseRadius = (radiusInput: string, bcr: DOMRect) => {
     const maxXRadius = bcr.width;
@@ -126,6 +162,12 @@ const createClippedPoints = () => {
     ];
   };
 
+  const createNavBarPath = () => {
+    if (!navBarBCR) return null;
+
+    return `M 0, 0 h ${overlaySize.width} v ${navBarBCR.height} H 0 z`;
+  };
+
   const [menuButtonPath, menuButtonClipPath] = createPath(
     menuBtnBCR,
     menuBtnStyle
@@ -136,6 +178,7 @@ const createClippedPoints = () => {
   );
 
   return {
+    navBarPath: createNavBarPath(),
     menuButtonClipPath,
     menuDropdownClipPath,
     menuButtonPath,
@@ -143,7 +186,7 @@ const createClippedPoints = () => {
   };
 };
 
-const generalOverlay = (e?: Event) => {
+const generalOverlay = () => {
   window.clearTimeout(generalTimeoutId!);
 
   generalTimeoutId = window.setTimeout(() => {
@@ -154,8 +197,6 @@ const generalOverlay = (e?: Event) => {
 
     if (!containerEl.isConnected) return;
     if (!toggle()) return;
-
-    console.log("resize ", e && e.type);
 
     updateSVG(stack);
   }, timeoutAmount);
@@ -349,19 +390,25 @@ const removeMutationObserver = () => {
   mutationObserver = null;
 };
 
-export const updateSVG = (stack?: TDismissStack) => {
+export const updateSVG = (
+  stack?: TDismissStack | null,
+  checkMenuButtonIsObscured?: boolean
+) => {
   const { menuDropdownEl, overlayEl, containerEl } =
     stack || getTopClippedOverlayStack()!;
 
   if (!overlayEl || !menuDropdownEl || !containerEl) return;
+  const svgEl = overlayEl.firstElementChild!;
+  const pathEl = svgEl.querySelectorAll("path") as NodeListOf<SVGPathElement>;
+  pathEl[1].style.pointerEvents = "none";
+  pathEl[2].style.pointerEvents = "none";
   const {
     menuButtonPath,
     menuDropdownPath,
     menuButtonClipPath,
     menuDropdownClipPath,
-  } = createClippedPoints();
-  const svgEl = overlayEl.firstElementChild!;
-  const pathEl = svgEl.querySelectorAll("path") as NodeListOf<SVGPathElement>;
+    navBarPath,
+  } = createClippedPoints(checkMenuButtonIsObscured);
 
   overlaySize.width = overlayEl.clientWidth;
   overlaySize.height = overlayEl.clientHeight;
@@ -372,9 +419,12 @@ export const updateSVG = (stack?: TDismissStack) => {
   );
 
   pathEl[0].setAttribute("d", menuDropdownClipPath);
-  pathEl[1].setAttribute("d", menuButtonClipPath);
-  pathEl[2].setAttribute("d", menuButtonPath);
-  pathEl[3].setAttribute("d", menuDropdownPath);
+  // pathEl[1].setAttribute("d", menuButtonClipPath);
+  pathEl[1].setAttribute("d", menuButtonPath);
+  pathEl[1].style.pointerEvents = "all";
+  // pathEl[3].setAttribute("d", menuDropdownPath);
+  pathEl[2].setAttribute("d", navBarPath || "");
+  pathEl[2].style.pointerEvents = "all";
 };
 
 export const mountOverlayClipped = () => {
@@ -387,6 +437,7 @@ export const mountOverlayClipped = () => {
     menuDropdownPath,
     menuButtonClipPath,
     menuDropdownClipPath,
+    navBarPath,
   } = createClippedPoints();
   const style = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: ${
     999 + dismissStack.length
@@ -408,23 +459,29 @@ export const mountOverlayClipped = () => {
       version="1.1"
     >
       <defs>
-        <clipPath id={clipPathMenuButtonId} clip-rule="evenodd">
+        <clipPath id={clipPathMenuDropdownId} clip-rule="evenodd">
           <path d={menuDropdownClipPath} />
         </clipPath>
-        <clipPath id={clipPathMenuDropdownId} clip-rule="evenodd">
+        {/* <clipPath id={clipPathMenuButtonId} clip-rule="evenodd">
           <path d={menuButtonClipPath} />
-        </clipPath>
+        </clipPath> */}
       </defs>
       <path
-        clip-path={`url(#${clipPathMenuButtonId})`}
+        clip-path={`url(#${clipPathMenuDropdownId})`}
         fill-rule="evenodd"
         d={menuButtonPath}
         style="pointer-events: all;"
       />
-      <path
-        clip-path={`url(#${clipPathMenuDropdownId})`}
+      {/* <path
+        clip-path={`url(#${clipPathMenuButtonId})`}
         fill-rule="evenodd"
         d={menuDropdownPath}
+        style="pointer-events: all;"
+      /> */}
+      <path
+        clip-path={`url(#${clipPathMenuDropdownId})`}
+        d={navBarPath || ""}
+        style="pointer-events: all"
       />
     </svg>
   );
@@ -444,7 +501,6 @@ const pollOverlaySize = (overlayEl: HTMLElement) => {
     setTimeout(() => {
       overlaySize.width = overlayEl!.clientWidth;
       overlaySize.height = overlayEl!.clientHeight;
-      console.log("polling");
       if (!overlaySize.height || !overlaySize.width) {
         if (counter >= maxPolling) return;
         counter++;

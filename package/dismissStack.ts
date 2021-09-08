@@ -10,6 +10,7 @@ export type TDismissStack = {
   overlayEl?: HTMLDivElement;
   overlay: "block" | "clipped" | false;
   isOverlayClipped: boolean;
+  detectIfMenuButtonObscured: boolean;
 };
 export const dismissStack: TDismissStack[] = [];
 

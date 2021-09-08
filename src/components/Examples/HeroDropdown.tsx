@@ -50,6 +50,7 @@ const HeroDropdown = () => {
           toggle={toggle}
           setToggle={setToggle}
           trapFocus
+          overlay={"clipped"}
           // closeWhenMenuButtonIsClicked={false}
         >
           <div className="shadow"></div>
