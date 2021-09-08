@@ -12,7 +12,12 @@ import {
   createUniqueId,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import { getNextFocusableElement, parseValToNum } from "./utils";
+import {
+  focusableSelectors,
+  getNextFocusableElement,
+  inverseQuerySelector,
+  parseValToNum,
+} from "./utils";
 import {
   dismissStack,
   addDismissStack,
@@ -62,6 +67,12 @@ const Dismiss: Component<{
     | (string | JSX.Element)[]
     | (() => JSX.Element)
     | (() => (string | JSX.Element)[]);
+  /**
+   * Default: `false`
+   *
+   * Have the behavior to move through a list of "dropdown items" using cursor keys.
+   */
+  cursorKeys?: boolean;
   /**
    * Default: `false`
    *
@@ -191,6 +202,7 @@ const Dismiss: Component<{
     focusOnActive,
     closeButton,
     children,
+    cursorKeys = false,
     closeWhenMenuButtonIsTabbed = false,
     closeWhenMenuButtonIsClicked = true,
     closeWhenScrolling = false,
@@ -198,11 +210,12 @@ const Dismiss: Component<{
     trapFocus = false,
   } = props;
   const uniqueId = createUniqueId();
+  const hasFocusSentinels = focusOnLeave || overlay === "block" || trapFocus;
   let closeBtn: HTMLElement[] = [];
   let menuDropdownEl: HTMLElement | null = null;
   let menuBtnEl!: HTMLElement;
-  let focusTrapEl1!: HTMLDivElement;
-  let focusTrapEl2!: HTMLDivElement;
+  let focusSentinelFirstEl!: HTMLDivElement;
+  let focusSentinelLastEl!: HTMLDivElement;
   let containerEl!: HTMLDivElement;
   let overlayEl!: HTMLDivElement;
   let isOverlayClipped = overlay === "clipped" || typeof overlay === "object";
@@ -239,7 +252,49 @@ const Dismiss: Component<{
     menuBtnEl.setAttribute("aria-expanded", `${toggle}`);
   };
 
+  const onCursorKeys = (e: KeyboardEvent) => {
+    const keys = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
+    const horizontalKeys = ["ArrowLeft", "ArrowRight"];
+
+    if (!keys.includes(e.key)) return;
+
+    e.preventDefault();
+
+    if (horizontalKeys.includes(e.key)) return;
+
+    const activeElement = document.activeElement!;
+
+    if (activeElement === menuBtnEl || activeElement === menuDropdownEl) {
+      const el =
+        e.key === "ArrowDown"
+          ? (menuDropdownEl?.querySelector(focusableSelectors) as HTMLElement)
+          : inverseQuerySelector(menuDropdownEl!, focusableSelectors);
+
+      if (el) {
+        el.focus();
+      }
+      return;
+    }
+
+    const direction: "forwards" | "backwards" =
+      e.key === "ArrowDown" ? "forwards" : "backwards";
+
+    const el = getNextFocusableElement({
+      from: activeElement,
+      direction,
+      stopAtElement: menuDropdownEl!,
+    });
+
+    if (el) {
+      el.focus();
+    }
+  };
+
   const onKeyDown = (e: KeyboardEvent) => {
+    if (cursorKeys) {
+      onCursorKeys(e);
+    }
+
     if (e.key !== "Escape") return;
     const item = dismissStack[dismissStack.length - 1];
 
@@ -335,7 +390,7 @@ const Dismiss: Component<{
     if (e.key !== "Tab") return;
     menuBtnKeyupTabFired = true;
     e.preventDefault();
-    const el = getNextFocusableElement({ from: focusTrapEl1 });
+    const el = getNextFocusableElement({ from: focusSentinelFirstEl });
     if (el) {
       el.focus();
     } else {
@@ -413,7 +468,7 @@ const Dismiss: Component<{
     }
   };
 
-  const onFocusTraps = (
+  const onFocusSentinel = (
     type: "first" | "last",
     relatedTarget?: HTMLElement
   ) => {
@@ -421,7 +476,7 @@ const Dismiss: Component<{
 
     if (relatedTarget === containerEl || relatedTarget === menuBtnEl) {
       const el = getNextFocusableElement({
-        from: focusTrapEl1,
+        from: focusSentinelFirstEl,
       })!;
 
       el.focus();
@@ -431,7 +486,7 @@ const Dismiss: Component<{
     if (type === "first") {
       if (trapFocus) {
         const el = getNextFocusableElement({
-          from: focusTrapEl2,
+          from: focusSentinelLastEl,
           direction: "backwards",
         })!;
 
@@ -461,7 +516,7 @@ const Dismiss: Component<{
 
     if (trapFocus) {
       const el = getNextFocusableElement({
-        from: focusTrapEl1,
+        from: focusSentinelFirstEl,
       })!;
 
       el.focus();
@@ -782,25 +837,25 @@ const Dismiss: Component<{
             ></div>
           </Portal>
         )}
-        {(focusOnLeave || overlay === "block" || trapFocus) && (
+        {hasFocusSentinels && (
           <div
             tabindex="0"
             onFocus={(e) => {
-              onFocusTraps("first", e.relatedTarget as HTMLElement);
+              onFocusSentinel("first", e.relatedTarget as HTMLElement);
             }}
             style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
             aria-hidden="true"
-            ref={focusTrapEl1}
+            ref={focusSentinelFirstEl}
           ></div>
         )}
         {children}
-        {(focusOnLeave || overlay === "block" || trapFocus) && (
+        {hasFocusSentinels && (
           <div
             tabindex="0"
-            onFocus={() => onFocusTraps("last")}
+            onFocus={() => onFocusSentinel("last")}
             style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
             aria-hidden="true"
-            ref={focusTrapEl2}
+            ref={focusSentinelLastEl}
           ></div>
         )}
       </div>

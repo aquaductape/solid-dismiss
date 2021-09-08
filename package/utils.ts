@@ -6,7 +6,7 @@ export const parseValToNum = (value?: string | number) => {
   return value || 0;
 };
 
-const focusableSelectors =
+export const focusableSelectors =
   'button, [href], input, select, textarea, details, [contentEditable=true], [tabindex]:not([tabindex="-1"])';
 
 export const getNextFocusableElement = ({
@@ -15,7 +15,7 @@ export const getNextFocusableElement = ({
   ignoreElement = [],
   direction = "forwards",
 }: {
-  from: HTMLElement;
+  from: Element;
   stopAtElement?: HTMLElement;
   ignoreElement?: HTMLElement[];
   direction?: "forwards" | "backwards";
@@ -26,8 +26,8 @@ export const getNextFocusableElement = ({
   if (!visitedElement) return null;
 
   const traverseNextSiblingsThenUp = (
-    parent: HTMLElement,
-    visitedElement: HTMLElement
+    parent: Element,
+    visitedElement: Element
   ): HTMLElement | null => {
     let hasPassedVisitedElement = false;
 
@@ -45,12 +45,12 @@ export const getNextFocusableElement = ({
           if (el) return el as HTMLElement;
           continue;
         }
+        if (child === stopAtElement) {
+          return null;
+        }
         if (child === visitedElement) {
           hasPassedVisitedElement = true;
           continue;
-        }
-        if (child === stopAtElement) {
-          return null;
         }
       }
     } else {
@@ -64,12 +64,12 @@ export const getNextFocusableElement = ({
           if (el) return el as HTMLElement;
           continue;
         }
+        if (child === stopAtElement) {
+          return null;
+        }
         if (child === visitedElement) {
           hasPassedVisitedElement = true;
           continue;
-        }
-        if (child === stopAtElement) {
-          return null;
         }
       }
     }
@@ -89,7 +89,7 @@ export const getNextFocusableElement = ({
  *
  * like querySelector but iterates through children backwards, which results that the selector matches last child first.
  */
-const inverseQuerySelector = (
+export const inverseQuerySelector = (
   el: Element,
   selector: string
 ): HTMLElement | null => {
@@ -102,17 +102,17 @@ const inverseQuerySelector = (
     for (let i = childrenCount - 1; i >= 0; i--) {
       const child = children[i];
 
+      if (foundElement) return foundElement;
+
       if (child.matches(selector)) {
         foundElement = child as HTMLElement;
         return foundElement;
       }
 
-      if (foundElement) return foundElement;
-
       query(child);
     }
 
-    return null;
+    return foundElement;
   };
 
   return query(el);

@@ -1,11 +1,38 @@
 import { Transition } from "solid-transition-group";
 import Dismiss from "../../../package/index";
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, createEffect } from "solid-js";
+
+// instead of having property to toggle scrollbar, developers can have more control on removing scrollbar such as preserving "space" when removing scrollbar without causing a page shift. This will be different depending on how the header bar or body is styled.
+export const toggleScrollbarWithoutPageShift = (type: "add" | "remove") => {
+  if (type === "add") {
+    const scrollWidth = Math.abs(
+      window.innerWidth - document.documentElement.clientWidth
+    );
+
+    document.body.style.marginRight = scrollWidth + "px";
+    document.body.style.overflow = "hidden";
+  }
+
+  if (type === "remove") {
+    document.body.style.marginRight = "";
+    document.body.style.overflow = "";
+  }
+};
+
 // ...
 
 const HeroDropdown = () => {
   const [toggle, setToggle] = createSignal(false);
   let btnEl!: HTMLButtonElement;
+
+  createEffect(() => {
+    if (!toggle()) {
+      toggleScrollbarWithoutPageShift("remove");
+      return;
+    }
+
+    toggleScrollbarWithoutPageShift("add");
+  });
 
   return (
     <div style="position: relative; display: inline-block;">

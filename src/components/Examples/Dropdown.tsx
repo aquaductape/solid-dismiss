@@ -11,11 +11,22 @@ const Dropdown = () => {
       <button class="btn-primary" ref={btnEl}>
         Dropdown
       </button>
-      <Dismiss menuButton={btnEl} toggle={toggle} setToggle={setToggle}>
+      <Dismiss
+        menuButton={btnEl}
+        toggle={toggle}
+        setToggle={setToggle}
+        cursorKeys
+      >
         <ul class="dropdown">
-          <li tabindex="0">cat</li>
-          <li tabindex="0">dog</li>
-          <li tabindex="0">fish</li>
+          <li>
+            <a href="#">cat</a>
+          </li>
+          <li>
+            <a href="#">dog</a>
+          </li>
+          <li>
+            <a href="#">fish</a>
+          </li>
         </ul>
       </Dismiss>
     </div>
