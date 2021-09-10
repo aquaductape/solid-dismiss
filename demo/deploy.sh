@@ -39,10 +39,9 @@ function is_in_remote() {
 }
 
 echo -e "\nbuilding $output...\n" &&
-    cd ./demo &&
     npm run "$buildScript" &&
+    echo -e "\ntracking $output by removing it in gitingore\n" &&
     cd ../ &&
-    echo -e "\ntracking $output by removing it in gitingore\n"
 sed -i -- "s/$output//g" ./.gitignore &&
     git add . &&
     echo -e "\ncommitting $output in order to push $output subtree for $branch...\n"
