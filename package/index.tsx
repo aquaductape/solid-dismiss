@@ -38,7 +38,7 @@ import {
 
 /**
  *
- * Handles "click outside" behavior for button dropdown pairings. Closing is triggered by click/focus outside of dropdown element or pressing "Escape" key.
+ * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key.
  */
 const Dismiss: Component<{
   /**

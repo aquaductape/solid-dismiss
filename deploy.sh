@@ -3,7 +3,7 @@
 # https://gist.github.com/cobyism/4730490#gistcomment-1394421 better but you don't have set up that way currently
 
 branch="gh-pages"
-output="dist"
+output="demo-dist"
 
 if [ $(git status --porcelain | wc -l) -eq "0" ]; then
   echo -e "  🟢 Git repo is clean.\n"
@@ -40,9 +40,9 @@ function is_in_remote() {
 echo -e "\nbuilding $output...\n" &&
     npm run build &&
     echo -e "\ntracking $output by removing it in gitingore\n"
-sed -i -- 's/dist//g' ./.gitignore &&
+sed -i -- "s/$output//g" ./.gitignore &&
     git add . &&
-    echo -e "\ncommitting $output in order to push dist subtree for $branch...\n"
+    echo -e "\ncommitting $output in order to push demo-dist subtree for $branch...\n"
 git commit -m "update $output subtree for $branch" &&
     is_in_remote
 

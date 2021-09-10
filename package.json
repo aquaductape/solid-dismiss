@@ -1,14 +1,34 @@
 {
-  "name": "vite-template-solid",
-  "version": "0.0.0",
-  "description": "",
+  "name": "solid-dismiss",
+  "version": "1.0.0",
+  "homepage": "https://aquaductape.github.io/solid-dismiss/",
+  "description": "Handles \"click outside\" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing \"Escape\" key.",
+  "author": "aquaductape",
+  "keywords": [
+    "dismiss",
+    "light dismiss",
+    "popup",
+    "popups",
+    "popup menu",
+    "popup dropdown",
+    "popover",
+    "solid"
+  ],
+  "type": "module",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview",
-    "deploy": "./deploy.sh",
-    "quick": "git add . && git commit -m 'update' && pnpm deploy"
+    "demo-build": "vite build",
+    "demo-serve": "vite preview",
+    "demo-deploy": "./deploy.sh",
+    "demo-quick": "git add . && git commit -m 'update' && pnpm deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aquaductape/solid-dismiss.git"
   },
   "license": "MIT",
   "devDependencies": {
