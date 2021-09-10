@@ -2,10 +2,11 @@ import { Accessor } from "solid-js";
 
 export type TDismissStack = {
   id: string;
+  uniqueId: string;
   setToggle: (v: boolean) => void;
   toggle: Accessor<boolean>;
   menuBtnEl: HTMLElement;
-  menuDropdownEl: HTMLElement;
+  menuPopupEl: HTMLElement;
   containerEl: HTMLElement;
   overlayEl?: HTMLDivElement;
   overlay: "block" | "clipped" | false;
@@ -37,7 +38,7 @@ export const addDismissStack = (props: TDismissStack) => {
 };
 
 export const removeDismissStack = (id: string) => {
-  const foundIdx = dismissStack.findIndex((item) => item.id === id);
+  const foundIdx = dismissStack.findIndex((item) => item.uniqueId === id);
   if (foundIdx === -1) return;
   const prevStack = dismissStack[foundIdx - 1];
 
@@ -45,11 +46,16 @@ export const removeDismissStack = (id: string) => {
     const paths = prevStack.overlayEl!.querySelectorAll(
       "path"
     ) as NodeListOf<SVGPathElement>;
+
     paths.forEach((path) => {
-      path.style.pointerEvents = "all";
+      path.style.pointerEvents = "";
       path.style.fill = "";
     });
+
+    paths[5].style.pointerEvents = "all";
+    paths[6].style.pointerEvents = "all";
   }
+
   const foundStack = dismissStack[foundIdx];
   dismissStack.splice(foundIdx, 1);
 

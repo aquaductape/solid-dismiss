@@ -334,17 +334,18 @@ const Select: Component<{
         toggle={toggle}
         setToggle={setToggle}
         setFocus={setFocus}
-        overlay={"shallow"}
+        menuPopup={() => listEl}
+        overlay={"clipped"}
         focusOnLeave={btnEl}
       >
-        <ul
-          class={classM("list", toggle() && "active")}
-          id={listId}
-          aria-labelledby={btnId}
-          tabindex="-1"
-          ref={listEl}
-        >
-          <div class={classM("list-inner")}>
+        <div class={classM("list-outer")}>
+          <ul
+            class={classM("list", toggle() && "active")}
+            id={listId}
+            aria-labelledby={btnId}
+            tabindex="-1"
+            ref={listEl}
+          >
             <For each={cpList}>
               {(item, idx) => {
                 const id = createUniqueId();
@@ -366,8 +367,8 @@ const Select: Component<{
                 );
               }}
             </For>
-          </div>
-        </ul>
+          </ul>
+        </div>
       </Dismiss>
     </>
   );

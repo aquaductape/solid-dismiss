@@ -45,10 +45,10 @@ const Dropdown: Component<{
               toggle={toggle}
               setToggle={setToggle}
               overlay={overlay}
-              focusOnLeave={focusOnLeave ? "menuButton" : undefined}
+              // focusOnLeave={focusOnLeave ? "menuButton" : undefined}
               ref={menuDropdown}
             >
-              <div>
+              <div role="dialog">
                 <h3>Nested Dropdown Text {overlay || ""}</h3>
                 <input
                   type="text"
@@ -81,7 +81,7 @@ const Dropdown: Component<{
             focusOnLeave={focusOnLeave ? "menuButton" : undefined}
             ref={menuDropdown}
           >
-            <div>
+            <div role="dialog">
               <h3>Nested Dropdown Text {overlay || ""}</h3>
               <input
                 type="text"

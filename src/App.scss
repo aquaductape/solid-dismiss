@@ -797,6 +797,35 @@ p {
   }
 }
 
-[solid-dismiss-overlay-clipped] path {
-  fill: rgba(0, 0, 0, 0.2);
+// [solid-dismiss-overlay-clipped] path {
+//   fill: rgba(0, 0, 0, 0.2);
+// }
+// [solid-dismiss-overlay-mask] {
+//   fill: rgba(0, 0, 0, 0.5);
+// }
+
+.hero-animate {
+  transform-origin: top right;
+
+  &-enter-active {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  &-enter-to {
+    transform: scale(1);
+    opacity: 1;
+    transition: transform 300ms, opacity 150ms 150ms;
+  }
+
+  &-exit-active {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  &-exit-to {
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 300ms, opacity 150ms;
+  }
 }

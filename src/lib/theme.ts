@@ -14,6 +14,7 @@ type IDark = {
   "--bg": "#201d26";
   "--text": "#cfcfcf";
   "--dropdown-bg": "#2c2835";
+  "--dropdown-btn": "rgb(0, 0, 0)";
   "--dropdown-root-bg": "#2d2837";
   "--dropdown-root-border": "#635f75";
   "--dropdown-root-shadow": "#000";
@@ -60,6 +61,7 @@ type ILight = {
   "--bg": "#f3effd";
   "--text": "#000";
   "--dropdown-bg": "#f3effd";
+  "--dropdown-btn": "rgba(10, 10, 60, 57%)";
   "--dropdown-root-bg": "#fff";
   "--dropdown-root-border": "#bcb7d4";
   "--dropdown-root-shadow": "#22243ab8";
@@ -111,6 +113,7 @@ export const themeConfig: IThemeConfig = {
     "--bg": "#201d26",
     "--text": "#cfcfcf",
     "--dropdown-bg": "#2c2835",
+    "--dropdown-btn": "rgb(0, 0, 0)",
     "--dropdown-root-bg": "#2d2837",
     "--dropdown-root-border": "#635f75",
     "--dropdown-root-shadow": "#000",
@@ -157,6 +160,7 @@ export const themeConfig: IThemeConfig = {
     "--bg": "#f3effd",
     "--text": "#000",
     "--dropdown-bg": "#f3effd",
+    "--dropdown-btn": "rgba(10, 10, 60, 57%)",
     "--dropdown-root-bg": "#fff",
     "--dropdown-root-border": "#bcb7d4",
     "--dropdown-root-shadow": "#22243ab8",

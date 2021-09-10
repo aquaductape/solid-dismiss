@@ -29,19 +29,19 @@ const getTopClippedOverlayStack = () => {
 };
 
 const createClippedPoints = (checkMenuButtonIsObscured?: boolean) => {
-  const { menuBtnEl, menuDropdownEl, detectIfMenuButtonObscured } =
+  const { menuBtnEl, menuPopupEl, detectIfMenuButtonObscured } =
     getTopClippedOverlayStack()!;
   const bcrs = [
     menuBtnEl.getBoundingClientRect(),
-    menuDropdownEl.getBoundingClientRect(),
+    menuPopupEl.getBoundingClientRect(),
   ];
-  const [menuBtnBCR, menuDropdownBCR] = bcrs;
-  const [menuBtnStyle, menuDropdownStyle] = [
+  const [menuBtnBCR, menuPopupBCR] = bcrs;
+  const [menuBtnStyle, menuPopupStyle] = [
     window.getComputedStyle(menuBtnEl),
-    window.getComputedStyle(menuDropdownEl),
+    window.getComputedStyle(menuPopupEl),
   ];
   const navBarBCR = getNavBarIfCoversMenuButton();
-  const bgCover = `M 0,0 H ${overlaySize.width} V ${overlaySize.height} H 0 Z`;
+  const bgCoverPath = `M 0,0 H ${overlaySize.width} V ${overlaySize.height} H 0 Z`;
 
   function getNavBarIfCoversMenuButton() {
     if (!detectIfMenuButtonObscured) return null;
@@ -145,7 +145,7 @@ const createClippedPoints = (checkMenuButtonIsObscured?: boolean) => {
     const leftCommand = `${bcr.top + bTopLeftRadius.y}`;
 
     return [
-      `${bgCover} M ${bcr.x + bTopLeftRadius.x}, ${bcr.y} H ${
+      `M ${bcr.x + bTopLeftRadius.x}, ${bcr.y} H ${
         bcr.right - bTopRightRadius.x
       } ${topRightArc} V ${
         bcr.bottom - bBottomRightRadius.y
@@ -172,17 +172,18 @@ const createClippedPoints = (checkMenuButtonIsObscured?: boolean) => {
     menuBtnBCR,
     menuBtnStyle
   );
-  const [menuDropdownPath, menuDropdownClipPath] = createPath(
-    menuDropdownBCR,
-    menuDropdownStyle
+  const [menuPopupPath, menuPopupClipPath] = createPath(
+    menuPopupBCR,
+    menuPopupStyle
   );
 
   return {
+    bgCoverPath,
     navBarPath: createNavBarPath(),
     menuButtonClipPath,
-    menuDropdownClipPath,
+    menuPopupClipPath,
     menuButtonPath,
-    menuDropdownPath,
+    menuPopupPath,
   };
 };
 
@@ -225,7 +226,7 @@ const onAnimationendOverlay = (e: Event) => {
     if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
-    const { toggle, containerEl, menuDropdownEl, menuBtnEl } = stack;
+    const { toggle, containerEl, menuPopupEl, menuBtnEl } = stack;
 
     if (!toggle()) return;
 
@@ -233,7 +234,7 @@ const onAnimationendOverlay = (e: Event) => {
     if (
       !(
         target === containerEl ||
-        target === menuDropdownEl ||
+        target === menuPopupEl ||
         target === menuBtnEl
       )
     )
@@ -250,7 +251,7 @@ const onTransitionendOverlay = (e: Event) => {
     if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
-    const { toggle, containerEl, menuDropdownEl, menuBtnEl } = stack;
+    const { toggle, containerEl, menuPopupEl, menuBtnEl } = stack;
 
     if (!toggle()) return;
 
@@ -258,7 +259,7 @@ const onTransitionendOverlay = (e: Event) => {
     if (
       !(
         target === containerEl ||
-        target === menuDropdownEl ||
+        target === menuPopupEl ||
         target === menuBtnEl
       )
     )
@@ -286,8 +287,7 @@ const onScrollOverlay = (e: Event) => {
 };
 
 export const addOverlayEvents = () => {
-  const { containerEl, menuBtnEl, menuDropdownEl } =
-    dismissStack[dismissStack.length - 1];
+  const { containerEl, menuPopupEl } = dismissStack[dismissStack.length - 1];
 
   if (!addedScrollEvent) {
     addedScrollEvent = true;
@@ -302,15 +302,15 @@ export const addOverlayEvents = () => {
 
   containerEl.addEventListener("transitionend", onTransitionendOverlay);
   // menuBtnEl.addEventListener("transitionend", onTransitionendOverlay);
-  menuDropdownEl.addEventListener("transitionend", onTransitionendOverlay);
+  menuPopupEl.addEventListener("transitionend", onTransitionendOverlay);
   containerEl.addEventListener("animationend", onAnimationendOverlay);
   // menuBtnEl.addEventListener("animationend", onAnimationendOverlay);
-  menuDropdownEl.addEventListener("animationend", onAnimationendOverlay);
+  menuPopupEl.addEventListener("animationend", onAnimationendOverlay);
 };
 
 export const removeOverlayEvents = (stack: TDismissStack | undefined) => {
   if (!stack) return;
-  const { containerEl, menuBtnEl, menuDropdownEl } = stack;
+  const { containerEl, menuBtnEl, menuPopupEl } = stack;
 
   if (!dismissStack.filter((stack) => stack.isOverlayClipped).length) {
     console.log("remove ResizeEvent MutationObserver Scroll");
@@ -324,15 +324,14 @@ export const removeOverlayEvents = (stack: TDismissStack | undefined) => {
   console.log("remove transitionend animationend");
   containerEl.removeEventListener("transitionend", onTransitionendOverlay);
   menuBtnEl.removeEventListener("transitionend", onTransitionendOverlay);
-  menuDropdownEl.removeEventListener("transitionend", onTransitionendOverlay);
+  menuPopupEl.removeEventListener("transitionend", onTransitionendOverlay);
   containerEl.removeEventListener("animationend", onAnimationendOverlay);
   menuBtnEl.removeEventListener("animationend", onAnimationendOverlay);
-  menuDropdownEl.removeEventListener("animationend", onAnimationendOverlay);
+  menuPopupEl.removeEventListener("animationend", onAnimationendOverlay);
 };
 
 const addResizeEvent = () => {
-  const { containerEl, menuBtnEl, menuDropdownEl } =
-    getTopClippedOverlayStack()!;
+  const { containerEl, menuBtnEl, menuPopupEl } = getTopClippedOverlayStack()!;
 
   if ("ResizeObserver" in window) {
     let init = true;
@@ -347,7 +346,7 @@ const addResizeEvent = () => {
     resizeObserver.observe(document.body);
     resizeObserver.observe(menuBtnEl);
     resizeObserver.observe(containerEl);
-    resizeObserver.observe(menuDropdownEl!);
+    resizeObserver.observe(menuPopupEl!);
   }
 
   if (!addedResizeEvent) {
@@ -368,8 +367,7 @@ const removeResizeEvent = () => {
 };
 
 const addMutationObserver = () => {
-  const { containerEl, menuBtnEl, menuDropdownEl } =
-    getTopClippedOverlayStack()!;
+  const { containerEl, menuBtnEl, menuPopupEl } = getTopClippedOverlayStack()!;
   let init = true;
   const config = { attributes: true };
   mutationObserver = new MutationObserver(() => {
@@ -381,7 +379,7 @@ const addMutationObserver = () => {
   });
   mutationObserver.observe(menuBtnEl, config);
   mutationObserver.observe(containerEl, config);
-  mutationObserver.observe(menuDropdownEl!, config);
+  mutationObserver.observe(menuPopupEl!, config);
 };
 
 const removeMutationObserver = () => {
@@ -394,19 +392,19 @@ export const updateSVG = (
   stack?: TDismissStack | null,
   checkMenuButtonIsObscured?: boolean
 ) => {
-  const { menuDropdownEl, overlayEl, containerEl } =
+  const { menuPopupEl, overlayEl, containerEl } =
     stack || getTopClippedOverlayStack()!;
 
-  if (!overlayEl || !menuDropdownEl || !containerEl) return;
+  if (!overlayEl || !menuPopupEl || !containerEl) return;
   const svgEl = overlayEl.firstElementChild!;
-  const pathEl = svgEl.querySelectorAll("path") as NodeListOf<SVGPathElement>;
-  pathEl[1].style.pointerEvents = "none";
-  pathEl[2].style.pointerEvents = "none";
+  const paths = svgEl.querySelectorAll("path") as NodeListOf<SVGPathElement>;
+  paths[5].style.pointerEvents = "none";
+  paths[6].style.pointerEvents = "none";
   const {
+    bgCoverPath,
     menuButtonPath,
-    menuDropdownPath,
-    menuButtonClipPath,
-    menuDropdownClipPath,
+    menuPopupPath,
+    menuPopupClipPath,
     navBarPath,
   } = createClippedPoints(checkMenuButtonIsObscured);
 
@@ -418,38 +416,47 @@ export const updateSVG = (
     `0 0 ${overlaySize.width} ${overlaySize.height}`
   );
 
-  pathEl[0].setAttribute("d", menuDropdownClipPath);
-  // pathEl[1].setAttribute("d", menuButtonClipPath);
-  pathEl[1].setAttribute("d", menuButtonPath);
-  pathEl[1].style.pointerEvents = "all";
-  // pathEl[3].setAttribute("d", menuDropdownPath);
-  pathEl[2].setAttribute("d", navBarPath || "");
-  pathEl[2].style.pointerEvents = "all";
+  // paths in mask
+  paths[0].setAttribute("d", bgCoverPath);
+  paths[1].setAttribute("d", menuButtonPath);
+  paths[2].setAttribute("d", navBarPath || "");
+  paths[3].setAttribute("d", menuPopupPath);
+
+  //paths in clipPath
+  paths[4].setAttribute("d", menuPopupClipPath);
+
+  //paths
+  paths[5].setAttribute("d", bgCoverPath + menuButtonPath);
+  paths[6].setAttribute("d", navBarPath || "");
+  paths[7].setAttribute("d", bgCoverPath);
+
+  paths[5].style.pointerEvents = "all";
+  paths[6].style.pointerEvents = "all";
 };
 
 export const mountOverlayClipped = () => {
-  const { overlayEl, id } = dismissStack[dismissStack.length - 1];
+  const { overlayEl, id, uniqueId } = dismissStack[dismissStack.length - 1];
   overlaySize.width = overlayEl!.clientWidth;
   overlaySize.height = overlayEl!.clientHeight;
 
   const {
+    bgCoverPath,
     menuButtonPath,
-    menuDropdownPath,
-    menuButtonClipPath,
-    menuDropdownClipPath,
+    menuPopupPath,
+    menuPopupClipPath,
     navBarPath,
   } = createClippedPoints();
   const style = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: ${
     999 + dismissStack.length
   }; pointer-events:none;`;
 
-  const clipPathId = `${id}--overlay--clipped`;
-  const clipPathMenuButtonId = `${clipPathId}--menu--button`;
-  const clipPathMenuDropdownId = `${clipPathId}--menu-dropdown`;
+  const clipPathId = `${uniqueId}--overlay--clipped`;
+  const clipPathMenuPopupId = `${clipPathId}--menu-dropdown`;
+  const maskId = `${clipPathId}--mask`;
 
   addOverlayEvents();
 
-  const child = (
+  const svgEl = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`0 0 ${overlaySize.width} ${overlaySize.height}`}
@@ -459,34 +466,40 @@ export const mountOverlayClipped = () => {
       version="1.1"
     >
       <defs>
-        <clipPath id={clipPathMenuDropdownId} clip-rule="evenodd">
-          <path d={menuDropdownClipPath} />
+        <mask id={maskId}>
+          <path d={bgCoverPath} fill="#fff" />
+          <path d={menuButtonPath} fill="#000" />
+          <path d={navBarPath || ""} fill="#fff" />
+          <path d={menuPopupPath} fill="#000" />
+        </mask>
+        <clipPath id={clipPathMenuPopupId} clip-rule="evenodd">
+          <path d={menuPopupClipPath} />
         </clipPath>
-        {/* <clipPath id={clipPathMenuButtonId} clip-rule="evenodd">
-          <path d={menuButtonClipPath} />
-        </clipPath> */}
       </defs>
       <path
-        clip-path={`url(#${clipPathMenuDropdownId})`}
+        clip-path={`url(#${clipPathMenuPopupId})`}
         fill-rule="evenodd"
-        d={menuButtonPath}
+        d={bgCoverPath + menuButtonPath}
         style="pointer-events: all;"
+        fill="none"
       />
-      {/* <path
-        clip-path={`url(#${clipPathMenuButtonId})`}
-        fill-rule="evenodd"
-        d={menuDropdownPath}
-        style="pointer-events: all;"
-      /> */}
       <path
-        clip-path={`url(#${clipPathMenuDropdownId})`}
+        clip-path={`url(#${clipPathMenuPopupId})`}
         d={navBarPath || ""}
         style="pointer-events: all"
+        fill="none"
+      />
+      <path
+        mask={`url(#${maskId})`}
+        d={bgCoverPath}
+        solid-dismiss-overlay-mask={id}
+        fill="none"
+        style="pointer-events: none"
       />
     </svg>
-  );
+  ) as HTMLElement;
   overlayEl!.style.cssText = style;
-  overlayEl!.appendChild(child as HTMLElement);
+  overlayEl!.appendChild(svgEl);
 
   pollOverlaySize(overlayEl!);
 };
