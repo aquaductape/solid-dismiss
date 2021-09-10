@@ -17,7 +17,6 @@ const App: Component = () => {
       <Navbar></Navbar>
       <main class="main">
         <Hero />
-        hi!!
         <BasicDropdown></BasicDropdown>
         {/* <NestedDropdown></NestedDropdown> */}
         <Select></Select>
