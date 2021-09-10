@@ -33,7 +33,8 @@
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "npm run build",
-    "release": "release-it"
+    "release": "release-it",
+    "demo-deploy": "./deploy.sh"
   },
   "repository": {
     "type": "git",

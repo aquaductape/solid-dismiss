@@ -4,7 +4,7 @@
 
 branch="gh-pages"
 output="demo-dist"
-buildScript="demo-build"
+buildScript="build"
 
 if [ $(git status --porcelain | wc -l) -eq "0" ]; then
   echo -e "  🟢 Git repo is clean.\n"
@@ -39,11 +39,13 @@ function is_in_remote() {
 }
 
 echo -e "\nbuilding $output...\n" &&
+    cd ./demo &&
     npm run "$buildScript" &&
+    cd ../ &&
     echo -e "\ntracking $output by removing it in gitingore\n"
 sed -i -- "s/$output//g" ./.gitignore &&
     git add . &&
-    echo -e "\ncommitting $output in order to push demo-dist subtree for $branch...\n"
+    echo -e "\ncommitting $output in order to push $output subtree for $branch...\n"
 git commit -m "update $output subtree for $branch" &&
     is_in_remote
 
