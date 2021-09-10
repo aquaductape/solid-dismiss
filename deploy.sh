@@ -4,6 +4,7 @@
 
 branch="gh-pages"
 output="demo-dist"
+buildScript="demo-build"
 
 if [ $(git status --porcelain | wc -l) -eq "0" ]; then
   echo -e "  🟢 Git repo is clean.\n"
@@ -38,7 +39,7 @@ function is_in_remote() {
 }
 
 echo -e "\nbuilding $output...\n" &&
-    npm run build &&
+    npm run "$buildScript" &&
     echo -e "\ntracking $output by removing it in gitingore\n"
 sed -i -- "s/$output//g" ./.gitignore &&
     git add . &&
