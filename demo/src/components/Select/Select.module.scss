@@ -1,0 +1,116 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.list-outer {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+  z-index: 50;
+  outline: 0;
+
+  &::before {
+    position: absolute;
+    content: "";
+    top: -4px;
+    left: 2px;
+    right: 2px;
+    height: 4px;
+    background: var(--dropdown-root-bg);
+    z-index: 2;
+  }
+
+  &::after {
+    position: absolute;
+    content: "";
+    top: 9px;
+    left: 1px;
+    right: 1px;
+    height: calc(100% - 12px);
+    box-shadow: 0 5px 18px 0px var(--dropdown-root-shadow);
+    border-radius: 10px;
+  }
+
+  .list {
+    position: relative;
+    height: 100%;
+    // border: 2px solid var(--dropdown-root-border);
+    border-radius: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    background: var(--dropdown-root-bg);
+    overflow: hidden;
+    outline: 0;
+    z-index: 1;
+  }
+}
+
+.list-item {
+  padding: 10px;
+  pointer-events: all;
+  cursor: pointer;
+  transition: background-color 200ms, color 200ms;
+  font-size: 16px;
+
+  &:hover {
+    background: var(--list-item-hover);
+  }
+  &.active {
+    color: var(--list-item-active-txt);
+    background: var(--list-item-active);
+  }
+}
+
+.select-btn {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.btn {
+  border: 0;
+  background: var(--select-btn-bg);
+  border-radius: 5px;
+  text-align: left;
+  width: 100%;
+  font-size: 16px;
+  height: 100%;
+  pointer-events: none;
+  color: #000;
+  transition: 250ms background-color, 250ms color;
+
+  &.active {
+    box-shadow: 0 3px 4px 0px var(--dropdown-btn),
+      0 25px 0 0px var(--dropdown-root-bg);
+  }
+
+  &:hover {
+    background: var(--select-btn-bg-hover);
+  }
+}
+
+.native-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  pointer-events: all;
+  opacity: 0;
+}
+
+@media (min-width: 500px) {
+  .native-select {
+    display: none;
+  }
+
+  .btn {
+    pointer-events: all;
+  }
+}
