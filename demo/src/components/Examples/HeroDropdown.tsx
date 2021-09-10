@@ -55,7 +55,7 @@ const HeroDropdown = () => {
             <p style="margin-top: 0;">
               To close: <strong>click</strong> outside, or press{" "}
               <code>Esc</code> key, or press <code>Tab</code> key until focus is
-              outside of dropdown
+              outside of popup
             </p>
             <div class="gutters">
               <button className="focus-gutter"></button>
