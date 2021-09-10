@@ -19,13 +19,16 @@ const Dropdown = () => {
       >
         <ul class="dropdown">
           <li>
-            <a href="#">cat</a>
+            <button>hi</button>
+            {/* <a href="#">cat</a> */}
           </li>
           <li>
-            <a href="#">dog</a>
+            <button>bye</button>
+            {/* <a href="#">dog</a> */}
           </li>
           <li>
-            <a href="#">fish</a>
+            <button>hello</button>
+            {/* <a href="#">fish</a> */}
           </li>
         </ul>
       </Dismiss>
