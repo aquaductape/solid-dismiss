@@ -331,12 +331,12 @@ const Select: Component<{
       <Dismiss
         class={c["container"]}
         menuButton={btnEl}
-        toggle={toggle}
-        setToggle={setToggle}
+        open={toggle}
+        setOpen={setToggle}
         setFocus={setFocus}
         menuPopup={() => listEl}
         overlay={"clipped"}
-        focusOnLeave={btnEl}
+        focusElWhenClosed={btnEl}
       >
         <div class={classM("list-outer")}>
           <ul

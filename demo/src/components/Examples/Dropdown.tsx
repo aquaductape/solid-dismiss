@@ -3,32 +3,36 @@ import { createSignal, onMount } from "solid-js";
 // ...
 
 const Dropdown = () => {
-  const [toggle, setToggle] = createSignal(false);
+  const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
 
   return (
     <div style="position: relative;">
-      <button class="btn-primary" ref={btnEl}>
+      <button class="btn-primary" id="foobar" ref={btnEl}>
         Dropdown
       </button>
       <Dismiss
         menuButton={btnEl}
-        toggle={toggle}
-        setToggle={setToggle}
+        open={open}
+        setOpen={setOpen}
         cursorKeys
+        useAriaExpanded
       >
         <ul class="dropdown">
           <li>
-            <button>hi</button>
-            {/* <a href="#">cat</a> */}
+            <a class="item" href="#">
+              cat
+            </a>
           </li>
           <li>
-            <button>bye</button>
-            {/* <a href="#">dog</a> */}
+            <a class="item" href="#">
+              dog
+            </a>
           </li>
           <li>
-            <button>hello</button>
-            {/* <a href="#">fish</a> */}
+            <a class="item" href="#">
+              fish
+            </a>
           </li>
         </ul>
       </Dismiss>

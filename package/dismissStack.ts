@@ -3,13 +3,13 @@ import { Accessor } from "solid-js";
 export type TDismissStack = {
   id: string;
   uniqueId: string;
-  setToggle: (v: boolean) => void;
-  toggle: Accessor<boolean>;
+  setOpen: (v: boolean) => void;
+  open: Accessor<boolean>;
   menuBtnEl: HTMLElement;
   menuPopupEl: HTMLElement;
   containerEl: HTMLElement;
   overlayEl?: HTMLDivElement;
-  overlay: "block" | "clipped" | false;
+  overlay: "backdrop" | "clipped" | false;
   isOverlayClipped: boolean;
   detectIfMenuButtonObscured: boolean;
 };

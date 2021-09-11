@@ -44,10 +44,11 @@ const HeroDropdown = () => {
         <Dismiss
           class="hero-dropdown"
           menuButton={btnEl}
-          toggle={toggle}
-          setToggle={setToggle}
+          open={toggle}
+          setOpen={setToggle}
           trapFocus
           overlay={"clipped"}
+
           // closeWhenMenuButtonIsClicked={false}
         >
           <div className="shadow"></div>
@@ -73,6 +74,7 @@ const TransitionHero: Component = (props) => {
   return (
     <Transition
       name="hero-animate"
+
       //       onEnter={(el, done) => {
       //         (el as HTMLElement).style.transformOrigin = "top right";
       //         const a = el.animate(

@@ -1,5 +1,6 @@
 import { createSignal, Show, createEffect, onMount } from "solid-js";
 import _DropdownWithCloseButtons from "../Examples/DropdownWithCloseButtons";
+import FocusGutter from "../FocusGutter";
 const DropdownWithCloseButtons = () => {
   let codeEl!: HTMLDivElement;
   onMount(() => {
@@ -41,16 +42,9 @@ const DropdownWithCloseButtons = () => {
       <div class="split-view">
         <div>
           <div class="dropdown-area">
-            <button
-              id="focus-me"
-              class="focus-gutter"
-              aria-label="focus gutter, before dropdown button"
-            ></button>
+            <FocusGutter />
             <_DropdownWithCloseButtons></_DropdownWithCloseButtons>
-            <button
-              class="focus-gutter"
-              aria-label="focus gutter, after dropdown button"
-            ></button>
+            <FocusGutter />
           </div>
         </div>
 

@@ -16,7 +16,7 @@ const resizeTimeoutAmount = 400;
 const overlaySize = { height: 0, width: 0 };
 
 const isTopStackOverlayBlock = () =>
-  dismissStack[dismissStack.length - 1].overlay === "block";
+  dismissStack[dismissStack.length - 1].overlay === "backdrop";
 
 const getTopClippedOverlayStack = () => {
   for (let i = dismissStack.length - 1; i >= 0; i--) {
@@ -194,10 +194,10 @@ const generalOverlay = () => {
     if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
-    const { toggle, containerEl } = stack;
+    const { open, containerEl } = stack;
 
     if (!containerEl.isConnected) return;
-    if (!toggle()) return;
+    if (!open()) return;
 
     updateSVG(stack);
   }, timeoutAmount);
@@ -210,10 +210,10 @@ const onViewportResizeOverlay = () => {
     if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
-    const { toggle, containerEl } = stack;
+    const { open, containerEl } = stack;
 
     if (!containerEl.isConnected) return;
-    if (!toggle()) return;
+    if (!open()) return;
 
     updateSVG(stack);
   }, resizeTimeoutAmount);
@@ -226,9 +226,9 @@ const onAnimationendOverlay = (e: Event) => {
     if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
-    const { toggle, containerEl, menuPopupEl, menuBtnEl } = stack;
+    const { open, containerEl, menuPopupEl, menuBtnEl } = stack;
 
-    if (!toggle()) return;
+    if (!open()) return;
 
     const target = e.target as HTMLElement;
     if (
@@ -251,9 +251,9 @@ const onTransitionendOverlay = (e: Event) => {
     if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
-    const { toggle, containerEl, menuPopupEl, menuBtnEl } = stack;
+    const { open, containerEl, menuPopupEl, menuBtnEl } = stack;
 
-    if (!toggle()) return;
+    if (!open()) return;
 
     const target = e.target as HTMLElement;
     if (
@@ -276,8 +276,8 @@ const onScrollOverlay = (e: Event) => {
     if (!dismissStack.length || isTopStackOverlayBlock()) return;
 
     const stack = getTopClippedOverlayStack()!;
-    const { menuBtnEl, containerEl, toggle } = stack;
-    if (!toggle()) return;
+    const { menuBtnEl, containerEl, open } = stack;
+    if (!open()) return;
 
     const target = e.target as HTMLElement;
     if (!(target.contains(menuBtnEl) || target.contains(containerEl))) return;

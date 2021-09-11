@@ -1,5 +1,6 @@
 import { createSignal, Show, onMount } from "solid-js";
 import Dropdown from "../Examples/Dropdown";
+import FocusGutter from "../FocusGutter";
 
 const BasicDropdown = () => {
   let codeEl!: HTMLDivElement;
@@ -43,15 +44,9 @@ const BasicDropdown = () => {
       <div class="split-view">
         <div>
           <div class="dropdown-area">
-            <button
-              class="focus-gutter"
-              aria-label="focus gutter, before dropdown button"
-            ></button>
+            <FocusGutter />
             <Dropdown></Dropdown>
-            <button
-              class="focus-gutter"
-              aria-label="focus gutter, after dropdown button"
-            ></button>
+            <FocusGutter />
           </div>
         </div>
         <div

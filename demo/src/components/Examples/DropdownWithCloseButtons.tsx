@@ -4,6 +4,7 @@ import { createSignal } from "solid-js";
 const DropdownWithCloseButtons = () => {
   const [toggle, setToggle] = createSignal(false);
   let btnEl!: HTMLButtonElement;
+  let btnSaveEl!: HTMLButtonElement;
 
   const onClickClose = () => {
     setToggle(false);
@@ -17,17 +18,25 @@ const DropdownWithCloseButtons = () => {
       <Dismiss
         class="dropdown dropdown-widget"
         menuButton={btnEl}
-        toggle={toggle}
-        setToggle={setToggle}
+        open={toggle}
+        setOpen={setToggle}
+        focusElWhenOpened={() => btnSaveEl}
       >
         <div>
           <h3>Dropdown Text</h3>
-          <button class="btn-secondary" onClick={onClickClose}>
-            Save
-          </button>
-          <button class="btn-secondary" onClick={onClickClose}>
-            Close
-          </button>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+          <div className="close-btns">
+            <button class="btn-secondary" onClick={onClickClose}>
+              Cancel
+            </button>
+            <button
+              class="btn-secondary"
+              ref={btnSaveEl}
+              onClick={onClickClose}
+            >
+              Save
+            </button>
+          </div>
         </div>
       </Dismiss>
     </div>

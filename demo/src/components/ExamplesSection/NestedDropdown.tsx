@@ -1,9 +1,10 @@
 import { Component, createSignal, Show, onMount } from "solid-js";
 import _NestedDropdown from "../Examples/NestedDropdown";
+import FocusGutter from "../FocusGutter";
 
 const NestedDropdown: Component<{
   focusOnLeave?: boolean;
-  overlay?: "clipped" | "block";
+  overlay?: "clipped" | "backdrop";
 }> = ({ focusOnLeave, overlay }) => {
   let codeEl!: HTMLDivElement;
 
@@ -35,19 +36,13 @@ const NestedDropdown: Component<{
 
   return (
     <div class="section">
-      <h2>Nested Dropdowns</h2>
+      <h2>Nested Popups</h2>
       <div class="split-view">
         <div>
           <div class="dropdown-area">
-            <button
-              class="focus-gutter"
-              aria-label="focus gutter, before dropdown button"
-            ></button>
+            <FocusGutter />
             <_NestedDropdown focusOnLeave={focusOnLeave} overlay={overlay} />
-            <button
-              class="focus-gutter"
-              aria-label="focus gutter, after dropdown button"
-            ></button>
+            <FocusGutter />
           </div>
         </div>
         <div

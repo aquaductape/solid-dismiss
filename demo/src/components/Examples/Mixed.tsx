@@ -48,8 +48,8 @@ const Mixed: Component = () => {
       <Dismiss
         class="nested-dropdown"
         menuButton={btnElNorm}
-        toggle={toggleNorm}
-        setToggle={setToggleNorm}
+        open={toggleNorm}
+        setOpen={setToggleNorm}
         // ref={menuDropdown}
       >
         <div>
@@ -75,8 +75,8 @@ const Mixed: Component = () => {
         <Dismiss
           class="nested-dropdown"
           menuButton={btnElBlock}
-          toggle={toggleBlock}
-          setToggle={setToggleBlock}
+          open={toggleBlock}
+          setOpen={setToggleBlock}
           overlay={"block"}
           ref={menuDropdown}
         >
@@ -104,8 +104,8 @@ const Mixed: Component = () => {
       <Dismiss
         class="nested-dropdown"
         menuButton={btnElClip}
-        toggle={toggleClip}
-        setToggle={setToggleClip}
+        open={toggleClip}
+        setOpen={setToggleClip}
         overlay={"clipped"}
       >
         <div>

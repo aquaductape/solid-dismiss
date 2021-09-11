@@ -17,11 +17,7 @@ const Modal = () => {
       </button>
       <Portal>
         <div>
-          <Dismiss
-            class="dropdown-container"
-            toggle={toggle}
-            setToggle={setToggle}
-          >
+          <Dismiss class="dropdown-container" open={toggle} setOpen={setToggle}>
             <h3>Text in Modal</h3>
             <button>Close</button>
           </Dismiss>
