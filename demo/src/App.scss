@@ -60,6 +60,10 @@ body {
   padding-bottom: 500px;
 }
 
+iframe {
+  pointer-events: none;
+}
+
 p {
   line-height: 1.5;
 }

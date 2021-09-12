@@ -335,6 +335,7 @@ const addResizeEvent = () => {
 
   if ("ResizeObserver" in window) {
     let init = true;
+    console.log("createResizeObserver!!");
     resizeObserver = new ResizeObserver(() => {
       if (init) {
         init = false;
@@ -359,6 +360,7 @@ const addResizeEvent = () => {
 
 const removeResizeEvent = () => {
   if (resizeObserver) {
+    console.log("remove resize observer!");
     resizeObserver.disconnect();
     resizeObserver = null;
   }
