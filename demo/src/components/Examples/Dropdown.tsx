@@ -1,7 +1,6 @@
 import Dismiss from "../../../../package/index";
 import { createSignal, onMount } from "solid-js";
 import IFrame from "../IFrame";
-// ...
 
 const Dropdown = () => {
   const [open, setOpen] = createSignal(false);
@@ -9,19 +8,11 @@ const Dropdown = () => {
 
   return (
     <div style="position: relative;">
-      <button class="btn-primary" id="foobar" ref={btnEl}>
+      <button class="btn-primary" ref={btnEl}>
         Dropdown
       </button>
-      <Dismiss
-        menuButton={btnEl}
-        open={open}
-        setOpen={setOpen}
-        closeWhenWindowBlurs
-        // trapFocus
-        cursorKeys
-        useAriaExpanded
-      >
-        <ul class="dropdown" style="overflow:auto;height: 200px;">
+      <Dismiss menuButton={btnEl} open={open} setOpen={setOpen} useAriaExpanded>
+        <ul class="dropdown">
           <li>
             <a class="item" href="#">
               cat

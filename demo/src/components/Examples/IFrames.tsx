@@ -2,17 +2,19 @@ import Dismiss from "../../../../package/index";
 import { createSignal, onMount, Component } from "solid-js";
 import IFrame from "../IFrame";
 import FocusGutter from "../FocusGutter";
-// ...
+
 const SingleIFrame: Component<{
   includeIframeChild: boolean;
   includeIframeChild2?: boolean;
   iframeChildCrossDomain: boolean;
   iframeSiblingCrossDomain: boolean;
+  closeWhenWindowBlurs?: boolean;
 }> = ({
   iframeChildCrossDomain,
   iframeSiblingCrossDomain,
   includeIframeChild,
   includeIframeChild2,
+  closeWhenWindowBlurs,
 }) => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
@@ -28,6 +30,7 @@ const SingleIFrame: Component<{
           menuButton={btnEl}
           open={open}
           setOpen={setOpen}
+          closeWhenWindowBlurs={closeWhenWindowBlurs}
           useAriaExpanded
         >
           <ul class="dropdown" style="overflow:auto;height: 200px;">
@@ -84,6 +87,14 @@ const IFrames = () => {
         includeIframeChild2
         iframeChildCrossDomain
         iframeSiblingCrossDomain
+      />
+      <p>Close when window blurs</p>
+      <SingleIFrame
+        includeIframeChild={false}
+        includeIframeChild2
+        iframeChildCrossDomain
+        iframeSiblingCrossDomain
+        closeWhenWindowBlurs
       />
     </div>
   );
