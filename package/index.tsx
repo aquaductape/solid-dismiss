@@ -287,7 +287,6 @@ const Dismiss: Component<{
   let addedFocusOutAppEvents = false;
   let menuBtnKeyupTabFired = false;
   let prevFocusedEl: HTMLElement | null = null;
-  let focusSentinelLastElTabbed = false;
   let containerFocusTimeoutId: number | null = null;
   let menuButtonBlurTimeoutId: number | null = null;
   const initDefer = !props.open();
@@ -413,8 +412,6 @@ const Dismiss: Component<{
   };
 
   const onWindowBlur = () => {
-    if (focusSentinelLastElTabbed) return;
-
     const exit = () => {
       console.log("TRIGGER");
       props.setOpen(false);
@@ -428,7 +425,6 @@ const Dismiss: Component<{
     };
 
     setTimeout(() => {
-      focusSentinelLastElTabbed = false;
       const activeElement = document.activeElement;
 
       if (!activeElement) return onBlurWindow();
@@ -658,7 +654,6 @@ const Dismiss: Component<{
       return;
     }
 
-    focusSentinelLastElTabbed = true;
     if (trapFocus) {
       const el = getNextTabbableElement({
         from: focusSentinelFirstEl,

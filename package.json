@@ -36,7 +36,8 @@
     "prepublishOnly": "npm run build",
     "release": "release-it",
     "dev": "cd demo && pnpm start",
-    "demo-deploy": "cd demo && ./deploy.sh"
+    "demo-deploy": "cd demo && ./deploy.sh",
+    "demo-deploy-quick": "git add . && git commit -m 'update' && cd demo && ./deploy.sh"
   },
   "repository": {
     "type": "git",
