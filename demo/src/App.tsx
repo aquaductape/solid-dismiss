@@ -9,6 +9,7 @@ import NestedDropdown from "./components/ExamplesSection/NestedDropdown";
 import IOSDebugger from "./components/iOSDebugger";
 import DropdownWithCloseButtons from "./components/ExamplesSection/DropdownWithCloseButtons";
 import Mixed from "./components/Examples/Mixed";
+import IFrames from "./components/Examples/IFrames";
 
 const App: Component = () => {
   return (
@@ -18,6 +19,7 @@ const App: Component = () => {
         <Hero />
         <BasicDropdown></BasicDropdown>
         {/* <NestedDropdown></NestedDropdown> */}
+        <IFrames />
         <NestedDropdown focusOnLeave={true} overlay="backdrop"></NestedDropdown>
         <NestedDropdown focusOnLeave={true} overlay="clipped"></NestedDropdown>
         <NestedDropdown focusOnLeave={true}></NestedDropdown>

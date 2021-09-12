@@ -37,7 +37,6 @@ const Dropdown = () => {
               fish
             </a>
           </li>
-          <IFrame useCrossDomain={true} />
         </ul>
       </Dismiss>
     </div>

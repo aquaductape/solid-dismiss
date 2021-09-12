@@ -47,7 +47,7 @@ const BasicDropdown = () => {
           <div class="dropdown-area">
             <FocusGutter />
             <Dropdown></Dropdown>
-            <IFrame useCrossDomain />
+            <IFrame />
             <FocusGutter />
           </div>
         </div>

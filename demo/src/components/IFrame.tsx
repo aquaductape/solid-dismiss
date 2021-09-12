@@ -8,7 +8,7 @@ const IFrame: Component<{ useCrossDomain?: boolean }> = ({
     if (useCrossDomain) return;
     const doc = el.contentWindow?.document!;
     doc.write(
-      "<html><body> <button>hi</button> <button>bye</button> </body> </html>"
+      "<html><body> <h1>Same Domain Iframe</h1> <button>hi</button> <button>bye</button> </body> </html>"
     );
     doc.close();
   });
@@ -17,8 +17,6 @@ const IFrame: Component<{ useCrossDomain?: boolean }> = ({
       src={useCrossDomain ? "https://example.org" : ""}
       width="200px"
       height="200px"
-      // @ts-ignore
-      tabindex="0"
       ref={el}
     ></iframe>
   );

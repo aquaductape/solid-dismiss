@@ -15,6 +15,7 @@ import {
   tabbableSelectors,
   getNextTabbableElement,
   inverseQuerySelector,
+  matchByFirstChild,
 } from "./utils";
 import {
   dismissStack,
@@ -96,7 +97,7 @@ const Dismiss: Component<{
    *
    * An example would be to emulate native <select> element behavior, set which sets focus to menuButton after dismiss.
    *
-   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However this library won't be able to grab tabbable elements inside an iframe with cross domain which triggers CORS policy, so instead the iframe will be focused.
+   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However this library won't be able to grab tabbable elements inside an iframe with cross domain which triggers CORS policy, so instead the iframe will be focused, this will happen if `overlay` is set to `backdrop` or iframe is last tabbable item in menuPopup.
    *
    * *² selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
@@ -172,7 +173,7 @@ const Dismiss: Component<{
   /**
    * Default: `false`
    *
-   * Closes when viewport window "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.
+   * Closes when window "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.
    */
   closeWhenWindowBlurs?: boolean;
   /**
@@ -233,15 +234,17 @@ const Dismiss: Component<{
    * If `true` add aria attributes for generic expand/collapse dropdown.
    */
   useAriaExpanded?: boolean;
-  open: Accessor<boolean>;
-  setOpen: (v: boolean) => void;
-  setFocus?: (v: boolean) => void;
   /**
    * Default: `false`
    *
-   * If `overlay` is set to "backdrop" or trapFocus is `true`,  then this prop will be set to `true`
+   * If `true` activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.
+   *
+   * Is set to `true`:  `overlay` prop has `"backdrop"` property.  This component's root container is not an adjacent sibling of menuButton. `focusElWhenClosed` prop has a value.
    */
-  includeFocusSentinels?: boolean;
+  mountedElseWhere?: boolean;
+  open: Accessor<boolean>;
+  setOpen: (v: boolean) => void;
+  setFocus?: (v: boolean) => void;
 }> = (props) => {
   const {
     id = "",
@@ -261,11 +264,14 @@ const Dismiss: Component<{
     trapFocus = false,
     removeScrollbar = false,
     useAriaExpanded = false,
-    includeFocusSentinels = false,
+    mountedElseWhere = false,
   } = props;
   const uniqueId = createUniqueId();
   const hasFocusSentinels =
-    focusElWhenClosed || overlay === "backdrop" || trapFocus;
+    focusElWhenClosed ||
+    overlay === "backdrop" ||
+    trapFocus ||
+    mountedElseWhere;
   let closeBtn: HTMLElement[] = [];
   let menuPopupEl: HTMLElement | null = null;
   let menuBtnEl!: HTMLElement;
@@ -281,8 +287,11 @@ const Dismiss: Component<{
   let addedFocusOutAppEvents = false;
   let menuBtnKeyupTabFired = false;
   let prevFocusedEl: HTMLElement | null = null;
-  let focusedIframeByTab = false;
   let focusSentinelLastElTabbed = false;
+  let containerFocusTimeoutId: number | null = null;
+  let menuButtonBlurTimeoutId: number | null = null;
+  const initDefer = !props.open();
+
   const refContainerCb = (el: HTMLElement) => {
     if (props.ref) {
       // @ts-ignore
@@ -290,17 +299,22 @@ const Dismiss: Component<{
     }
     containerEl = el as any;
   };
-  const refOverlayCb = (el: HTMLElement) => {
-    if (props.ref) {
-      // @ts-ignore
-      props.ref(el);
-    }
-    containerEl = el as any;
-  };
 
-  let containerFocusTimeoutId: number | null = null;
-  let menuButtonBlurTimeoutId: number | null = null;
-  const initDefer = !props.open();
+  const activateLastFocusSentinel = () => {
+    if (mountedElseWhere) return;
+
+    const menuBtnSibling = menuBtnEl.nextElementSibling!;
+
+    if (
+      matchByFirstChild({
+        parent: menuBtnSibling,
+        matchEl: containerEl,
+      })
+    )
+      return;
+
+    focusSentinelLastEl.setAttribute("tabindex", "0");
+  };
 
   const runFocusOnActive = () => {
     if (focusElWhenOpened == null) return;
@@ -398,7 +412,7 @@ const Dismiss: Component<{
     }
   };
 
-  const onWindowBlur = (e: Event) => {
+  const onWindowBlur = () => {
     if (focusSentinelLastElTabbed) return;
 
     const exit = () => {
@@ -421,7 +435,9 @@ const Dismiss: Component<{
       if (activeElement.tagName !== "IFRAME") return onBlurWindow();
 
       if (containerEl.contains(activeElement)) {
-        focusSentinelLastEl.setAttribute("tabindex", "0");
+        if (activeElement.nextElementSibling === focusSentinelLastEl) {
+          focusSentinelLastEl.setAttribute("tabindex", "0");
+        }
         return;
       }
 
@@ -893,6 +909,8 @@ const Dismiss: Component<{
           if (isOverlayClipped) {
             mountOverlayClipped();
           }
+
+          activateLastFocusSentinel();
         } else {
           removeOutsideFocusEvents();
           removeMenuPopupEl();
