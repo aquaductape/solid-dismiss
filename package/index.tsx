@@ -88,9 +88,9 @@ const Dismiss: Component<{
    *
    * which element, via selector*, to recieve focus after popup opens.
    *
-   * *selector: css string queried from document, or if string value is `"menuPopup"` uses menuPopup element.
+   * *css string queried from document, or if string value is `"menuPopup"` uses menuPopup element.
    */
-  focusElWhenOpened?: "menuPopup" | string | JSX.Element | (() => JSX.Element);
+  focusElementOnOpen?: "menuPopup" | string | JSX.Element | (() => JSX.Element);
   /**
    * Default: When Tabbing forwards, focuses on tabbable element*¹ after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click"*³, user-agent determines which element recieves focus, if overlay present, then menuButton will be focused instead.
    *
@@ -105,7 +105,7 @@ const Dismiss: Component<{
    * *³ When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
    *
    */
-  focusElWhenClosed?:
+  focusElementOnClose?:
     | "menuButton"
     | string
     | JSX.Element
@@ -246,7 +246,7 @@ const Dismiss: Component<{
   /**
    * Default: `false`, but `true` on Safari iOS and no `overlay` is set.
    *
-   * Dealing with iframes when clicked upon in order to close
+   * If "click outside" happended to be on an iframe, it can be tricky since iframes don't bubble events. The library checks if the window blurs in order to detect that iframe was selected. However window blur strategy isn't guaranteed to work for the following: if iframe inside menuPopup is clicked then click "outside" iframe, or in iOS a non-clickable element is selected.
    *
    */
   aggressiveOnIframes?: boolean;
@@ -258,8 +258,8 @@ const Dismiss: Component<{
     id = "",
     menuButton,
     menuPopup,
-    focusElWhenClosed,
-    focusElWhenOpened,
+    focusElementOnClose,
+    focusElementOnOpen,
     closeButton,
     children,
     cursorKeys = false,
@@ -276,7 +276,7 @@ const Dismiss: Component<{
   } = props;
   const uniqueId = createUniqueId().replace(/\:/g, "-");
   const hasFocusSentinels =
-    focusElWhenClosed ||
+    focusElementOnClose ||
     overlay === "backdrop" ||
     trapFocus ||
     mountedElseWhere;
@@ -324,9 +324,9 @@ const Dismiss: Component<{
   };
 
   const runFocusOnActive = () => {
-    if (focusElWhenOpened == null) return;
+    if (focusElementOnOpen == null) return;
 
-    const el = queryElement(focusElWhenOpened);
+    const el = queryElement(focusElementOnOpen);
     if (el) {
       el.focus();
     }
@@ -388,7 +388,7 @@ const Dismiss: Component<{
     if (!item) return;
 
     const el =
-      queryElement(focusElWhenClosed, "focusOnLeave", "escapeKey") ||
+      queryElement(focusElementOnClose, "focusOnLeave", "escapeKey") ||
       item.menuBtnEl;
 
     if (el) {
@@ -412,7 +412,8 @@ const Dismiss: Component<{
     }
 
     const el =
-      queryElement(focusElWhenClosed, "focusOnLeave", "scrolling") || menuBtnEl;
+      queryElement(focusElementOnClose, "focusOnLeave", "scrolling") ||
+      menuBtnEl;
 
     if (el) {
       el.focus();
@@ -465,7 +466,7 @@ const Dismiss: Component<{
     }
 
     const el =
-      queryElement(focusElWhenClosed, "focusOnLeave", "click") || menuBtnEl;
+      queryElement(focusElementOnClose, "focusOnLeave", "click") || menuBtnEl;
 
     if (el) {
       el.focus();
@@ -566,7 +567,7 @@ const Dismiss: Component<{
 
   const onFocusOutContainer = (e: FocusEvent) => {
     console.log("runfocusout!!!");
-    if (focusElWhenClosed || overlay === "backdrop") {
+    if (focusElementOnClose || overlay === "backdrop") {
       e.stopImmediatePropagation();
     }
 
@@ -639,7 +640,7 @@ const Dismiss: Component<{
       }
 
       const el =
-        queryElement(focusElWhenClosed, "focusOnLeave", "tabBackwards") ||
+        queryElement(focusElementOnClose, "focusOnLeave", "tabBackwards") ||
         menuBtnEl;
 
       if (el) {
@@ -663,7 +664,7 @@ const Dismiss: Component<{
     }
 
     const el =
-      queryElement(focusElWhenClosed, "focusOnLeave", "tabForwards") ||
+      queryElement(focusElementOnClose, "focusOnLeave", "tabForwards") ||
       getNextTabbableElement({
         from: menuBtnEl,
         ignoreElement: [containerEl],

@@ -19,16 +19,16 @@ export const updateIframeStyle = ({
   id?: string;
   clear?: boolean;
 }) => {
+  //     iframe {
+  //     pointer-events: none !important;
+  //   }
+  //
+  //   [data-solid-dismiss-dropdown-container="${id}"] iframe {
+  //     pointer-events: unset !important;
+  //   }
   const stylesheet = !clear
     ? `
 
-  iframe {
-    pointer-events: none !important;
-  }
-
-  [data-solid-dismiss-dropdown-container="${id}"] iframe {
-    pointer-events: unset !important;
-  }
 
   `
     : "";

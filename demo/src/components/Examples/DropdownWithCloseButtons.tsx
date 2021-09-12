@@ -20,7 +20,7 @@ const DropdownWithCloseButtons = () => {
         menuButton={btnEl}
         open={toggle}
         setOpen={setToggle}
-        focusElWhenOpened={() => btnSaveEl}
+        focusElementOnOpen={() => btnSaveEl}
       >
         <div>
           <h3>Dropdown Text</h3>

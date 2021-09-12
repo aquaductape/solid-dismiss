@@ -75,7 +75,7 @@ const Dropdown: Component<{
             open={toggle}
             setOpen={setToggle}
             overlay={"clipped"}
-            focusElWhenClosed={focusOnLeave ? "menuButton" : undefined}
+            focusElementOnClose={focusOnLeave ? "menuButton" : undefined}
             ref={menuDropdown}
           >
             <div class="nested-dropdown" role="dialog">

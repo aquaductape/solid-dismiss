@@ -336,7 +336,7 @@ const Select: Component<{
         setFocus={setFocus}
         menuPopup={() => listEl}
         overlay={"clipped"}
-        focusElWhenClosed={btnEl}
+        focusElementOnClose={btnEl}
       >
         <div class={classM("list-outer")}>
           <ul
