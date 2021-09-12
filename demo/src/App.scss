@@ -44,23 +44,13 @@
   --inline-code-color: #fff;
 }
 
-// @media (prefers-color-scheme: dark) {
-//   :root {
-//     --dropdown-root-bg: #fff;
-//     --dropdown-root-border: #bcb7d4;
-//     --dropdown-root-shadow: #22243ab8;
-//     --list-item-hover: #dbd8eb;
-//     --select-btn-bg: #8e87ad;
-//     --select-btn-bg-hover: #b0aaca;
-//   }
-// }
-
 * {
   box-sizing: border-box;
 }
 
 html {
   color-scheme: var(--color-scheme);
+  touch-action: manipulation;
 }
 
 body {
