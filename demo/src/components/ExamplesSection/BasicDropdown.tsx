@@ -1,6 +1,7 @@
 import { createSignal, Show, onMount } from "solid-js";
 import Dropdown from "../Examples/Dropdown";
 import FocusGutter from "../FocusGutter";
+import IFrame from "../IFrame";
 
 const BasicDropdown = () => {
   let codeEl!: HTMLDivElement;
@@ -46,6 +47,7 @@ const BasicDropdown = () => {
           <div class="dropdown-area">
             <FocusGutter />
             <Dropdown></Dropdown>
+            <IFrame useCrossDomain />
             <FocusGutter />
           </div>
         </div>

@@ -20,7 +20,7 @@ const Dropdown: Component<{
   const [inputText, setInputText] = createSignal("");
 
   createEffect(() => {
-    if (overlay !== "backdrop") return;
+    if (overlay === "clipped") return;
     if (!toggle()) return;
 
     const btnBCR = btnEl.getBoundingClientRect();
@@ -44,11 +44,9 @@ const Dropdown: Component<{
               open={toggle}
               setOpen={setToggle}
               overlay={overlay}
-              // focusOnLeave={focusOnLeave ? "menuButton" : undefined}
-              closeWhenClickedOutside={false}
               ref={menuDropdown}
             >
-              <div class="nested-dropdown" role="dialog">
+              <div class="nested-dropdown absolute" role="dialog">
                 <h3>Nested Popup Text {overlay || ""}</h3>
                 <input
                   type="text"
@@ -73,7 +71,6 @@ const Dropdown: Component<{
         </Match>
         <Match when={overlay === "clipped"}>
           <Dismiss
-            class="nested-dropdown"
             menuButton={btnEl}
             open={toggle}
             setOpen={setToggle}
@@ -81,7 +78,7 @@ const Dropdown: Component<{
             focusElWhenClosed={focusOnLeave ? "menuButton" : undefined}
             ref={menuDropdown}
           >
-            <div role="dialog">
+            <div class="nested-dropdown" role="dialog">
               <h3>Nested Popup Text {overlay || ""}</h3>
               <input
                 type="text"
@@ -104,35 +101,36 @@ const Dropdown: Component<{
           </Dismiss>
         </Match>
         <Match when={true}>
-          <Dismiss
-            class="nested-dropdown"
-            menuButton={btnEl}
-            open={toggle}
-            setOpen={setToggle}
-            focusElWhenClosed={focusOnLeave ? "menuButton" : undefined}
-            ref={menuDropdown}
-          >
-            <div>
-              <h3>Nested Popup Text</h3>
-              <input
-                type="text"
-                placeholder={"input text..."}
-                onInput={(e) => setInputText(e.currentTarget.value)}
-              />
-              {inputText()}
-              <br />
-              <select name="" id="">
-                <option value="car">car</option>
-                <option value="rat">rat</option>
-                <option value="cat">cat</option>
-              </select>
-              <Show when={toggle()}>
-                <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
-                <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
-                <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
-              </Show>
-            </div>
-          </Dismiss>
+          <Portal>
+            <Dismiss
+              menuButton={btnEl}
+              open={toggle}
+              setOpen={setToggle}
+              // focusElWhenClosed={focusOnLeave ? "menuButton" : undefined}
+              ref={menuDropdown}
+            >
+              <div class="nested-dropdown absolute">
+                <h3>Nested Popup Text</h3>
+                <input
+                  type="text"
+                  placeholder={"input text..."}
+                  onInput={(e) => setInputText(e.currentTarget.value)}
+                />
+                {inputText()}
+                <br />
+                <select name="" id="">
+                  <option value="car">car</option>
+                  <option value="rat">rat</option>
+                  <option value="cat">cat</option>
+                </select>
+                <Show when={toggle()}>
+                  <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
+                  <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
+                  <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
+                </Show>
+              </div>
+            </Dismiss>
+          </Portal>
         </Match>
       </Switch>
     </div>

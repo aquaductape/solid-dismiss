@@ -12,8 +12,8 @@ import {
 } from "solid-js";
 import { Portal } from "solid-js/web";
 import {
-  focusableSelectors,
-  getNextFocusableElement,
+  tabbableSelectors,
+  getNextTabbableElement,
   inverseQuerySelector,
 } from "./utils";
 import {
@@ -90,15 +90,17 @@ const Dismiss: Component<{
    */
   focusElWhenOpened?: "menuPopup" | string | JSX.Element | (() => JSX.Element);
   /**
-   * Default: When Tabbing forwards, focuses on focusable element after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click", user-agent determines which element recieves focus, if overlay present, then menuButton will be focused instead.
+   * Default: When Tabbing forwards, focuses on tabbable element*¹ after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click"*³, user-agent determines which element recieves focus, if overlay present, then menuButton will be focused instead.
    *
-   * Which element, via selector*, to recieve focus after popup closes.
-   *
-   * *selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
+   * Which element, via selector*², to recieve focus after popup closes.
    *
    * An example would be to emulate native <select> element behavior, set which sets focus to menuButton after dismiss.
    *
-   * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
+   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However this library won't be able to grab tabbable elements inside an iframe with cross domain which triggers CORS policy, so instead the iframe will be focused.
+   *
+   * *² selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
+   *
+   * *³ When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
    *
    */
   focusElWhenClosed?:
@@ -107,11 +109,18 @@ const Dismiss: Component<{
     | JSX.Element
     | {
         /**
+         * Default: menuButton
+         *
          * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
+         *
          */
         tabBackwards?: "menuButton" | string | JSX.Element;
         /**
+         * Default: next tabbable element after menuButton;
+         *
          * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
+         *
+         * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
          */
         tabForwards?: "menuButton" | string | JSX.Element;
         /**
@@ -123,10 +132,14 @@ const Dismiss: Component<{
          */
         click?: "menuButton" | string | JSX.Element;
         /**
+         * Default: menuButton
+         *
          * focus on element when exiting menuPopup via "Escape" key
          */
         escapeKey?: "menuButton" | string | JSX.Element;
         /**
+         * Default: menuButton
+         *
          * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
          */
         scrolling?: "menuButton" | string | JSX.Element;
@@ -223,6 +236,12 @@ const Dismiss: Component<{
   open: Accessor<boolean>;
   setOpen: (v: boolean) => void;
   setFocus?: (v: boolean) => void;
+  /**
+   * Default: `false`
+   *
+   * If `overlay` is set to "backdrop" or trapFocus is `true`,  then this prop will be set to `true`
+   */
+  includeFocusSentinels?: boolean;
 }> = (props) => {
   const {
     id = "",
@@ -242,6 +261,7 @@ const Dismiss: Component<{
     trapFocus = false,
     removeScrollbar = false,
     useAriaExpanded = false,
+    includeFocusSentinels = false,
   } = props;
   const uniqueId = createUniqueId();
   const hasFocusSentinels =
@@ -253,6 +273,7 @@ const Dismiss: Component<{
   let focusSentinelLastEl!: HTMLDivElement;
   let containerEl!: HTMLDivElement;
   let overlayEl!: HTMLDivElement;
+  let cachedScrollTarget: Element;
   let isOverlayClipped = overlay === "clipped" || typeof overlay === "object";
   let closeBtnsAdded = false;
   let menuPopupAdded = false;
@@ -260,6 +281,8 @@ const Dismiss: Component<{
   let addedFocusOutAppEvents = false;
   let menuBtnKeyupTabFired = false;
   let prevFocusedEl: HTMLElement | null = null;
+  let focusedIframeByTab = false;
+  let focusSentinelLastElTabbed = false;
   const refContainerCb = (el: HTMLElement) => {
     if (props.ref) {
       // @ts-ignore
@@ -310,8 +333,8 @@ const Dismiss: Component<{
     if (activeElement === menuBtnEl || activeElement === menuPopupEl) {
       const el =
         e.key === "ArrowDown"
-          ? (menuPopupEl?.querySelector(focusableSelectors) as HTMLElement)
-          : inverseQuerySelector(menuPopupEl!, focusableSelectors);
+          ? (menuPopupEl?.querySelector(tabbableSelectors) as HTMLElement)
+          : inverseQuerySelector(menuPopupEl!, tabbableSelectors);
 
       if (el) {
         el.focus();
@@ -322,7 +345,7 @@ const Dismiss: Component<{
     const direction: "forwards" | "backwards" =
       e.key === "ArrowDown" ? "forwards" : "backwards";
 
-    const el = getNextFocusableElement({
+    const el = getNextTabbableElement({
       from: activeElement,
       direction,
       stopAtElement: menuPopupEl!,
@@ -357,8 +380,14 @@ const Dismiss: Component<{
   const onScrollClose = (e: Event) => {
     const target = e.target as HTMLElement;
 
+    if (cachedScrollTarget === target) return;
+
     if (target.contains(menuBtnEl)) {
       props.setOpen(false);
+      window.removeEventListener("scroll", onScrollClose, { capture: true });
+    } else {
+      cachedScrollTarget = target;
+      return;
     }
 
     const el =
@@ -369,9 +398,35 @@ const Dismiss: Component<{
     }
   };
 
-  const onWindowBlur = () => {
-    menuBtnEl.focus();
-    props.setOpen(false);
+  const onWindowBlur = (e: Event) => {
+    if (focusSentinelLastElTabbed) return;
+
+    const exit = () => {
+      console.log("TRIGGER");
+      props.setOpen(false);
+      window.removeEventListener("blur", onWindowBlur);
+    };
+
+    const onBlurWindow = () => {
+      if (!closeWhenWindowBlurs) return;
+      menuBtnEl.focus();
+      exit();
+    };
+
+    setTimeout(() => {
+      focusSentinelLastElTabbed = false;
+      const activeElement = document.activeElement;
+
+      if (!activeElement) return onBlurWindow();
+      if (activeElement.tagName !== "IFRAME") return onBlurWindow();
+
+      if (containerEl.contains(activeElement)) {
+        focusSentinelLastEl.setAttribute("tabindex", "0");
+        return;
+      }
+
+      exit();
+    });
   };
 
   const onClickOverlay = () => {
@@ -445,7 +500,7 @@ const Dismiss: Component<{
     if (e.key !== "Tab") return;
     menuBtnKeyupTabFired = true;
     e.preventDefault();
-    const el = getNextFocusableElement({ from: focusSentinelFirstEl });
+    const el = getNextTabbableElement({ from: focusSentinelFirstEl });
     if (el) {
       el.focus();
     } else {
@@ -530,7 +585,7 @@ const Dismiss: Component<{
     clearTimeout(containerFocusTimeoutId!);
 
     if (relatedTarget === containerEl || relatedTarget === menuBtnEl) {
-      const el = getNextFocusableElement({
+      const el = getNextTabbableElement({
         from: focusSentinelFirstEl,
       })!;
 
@@ -540,7 +595,7 @@ const Dismiss: Component<{
 
     if (type === "first") {
       if (trapFocus) {
-        const el = getNextFocusableElement({
+        const el = getNextTabbableElement({
           from: focusSentinelLastEl,
           direction: "backwards",
         })!;
@@ -570,8 +625,9 @@ const Dismiss: Component<{
       return;
     }
 
+    focusSentinelLastElTabbed = true;
     if (trapFocus) {
-      const el = getNextFocusableElement({
+      const el = getNextTabbableElement({
         from: focusSentinelFirstEl,
       })!;
 
@@ -581,11 +637,12 @@ const Dismiss: Component<{
 
     const el =
       queryElement(focusElWhenClosed, "focusOnLeave", "tabForwards") ||
-      getNextFocusableElement({
+      getNextTabbableElement({
         from: menuBtnEl,
         ignoreElement: [containerEl],
       });
 
+    console.log({ el });
     if (el) {
       el.focus();
     }
@@ -612,8 +669,8 @@ const Dismiss: Component<{
     if (inputElement == null && type === "menuPopup") {
       if (!containerEl) return null as any;
       if (menuPopupEl) return menuPopupEl;
-      if (hasFocusSentinels) return containerEl.children[1] as HTMLElement;
-      return containerEl.children[0] as HTMLElement;
+      // if (hasFocusSentinels) return containerEl.children[1] as HTMLElement;
+      return containerEl.children[1] as HTMLElement;
     }
     if (typeof inputElement === "string" && type === "menuButton") {
       return document.querySelector(inputElement) as HTMLElement;
@@ -794,14 +851,12 @@ const Dismiss: Component<{
 
         if (closeWhenScrolling) {
           window.addEventListener("scroll", onScrollClose, {
-            once: true,
             capture: true,
+            passive: true,
           });
         }
 
-        if (closeWhenWindowBlurs) {
-          window.addEventListener("blur", onWindowBlur, { once: true });
-        }
+        window.addEventListener("blur", onWindowBlur);
 
         runAriaExpanded(open);
 
@@ -844,11 +899,14 @@ const Dismiss: Component<{
           removeCloseButtons();
           document.removeEventListener("click", onClickDocument);
           const stack = removeDismissStack(uniqueId);
-          console.log("on false");
           if (isOverlayClipped) {
             removeOverlayEvents(stack);
           }
 
+          window.removeEventListener("blur", onWindowBlur);
+          window.removeEventListener("scroll", onScrollClose, {
+            capture: true,
+          });
           runRemoveScrollbar(open);
 
           if (dismissStack.length < 1) {
@@ -931,27 +989,27 @@ const Dismiss: Component<{
             ></div>
           </Portal>
         )}
-        {hasFocusSentinels && (
-          <div
-            tabindex="0"
-            onFocus={(e) => {
-              onFocusSentinel("first", e.relatedTarget as HTMLElement);
-            }}
-            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
-            aria-hidden="true"
-            ref={focusSentinelFirstEl}
-          ></div>
-        )}
+        {/* {hasFocusSentinels && ( */}
+        <div
+          tabindex="0"
+          onFocus={(e) => {
+            onFocusSentinel("first", e.relatedTarget as HTMLElement);
+          }}
+          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
+          aria-hidden="true"
+          ref={focusSentinelFirstEl}
+        ></div>
+        {/* )} */}
         {children}
-        {hasFocusSentinels && (
-          <div
-            tabindex="0"
-            onFocus={() => onFocusSentinel("last")}
-            style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
-            aria-hidden="true"
-            ref={focusSentinelLastEl}
-          ></div>
-        )}
+        {/* {hasFocusSentinels && ( */}
+        <div
+          tabindex={hasFocusSentinels ? "0" : "-1"}
+          onFocus={() => onFocusSentinel("last")}
+          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
+          aria-hidden="true"
+          ref={focusSentinelLastEl}
+        ></div>
+        {/* )} */}
       </div>
     </Show>
   );

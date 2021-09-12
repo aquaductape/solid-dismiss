@@ -1,5 +1,6 @@
 import Dismiss from "../../../../package/index";
 import { createSignal, onMount } from "solid-js";
+import IFrame from "../IFrame";
 // ...
 
 const Dropdown = () => {
@@ -15,10 +16,12 @@ const Dropdown = () => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
+        closeWhenWindowBlurs
+        // trapFocus
         cursorKeys
         useAriaExpanded
       >
-        <ul class="dropdown">
+        <ul class="dropdown" style="overflow:auto;height: 200px;">
           <li>
             <a class="item" href="#">
               cat
@@ -34,6 +37,7 @@ const Dropdown = () => {
               fish
             </a>
           </li>
+          <IFrame useCrossDomain={true} />
         </ul>
       </Dismiss>
     </div>
