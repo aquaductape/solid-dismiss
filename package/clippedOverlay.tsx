@@ -494,7 +494,7 @@ export const mountOverlayClipped = () => {
       <path
         mask={`url(#${maskId})`}
         d={bgCoverPath}
-        solid-dismiss-overlay-mask={id}
+        data-solid-dismiss-overlay-mask={id}
         fill="none"
         style="pointer-events: none"
       />

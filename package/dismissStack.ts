@@ -1,4 +1,5 @@
 import { Accessor } from "solid-js";
+import { updateIframeStyle } from "./stylesheet";
 
 export type TDismissStack = {
   id: string;
@@ -54,6 +55,12 @@ export const removeDismissStack = (id: string) => {
 
     paths[5].style.pointerEvents = "all";
     paths[6].style.pointerEvents = "all";
+  }
+
+  if (prevStack) {
+    updateIframeStyle({ id: prevStack.uniqueId });
+  } else {
+    updateIframeStyle({ clear: true });
   }
 
   const foundStack = dismissStack[foundIdx];

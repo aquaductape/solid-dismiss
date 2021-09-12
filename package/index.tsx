@@ -28,6 +28,7 @@ import {
   removeOverlayEvents,
   updateSVG,
 } from "./clippedOverlay";
+import { initStyleElement } from "./stylesheet";
 
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
@@ -242,6 +243,13 @@ const Dismiss: Component<{
    * Is set to `true`:  `overlay` prop has `"backdrop"` property.  This component's root container is not an adjacent sibling of menuButton. `focusElWhenClosed` prop has a value.
    */
   mountedElseWhere?: boolean;
+  /**
+   * Default: `false`, but `true` on Safari iOS and no `overlay` is set.
+   *
+   * Dealing with iframes when clicked upon in order to close
+   *
+   */
+  aggressiveOnIframes?: boolean;
   open: Accessor<boolean>;
   setOpen: (v: boolean) => void;
   setFocus?: (v: boolean) => void;
@@ -266,7 +274,7 @@ const Dismiss: Component<{
     useAriaExpanded = false,
     mountedElseWhere = false,
   } = props;
-  const uniqueId = createUniqueId();
+  const uniqueId = createUniqueId().replace(/\:/g, "-");
   const hasFocusSentinels =
     focusElWhenClosed ||
     overlay === "backdrop" ||
@@ -431,21 +439,12 @@ const Dismiss: Component<{
       if (activeElement.tagName !== "IFRAME") return onBlurWindow();
 
       if (containerEl.contains(activeElement)) {
-        console.log(
-          getNextTabbableElement({
-            from: activeElement,
-            stopAtElement: containerEl,
-            allowSelectors: [
-              `[data-solid-dismiss-focus-sentinel-last="${id}"]`,
-            ],
-          })
-        );
         if (
           getNextTabbableElement({
             from: activeElement,
             stopAtElement: containerEl,
             allowSelectors: [
-              `[data-solid-dismiss-focus-sentinel-last="${id}"]`,
+              `[data-solid-dismiss-focus-sentinel-last="${uniqueId}"]`,
             ],
           }) === focusSentinelLastEl
         ) {
@@ -923,6 +922,7 @@ const Dismiss: Component<{
           }
 
           activateLastFocusSentinel();
+          initStyleElement(uniqueId);
         } else {
           removeOutsideFocusEvents();
           removeMenuPopupEl();
@@ -983,7 +983,7 @@ const Dismiss: Component<{
       <div
         id={id}
         class={props.class}
-        data-solid-dismiss-dropdown-container={id}
+        data-solid-dismiss-dropdown-container={uniqueId}
         classList={props.classList || {}}
         onFocusIn={onFocusInContainer}
         onFocusOut={onFocusOutContainer}
@@ -1037,7 +1037,7 @@ const Dismiss: Component<{
           onFocus={() => onFocusSentinel("last")}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
-          data-solid-dismiss-focus-sentinel-last={id}
+          data-solid-dismiss-focus-sentinel-last={uniqueId}
           ref={focusSentinelLastEl}
         ></div>
         {/* )} */}
