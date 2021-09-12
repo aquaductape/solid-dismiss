@@ -31,6 +31,7 @@ const SingleIFrame: Component<{
           open={open}
           setOpen={setOpen}
           closeWhenWindowBlurs={closeWhenWindowBlurs}
+          mountedElseWhere
           useAriaExpanded
         >
           <ul class="dropdown" style="overflow:auto;height: 200px;">
