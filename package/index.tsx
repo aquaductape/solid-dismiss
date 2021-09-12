@@ -12,7 +12,7 @@ import {
 } from "solid-js";
 import { Portal } from "solid-js/web";
 import {
-  tabbableSelectors,
+  _tabbableSelectors as tabbableSelectors,
   getNextTabbableElement,
   inverseQuerySelector,
   matchByFirstChild,
@@ -435,7 +435,24 @@ const Dismiss: Component<{
       if (activeElement.tagName !== "IFRAME") return onBlurWindow();
 
       if (containerEl.contains(activeElement)) {
-        if (activeElement.nextElementSibling === focusSentinelLastEl) {
+        console.log(
+          getNextTabbableElement({
+            from: activeElement,
+            stopAtElement: containerEl,
+            allowSelectors: [
+              `[data-solid-dismiss-focus-sentinel-last="${id}"]`,
+            ],
+          })
+        );
+        if (
+          getNextTabbableElement({
+            from: activeElement,
+            stopAtElement: containerEl,
+            allowSelectors: [
+              `[data-solid-dismiss-focus-sentinel-last="${id}"]`,
+            ],
+          }) === focusSentinelLastEl
+        ) {
           focusSentinelLastEl.setAttribute("tabindex", "0");
         }
         return;
@@ -986,8 +1003,8 @@ const Dismiss: Component<{
               style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: ${
                 999 + dismissStack.length
               };`}
-              solid-dismiss-overlay-clipped={id}
-              solid-dismiss-overlay-clipped-level={dismissStack.length}
+              data-solid-dismiss-overlay-clipped={id}
+              data-solid-dismiss-overlay-clipped-level={dismissStack.length}
               onClick={onClickOverlay}
               ref={overlayEl}
             ></div>
@@ -997,8 +1014,8 @@ const Dismiss: Component<{
           <Portal>
             <div
               role="presentation"
-              solid-dismiss-overlay-backdrop={id}
-              solid-dismiss-overlay-backdrop-level={dismissStack.length}
+              data-solid-dismiss-overlay-backdrop={id}
+              data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
               onClick={onClickOverlay}
               style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: ${
                 999 + dismissStack.length
@@ -1025,6 +1042,7 @@ const Dismiss: Component<{
           onFocus={() => onFocusSentinel("last")}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
+          data-solid-dismiss-focus-sentinel-last={id}
           ref={focusSentinelLastEl}
         ></div>
         {/* )} */}

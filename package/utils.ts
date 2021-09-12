@@ -6,7 +6,7 @@ export const parseValToNum = (value?: string | number) => {
   return value || 0;
 };
 
-export const tabbableSelectors = [
+export const _tabbableSelectors = [
   "a[href]",
   "area[href]",
   "input:not([disabled])",
@@ -16,21 +16,25 @@ export const tabbableSelectors = [
   "iframe",
   "[tabindex]",
   "[contentEditable=true]",
-].reduce((a, c, idx) => `${a}${idx ? "," : ""} ${c}:not([tabindex="-1"])`, "");
+].reduce((a, c, idx) => `${a}${idx ? "," : ""}${c}:not([tabindex="-1"])`, "");
 
 export const getNextTabbableElement = ({
   from = document.activeElement as HTMLElement,
   stopAtElement,
   ignoreElement = [],
+  allowSelectors,
   direction = "forwards",
 }: {
   from: Element;
   stopAtElement?: HTMLElement;
   ignoreElement?: HTMLElement[];
+  allowSelectors?: string[];
   direction?: "forwards" | "backwards";
 }) => {
   const parent = from.parentElement!;
   const visitedElement = from;
+  const tabbableSelectors =
+    _tabbableSelectors + (allowSelectors ? "," + allowSelectors.join(",") : "");
 
   if (!visitedElement) return null;
 
