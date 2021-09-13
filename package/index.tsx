@@ -98,7 +98,7 @@ const Dismiss: Component<{
    *
    * An example would be to emulate native <select> element behavior, set which sets focus to menuButton after dismiss.
    *
-   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However this library won't be able to grab tabbable elements inside an iframe with cross domain which triggers CORS policy, so instead the iframe will be focused, this will happen if `overlay` is set to `backdrop` or iframe is last tabbable item in menuPopup.
+   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However this library won't be able to grab tabbable elements inside an iframe with cross origin which triggers CORS policy, so instead the iframe will be focused, this will happen if `overlay` is set to `backdrop` or iframe is last tabbable item in menuPopup.
    *
    * *² selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
@@ -246,7 +246,8 @@ const Dismiss: Component<{
   /**
    * Default: `false`, but `true` on Safari iOS and no `overlay` is set.
    *
-   * If "click outside" happended to be on an iframe, it can be tricky since iframes don't bubble events. The library checks if the window blurs in order to detect that iframe was selected. However window blur strategy isn't guaranteed to work for the following: if iframe inside menuPopup is clicked then click "outside" iframe, or in iOS a non-clickable element is selected.
+   * If "click outside" happended to be on an iframe, it can be tricky since iframes don't bubble events. The library checks if the window blurs in order to detect that iframe was selected. However window blur strategy isn't guaranteed to work for the following: if iframe inside menuPopup is clicked then click "outside" iframe, or in iOS a non-clickable element is selected. Because of that a more aggressive procedure runs where all outside iframes have
+   *
    *
    */
   aggressiveOnIframes?: boolean;
@@ -295,9 +296,12 @@ const Dismiss: Component<{
   let addedFocusOutAppEvents = false;
   let menuBtnKeyupTabFired = false;
   let prevFocusedEl: HTMLElement | null = null;
+  let cachedPolledElement: Element | null = null;
+  let pollTimeoutId: number | null = null;
   let containerFocusTimeoutId: number | null = null;
   let menuButtonBlurTimeoutId: number | null = null;
   const initDefer = !props.open();
+  // issue where it doesn't close following these steps: clicking menuPopup -> outside iframe -> open -> menuPopup -> devtools -> window.
 
   const refContainerCb = (el: HTMLElement) => {
     if (props.ref) {
@@ -388,7 +392,7 @@ const Dismiss: Component<{
     if (!item) return;
 
     const el =
-      queryElement(focusElementOnClose, "focusOnLeave", "escapeKey") ||
+      queryElement(focusElementOnClose, "focusElementOnClose", "escapeKey") ||
       item.menuBtnEl;
 
     if (el) {
@@ -412,7 +416,7 @@ const Dismiss: Component<{
     }
 
     const el =
-      queryElement(focusElementOnClose, "focusOnLeave", "scrolling") ||
+      queryElement(focusElementOnClose, "focusElementOnClose", "scrolling") ||
       menuBtnEl;
 
     if (el) {
@@ -420,7 +424,14 @@ const Dismiss: Component<{
     }
   };
 
+  const onFocusOutAndDetectIframe = () => {};
+
   const onWindowBlur = () => {
+    if (props.open()!) {
+      window.removeEventListener("blur", onWindowBlur);
+      return;
+    }
+
     const exit = () => {
       console.log("TRIGGER");
       props.setOpen(false);
@@ -433,29 +444,32 @@ const Dismiss: Component<{
       exit();
     };
 
-    setTimeout(() => {
-      const activeElement = document.activeElement;
-
-      if (!activeElement) return onBlurWindow();
-      if (activeElement.tagName !== "IFRAME") return onBlurWindow();
-
-      if (containerEl.contains(activeElement)) {
-        if (
-          getNextTabbableElement({
-            from: activeElement,
-            stopAtElement: containerEl,
-            allowSelectors: [
-              `[data-solid-dismiss-focus-sentinel-last="${uniqueId}"]`,
-            ],
-          }) === focusSentinelLastEl
-        ) {
-          focusSentinelLastEl.setAttribute("tabindex", "0");
-        }
-        return;
-      }
-
-      exit();
-    });
+    //     setTimeout(() => {
+    //       const activeElement = document.activeElement;
+    //
+    //       if (!activeElement) return onBlurWindow();
+    //       if (activeElement.tagName !== "IFRAME") return onBlurWindow();
+    //
+    //       if (containerEl.contains(activeElement)) {
+    //         cachedPolledElement = activeElement;
+    //         pollingIframe();
+    //
+    //         if (
+    //           getNextTabbableElement({
+    //             from: activeElement,
+    //             stopAtElement: containerEl,
+    //             allowSelectors: [
+    //               `[data-solid-dismiss-focus-sentinel-last="${uniqueId}"]`,
+    //             ],
+    //           }) === focusSentinelLastEl
+    //         ) {
+    //           focusSentinelLastEl.setAttribute("tabindex", "0");
+    //         }
+    //         return;
+    //       }
+    //
+    //       exit();
+    //     });
   };
 
   const onClickOverlay = () => {
@@ -466,7 +480,8 @@ const Dismiss: Component<{
     }
 
     const el =
-      queryElement(focusElementOnClose, "focusOnLeave", "click") || menuBtnEl;
+      queryElement(focusElementOnClose, "focusElementOnClose", "click") ||
+      menuBtnEl;
 
     if (el) {
       el.focus();
@@ -565,15 +580,88 @@ const Dismiss: Component<{
     prevFocusedEl = null;
   };
 
+  // polls iframe to deal with edge case if menuPopup item selected is an iframe and then select another iframe that is "outside" of menuPopup
+  const pollingIframe = () => {
+    if (overlay) return;
+    // worst case scenerio is user has to wait for up to 300ms for menuPop to close, while average case is 150ms
+    const duration = 300;
+
+    const poll = () => {
+      const activeElement = document.activeElement as HTMLElement;
+
+      if (!activeElement) {
+        return;
+      }
+
+      if (cachedPolledElement === activeElement) {
+        pollTimeoutId = window.setTimeout(poll, duration);
+        return;
+      }
+
+      if (activeElement.tagName !== "IFRAME") return;
+
+      if (menuPopupEl!.contains(activeElement)) {
+        cachedPolledElement = activeElement;
+        pollTimeoutId = window.setTimeout(poll, duration);
+        return;
+      }
+
+      const el =
+        queryElement(focusElementOnClose, "focusElementOnClose", "click") ||
+        menuBtnEl;
+
+      if (el) {
+        el.focus();
+      }
+
+      props.setOpen(false);
+      cachedPolledElement = null;
+      pollTimeoutId = null;
+    };
+
+    pollTimeoutId = window.setTimeout(poll, duration);
+  };
+
   const onFocusOutContainer = (e: FocusEvent) => {
-    console.log("runfocusout!!!");
+    const relatedTarget = e.relatedTarget as HTMLElement | null;
     if (focusElementOnClose || overlay === "backdrop") {
       e.stopImmediatePropagation();
     }
 
     if (!props.open()) return;
 
-    if (!e.relatedTarget) {
+    setTimeout(() => {
+      if (overlay) return;
+
+      if (
+        (relatedTarget && relatedTarget.tagName !== "IFRAME") ||
+        !document.hasFocus()
+      ) {
+        return;
+      }
+
+      const activeElement = document.activeElement;
+
+      if (!activeElement || !menuPopupEl) return;
+      if (
+        activeElement.tagName !== "IFRAME" ||
+        menuPopupEl.contains(activeElement)
+      ) {
+        return;
+      }
+
+      const el =
+        queryElement(focusElementOnClose, "focusElementOnClose", "click") ||
+        menuBtnEl;
+
+      if (el) {
+        el.focus();
+      }
+
+      props.setOpen(false);
+    });
+
+    if (!relatedTarget) {
       if (addedFocusOutAppEvents) return;
       addedFocusOutAppEvents = true;
       prevFocusedEl = e.target as HTMLElement;
@@ -640,8 +728,11 @@ const Dismiss: Component<{
       }
 
       const el =
-        queryElement(focusElementOnClose, "focusOnLeave", "tabBackwards") ||
-        menuBtnEl;
+        queryElement(
+          focusElementOnClose,
+          "focusElementOnClose",
+          "tabBackwards"
+        ) || menuBtnEl;
 
       if (el) {
         el.focus();
@@ -664,7 +755,7 @@ const Dismiss: Component<{
     }
 
     const el =
-      queryElement(focusElementOnClose, "focusOnLeave", "tabForwards") ||
+      queryElement(focusElementOnClose, "focusElementOnClose", "tabForwards") ||
       getNextTabbableElement({
         from: menuBtnEl,
         ignoreElement: [containerEl],
@@ -680,7 +771,7 @@ const Dismiss: Component<{
 
   const queryElement = (
     inputElement: any,
-    type?: "menuButton" | "menuPopup" | "closeButton" | "focusOnLeave",
+    type?: "menuButton" | "menuPopup" | "closeButton" | "focusElementOnClose",
     subType?:
       | "tabForwards"
       | "tabBackwards"
@@ -725,7 +816,7 @@ const Dismiss: Component<{
       }
     }
 
-    if (type === "focusOnLeave") {
+    if (type === "focusElementOnClose") {
       if (!inputElement) return null as any;
 
       switch (subType) {
@@ -925,6 +1016,7 @@ const Dismiss: Component<{
           activateLastFocusSentinel();
           initStyleElement(uniqueId);
         } else {
+          clearTimeout(pollTimeoutId!);
           removeOutsideFocusEvents();
           removeMenuPopupEl();
           removeCloseButtons();
@@ -1020,7 +1112,6 @@ const Dismiss: Component<{
             ></div>
           </Portal>
         )}
-        {/* {hasFocusSentinels && ( */}
         <div
           tabindex="0"
           onFocus={(e) => {
@@ -1030,9 +1121,7 @@ const Dismiss: Component<{
           aria-hidden="true"
           ref={focusSentinelFirstEl}
         ></div>
-        {/* )} */}
         {children}
-        {/* {hasFocusSentinels && ( */}
         <div
           tabindex={hasFocusSentinels ? "0" : "-1"}
           onFocus={() => onFocusSentinel("last")}
@@ -1041,7 +1130,6 @@ const Dismiss: Component<{
           data-solid-dismiss-focus-sentinel-last={uniqueId}
           ref={focusSentinelLastEl}
         ></div>
-        {/* )} */}
       </div>
     </Show>
   );

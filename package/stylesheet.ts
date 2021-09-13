@@ -20,16 +20,14 @@ export const updateIframeStyle = ({
   clear?: boolean;
 }) => {
   //     iframe {
-  //     pointer-events: none !important;
-  //   }
+  //       pointer-events: none !important;
+  //     }
   //
-  //   [data-solid-dismiss-dropdown-container="${id}"] iframe {
-  //     pointer-events: unset !important;
-  //   }
+  //     [data-solid-dismiss-dropdown-container="${id}"] iframe {
+  //       pointer-events: unset !important;
+  //     }
   const stylesheet = !clear
     ? `
-
-
   `
     : "";
 
