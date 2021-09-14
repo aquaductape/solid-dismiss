@@ -19,6 +19,11 @@ import {
   TDismissStack,
   TFocusElementOnClose,
 } from "./dismissStack";
+import {
+  mountOverlayClipped,
+  removeOverlayEvents,
+  updateSVG,
+} from "./clippedOverlay";
 import { addGlobalEvents, removeGlobalEvents } from "./globalEvents";
 
 // Safari iOS notes
@@ -28,7 +33,12 @@ import { addGlobalEvents, removeGlobalEvents } from "./globalEvents";
 
 // thoughts on configuration
 // easy hacky way is to have an exported object that can be edited and is referenced when Dismiss is called. Downside of this is that ts types default types won't be in sync
-type TDismiss = {
+
+/**
+ *
+ * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key.
+ */
+const Dismiss: Component<{
   /**
    * sets id attribute for root component
    */
@@ -50,7 +60,7 @@ type TDismiss = {
    *
    * css selector, queried from container element, to get close button element(s). Or pass JSX element(s)
    */
-  closeButtons?:
+  closeButton?:
     | string
     | JSX.Element
     | (string | JSX.Element)[]
@@ -78,7 +88,7 @@ type TDismiss = {
    */
   focusElementOnOpen?: "menuPopup" | string | JSX.Element | (() => JSX.Element);
   /**
-   * Default: When Tabbing forwards, focuses on tabbable element*¹ after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click", user-agent determines which element recieves focus, however if overlay is `true`, then menuButton will be focused instead.
+   * Default: When Tabbing forwards, focuses on tabbable element*¹ after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click"*³, user-agent determines which element recieves focus, if overlay present, then menuButton will be focused instead.
    *
    * Which element, via selector*², to recieve focus after popup closes.
    *
@@ -88,6 +98,7 @@ type TDismiss = {
    *
    * *² selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
+   * *³ When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
    *
    */
   focusElementOnClose?: TFocusElementOnClose;
@@ -101,7 +112,7 @@ type TDismiss = {
   /**
    * Default: `true`
    *
-   * If `overlay` is `true`, menuPopup will always close when menu button is clicked
+   * If `overlay` is `"block"`, menuPopup will always close when menu button is clicked
    */
   closeWhenMenuButtonIsClicked?: boolean;
   /**
@@ -143,15 +154,44 @@ type TDismiss = {
   /**
    * Default `false`
    *
-   * When `true`, adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element. Make sure that menuPopup lives in the root level, one of the ways, is to nest this Component inside Solid's {@link https://www.solidjs.com/docs/latest/api#%3Cportal%3E Portal}.
+   * When prop is `"backdrop"`, adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element. Make sure that menuPopup lives in the root level, one way is to nest this Component inside Solid's {@link https://www.solidjs.com/docs/latest/api#%3Cportal%3E Portal}.
    *
+   * When prop is `"clipped"`, it's similar to `"block"` where it places an element at root document, but creates a "mask"* that clips around the menuButton and menuPopup. This allows menuPopup to live anywhere in the document, rather than forced to mounting it at top level of root document in order to be interacted with.
+   *
+   * Note the "mask" is accurate if the menuButton and menuPopup are rectangular shaped, border radius is also accounted for.
    */
   overlay?:
-    | boolean
+    | "backdrop"
+    | "clipped"
     | {
-        ref?: (el: HTMLElement) => void;
-        className?: string;
-        classList?: { [key: string]: boolean };
+        clipped: {
+          menuButton?: () => JSX.Element;
+          menuPopup?: () => JSX.Element;
+          /**
+           * Use this to trigger redraw of "mask" that clips around menuButton and menuPopup, in case mask is not aligned correctly.
+           *
+           * Clip automatically redraws when cases run:
+           * 1. parent scrollable container of menuButton/menuPopup is scrolled.
+           * 2. viewport is resized.
+           * 3. animationend/transitionend fires on menuPopup.
+           * 4. menuButton/menuPopup resizes or attributes change.
+           *
+           * All of the above is debounced with duration of 75ms
+           */
+          redrawClippedPath?: Accessor<number>;
+          /**
+           * Default: creates clipped path calculated on elements' rectangular shape and its border radius
+           *
+           * Use custom clipPath instead of using.
+           *
+           */
+          /**
+           * Default: `true`
+           *
+           * If menuButton is partially obscured by other elements (not including menuPopup) such as Header bar, the clipPath needs to acknowlege it otherwise that element could be interacted with. If the element is not a `<header>` or `<nav>`, the clipped path will not be precise on how much the menuButton is obscured.
+           */
+          detectIfMenuButtonObscured?: boolean;
+        };
       };
   /**
    * Default: `false`
@@ -164,26 +204,20 @@ type TDismiss = {
    *
    * If `true` activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.
    *
-   * Automatically set to `true` for the following:  `overlay` prop is `true`,  this component's root container is not an adjacent sibling of menuButton, or `focusElWhenClosed` prop has a value.
+   * Is set to `true`:  `overlay` prop has `"backdrop"` property.  This component's root container is not an adjacent sibling of menuButton. `focusElWhenClosed` prop has a value.
    */
   mountedElseWhere?: boolean;
   open: Accessor<boolean>;
   setOpen: (v: boolean) => void;
   setFocus?: (v: boolean) => void;
-};
-
-/**
- *
- * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key.
- */
-const Dismiss: Component<TDismiss> = (props) => {
+}> = (props) => {
   const {
     id = "",
     menuButton,
     menuPopup,
     focusElementOnClose,
     focusElementOnOpen,
-    closeButtons,
+    closeButton,
     children,
     cursorKeys = false,
     closeWhenMenuButtonIsTabbed = false,
@@ -198,9 +232,12 @@ const Dismiss: Component<TDismiss> = (props) => {
     useAriaExpanded = false,
     mountedElseWhere = false,
   } = props;
-  const uniqueId = createUniqueId();
+  const uniqueId = createUniqueId().replace(/\:/g, "-");
   const hasFocusSentinels =
-    focusElementOnClose || overlay || trapFocus || mountedElseWhere;
+    focusElementOnClose ||
+    overlay === "backdrop" ||
+    trapFocus ||
+    mountedElseWhere;
   let closeBtn: HTMLElement[] = [];
   let menuPopupEl: HTMLElement | null = null;
   let menuBtnEl!: HTMLElement;
@@ -208,12 +245,15 @@ const Dismiss: Component<TDismiss> = (props) => {
   let focusSentinelLastEl!: HTMLDivElement;
   let containerEl!: HTMLDivElement;
   let overlayEl!: HTMLDivElement;
+  let isOverlayClipped = overlay === "clipped" || typeof overlay === "object";
   let closeBtnsAdded = false;
   let menuPopupAdded = false;
   let menuBtnId = "";
   let addedFocusOutAppEvents = false;
   let menuBtnKeyupTabFired = false;
   let prevFocusedEl: HTMLElement | null = null;
+  let cachedPolledElement: Element | null = null;
+  let pollTimeoutId: number | null = null;
   let containerFocusTimeoutId: number | null = null;
   let menuButtonBlurTimeoutId: number | null = null;
   const initDefer = !props.open();
@@ -225,14 +265,6 @@ const Dismiss: Component<TDismiss> = (props) => {
       props.ref(el);
     }
     containerEl = el as any;
-  };
-
-  const refOverlayCb = (el: HTMLElement) => {
-    if (typeof overlay === "object" && overlay.ref) {
-      overlay.ref(el);
-    }
-
-    overlayEl = el as any;
   };
 
   const activateLastFocusSentinel = () => {
@@ -377,9 +409,9 @@ const Dismiss: Component<TDismiss> = (props) => {
 
   const onFocusOutContainer = (e: FocusEvent) => {
     const relatedTarget = e.relatedTarget as HTMLElement | null;
-    // if (focusElementOnClose || overlay) {
-    //   e.stopImmediatePropagation();
-    // }
+    if (focusElementOnClose || overlay === "backdrop") {
+      e.stopImmediatePropagation();
+    }
 
     if (!props.open()) return;
 
@@ -564,7 +596,7 @@ const Dismiss: Component<TDismiss> = (props) => {
   };
 
   const addCloseButtons = () => {
-    if (!closeButtons) return;
+    if (!closeButton) return;
     if (closeBtnsAdded) return;
 
     const getCloseButton = (closeButton: string | JSX.Element) => {
@@ -580,15 +612,15 @@ const Dismiss: Component<TDismiss> = (props) => {
       closeBtn?.push(el);
     };
 
-    if (Array.isArray(closeButtons)) {
-      closeButtons.forEach((item) => {
+    if (Array.isArray(closeButton)) {
+      closeButton.forEach((item) => {
         getCloseButton(item);
       });
       return;
     }
 
-    if (typeof closeButtons === "function") {
-      const result = closeButtons();
+    if (typeof closeButton === "function") {
+      const result = closeButton();
 
       if (Array.isArray(result)) {
         result.forEach((item) => {
@@ -601,11 +633,11 @@ const Dismiss: Component<TDismiss> = (props) => {
       return;
     }
 
-    getCloseButton(closeButtons);
+    getCloseButton(closeButton);
   };
 
   const removeCloseButtons = () => {
-    if (!closeButtons) return;
+    if (!closeButton) return;
     if (!closeBtnsAdded) return;
 
     closeBtnsAdded = false;
@@ -706,26 +738,40 @@ const Dismiss: Component<TDismiss> = (props) => {
             menuBtnEl,
             overlayEl,
             menuPopupEl: menuPopupEl!,
-            isOverlayClipped: false,
-            overlay: !!overlay,
+            isOverlayClipped,
+            overlay: typeof overlay === "object" ? "clipped" : overlay,
             closeWhenDocumentBlurs,
             closeWhenEscapeKeyIsPressed,
             cursorKeys,
             focusElementOnClose,
-            detectIfMenuButtonObscured: false,
+            detectIfMenuButtonObscured:
+              typeof overlay === "object"
+                ? overlay.clipped.detectIfMenuButtonObscured == null
+                  ? true
+                  : overlay.clipped.detectIfMenuButtonObscured
+                : true,
           });
 
           runRemoveScrollbar(open);
 
+          if (isOverlayClipped) {
+            mountOverlayClipped();
+          }
+
           activateLastFocusSentinel();
         } else {
-          document.removeEventListener("click", onClickDocument);
-
+          clearTimeout(pollTimeoutId!);
           removeOutsideFocusEvents();
           removeMenuPopupEl();
           removeCloseButtons();
-          removeDismissStack(uniqueId);
+          document.removeEventListener("click", onClickDocument);
+          const stack = removeDismissStack(uniqueId);
+          if (isOverlayClipped) {
+            removeOverlayEvents(stack);
+          }
+
           removeGlobalEvents();
+
           runRemoveScrollbar(open);
         }
       },
@@ -733,14 +779,33 @@ const Dismiss: Component<TDismiss> = (props) => {
     )
   );
 
+  if (typeof overlay === "object" && overlay.clipped.redrawClippedPath) {
+    createEffect(
+      on(
+        // @ts-ignore
+        () => props.overlay.clipped.redrawClippedPath(),
+        (result) => {
+          if (result === null || !props.open()) return;
+          console.log("run redraw");
+          updateSVG(null, true);
+        },
+        { defer: true }
+      )
+    );
+  }
+
   onCleanup(() => {
     menuBtnEl.removeEventListener("click", onClickMenuButton);
     document.removeEventListener("click", onClickDocument);
-
     removeCloseButtons();
     removeMenuPopupEl();
+
     removeOutsideFocusEvents();
-    removeDismissStack(uniqueId);
+    const stack = removeDismissStack(uniqueId);
+    if (isOverlayClipped) {
+      removeOverlayEvents(stack);
+    }
+
     removeGlobalEvents();
     console.log("onCleanup");
   });
@@ -750,28 +815,39 @@ const Dismiss: Component<TDismiss> = (props) => {
       <div
         id={id}
         class={props.class}
+        data-solid-dismiss-dropdown-container={uniqueId}
         classList={props.classList || {}}
         onFocusIn={onFocusInContainer}
         onFocusOut={onFocusOutContainer}
-        style={overlay ? `z-index: ${1000 + dismissStack.length}` : ""}
+        style={
+          overlay === "backdrop" ? `z-index: ${1000 + dismissStack.length}` : ""
+        }
         ref={refContainerCb}
       >
-        {overlay && (
+        {isOverlayClipped && (
           <Portal>
             <div
-              class={
-                typeof overlay === "object" ? overlay.className : undefined
-              }
-              classList={
-                typeof overlay === "object" ? overlay.classList || {} : {}
-              }
+              style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: ${
+                999 + dismissStack.length
+              };`}
+              data-solid-dismiss-overlay-clipped={id}
+              data-solid-dismiss-overlay-clipped-level={dismissStack.length}
+              onClick={onClickOverlay}
+              ref={overlayEl}
+            ></div>
+          </Portal>
+        )}
+        {overlay === "backdrop" && (
+          <Portal>
+            <div
               role="presentation"
+              data-solid-dismiss-overlay-backdrop={id}
               data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
               onClick={onClickOverlay}
               style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: ${
                 999 + dismissStack.length
               };`}
-              ref={refOverlayCb}
+              ref={overlayEl}
             ></div>
           </Portal>
         )}
@@ -790,6 +866,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           onFocus={() => onFocusSentinel("last")}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
+          data-solid-dismiss-focus-sentinel-last={uniqueId}
           ref={focusSentinelLastEl}
         ></div>
       </div>

@@ -1,5 +1,4 @@
 import { Accessor, JSX } from "solid-js";
-import { updateIframeStyle } from "./stylesheet";
 
 export type TFocusElementOnClose =
   | "menuButton"
@@ -52,7 +51,7 @@ export type TDismissStack = {
   menuPopupEl: HTMLElement;
   containerEl: HTMLElement;
   overlayEl?: HTMLDivElement;
-  overlay: "backdrop" | "clipped" | false;
+  overlay: "backdrop" | "clipped" | boolean;
   isOverlayClipped: boolean;
   detectIfMenuButtonObscured: boolean;
   closeWhenDocumentBlurs: boolean;
@@ -102,12 +101,6 @@ export const removeDismissStack = (id: string) => {
 
     paths[5].style.pointerEvents = "all";
     paths[6].style.pointerEvents = "all";
-  }
-
-  if (prevStack) {
-    updateIframeStyle({ id: prevStack.uniqueId });
-  } else {
-    updateIframeStyle({ clear: true });
   }
 
   const foundStack = dismissStack[foundIdx];

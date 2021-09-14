@@ -7,7 +7,7 @@ import {
 
 let scrollEventAddedViaTouch = false;
 let scrollEventAdded = false;
-let cachedScrollTarget: Element | null;
+let cachedScrollTarget: Element | null = null;
 let cachedPolledElement: Element | null = null;
 let pollTimeoutId: number | null = null;
 
