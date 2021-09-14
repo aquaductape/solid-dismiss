@@ -1,5 +1,6 @@
 import Dismiss from "../../../../package/index";
-import { createSignal, onMount, Component } from "solid-js";
+import { createSignal, onMount, Component, createEffect } from "solid-js";
+import { Portal } from "solid-js/web";
 import IFrame from "../IFrame";
 import FocusGutter from "../FocusGutter";
 
@@ -9,15 +10,28 @@ const SingleIFrame: Component<{
   iframeChildCrossDomain: boolean;
   iframeSiblingCrossDomain: boolean;
   closeWhenWindowBlurs?: boolean;
+  closeWhenScrolling?: boolean;
 }> = ({
   iframeChildCrossDomain,
   iframeSiblingCrossDomain,
   includeIframeChild,
   includeIframeChild2,
   closeWhenWindowBlurs,
+  closeWhenScrolling,
 }) => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
+  let popupContainerEl!: HTMLElement;
+
+  createEffect(() => {
+    if (!open()) return;
+
+    const btnBCR = btnEl.getBoundingClientRect();
+    popupContainerEl.style.position = "absolute";
+    popupContainerEl.style.top =
+      btnBCR.top + btnBCR.height + window.scrollY + 10 + "px";
+    popupContainerEl.style.left = btnBCR.left + window.scrollX + "px";
+  });
 
   return (
     <>
@@ -26,37 +40,56 @@ const SingleIFrame: Component<{
         <button class="btn-primary" ref={btnEl}>
           Dropdown
         </button>
-        <Dismiss
-          menuButton={btnEl}
-          open={open}
-          setOpen={setOpen}
-          closeWhenWindowBlurs={closeWhenWindowBlurs}
-          useAriaExpanded
-        >
-          <ul class="dropdown" style="overflow:auto;height: 200px;">
-            <li>
-              <a class="item" href="#">
-                cat
-              </a>
-            </li>
-            <li>
-              <a class="item" href="#">
-                dog
-              </a>
-            </li>
-            {includeIframeChild2 && (
-              <IFrame useCrossDomain={iframeChildCrossDomain} />
-            )}
-            <li>
-              <a class="item" href="#">
-                fish
-              </a>
-            </li>
-            {includeIframeChild && (
-              <IFrame useCrossDomain={iframeChildCrossDomain} />
-            )}
-          </ul>
-        </Dismiss>
+        <Portal>
+          <Dismiss
+            menuButton={btnEl}
+            open={open}
+            setOpen={setOpen}
+            closeWhenDocumentBlurs={closeWhenWindowBlurs}
+            closeWhenScrolling={closeWhenScrolling}
+            useAriaExpanded
+            ref={popupContainerEl}
+          >
+            <ul class="dropdown" style="overflow:auto;height: 200px;">
+              {closeWhenScrolling && (
+                <>
+                  <p>closeWhenScrolling</p>
+                  {open() && (
+                    <SingleIFrame
+                      includeIframeChild
+                      iframeChildCrossDomain
+                      iframeSiblingCrossDomain
+                      closeWhenScrolling
+                    />
+                  )}
+                </>
+              )}
+              {closeWhenWindowBlurs && <p>closeWhenWindowBlurs</p>}
+              <li>
+                <a class="item" href="#">
+                  cat
+                </a>
+              </li>
+              <li>
+                <a class="item" href="#">
+                  dog
+                </a>
+              </li>
+              {includeIframeChild2 && (
+                <IFrame useCrossDomain={iframeChildCrossDomain} />
+              )}
+              <li>
+                <a class="item" href="#">
+                  fish
+                </a>
+              </li>
+              {includeIframeChild && (
+                <IFrame useCrossDomain={iframeChildCrossDomain} />
+              )}
+            </ul>
+          </Dismiss>
+        </Portal>
+
         <IFrame useCrossDomain={iframeSiblingCrossDomain} />
       </div>
       <FocusGutter />
@@ -71,6 +104,7 @@ const IFrames = () => {
         includeIframeChild
         iframeChildCrossDomain
         iframeSiblingCrossDomain
+        closeWhenScrolling
       />
       <SingleIFrame
         includeIframeChild

@@ -11,7 +11,13 @@ const Dropdown = () => {
       <button class="btn-primary" ref={btnEl}>
         Dropdown
       </button>
-      <Dismiss menuButton={btnEl} open={open} setOpen={setOpen} useAriaExpanded>
+      <Dismiss
+        menuButton={btnEl}
+        open={open}
+        setOpen={setOpen}
+        closeWhenScrolling
+        useAriaExpanded
+      >
         <ul class="dropdown">
           <li>
             <a class="item" href="#">

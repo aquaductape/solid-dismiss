@@ -11,17 +11,13 @@ import {
   createUniqueId,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import {
-  _tabbableSelectors as tabbableSelectors,
-  getNextTabbableElement,
-  inverseQuerySelector,
-  matchByFirstChild,
-} from "./utils";
+import { getNextTabbableElement, matchByFirstChild } from "./utils";
 import {
   dismissStack,
   addDismissStack,
   removeDismissStack,
   TDismissStack,
+  TFocusElementOnClose,
 } from "./dismissStack";
 import {
   mountOverlayClipped,
@@ -29,6 +25,7 @@ import {
   updateSVG,
 } from "./clippedOverlay";
 import { initStyleElement } from "./stylesheet";
+import { addGlobalEvents, removeGlobalEvents } from "./globalEvents";
 
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
@@ -98,54 +95,14 @@ const Dismiss: Component<{
    *
    * An example would be to emulate native <select> element behavior, set which sets focus to menuButton after dismiss.
    *
-   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However this library won't be able to grab tabbable elements inside an iframe with cross origin which triggers CORS policy, so instead the iframe will be focused, this will happen if `overlay` is set to `backdrop` or iframe is last tabbable item in menuPopup.
+   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However if that next tabbable element is inside an iframe that has different origin, then this library won't be able to grab tabbable elements inside it, instead the iframe will be focused.
    *
    * *² selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
    * *³ When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
    *
    */
-  focusElementOnClose?:
-    | "menuButton"
-    | string
-    | JSX.Element
-    | {
-        /**
-         * Default: menuButton
-         *
-         * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
-         *
-         */
-        tabBackwards?: "menuButton" | string | JSX.Element;
-        /**
-         * Default: next tabbable element after menuButton;
-         *
-         * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
-         *
-         * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
-         */
-        tabForwards?: "menuButton" | string | JSX.Element;
-        /**
-         * focus on element when exiting menuPopup via click outside popup.
-         *
-         * If overlay present, and popup closes via click, then menuButton will be focused.
-         *
-         * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
-         */
-        click?: "menuButton" | string | JSX.Element;
-        /**
-         * Default: menuButton
-         *
-         * focus on element when exiting menuPopup via "Escape" key
-         */
-        escapeKey?: "menuButton" | string | JSX.Element;
-        /**
-         * Default: menuButton
-         *
-         * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
-         */
-        scrolling?: "menuButton" | string | JSX.Element;
-      };
+  focusElementOnClose?: TFocusElementOnClose;
   /**
    * Default: `false`
    *
@@ -162,7 +119,9 @@ const Dismiss: Component<{
   /**
    * Default: `false`
    *
-   * Closes menuPopup when a scrollable container that contains menuButton is scrolled
+   * Closes menuPopup when any scrollable container (except inside menuPopup) is scrolled
+   *
+   * If `true` and `overlay` is not set, scrolling "outside" iframe won't be able to close menuPopup.
    */
   closeWhenScrolling?: boolean;
   /**
@@ -172,11 +131,17 @@ const Dismiss: Component<{
    */
   closeWhenClickedOutside?: boolean;
   /**
+   * Default: `true`
+   *
+   * Closes menuPopup when escape key is pressed
+   */
+  closeWhenEscapeKeyIsPressed?: boolean;
+  /**
    * Default: `false`
    *
-   * Closes when window "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.
+   * Closes when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.
    */
-  closeWhenWindowBlurs?: boolean;
+  closeWhenDocumentBlurs?: boolean;
   /**
    * Default: `false`
    *
@@ -243,14 +208,6 @@ const Dismiss: Component<{
    * Is set to `true`:  `overlay` prop has `"backdrop"` property.  This component's root container is not an adjacent sibling of menuButton. `focusElWhenClosed` prop has a value.
    */
   mountedElseWhere?: boolean;
-  /**
-   * Default: `false`, but `true` on Safari iOS and no `overlay` is set.
-   *
-   * If "click outside" happended to be on an iframe, it can be tricky since iframes don't bubble events. The library checks if the window blurs in order to detect that iframe was selected. However window blur strategy isn't guaranteed to work for the following: if iframe inside menuPopup is clicked then click "outside" iframe, or in iOS a non-clickable element is selected. Because of that a more aggressive procedure runs where all outside iframes have
-   *
-   *
-   */
-  aggressiveOnIframes?: boolean;
   open: Accessor<boolean>;
   setOpen: (v: boolean) => void;
   setFocus?: (v: boolean) => void;
@@ -267,8 +224,9 @@ const Dismiss: Component<{
     closeWhenMenuButtonIsTabbed = false,
     closeWhenMenuButtonIsClicked = true,
     closeWhenScrolling = false,
-    closeWhenWindowBlurs = false,
+    closeWhenDocumentBlurs = false,
     closeWhenClickedOutside = true,
+    closeWhenEscapeKeyIsPressed = true,
     overlay = false,
     trapFocus = false,
     removeScrollbar = false,
@@ -288,7 +246,6 @@ const Dismiss: Component<{
   let focusSentinelLastEl!: HTMLDivElement;
   let containerEl!: HTMLDivElement;
   let overlayEl!: HTMLDivElement;
-  let cachedScrollTarget: Element;
   let isOverlayClipped = overlay === "clipped" || typeof overlay === "object";
   let closeBtnsAdded = false;
   let menuPopupAdded = false;
@@ -339,137 +296,6 @@ const Dismiss: Component<{
   const runAriaExpanded = (open: boolean) => {
     if (!useAriaExpanded) return;
     menuBtnEl.setAttribute("aria-expanded", `${open}`);
-  };
-
-  const onCursorKeys = (e: KeyboardEvent) => {
-    const keys = ["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"];
-    const horizontalKeys = ["ArrowLeft", "ArrowRight"];
-
-    if (!keys.includes(e.key)) return;
-
-    e.preventDefault();
-
-    if (horizontalKeys.includes(e.key)) return;
-
-    const { menuBtnEl, menuPopupEl } = dismissStack[dismissStack.length - 1];
-
-    const activeElement = document.activeElement!;
-
-    if (activeElement === menuBtnEl || activeElement === menuPopupEl) {
-      const el =
-        e.key === "ArrowDown"
-          ? (menuPopupEl?.querySelector(tabbableSelectors) as HTMLElement)
-          : inverseQuerySelector(menuPopupEl!, tabbableSelectors);
-
-      if (el) {
-        el.focus();
-      }
-      return;
-    }
-
-    const direction: "forwards" | "backwards" =
-      e.key === "ArrowDown" ? "forwards" : "backwards";
-
-    const el = getNextTabbableElement({
-      from: activeElement,
-      direction,
-      stopAtElement: menuPopupEl!,
-    });
-
-    if (el) {
-      el.focus();
-    }
-  };
-
-  const onKeyDown = (e: KeyboardEvent) => {
-    if (cursorKeys) {
-      onCursorKeys(e);
-    }
-
-    if (e.key !== "Escape") return;
-    const item = dismissStack[dismissStack.length - 1];
-
-    if (!item) return;
-
-    const el =
-      queryElement(focusElementOnClose, "focusElementOnClose", "escapeKey") ||
-      item.menuBtnEl;
-
-    if (el) {
-      el.focus();
-    }
-
-    item.setOpen(false);
-  };
-
-  const onScrollClose = (e: Event) => {
-    const target = e.target as HTMLElement;
-
-    if (cachedScrollTarget === target) return;
-
-    if (target.contains(menuBtnEl)) {
-      props.setOpen(false);
-      window.removeEventListener("scroll", onScrollClose, { capture: true });
-    } else {
-      cachedScrollTarget = target;
-      return;
-    }
-
-    const el =
-      queryElement(focusElementOnClose, "focusElementOnClose", "scrolling") ||
-      menuBtnEl;
-
-    if (el) {
-      el.focus();
-    }
-  };
-
-  const onFocusOutAndDetectIframe = () => {};
-
-  const onWindowBlur = () => {
-    if (props.open()!) {
-      window.removeEventListener("blur", onWindowBlur);
-      return;
-    }
-
-    const exit = () => {
-      console.log("TRIGGER");
-      props.setOpen(false);
-      window.removeEventListener("blur", onWindowBlur);
-    };
-
-    const onBlurWindow = () => {
-      if (!closeWhenWindowBlurs) return;
-      menuBtnEl.focus();
-      exit();
-    };
-
-    //     setTimeout(() => {
-    //       const activeElement = document.activeElement;
-    //
-    //       if (!activeElement) return onBlurWindow();
-    //       if (activeElement.tagName !== "IFRAME") return onBlurWindow();
-    //
-    //       if (containerEl.contains(activeElement)) {
-    //         cachedPolledElement = activeElement;
-    //         pollingIframe();
-    //
-    //         if (
-    //           getNextTabbableElement({
-    //             from: activeElement,
-    //             stopAtElement: containerEl,
-    //             allowSelectors: [
-    //               `[data-solid-dismiss-focus-sentinel-last="${uniqueId}"]`,
-    //             ],
-    //           }) === focusSentinelLastEl
-    //         ) {
-    //           focusSentinelLastEl.setAttribute("tabindex", "0");
-    //         }
-    //         return;
-    //       }
-    //
-    //       exit();
-    //     });
   };
 
   const onClickOverlay = () => {
@@ -556,6 +382,7 @@ const Dismiss: Component<{
 
   const onClickDocument = (e: MouseEvent) => {
     if (containerEl.contains(e.target as HTMLElement)) return;
+
     if (prevFocusedEl) {
       prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
     }
@@ -575,51 +402,10 @@ const Dismiss: Component<{
 
   const removeOutsideFocusEvents = () => {
     if (!prevFocusedEl) return;
+    console.log("removeOutsideFocusEvents");
     prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
     document.removeEventListener("click", onClickDocument);
     prevFocusedEl = null;
-  };
-
-  // polls iframe to deal with edge case if menuPopup item selected is an iframe and then select another iframe that is "outside" of menuPopup
-  const pollingIframe = () => {
-    if (overlay) return;
-    // worst case scenerio is user has to wait for up to 300ms for menuPop to close, while average case is 150ms
-    const duration = 300;
-
-    const poll = () => {
-      const activeElement = document.activeElement as HTMLElement;
-
-      if (!activeElement) {
-        return;
-      }
-
-      if (cachedPolledElement === activeElement) {
-        pollTimeoutId = window.setTimeout(poll, duration);
-        return;
-      }
-
-      if (activeElement.tagName !== "IFRAME") return;
-
-      if (menuPopupEl!.contains(activeElement)) {
-        cachedPolledElement = activeElement;
-        pollTimeoutId = window.setTimeout(poll, duration);
-        return;
-      }
-
-      const el =
-        queryElement(focusElementOnClose, "focusElementOnClose", "click") ||
-        menuBtnEl;
-
-      if (el) {
-        el.focus();
-      }
-
-      props.setOpen(false);
-      cachedPolledElement = null;
-      pollTimeoutId = null;
-    };
-
-    pollTimeoutId = window.setTimeout(poll, duration);
   };
 
   const onFocusOutContainer = (e: FocusEvent) => {
@@ -629,37 +415,6 @@ const Dismiss: Component<{
     }
 
     if (!props.open()) return;
-
-    setTimeout(() => {
-      if (overlay) return;
-
-      if (
-        (relatedTarget && relatedTarget.tagName !== "IFRAME") ||
-        !document.hasFocus()
-      ) {
-        return;
-      }
-
-      const activeElement = document.activeElement;
-
-      if (!activeElement || !menuPopupEl) return;
-      if (
-        activeElement.tagName !== "IFRAME" ||
-        menuPopupEl.contains(activeElement)
-      ) {
-        return;
-      }
-
-      const el =
-        queryElement(focusElementOnClose, "focusElementOnClose", "click") ||
-        menuBtnEl;
-
-      if (el) {
-        el.focus();
-      }
-
-      props.setOpen(false);
-    });
 
     if (!relatedTarget) {
       if (addedFocusOutAppEvents) return;
@@ -761,7 +516,6 @@ const Dismiss: Component<{
         ignoreElement: [containerEl],
       });
 
-    console.log({ el });
     if (el) {
       el.focus();
     }
@@ -788,7 +542,6 @@ const Dismiss: Component<{
     if (inputElement == null && type === "menuPopup") {
       if (!containerEl) return null as any;
       if (menuPopupEl) return menuPopupEl;
-      // if (hasFocusSentinels) return containerEl.children[1] as HTMLElement;
       return containerEl.children[1] as HTMLElement;
     }
     if (typeof inputElement === "string" && type === "menuButton") {
@@ -912,6 +665,13 @@ const Dismiss: Component<{
     }
   };
 
+  const removeMenuPopupEl = () => {
+    if (!menuPopupEl) return;
+    if (!menuPopupAdded) return;
+    menuPopupEl = null;
+    menuPopupAdded = false;
+  };
+
   const runRemoveScrollbar = (open: boolean) => {
     if (!removeScrollbar) return;
 
@@ -929,13 +689,6 @@ const Dismiss: Component<{
       const el = document.scrollingElement as HTMLElement;
       el.style.overflow = "";
     }
-  };
-
-  const removeMenuPopupEl = () => {
-    if (!menuPopupEl) return;
-    if (!menuPopupAdded) return;
-    menuPopupEl = null;
-    menuPopupAdded = false;
   };
 
   const onFocusMenuButton = () => {
@@ -968,25 +721,14 @@ const Dismiss: Component<{
       (open, prevOpen) => {
         if (open === prevOpen) return;
 
-        if (closeWhenScrolling) {
-          window.addEventListener("scroll", onScrollClose, {
-            capture: true,
-            passive: true,
-          });
-        }
-
-        window.addEventListener("blur", onWindowBlur);
-
         runAriaExpanded(open);
 
         if (open) {
           addCloseButtons();
           addMenuPopupEl();
           runFocusOnActive();
-          if (!addedKeydownListener) {
-            addedKeydownListener = true;
-            document.addEventListener("keydown", onKeyDown);
-          }
+
+          addGlobalEvents();
 
           addDismissStack({
             id,
@@ -999,6 +741,10 @@ const Dismiss: Component<{
             menuPopupEl: menuPopupEl!,
             isOverlayClipped,
             overlay: typeof overlay === "object" ? "clipped" : overlay,
+            closeWhenDocumentBlurs,
+            closeWhenEscapeKeyIsPressed,
+            cursorKeys,
+            focusElementOnClose,
             detectIfMenuButtonObscured:
               typeof overlay === "object"
                 ? overlay.clipped.detectIfMenuButtonObscured == null
@@ -1026,16 +772,9 @@ const Dismiss: Component<{
             removeOverlayEvents(stack);
           }
 
-          window.removeEventListener("blur", onWindowBlur);
-          window.removeEventListener("scroll", onScrollClose, {
-            capture: true,
-          });
-          runRemoveScrollbar(open);
+          removeGlobalEvents();
 
-          if (dismissStack.length < 1) {
-            addedKeydownListener = false;
-            document.removeEventListener("keydown", onKeyDown);
-          }
+          runRemoveScrollbar(open);
         }
       },
       { defer: initDefer }
@@ -1058,8 +797,8 @@ const Dismiss: Component<{
   }
 
   onCleanup(() => {
-    document.removeEventListener("keydown", onKeyDown);
     menuBtnEl.removeEventListener("click", onClickMenuButton);
+    document.removeEventListener("click", onClickDocument);
     removeCloseButtons();
     removeMenuPopupEl();
 
@@ -1068,6 +807,8 @@ const Dismiss: Component<{
     if (isOverlayClipped) {
       removeOverlayEvents(stack);
     }
+
+    removeGlobalEvents();
     console.log("onCleanup");
   });
 
@@ -1134,7 +875,5 @@ const Dismiss: Component<{
     </Show>
   );
 };
-
-let addedKeydownListener = false;
 
 export default Dismiss;

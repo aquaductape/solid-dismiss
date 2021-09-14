@@ -1,5 +1,47 @@
-import { Accessor } from "solid-js";
+import { Accessor, JSX } from "solid-js";
 import { updateIframeStyle } from "./stylesheet";
+
+export type TFocusElementOnClose =
+  | "menuButton"
+  | string
+  | JSX.Element
+  | {
+      /**
+       * Default: menuButton
+       *
+       * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
+       *
+       */
+      tabBackwards?: "menuButton" | string | JSX.Element;
+      /**
+       * Default: next tabbable element after menuButton;
+       *
+       * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
+       *
+       * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
+       */
+      tabForwards?: "menuButton" | string | JSX.Element;
+      /**
+       * focus on element when exiting menuPopup via click outside popup.
+       *
+       * If overlay present, and popup closes via click, then menuButton will be focused.
+       *
+       * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
+       */
+      click?: "menuButton" | string | JSX.Element;
+      /**
+       * Default: menuButton
+       *
+       * focus on element when exiting menuPopup via "Escape" key
+       */
+      escapeKey?: "menuButton" | string | JSX.Element;
+      /**
+       * Default: menuButton
+       *
+       * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
+       */
+      scrolling?: "menuButton" | string | JSX.Element;
+    };
 
 export type TDismissStack = {
   id: string;
@@ -13,7 +55,12 @@ export type TDismissStack = {
   overlay: "backdrop" | "clipped" | false;
   isOverlayClipped: boolean;
   detectIfMenuButtonObscured: boolean;
+  closeWhenDocumentBlurs: boolean;
+  cursorKeys: boolean;
+  closeWhenEscapeKeyIsPressed: boolean;
+  focusElementOnClose: TFocusElementOnClose;
 };
+
 export const dismissStack: TDismissStack[] = [];
 
 export const addDismissStack = (props: TDismissStack) => {
