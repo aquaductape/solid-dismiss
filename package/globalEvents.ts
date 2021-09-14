@@ -5,6 +5,7 @@ import {
   _tabbableSelectors as tabbableSelectors,
 } from "./utils";
 
+let scrollEventAdded = false;
 let cachedScrollTarget: Element | null;
 let cachedPolledElement: Element | null = null;
 let pollTimeoutId: number | null = null;
@@ -93,6 +94,8 @@ export const onKeyDown = (e: KeyboardEvent) => {
 };
 
 export const onScrollClose = (e: Event) => {
+  // if(delayScroll) return
+
   const target = e.target as HTMLElement;
 
   if (cachedScrollTarget === target) return;
@@ -176,24 +179,30 @@ const checkThenClose = <T extends unknown>(
 export const addGlobalEvents = () => {
   cachedScrollTarget = null;
 
+  if (!scrollEventAdded) {
+    scrollEventAdded = false;
+
+    window.addEventListener("wheel", onScrollClose, {
+      capture: true,
+      passive: true,
+    });
+  }
+
   if (dismissStack.length) return;
 
   console.log("addGlobalEvents");
   document.addEventListener("keydown", onKeyDown);
   window.addEventListener("blur", onWindowBlur);
-  window.addEventListener("scroll", onScrollClose, {
-    capture: true,
-    passive: true,
-  });
 };
 
 export const removeGlobalEvents = () => {
   if (dismissStack.length) return;
 
+  scrollEventAdded = false;
   console.log("removeGlobalEvents");
   document.removeEventListener("keydown", onKeyDown);
   window.removeEventListener("blur", onWindowBlur);
-  window.removeEventListener("scroll", onScrollClose, {
+  window.removeEventListener("wheel", onScrollClose, {
     capture: true,
   });
 };
