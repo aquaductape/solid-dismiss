@@ -17,7 +17,6 @@ import {
   addDismissStack,
   removeDismissStack,
   TDismissStack,
-  TFocusElementOnClose,
 } from "./dismissStack";
 import { addGlobalEvents, removeGlobalEvents } from "./globalEvents";
 
@@ -26,9 +25,7 @@ import { addGlobalEvents, removeGlobalEvents } from "./globalEvents";
 // blur (tested so far on only buttons) will fire even on tapping same focused button (which would be invoked `focus()` )
 // For Nested Dropdowns. Since button has to be refocused, when nested button(1) is tapped, it also triggers focusout container(1) for some reason
 
-// thoughts on configuration
-// easy hacky way is to have an exported object that can be edited and is referenced when Dismiss is called. Downside of this is that ts types default types won't be in sync
-type TDismiss = {
+export type TDismiss = {
   /**
    * sets id attribute for root component
    */
@@ -139,7 +136,7 @@ type TDismiss = {
    */
   removeScrollbar?:
     | boolean
-    | ((open: boolean, dismissStack: TDismissStack[]) => void);
+    | ((open: boolean, dismissStack: DismissStack[]) => void);
   /**
    * Default `false`
    *
@@ -171,6 +168,50 @@ type TDismiss = {
   setOpen: (v: boolean) => void;
   setFocus?: (v: boolean) => void;
 };
+
+export type TFocusElementOnClose =
+  | "menuButton"
+  | string
+  | JSX.Element
+  | {
+      /**
+       * Default: menuButton
+       *
+       * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
+       *
+       */
+      tabBackwards?: "menuButton" | string | JSX.Element;
+      /**
+       * Default: next tabbable element after menuButton;
+       *
+       * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
+       *
+       * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
+       */
+      tabForwards?: "menuButton" | string | JSX.Element;
+      /**
+       * focus on element when exiting menuPopup via click outside popup.
+       *
+       * If overlay present, and popup closes via click, then menuButton will be focused.
+       *
+       * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
+       */
+      click?: "menuButton" | string | JSX.Element;
+      /**
+       * Default: menuButton
+       *
+       * focus on element when exiting menuPopup via "Escape" key
+       */
+      escapeKey?: "menuButton" | string | JSX.Element;
+      /**
+       * Default: menuButton
+       *
+       * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
+       */
+      scrolling?: "menuButton" | string | JSX.Element;
+    };
+
+export type DismissStack = TDismissStack;
 
 /**
  *
@@ -217,7 +258,6 @@ const Dismiss: Component<TDismiss> = (props) => {
   let containerFocusTimeoutId: number | null = null;
   let menuButtonBlurTimeoutId: number | null = null;
   const initDefer = !props.open();
-  // issue where it doesn't close following these steps: clicking menuPopup -> outside iframe -> open -> menuPopup -> devtools -> window.
 
   const refContainerCb = (el: HTMLElement) => {
     if (props.ref) {
@@ -377,9 +417,7 @@ const Dismiss: Component<TDismiss> = (props) => {
 
   const onFocusOutContainer = (e: FocusEvent) => {
     const relatedTarget = e.relatedTarget as HTMLElement | null;
-    // if (focusElementOnClose || overlay) {
-    //   e.stopImmediatePropagation();
-    // }
+    if (overlay) return;
 
     if (!props.open()) return;
 
@@ -396,7 +434,7 @@ const Dismiss: Component<TDismiss> = (props) => {
       return;
     }
 
-    const newTimeout = window.setTimeout(() => {
+    containerFocusTimeoutId = window.setTimeout(() => {
       console.log("focusout");
       props.setOpen(false);
 
@@ -404,7 +442,6 @@ const Dismiss: Component<TDismiss> = (props) => {
         props.setFocus(false);
       }
     });
-    containerFocusTimeoutId = newTimeout;
   };
 
   const onFocusInContainer = () => {
@@ -706,7 +743,7 @@ const Dismiss: Component<TDismiss> = (props) => {
             menuBtnEl,
             overlayEl,
             menuPopupEl: menuPopupEl!,
-            isOverlayClipped: false,
+            isOverlayClip: false,
             overlay: !!overlay,
             closeWhenDocumentBlurs,
             closeWhenEscapeKeyIsPressed,

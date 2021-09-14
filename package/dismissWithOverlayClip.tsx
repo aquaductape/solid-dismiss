@@ -16,208 +16,61 @@ import {
   dismissStack,
   addDismissStack,
   removeDismissStack,
-  TDismissStack,
-  TFocusElementOnClose,
 } from "./dismissStack";
 import {
-  mountOverlayClipped,
+  mountOverlayClip,
   removeOverlayEvents,
   updateSVG,
-} from "./clippedOverlay";
+} from "./clipOverlay";
 import { addGlobalEvents, removeGlobalEvents } from "./globalEvents";
-
-// Safari iOS notes
-// buttons can't receive focus on tap, only through invoking `focus()` method
-// blur (tested so far on only buttons) will fire even on tapping same focused button (which would be invoked `focus()` )
-// For Nested Dropdowns. Since button has to be refocused, when nested button(1) is tapped, it also triggers focusout container(1) for some reason
-
-// thoughts on configuration
-// easy hacky way is to have an exported object that can be edited and is referenced when Dismiss is called. Downside of this is that ts types default types won't be in sync
+import { TDismiss } from ".";
 
 /**
  *
- * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key.
+ * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key. Includes overlay clip experimental feature.
  */
-const Dismiss: Component<{
-  /**
-   * sets id attribute for root component
-   */
-  id?: string;
-  ref?: JSX.Element;
-  class?: string;
-  classList?: { [key: string]: boolean };
-  /**
-   * css selector, queried from document, to get menu button element. Or pass JSX element
-   */
-  menuButton: string | JSX.Element | (() => JSX.Element);
-  /**
-   * Default: root component element queries first child element
-   * css selector, queried from document, to get menu popup element. Or pass JSX element
-   */
-  menuPopup?: string | JSX.Element | (() => JSX.Element);
-  /**
-   * Default: `undefined`
-   *
-   * css selector, queried from container element, to get close button element(s). Or pass JSX element(s)
-   */
-  closeButton?:
-    | string
-    | JSX.Element
-    | (string | JSX.Element)[]
-    | (() => JSX.Element)
-    | (() => (string | JSX.Element)[]);
-  /**
-   * Default: `false`
-   *
-   * Have the behavior to move through a list of "dropdown items" using cursor keys.
-   *
-   */
-  cursorKeys?: boolean;
-  /**
-   * Default: `false`
-   *
-   * Focus will remain inside menuPopup when pressing Tab key
-   */
-  trapFocus?: boolean;
-  /**
-   * Default: focus remains on `"menuButton"`
-   *
-   * which element, via selector*, to recieve focus after popup opens.
-   *
-   * *css string queried from document, or if string value is `"menuPopup"` uses menuPopup element.
-   */
-  focusElementOnOpen?: "menuPopup" | string | JSX.Element | (() => JSX.Element);
-  /**
-   * Default: When Tabbing forwards, focuses on tabbable element*¹ after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click"*³, user-agent determines which element recieves focus, if overlay present, then menuButton will be focused instead.
-   *
-   * Which element, via selector*², to recieve focus after popup closes.
-   *
-   * An example would be to emulate native <select> element behavior, set which sets focus to menuButton after dismiss.
-   *
-   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However if that next tabbable element is inside an iframe that has different origin, then this library won't be able to grab tabbable elements inside it, instead the iframe will be focused.
-   *
-   * *² selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
-   *
-   * *³ When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
-   *
-   */
-  focusElementOnClose?: TFocusElementOnClose;
-  /**
-   * Default: `false`
-   *
-   * When `true`, after focusing within menuPopup, if focused back to menu button via keyboard (Tab key), the menuPopup will close.
-   *
-   */
-  closeWhenMenuButtonIsTabbed?: boolean;
-  /**
-   * Default: `true`
-   *
-   * If `overlay` is `"block"`, menuPopup will always close when menu button is clicked
-   */
-  closeWhenMenuButtonIsClicked?: boolean;
-  /**
-   * Default: `false`
-   *
-   * Closes menuPopup when any scrollable container (except inside menuPopup) is scrolled
-   *
-   * Note: Even when `true`, scrolling in "outside" scrollable iframe won't be able to close menuPopup.
-   */
-  closeWhenScrolling?: boolean;
-  /**
-   * Default: `true`
-   *
-   * If `false`, menuPopup won't close when overlay backdrop is clicked, should use `overlay` prop to work. When backdrop clicked, menuPopup will recieve focus.
-   */
-  closeWhenClickedOutside?: boolean;
-  /**
-   * Default: `true`
-   *
-   * Closes menuPopup when escape key is pressed
-   */
-  closeWhenEscapeKeyIsPressed?: boolean;
-  /**
-   * Default: `false`
-   *
-   * Closes when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.
-   */
-  closeWhenDocumentBlurs?: boolean;
-  /**
-   * Default: `false`
-   *
-   * If `true`, sets "overflow: hidden" declaration to Document.scrollingElement.
-   *
-   * Use callback function if author wants customize how the scrollbar is removed.
-   */
-  removeScrollbar?:
-    | boolean
-    | ((open: boolean, dismissStack: TDismissStack[]) => void);
-  /**
-   * Default `false`
-   *
-   * When prop is `"backdrop"`, adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element. Make sure that menuPopup lives in the root level, one way is to nest this Component inside Solid's {@link https://www.solidjs.com/docs/latest/api#%3Cportal%3E Portal}.
-   *
-   * When prop is `"clipped"`, it's similar to `"block"` where it places an element at root document, but creates a "mask"* that clips around the menuButton and menuPopup. This allows menuPopup to live anywhere in the document, rather than forced to mounting it at top level of root document in order to be interacted with.
-   *
-   * Note the "mask" is accurate if the menuButton and menuPopup are rectangular shaped, border radius is also accounted for.
-   */
-  overlay?:
-    | "backdrop"
-    | "clipped"
-    | {
-        clipped: {
-          menuButton?: () => JSX.Element;
-          menuPopup?: () => JSX.Element;
-          /**
-           * Use this to trigger redraw of "mask" that clips around menuButton and menuPopup, in case mask is not aligned correctly.
-           *
-           * Clip automatically redraws when cases run:
-           * 1. parent scrollable container of menuButton/menuPopup is scrolled.
-           * 2. viewport is resized.
-           * 3. animationend/transitionend fires on menuPopup.
-           * 4. menuButton/menuPopup resizes or attributes change.
-           *
-           * All of the above is debounced with duration of 75ms
-           */
-          redrawClippedPath?: Accessor<number>;
-          /**
-           * Default: creates clipped path calculated on elements' rectangular shape and its border radius
-           *
-           * Use custom clipPath instead of using.
-           *
-           */
-          /**
-           * Default: `true`
-           *
-           * If menuButton is partially obscured by other elements (not including menuPopup) such as Header bar, the clipPath needs to acknowlege it otherwise that element could be interacted with. If the element is not a `<header>` or `<nav>`, the clipped path will not be precise on how much the menuButton is obscured.
-           */
-          detectIfMenuButtonObscured?: boolean;
-        };
-      };
-  /**
-   * Default: `false`
-   *
-   * If `true` add aria attributes for generic expand/collapse dropdown.
-   */
-  useAriaExpanded?: boolean;
-  /**
-   * Default: `false`
-   *
-   * If `true` activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.
-   *
-   * Is set to `true`:  `overlay` prop has `"backdrop"` property.  This component's root container is not an adjacent sibling of menuButton. `focusElWhenClosed` prop has a value.
-   */
-  mountedElseWhere?: boolean;
-  open: Accessor<boolean>;
-  setOpen: (v: boolean) => void;
-  setFocus?: (v: boolean) => void;
-}> = (props) => {
+type TOverlay =
+  | "backdrop"
+  | "clip"
+  | {
+      menuButton?: () => JSX.Element;
+      menuPopup?: () => JSX.Element;
+      /**
+       * Use this to trigger redraw of "mask" that clips around menuButton and menuPopup, in case mask is not aligned correctly.
+       *
+       * Clip automatically redraws when cases run:
+       * 1. parent scrollable container of menuButton/menuPopup is scrolled.
+       * 2. viewport is resized.
+       * 3. animationend/transitionend fires on menuPopup.
+       * 4. menuButton/menuPopup resizes or attributes change.
+       *
+       * All of the above is debounced with duration of 75ms
+       */
+      redrawClipPath?: Accessor<number>;
+      /**
+       * Default: creates clipped path calculated on elements' rectangular shape and its border radius
+       *
+       * Use custom clipPath instead of using.
+       *
+       */
+      /**
+       * Default: `true`
+       *
+       * If menuButton is partially obscured by other elements (not including menuPopup) such as Header bar, the clipPath needs to acknowlege it otherwise that element could be interacted with. If the element is not a `<header>` or `<nav>`, the clipped path will not be precise on how much the menuButton is obscured.
+       */
+      detectIfMenuButtonObscured?: boolean;
+    }
+  | {};
+const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay: TOverlay }> = (
+  props
+) => {
   const {
     id = "",
     menuButton,
     menuPopup,
     focusElementOnClose,
     focusElementOnOpen,
-    closeButton,
+    closeButtons,
     children,
     cursorKeys = false,
     closeWhenMenuButtonIsTabbed = false,
@@ -409,9 +262,7 @@ const Dismiss: Component<{
 
   const onFocusOutContainer = (e: FocusEvent) => {
     const relatedTarget = e.relatedTarget as HTMLElement | null;
-    if (focusElementOnClose || overlay === "backdrop") {
-      e.stopImmediatePropagation();
-    }
+    if (overlay) return;
 
     if (!props.open()) return;
 
@@ -596,7 +447,7 @@ const Dismiss: Component<{
   };
 
   const addCloseButtons = () => {
-    if (!closeButton) return;
+    if (!closeButtons) return;
     if (closeBtnsAdded) return;
 
     const getCloseButton = (closeButton: string | JSX.Element) => {
@@ -612,15 +463,15 @@ const Dismiss: Component<{
       closeBtn?.push(el);
     };
 
-    if (Array.isArray(closeButton)) {
-      closeButton.forEach((item) => {
+    if (Array.isArray(closeButtons)) {
+      closeButtons.forEach((item) => {
         getCloseButton(item);
       });
       return;
     }
 
-    if (typeof closeButton === "function") {
-      const result = closeButton();
+    if (typeof closeButtons === "function") {
+      const result = closeButtons();
 
       if (Array.isArray(result)) {
         result.forEach((item) => {
@@ -633,11 +484,11 @@ const Dismiss: Component<{
       return;
     }
 
-    getCloseButton(closeButton);
+    getCloseButton(closeButtons);
   };
 
   const removeCloseButtons = () => {
-    if (!closeButton) return;
+    if (!closeButtons) return;
     if (!closeBtnsAdded) return;
 
     closeBtnsAdded = false;
@@ -738,24 +589,24 @@ const Dismiss: Component<{
             menuBtnEl,
             overlayEl,
             menuPopupEl: menuPopupEl!,
-            isOverlayClipped,
-            overlay: typeof overlay === "object" ? "clipped" : overlay,
+            isOverlayClip: isOverlayClipped,
+            overlay: typeof overlay === "object" ? "clip" : overlay,
             closeWhenDocumentBlurs,
             closeWhenEscapeKeyIsPressed,
             cursorKeys,
             focusElementOnClose,
             detectIfMenuButtonObscured:
               typeof overlay === "object"
-                ? overlay.clipped.detectIfMenuButtonObscured == null
+                ? overlay.detectIfMenuButtonObscured == null
                   ? true
-                  : overlay.clipped.detectIfMenuButtonObscured
+                  : overlay.detectIfMenuButtonObscured
                 : true,
           });
 
           runRemoveScrollbar(open);
 
           if (isOverlayClipped) {
-            mountOverlayClipped();
+            mountOverlayClip();
           }
 
           activateLastFocusSentinel();
@@ -779,7 +630,7 @@ const Dismiss: Component<{
     )
   );
 
-  if (typeof overlay === "object" && overlay.clipped.redrawClippedPath) {
+  if (typeof overlay === "object" && overlay.redrawClippedPath) {
     createEffect(
       on(
         // @ts-ignore

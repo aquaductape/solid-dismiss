@@ -1,46 +1,5 @@
 import { Accessor, JSX } from "solid-js";
-
-export type TFocusElementOnClose =
-  | "menuButton"
-  | string
-  | JSX.Element
-  | {
-      /**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
-       *
-       */
-      tabBackwards?: "menuButton" | string | JSX.Element;
-      /**
-       * Default: next tabbable element after menuButton;
-       *
-       * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
-       *
-       * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
-       */
-      tabForwards?: "menuButton" | string | JSX.Element;
-      /**
-       * focus on element when exiting menuPopup via click outside popup.
-       *
-       * If overlay present, and popup closes via click, then menuButton will be focused.
-       *
-       * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
-       */
-      click?: "menuButton" | string | JSX.Element;
-      /**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via "Escape" key
-       */
-      escapeKey?: "menuButton" | string | JSX.Element;
-      /**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
-       */
-      scrolling?: "menuButton" | string | JSX.Element;
-    };
+import { TFocusElementOnClose } from ".";
 
 export type TDismissStack = {
   id: string;
@@ -51,8 +10,8 @@ export type TDismissStack = {
   menuPopupEl: HTMLElement;
   containerEl: HTMLElement;
   overlayEl?: HTMLDivElement;
-  overlay: "backdrop" | "clipped" | boolean;
-  isOverlayClipped: boolean;
+  overlay: "backdrop" | "clip" | boolean;
+  isOverlayClip: boolean;
   detectIfMenuButtonObscured: boolean;
   closeWhenDocumentBlurs: boolean;
   cursorKeys: boolean;
@@ -68,8 +27,8 @@ export const addDismissStack = (props: TDismissStack) => {
   if (
     prevStack &&
     prevStack.overlayEl &&
-    prevStack.isOverlayClipped &&
-    props.isOverlayClipped
+    prevStack.isOverlayClip &&
+    props.isOverlayClip
   ) {
     const paths = prevStack.overlayEl!.querySelectorAll(
       "path"
@@ -89,7 +48,7 @@ export const removeDismissStack = (id: string) => {
   if (foundIdx === -1) return;
   const prevStack = dismissStack[foundIdx - 1];
 
-  if (prevStack && prevStack.overlayEl && prevStack.isOverlayClipped) {
+  if (prevStack && prevStack.overlayEl && prevStack.isOverlayClip) {
     const paths = prevStack.overlayEl!.querySelectorAll(
       "path"
     ) as NodeListOf<SVGPathElement>;
