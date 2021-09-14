@@ -14,7 +14,7 @@ const IFrame: Component<{ useCrossDomain?: boolean }> = ({
 
     doc.close();
     setTimeout(() => {
-      doc.addEventListener("touchstart", () => {});
+      doc.body.addEventListener("touchstart", () => {});
     }, 1000);
   });
   return (
