@@ -117,10 +117,10 @@ export const onScrollClose = (e: Event) => {
   );
 };
 
-export const addGlobalEvents = () => {
+export const addGlobalEvents = (closeWhenScrolling: boolean) => {
   cachedScrollTarget = null;
 
-  if (!scrollEventAdded) {
+  if (!scrollEventAdded && closeWhenScrolling) {
     scrollEventAdded = false;
 
     window.addEventListener("wheel", onScrollClose, {

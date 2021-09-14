@@ -728,7 +728,7 @@ const Dismiss: Component<{
           addMenuPopupEl();
           runFocusOnActive();
 
-          addGlobalEvents();
+          addGlobalEvents(closeWhenScrolling);
 
           addDismissStack({
             id,
