@@ -127,7 +127,7 @@ export const addGlobalEvents = () => {
       capture: true,
       passive: true,
     });
-    document.addEventListener("touchmove", onTouchMove);
+    document.body.addEventListener("touchmove", onTouchMove);
   }
 
   if (dismissStack.length) return;
@@ -147,7 +147,7 @@ export const removeGlobalEvents = () => {
   window.removeEventListener("wheel", onScrollClose, {
     capture: true,
   });
-  document.removeEventListener("touchmove", onTouchMove);
+  document.body.removeEventListener("touchmove", onTouchMove);
 };
 
 const onTouchMove = () => {
@@ -155,7 +155,7 @@ const onTouchMove = () => {
   scrollEventAddedViaTouch = true;
   console.log("ontouch added!!");
 
-  document.addEventListener(
+  document.body.addEventListener(
     "touchend",
     () => {
       scrollEventAddedViaTouch = false;
