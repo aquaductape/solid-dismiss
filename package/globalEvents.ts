@@ -5,6 +5,7 @@ import {
   _tabbableSelectors as tabbableSelectors,
 } from "./utils";
 
+let scrollEventAddedViaTouch = false;
 let scrollEventAdded = false;
 let cachedScrollTarget: Element | null;
 let cachedPolledElement: Element | null = null;
@@ -51,19 +52,6 @@ export const onWindowBlur = () => {
       },
       (item) => item.setOpen(false)
     );
-
-    //     if (menuPopupEl.contains(activeElement)) {
-    //       cachedPolledElement = activeElement;
-    //
-    //       pollingIframe();
-    //
-    //       document.addEventListener("visibilitychange", onVisibilityChange);
-    //
-    //       return;
-    //     }
-    //
-    //     item.setOpen(false);
-    // exit();
   });
 };
 
@@ -94,25 +82,9 @@ export const onKeyDown = (e: KeyboardEvent) => {
 };
 
 export const onScrollClose = (e: Event) => {
-  // if(delayScroll) return
-
   const target = e.target as HTMLElement;
 
   if (cachedScrollTarget === target) return;
-
-  //   const exit = (item: TDismissStack) => {
-  //     item.setOpen(false);
-  //     const el =
-  //       queryElement(
-  //         item.focusElementOnClose,
-  //         "focusElementOnClose",
-  //         "scrolling"
-  //       ) || item.menuBtnEl;
-  //
-  //     if (el) {
-  //       el.focus();
-  //     }
-  //   };
 
   console.log("run expensive");
 
@@ -130,6 +102,7 @@ export const onScrollClose = (e: Event) => {
     },
     (item) => {
       item.setOpen(false);
+
       const el =
         queryElement(
           item.focusElementOnClose,
@@ -142,18 +115,59 @@ export const onScrollClose = (e: Event) => {
       }
     }
   );
+};
 
-  //   for (let i = dismissStack.length - 1; i >= 0; i--) {
-  //     const item = dismissStack[i];
-  //     const { menuPopupEl } = item;
-  //
-  //     if (menuPopupEl!.contains(target)) {
-  //       cachedScrollTarget = target;
-  //       return;
-  //     }
-  //
-  //     exit(item);
-  //   }
+export const addGlobalEvents = () => {
+  cachedScrollTarget = null;
+
+  if (!scrollEventAdded) {
+    scrollEventAdded = false;
+
+    window.addEventListener("wheel", onScrollClose, {
+      capture: true,
+      passive: true,
+    });
+    document.addEventListener("touchmove", onTouchMove);
+  }
+
+  if (dismissStack.length) return;
+
+  console.log("addGlobalEvents");
+  document.addEventListener("keydown", onKeyDown);
+  window.addEventListener("blur", onWindowBlur);
+};
+
+export const removeGlobalEvents = () => {
+  if (dismissStack.length) return;
+
+  scrollEventAdded = false;
+  console.log("removeGlobalEvents");
+  document.removeEventListener("keydown", onKeyDown);
+  window.removeEventListener("blur", onWindowBlur);
+  window.removeEventListener("wheel", onScrollClose, {
+    capture: true,
+  });
+  document.removeEventListener("touchmove", onTouchMove);
+};
+
+const onTouchMove = () => {
+  if (scrollEventAddedViaTouch) return;
+  scrollEventAddedViaTouch = true;
+  console.log("ontouch added!!");
+
+  document.addEventListener(
+    "touchend",
+    () => {
+      scrollEventAddedViaTouch = false;
+    },
+    { once: true }
+  );
+
+  window.addEventListener("scroll", onScrollClose, {
+    capture: true,
+    passive: true,
+    once: true,
+  });
 };
 
 /**
@@ -174,37 +188,6 @@ const checkThenClose = <T extends unknown>(
 
     return;
   }
-};
-
-export const addGlobalEvents = () => {
-  cachedScrollTarget = null;
-
-  if (!scrollEventAdded) {
-    scrollEventAdded = false;
-
-    window.addEventListener("wheel", onScrollClose, {
-      capture: true,
-      passive: true,
-    });
-  }
-
-  if (dismissStack.length) return;
-
-  console.log("addGlobalEvents");
-  document.addEventListener("keydown", onKeyDown);
-  window.addEventListener("blur", onWindowBlur);
-};
-
-export const removeGlobalEvents = () => {
-  if (dismissStack.length) return;
-
-  scrollEventAdded = false;
-  console.log("removeGlobalEvents");
-  document.removeEventListener("keydown", onKeyDown);
-  window.removeEventListener("blur", onWindowBlur);
-  window.removeEventListener("wheel", onScrollClose, {
-    capture: true,
-  });
 };
 
 const onCursorKeys = (e: KeyboardEvent) => {
@@ -294,19 +277,6 @@ const pollingIframe = () => {
         document.removeEventListener("visibilitychange", onVisibilityChange);
       }
     );
-
-    //     const { menuPopupEl, setOpen } = dismissStack[dismissStack.length - 1];
-    //
-    //     if (menuPopupEl && menuPopupEl.contains(activeElement)) {
-    //       cachedPolledElement = activeElement;
-    //       pollTimeoutId = window.setTimeout(poll, duration);
-    //       return;
-    //     }
-
-    // setOpen(false);
-    // cachedPolledElement = null;
-    // pollTimeoutId = null;
-    // document.removeEventListener("visibilitychange", onVisibilityChange);
   };
 
   pollTimeoutId = window.setTimeout(poll, duration);
