@@ -20,7 +20,7 @@ const IFrame: Component<{ useCrossDomain?: boolean }> = ({
   return (
     <iframe
       src={useCrossDomain ? "https://example.org" : ""}
-      width="200px"
+      width="150px"
       height="200px"
       ref={el}
     ></iframe>
