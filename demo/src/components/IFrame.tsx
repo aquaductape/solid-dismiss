@@ -6,15 +6,15 @@ const IFrame: Component<{ useCrossDomain?: boolean }> = ({
   let el!: HTMLIFrameElement;
   onMount(() => {
     if (useCrossDomain) return;
+    const iframe = document.querySelector("iframe");
     const doc = el.contentWindow?.document!;
-    // const doc = document.querySelector('iframe').contentWindow?.document!;
     doc.write(
-      "<html><body> <h1>Same Domain Iframe</h1> <button>hi</button> <button>bye</button> </body> </html>"
+      "<html><body style='height: 100%'><div> <h1>Same Domain Iframe</h1> <button>hi</button> <button>bye</button></div> </body> </html>"
     );
 
     doc.close();
     setTimeout(() => {
-      doc.body.addEventListener("touchstart", () => {});
+      doc.body.addEventListener("click", () => {});
     }, 1000);
   });
   return (
