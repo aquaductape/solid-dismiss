@@ -1,4 +1,4 @@
-import Dismiss from "../../../../package/index";
+import Dismiss from "../../../../package/dismissWithOverlayClip";
 import {
   For,
   Component,
@@ -282,6 +282,7 @@ const Select: Component<{
   });
 
   createEffect(() => {
+    console.log("focus", focus());
     if (focus()) {
       document.addEventListener("keydown", onKeyDown);
       return;
@@ -335,7 +336,7 @@ const Select: Component<{
         setOpen={setToggle}
         setFocus={setFocus}
         menuPopup={() => listEl}
-        overlay={"clipped"}
+        overlay={"clip"}
         focusElementOnClose={btnEl}
       >
         <div class={classM("list-outer")}>

@@ -12,7 +12,7 @@ import {
 
 const Dropdown: Component<{
   focusOnLeave?: boolean;
-  overlay?: "clipped" | "backdrop";
+  overlay?: "clip" | "backdrop" | boolean;
 }> = ({ focusOnLeave, overlay }) => {
   const [toggle, setToggle] = createSignal(false);
   let btnEl!: HTMLButtonElement;
@@ -20,7 +20,7 @@ const Dropdown: Component<{
   const [inputText, setInputText] = createSignal("");
 
   createEffect(() => {
-    if (overlay === "clipped") return;
+    if (overlay === "clip") return;
     if (!toggle()) return;
 
     const btnBCR = btnEl.getBoundingClientRect();
@@ -37,17 +37,21 @@ const Dropdown: Component<{
       </button>
 
       <Switch>
-        <Match when={overlay === "backdrop"}>
+        <Match when={overlay === "backdrop" || overlay === true}>
           <Portal>
             <Dismiss
               menuButton={btnEl}
               open={toggle}
               setOpen={setToggle}
-              overlay={overlay}
+              overlay={{
+                ref: (el) => {
+                  el.style.background = "rgba(0, 0, 0, 0.2)";
+                },
+              }}
               ref={menuDropdown}
             >
               <div class="nested-dropdown absolute" role="dialog">
-                <h3>Nested Popup Text {overlay || ""}</h3>
+                <h3>Nested Popup Text {"backdrop"}</h3>
                 <input
                   type="text"
                   placeholder={"input text..."}
@@ -69,8 +73,8 @@ const Dropdown: Component<{
             </Dismiss>
           </Portal>
         </Match>
-        <Match when={overlay === "clipped"}>
-          <Dismiss
+        <Match when={overlay === "clip"}>
+          {/* <Dismiss
             menuButton={btnEl}
             open={toggle}
             setOpen={setToggle}
@@ -98,7 +102,7 @@ const Dropdown: Component<{
                 <Dropdown focusOnLeave={focusOnLeave} overlay={overlay} />
               </Show>
             </div>
-          </Dismiss>
+          </Dismiss> */}
         </Match>
         <Match when={true}>
           <Portal>
@@ -139,7 +143,7 @@ const Dropdown: Component<{
 
 const NestedDropdown: Component<{
   focusOnLeave?: boolean;
-  overlay?: "clipped" | "backdrop";
+  overlay?: "clip" | "backdrop" | boolean;
 }> = ({ focusOnLeave, overlay }) => {
   return <Dropdown focusOnLeave={focusOnLeave} overlay={overlay}></Dropdown>;
 };

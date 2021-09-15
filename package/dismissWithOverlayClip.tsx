@@ -11,7 +11,7 @@ import {
   createUniqueId,
 } from "solid-js";
 import { Portal } from "solid-js/web";
-import { getNextTabbableElement, matchByFirstChild } from "./utils";
+import { queryElement } from "./utils";
 import {
   dismissStack,
   addDismissStack,
@@ -24,15 +24,47 @@ import {
 } from "./clipOverlay";
 import { addGlobalEvents, removeGlobalEvents } from "./globalEvents";
 import { TDismiss } from ".";
+import { TLocalState } from "./localState";
+import {
+  onClickDocument,
+  onFocusFromOutsideAppOrTab,
+  removeOutsideFocusEvents,
+} from "./outside";
+import { onClickOverlay } from "./overlay";
+import {
+  onFocusInContainer,
+  onFocusOutContainer,
+  runFocusOnActive,
+} from "./container";
+import {
+  onBlurMenuButton,
+  onClickMenuButton,
+  onFocusMenuButton,
+  onKeydownMenuButton,
+  runAriaExpanded,
+} from "./menuButton";
+import {
+  addCloseButtons,
+  onClickCloseButtons,
+  removeCloseButtons,
+} from "./closeButtons";
+import { addMenuPopupEl, removeMenuPopupEl } from "./menuPopup";
+import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
 
 /**
+ * Default: `false`
  *
- * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key. Includes overlay clip experimental feature.
+ * If `true` or `"backdrop": Adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element, that way menuPopup is the only element that can be interacted with. Author must ensure that menuPopup is placed above overlay element, one of the ways, is to nest this Component inside Solid's {@link https://www.solidjs.com/docs/latest/api#%3Cportal%3E Portal}.
+ *
+ * If `clip` or `"backdrop"`: Serves the same goal as `"backdrop"`, to prevent interaction of page elements except for menuPopup. The two differences are that the user can interact with menuButton, so hover effects will show ect, and menuPopup doesn't need to be mounted at the root in the DOM. This is possible because an overlay mask clips around menuButton and menuPopup. However menuButton and menuPopup must be rectangular shaped.
  */
 type TOverlay =
   | "backdrop"
   | "clip"
   | {
+      type: "clip";
+      className?: string;
+      classList?: { [key: string]: boolean };
       menuButton?: () => JSX.Element;
       menuPopup?: () => JSX.Element;
       /**
@@ -59,9 +91,20 @@ type TOverlay =
        * If menuButton is partially obscured by other elements (not including menuPopup) such as Header bar, the clipPath needs to acknowlege it otherwise that element could be interacted with. If the element is not a `<header>` or `<nav>`, the clipped path will not be precise on how much the menuButton is obscured.
        */
       detectIfMenuButtonObscured?: boolean;
+      ref?: (el: HTMLElement) => void;
     }
-  | {};
-const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay: TOverlay }> = (
+  | {
+      type: "backdrop";
+      className?: string;
+      classList?: { [key: string]: boolean };
+      ref?: (el: HTMLElement) => void;
+    };
+
+/**
+ *
+ * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key. Includes overlay clip experimental feature.
+ */
+const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay?: TOverlay }> = (
   props
 ) => {
   const {
@@ -84,451 +127,89 @@ const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay: TOverlay }> = (
     removeScrollbar = false,
     useAriaExpanded = false,
     mountedElseWhere = false,
+    onOpen,
   } = props;
-  const uniqueId = createUniqueId().replace(/\:/g, "-");
-  const hasFocusSentinels =
-    focusElementOnClose ||
-    overlay === "backdrop" ||
-    trapFocus ||
-    mountedElseWhere;
-  let closeBtn: HTMLElement[] = [];
-  let menuPopupEl: HTMLElement | null = null;
-  let menuBtnEl!: HTMLElement;
-  let focusSentinelFirstEl!: HTMLDivElement;
-  let focusSentinelLastEl!: HTMLDivElement;
-  let containerEl!: HTMLDivElement;
-  let overlayEl!: HTMLDivElement;
-  let isOverlayClipped = overlay === "clipped" || typeof overlay === "object";
-  let closeBtnsAdded = false;
-  let menuPopupAdded = false;
-  let menuBtnId = "";
-  let addedFocusOutAppEvents = false;
-  let menuBtnKeyupTabFired = false;
-  let prevFocusedEl: HTMLElement | null = null;
-  let cachedPolledElement: Element | null = null;
-  let pollTimeoutId: number | null = null;
-  let containerFocusTimeoutId: number | null = null;
-  let menuButtonBlurTimeoutId: number | null = null;
+  const state: TLocalState = {
+    addedFocusOutAppEvents: false,
+    children,
+    closeBtns: [],
+    closeBtnsAdded: false,
+    closeButtons,
+    closeWhenClickedOutside,
+    closeWhenDocumentBlurs,
+    closeWhenEscapeKeyIsPressed,
+    closeWhenMenuButtonIsClicked,
+    closeWhenMenuButtonIsTabbed,
+    closeWhenScrolling,
+    cursorKeys,
+    focusElementOnClose,
+    focusElementOnOpen,
+    id,
+    uniqueId: createUniqueId(),
+    menuBtnId: "",
+    menuBtnKeyupTabFired: false,
+    menuButton,
+    containerFocusTimeoutId: null,
+    menuButtonBlurTimeoutId: null,
+    menuPopup,
+    menuPopupAdded: false,
+    mountedElseWhere,
+    // @ts-ignore
+    overlay,
+    removeScrollbar,
+    trapFocus,
+    useAriaExpanded,
+    hasFocusSentinels:
+      !!focusElementOnClose || !!overlay || trapFocus || mountedElseWhere,
+    open: props.open,
+    setOpen: props.setOpen,
+    setFocus: props.setFocus,
+    onClickDocumentRef: (e) => onClickDocument(state, e),
+    onClickOverlayRef: () => onClickOverlay(state),
+    onFocusInContainerRef: () => onFocusInContainer(state),
+    onFocusOutContainerRef: (e) => onFocusOutContainer(state, e),
+    onBlurMenuButtonRef: (e) => onBlurMenuButton(state, e),
+    onClickMenuButtonRef: () => onClickMenuButton(state),
+    onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
+    onFocusMenuButtonRef: () => onFocusMenuButton(state),
+    onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
+    onClickCloseButtonsRef: () => onClickCloseButtons(state),
+    refContainerCb: (el: HTMLElement) => {
+      if (props.ref) {
+        // @ts-ignore
+        props.ref(el);
+      }
+      state.containerEl = el as any;
+    },
+    refOverlayCb: (el: HTMLElement) => {
+      el.style.position = "fixed";
+      el.style.top = "0";
+      el.style.left = "0";
+      el.style.width = "100%";
+      el.style.height = "100%";
+      el.style.zIndex = `${999 + dismissStack.length}`;
+
+      if (typeof overlay === "object" && overlay.ref) {
+        if (overlay.type === "clip") {
+          el.style.pointerEvents = "none";
+        }
+        overlay.ref(el);
+      }
+
+      state.overlayEl = el as any;
+    },
+  };
+
   const initDefer = !props.open();
-  // issue where it doesn't close following these steps: clicking menuPopup -> outside iframe -> open -> menuPopup -> devtools -> window.
-
-  const refContainerCb = (el: HTMLElement) => {
-    if (props.ref) {
-      // @ts-ignore
-      props.ref(el);
-    }
-    containerEl = el as any;
-  };
-
-  const activateLastFocusSentinel = () => {
-    if (mountedElseWhere) return;
-
-    const menuBtnSibling = menuBtnEl.nextElementSibling!;
-
-    if (
-      matchByFirstChild({
-        parent: menuBtnSibling,
-        matchEl: containerEl,
-      })
-    )
-      return;
-
-    focusSentinelLastEl.setAttribute("tabindex", "0");
-  };
-
-  const runFocusOnActive = () => {
-    if (focusElementOnOpen == null) return;
-
-    const el = queryElement(focusElementOnOpen);
-    if (el) {
-      el.focus();
-    }
-  };
-
-  const runAriaExpanded = (open: boolean) => {
-    if (!useAriaExpanded) return;
-    menuBtnEl.setAttribute("aria-expanded", `${open}`);
-  };
-
-  const onClickOverlay = () => {
-    console.log({ closeWhenClickedOutside });
-    if (!closeWhenClickedOutside) {
-      menuPopupEl!.focus();
-      return;
-    }
-
-    const el =
-      queryElement(focusElementOnClose, "focusElementOnClose", "click") ||
-      menuBtnEl;
-
-    if (el) {
-      el.focus();
-    }
-
-    props.setOpen(false);
-  };
-
-  const onClickCloseButton = () => {
-    props.setOpen(false);
-  };
-
-  const onClickMenuButton = () => {
-    clearTimeout(containerFocusTimeoutId!);
-    clearTimeout(menuButtonBlurTimeoutId!);
-    menuBtnEl.focus();
-    containerFocusTimeoutId = null;
-
-    if (!closeWhenMenuButtonIsClicked) {
-      props.setOpen(true);
-      return;
-    }
-
-    props.setOpen(!props.open());
-  };
-
-  const onBlurMenuButton = (e: FocusEvent) => {
-    if (!props.open()) return;
-
-    if (menuBtnKeyupTabFired) {
-      menuBtnKeyupTabFired = false;
-      return;
-    }
-
-    if (!e.relatedTarget) {
-      if (!overlay) {
-        document.addEventListener("click", onClickDocument, { once: true });
-      }
-      return;
-    }
-
-    removeOutsideFocusEvents();
-    if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
-    const run = () => {
-      props.setOpen(false);
-    };
-
-    menuButtonBlurTimeoutId = window.setTimeout(run);
-  };
-
-  const onKeydownMenuButton = (e: KeyboardEvent) => {
-    if (!props.open()) return;
-    if (e.key === "Tab" && e.shiftKey) {
-      props.setOpen(false);
-      menuBtnKeyupTabFired = true;
-      menuBtnEl.removeEventListener("keydown", onKeydownMenuButton);
-      menuBtnEl.removeEventListener("blur", onBlurMenuButton);
-      return;
-    }
-    if (e.key !== "Tab") return;
-    menuBtnKeyupTabFired = true;
-    e.preventDefault();
-    const el = getNextTabbableElement({ from: focusSentinelFirstEl });
-    if (el) {
-      el.focus();
-    } else {
-      containerEl.focus();
-    }
-    menuBtnEl.removeEventListener("keydown", onKeydownMenuButton);
-    menuBtnEl.removeEventListener("blur", onBlurMenuButton);
-  };
-
-  const onClickDocument = (e: MouseEvent) => {
-    if (containerEl.contains(e.target as HTMLElement)) return;
-
-    if (prevFocusedEl) {
-      prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
-    }
-    prevFocusedEl = null;
-    props.setOpen(false);
-    addedFocusOutAppEvents = false;
-  };
-
-  const onFocusFromOutsideAppOrTab = (e: FocusEvent) => {
-    if (containerEl.contains(e.target as HTMLElement)) return;
-
-    props.setOpen(false);
-    prevFocusedEl = null;
-    addedFocusOutAppEvents = false;
-    document.removeEventListener("click", onClickDocument);
-  };
-
-  const removeOutsideFocusEvents = () => {
-    if (!prevFocusedEl) return;
-    console.log("removeOutsideFocusEvents");
-    prevFocusedEl.removeEventListener("focus", onFocusFromOutsideAppOrTab);
-    document.removeEventListener("click", onClickDocument);
-    prevFocusedEl = null;
-  };
-
-  const onFocusOutContainer = (e: FocusEvent) => {
-    const relatedTarget = e.relatedTarget as HTMLElement | null;
-    if (overlay) return;
-
-    if (!props.open()) return;
-
-    if (!relatedTarget) {
-      if (addedFocusOutAppEvents) return;
-      addedFocusOutAppEvents = true;
-      prevFocusedEl = e.target as HTMLElement;
-      if (!overlay) {
-        document.addEventListener("click", onClickDocument);
-      }
-      prevFocusedEl.addEventListener("focus", onFocusFromOutsideAppOrTab, {
-        once: true,
-      });
-      return;
-    }
-
-    const newTimeout = window.setTimeout(() => {
-      console.log("focusout");
-      props.setOpen(false);
-
-      if (props.setFocus) {
-        props.setFocus(false);
-      }
-    });
-    containerFocusTimeoutId = newTimeout;
-  };
-
-  const onFocusInContainer = () => {
-    console.log("focusin");
-    clearTimeout(containerFocusTimeoutId!);
-    containerFocusTimeoutId = null;
-
-    if (props.setFocus) {
-      props.setFocus(true);
-    }
-  };
-
-  const onFocusSentinel = (
-    type: "first" | "last",
-    relatedTarget?: HTMLElement
-  ) => {
-    clearTimeout(containerFocusTimeoutId!);
-
-    if (relatedTarget === containerEl || relatedTarget === menuBtnEl) {
-      const el = getNextTabbableElement({
-        from: focusSentinelFirstEl,
-      })!;
-
-      el.focus();
-      return;
-    }
-
-    if (type === "first") {
-      if (trapFocus) {
-        const el = getNextTabbableElement({
-          from: focusSentinelLastEl,
-          direction: "backwards",
-        })!;
-
-        el.focus();
-        return;
-      }
-
-      if (closeWhenMenuButtonIsTabbed) {
-        props.setOpen(false);
-        menuBtnEl.focus();
-        return;
-      }
-
-      const el =
-        queryElement(
-          focusElementOnClose,
-          "focusElementOnClose",
-          "tabBackwards"
-        ) || menuBtnEl;
-
-      if (el) {
-        el.focus();
-      }
-
-      if (el !== menuBtnEl) {
-        props.setOpen(false);
-      }
-
-      return;
-    }
-
-    if (trapFocus) {
-      const el = getNextTabbableElement({
-        from: focusSentinelFirstEl,
-      })!;
-
-      el.focus();
-      return;
-    }
-
-    const el =
-      queryElement(focusElementOnClose, "focusElementOnClose", "tabForwards") ||
-      getNextTabbableElement({
-        from: menuBtnEl,
-        ignoreElement: [containerEl],
-      });
-
-    if (el) {
-      el.focus();
-    }
-
-    props.setOpen(false);
-  };
-
-  const queryElement = (
-    inputElement: any,
-    type?: "menuButton" | "menuPopup" | "closeButton" | "focusElementOnClose",
-    subType?:
-      | "tabForwards"
-      | "tabBackwards"
-      | "click"
-      | "escapeKey"
-      | "scrolling"
-  ): HTMLElement => {
-    if (inputElement === "menuButton") {
-      return menuBtnEl;
-    }
-    if (inputElement === "menuPopup") {
-      return menuPopupEl!;
-    }
-    if (inputElement == null && type === "menuPopup") {
-      if (!containerEl) return null as any;
-      if (menuPopupEl) return menuPopupEl;
-      return containerEl.children[1] as HTMLElement;
-    }
-    if (typeof inputElement === "string" && type === "menuButton") {
-      return document.querySelector(inputElement) as HTMLElement;
-    }
-    if (typeof inputElement === "string" && type === "closeButton") {
-      if (!containerEl) return null as any;
-      return containerEl.querySelector(inputElement) as HTMLElement;
-    }
-    if (typeof inputElement === "string") {
-      return document.querySelector(inputElement) as HTMLElement;
-    }
-    if (inputElement instanceof Element) {
-      return inputElement as HTMLElement;
-    }
-
-    if (typeof inputElement === "function") {
-      const result = inputElement();
-      if (result instanceof Element) {
-        return result as HTMLElement;
-      }
-      if (type === "closeButton") {
-        if (!containerEl) return null as any;
-        return containerEl.querySelector(result) as HTMLElement;
-      }
-    }
-
-    if (type === "focusElementOnClose") {
-      if (!inputElement) return null as any;
-
-      switch (subType) {
-        case "tabForwards":
-          return queryElement(inputElement.tabForwards);
-        case "tabBackwards":
-          return queryElement(inputElement.tabBackwards);
-        case "click":
-          return queryElement(inputElement.click);
-        case "escapeKey":
-          return queryElement(inputElement.escapeKey);
-        case "scrolling":
-          return queryElement(inputElement.scrolling);
-      }
-    }
-
-    if (inputElement == null) return null as any;
-
-    for (const key in inputElement as { [key: string]: any }) {
-      const item = (inputElement as { [key: string]: any })[key];
-      return queryElement(item);
-    }
-
-    return null as any;
-  };
-
-  const addCloseButtons = () => {
-    if (!closeButtons) return;
-    if (closeBtnsAdded) return;
-
-    const getCloseButton = (closeButton: string | JSX.Element) => {
-      if (closeButton == null) return;
-
-      const el = queryElement(closeButton, "closeButton");
-      console.log({ el });
-
-      if (!el) return;
-      closeBtnsAdded = true;
-
-      el.addEventListener("click", onClickCloseButton);
-      closeBtn?.push(el);
-    };
-
-    if (Array.isArray(closeButtons)) {
-      closeButtons.forEach((item) => {
-        getCloseButton(item);
-      });
-      return;
-    }
-
-    if (typeof closeButtons === "function") {
-      const result = closeButtons();
-
-      if (Array.isArray(result)) {
-        result.forEach((item) => {
-          getCloseButton(item);
-        });
-        return;
-      }
-
-      getCloseButton(result);
-      return;
-    }
-
-    getCloseButton(closeButtons);
-  };
-
-  const removeCloseButtons = () => {
-    if (!closeButtons) return;
-    if (!closeBtnsAdded) return;
-
-    closeBtnsAdded = false;
-    closeBtn.forEach((el) => {
-      el.removeEventListener("click", onClickCloseButton);
-    });
-    closeBtn = [];
-  };
-
-  const addMenuPopupEl = () => {
-    if (menuPopupAdded) return;
-
-    menuPopupEl = queryElement(menuPopup, "menuPopup");
-    if (menuPopupEl) {
-      menuPopupAdded = true;
-
-      menuPopupEl.setAttribute("tabindex", "-1");
-
-      if (!useAriaExpanded) return;
-
-      if (!menuPopupEl.getAttribute("aria-labelledby")) {
-        menuPopupEl.setAttribute("aria-labelledby", menuBtnId);
-      }
-    }
-  };
-
-  const removeMenuPopupEl = () => {
-    if (!menuPopupEl) return;
-    if (!menuPopupAdded) return;
-    menuPopupEl = null;
-    menuPopupAdded = false;
-  };
+  const isOverlayClip =
+    overlay === "clip"
+      ? true
+      : typeof overlay === "object"
+      ? overlay.type === "clip"
+      : false;
 
   const runRemoveScrollbar = (open: boolean) => {
     if (!removeScrollbar) return;
-
-    if (typeof removeScrollbar === "function") {
-      removeScrollbar(open, dismissStack);
-      return;
-    }
 
     if (dismissStack.length > 1) return;
 
@@ -541,96 +222,32 @@ const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay: TOverlay }> = (
     }
   };
 
-  const onFocusMenuButton = () => {
-    if (!closeWhenMenuButtonIsTabbed) {
-      console.log("clear!!");
-      clearTimeout(containerFocusTimeoutId!);
-    }
-    menuBtnEl.addEventListener("keydown", onKeydownMenuButton);
-    menuBtnEl.addEventListener("blur", onBlurMenuButton);
-  };
-
   onMount(() => {
-    menuBtnEl = queryElement(menuButton, "menuButton");
-    menuBtnEl.setAttribute("type", "button");
-    menuBtnEl.addEventListener("click", onClickMenuButton);
-    menuBtnEl.addEventListener("focus", onFocusMenuButton);
-    menuBtnId = menuBtnEl.id;
+    state.menuBtnEl = queryElement(state, {
+      inputElement: menuButton,
+      type: "menuButton",
+    });
+    state.menuBtnEl.setAttribute("type", "button");
+    state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+    state.menuBtnEl.addEventListener("focus", state.onFocusMenuButtonRef);
+    state.menuBtnId = state.menuBtnEl.id;
 
-    runAriaExpanded(props.open());
+    runAriaExpanded(state, props.open());
 
-    if (!menuBtnId) {
-      menuBtnId = id || uniqueId;
-      menuBtnEl.id = menuBtnId;
+    if (!state.menuBtnId) {
+      state.menuBtnId = id || state.uniqueId;
+      state.menuBtnEl.id = state.menuBtnId;
     }
   });
 
-  createEffect(
-    on(
-      () => !!props.open(),
-      (open, prevOpen) => {
-        if (open === prevOpen) return;
-
-        runAriaExpanded(open);
-
-        if (open) {
-          addCloseButtons();
-          addMenuPopupEl();
-          runFocusOnActive();
-
-          addGlobalEvents(closeWhenScrolling);
-
-          addDismissStack({
-            id,
-            uniqueId,
-            open: props.open,
-            setOpen: props.setOpen,
-            containerEl,
-            menuBtnEl,
-            overlayEl,
-            menuPopupEl: menuPopupEl!,
-            isOverlayClip: isOverlayClipped,
-            overlay: typeof overlay === "object" ? "clip" : overlay,
-            closeWhenDocumentBlurs,
-            closeWhenEscapeKeyIsPressed,
-            cursorKeys,
-            focusElementOnClose,
-            detectIfMenuButtonObscured:
-              typeof overlay === "object"
-                ? overlay.detectIfMenuButtonObscured == null
-                  ? true
-                  : overlay.detectIfMenuButtonObscured
-                : true,
-          });
-
-          runRemoveScrollbar(open);
-
-          if (isOverlayClipped) {
-            mountOverlayClip();
-          }
-
-          activateLastFocusSentinel();
-        } else {
-          clearTimeout(pollTimeoutId!);
-          removeOutsideFocusEvents();
-          removeMenuPopupEl();
-          removeCloseButtons();
-          document.removeEventListener("click", onClickDocument);
-          const stack = removeDismissStack(uniqueId);
-          if (isOverlayClipped) {
-            removeOverlayEvents(stack);
-          }
-
-          removeGlobalEvents();
-
-          runRemoveScrollbar(open);
-        }
-      },
-      { defer: initDefer }
-    )
-  );
-
-  if (typeof overlay === "object" && overlay.redrawClippedPath) {
+  if (
+    typeof overlay === "object" &&
+    // @ts-ignore
+    overlay.redrawClippedPath
+  ) {
+    if ("redrawClippedPath" in overlay) {
+      overlay;
+    }
     createEffect(
       on(
         // @ts-ignore
@@ -645,18 +262,77 @@ const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay: TOverlay }> = (
     );
   }
 
-  onCleanup(() => {
-    menuBtnEl.removeEventListener("click", onClickMenuButton);
-    document.removeEventListener("click", onClickDocument);
-    removeCloseButtons();
-    removeMenuPopupEl();
+  createEffect(
+    on(
+      () => !!props.open(),
+      (open, prevOpen) => {
+        if (open === prevOpen) return;
 
-    removeOutsideFocusEvents();
-    const stack = removeDismissStack(uniqueId);
-    if (isOverlayClipped) {
+        runAriaExpanded(state, open);
+
+        if (open) {
+          addCloseButtons(state);
+          addMenuPopupEl(state);
+          runFocusOnActive(state);
+
+          addGlobalEvents(closeWhenScrolling);
+
+          addDismissStack({
+            id,
+            uniqueId: state.uniqueId,
+            open: props.open,
+            setOpen: props.setOpen,
+            setFocus: props.setFocus,
+            containerEl: state.containerEl!,
+            menuBtnEl: state.menuBtnEl!,
+            overlayEl: state.overlayEl!,
+            menuPopupEl: state.menuPopupEl!,
+            overlay:
+              typeof overlay === "string"
+                ? overlay
+                : typeof overlay === "boolean"
+                ? overlay
+                : overlay.type,
+            closeWhenDocumentBlurs,
+            closeWhenEscapeKeyIsPressed,
+            cursorKeys,
+            focusElementOnClose,
+            detectIfMenuButtonObscured: false,
+          });
+          if (isOverlayClip) {
+            mountOverlayClip();
+          }
+
+          runRemoveScrollbar(open);
+          onOpen && onOpen(open, dismissStack);
+          activateLastFocusSentinel(state);
+        } else {
+          document.removeEventListener("click", state.onClickDocumentRef);
+
+          removeOutsideFocusEvents(state);
+          removeMenuPopupEl(state);
+          removeCloseButtons(state);
+          removeDismissStack(state.uniqueId);
+          removeGlobalEvents();
+          runRemoveScrollbar(open);
+          onOpen && onOpen(open, dismissStack);
+        }
+      },
+      { defer: initDefer }
+    )
+  );
+
+  onCleanup(() => {
+    state.menuBtnEl!.removeEventListener("click", state.onClickMenuButtonRef);
+    document.removeEventListener("click", state.onClickDocumentRef);
+
+    removeCloseButtons(state);
+    removeMenuPopupEl(state);
+    removeOutsideFocusEvents(state);
+    const stack = removeDismissStack(state.uniqueId);
+    if (isOverlayClip) {
       removeOverlayEvents(stack);
     }
-
     removeGlobalEvents();
     console.log("onCleanup");
   });
@@ -664,61 +340,71 @@ const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay: TOverlay }> = (
   return (
     <Show when={props.open()}>
       <div
-        id={id}
+        id={state.id}
         class={props.class}
-        data-solid-dismiss-dropdown-container={uniqueId}
         classList={props.classList || {}}
-        onFocusIn={onFocusInContainer}
-        onFocusOut={onFocusOutContainer}
-        style={
-          overlay === "backdrop" ? `z-index: ${1000 + dismissStack.length}` : ""
-        }
-        ref={refContainerCb}
+        onFocusIn={state.onFocusInContainerRef}
+        onFocusOut={state.onFocusOutContainerRef}
+        style={state.overlay ? `z-index: ${1000 + dismissStack.length}` : ""}
+        ref={state.refContainerCb}
       >
-        {isOverlayClipped && (
+        {state.overlay && (
           <Portal>
             <div
-              style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: ${
-                999 + dismissStack.length
-              };`}
-              data-solid-dismiss-overlay-clipped={id}
-              data-solid-dismiss-overlay-clipped-level={dismissStack.length}
-              onClick={onClickOverlay}
-              ref={overlayEl}
+              class={
+                typeof state.overlay === "object"
+                  ? state.overlay.className
+                  : undefined
+              }
+              classList={
+                typeof state.overlay === "object"
+                  ? state.overlay.classList || {}
+                  : {}
+              }
+              role="presentation"
+              data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
+              onClick={state.onClickOverlayRef}
+              ref={state.refOverlayCb}
             ></div>
           </Portal>
         )}
-        {overlay === "backdrop" && (
+
+        {isOverlayClip && (
           <Portal>
             <div
+              class={
+                typeof state.overlay === "object"
+                  ? state.overlay.className
+                  : undefined
+              }
+              classList={
+                typeof state.overlay === "object"
+                  ? state.overlay.classList || {}
+                  : {}
+              }
               role="presentation"
-              data-solid-dismiss-overlay-backdrop={id}
-              data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
-              onClick={onClickOverlay}
-              style={`position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: ${
-                999 + dismissStack.length
-              };`}
-              ref={overlayEl}
+              data-solid-dismiss-overlay-clipped-level={dismissStack.length}
+              onClick={state.onClickOverlayRef}
+              ref={state.refContainerCb}
             ></div>
           </Portal>
         )}
         <div
           tabindex="0"
           onFocus={(e) => {
-            onFocusSentinel("first", e.relatedTarget as HTMLElement);
+            onFocusSentinel(state, "first", e.relatedTarget as HTMLElement);
           }}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
-          ref={focusSentinelFirstEl}
+          ref={state.focusSentinelFirstEl}
         ></div>
-        {children}
+        {state.children}
         <div
-          tabindex={hasFocusSentinels ? "0" : "-1"}
-          onFocus={() => onFocusSentinel("last")}
+          tabindex={state.hasFocusSentinels ? "0" : "-1"}
+          onFocus={() => onFocusSentinel(state, "last")}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
-          data-solid-dismiss-focus-sentinel-last={uniqueId}
-          ref={focusSentinelLastEl}
+          ref={state.focusSentinelLastEl}
         ></div>
       </div>
     </Show>

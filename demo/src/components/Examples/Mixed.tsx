@@ -101,7 +101,7 @@ const Mixed: Component = () => {
         </Dismiss>
       </Portal>
 
-      <Dismiss
+      {/* <Dismiss
         class="nested-dropdown"
         menuButton={btnElClip}
         open={toggleClip}
@@ -126,7 +126,7 @@ const Mixed: Component = () => {
             <Mixed></Mixed>
           </Show>
         </div>
-      </Dismiss>
+      </Dismiss> */}
     </div>
   );
 };

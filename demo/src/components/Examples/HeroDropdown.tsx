@@ -1,5 +1,5 @@
 import { Transition } from "solid-transition-group";
-import Dismiss from "../../../../package/dismissWithOverlayClip";
+import Dismiss from "../../../../package/index";
 import { createSignal, onMount, createEffect, Component } from "solid-js";
 
 // instead of having property to toggle scrollbar, developers can have more control on removing scrollbar such as preserving "space" when removing scrollbar without causing a page shift. This will be different depending on how the header bar or body is styled.
@@ -46,8 +46,8 @@ const HeroDropdown = () => {
           menuButton={btnEl}
           open={toggle}
           setOpen={setToggle}
+          focusElementOnOpen={".focus-gutter"}
           trapFocus
-          overlay={"clip"}
 
           // closeWhenMenuButtonIsClicked={false}
         >

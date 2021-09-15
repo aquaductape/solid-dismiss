@@ -789,7 +789,7 @@ p {
   &-enter-to {
     transform: scale(1);
     opacity: 1;
-    transition: transform 300ms, opacity 150ms 150ms;
+    transition: transform 300ms, opacity 250ms 50ms;
     transform-origin: top right;
   }
 
@@ -801,7 +801,7 @@ p {
   &-exit-to {
     transform: scale(0);
     opacity: 0;
-    transition: transform 300ms, opacity 150ms;
+    transition: transform 300ms, opacity 250ms;
     transform-origin: top right;
   }
 }

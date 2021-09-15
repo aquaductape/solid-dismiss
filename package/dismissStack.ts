@@ -5,13 +5,13 @@ export type TDismissStack = {
   id: string;
   uniqueId: string;
   setOpen: (v: boolean) => void;
+  setFocus?: (v: boolean) => void;
   open: Accessor<boolean>;
   menuBtnEl: HTMLElement;
   menuPopupEl: HTMLElement;
   containerEl: HTMLElement;
   overlayEl?: HTMLDivElement;
   overlay: "backdrop" | "clip" | boolean;
-  isOverlayClip: boolean;
   detectIfMenuButtonObscured: boolean;
   closeWhenDocumentBlurs: boolean;
   cursorKeys: boolean;
@@ -23,12 +23,19 @@ export const dismissStack: TDismissStack[] = [];
 
 export const addDismissStack = (props: TDismissStack) => {
   const prevStack = dismissStack[dismissStack.length - 1];
+  const isOverlayClip =
+    props.overlay === "clip"
+      ? true
+      : typeof props.overlay === "object"
+      ? // @ts-ignore
+        props.overlay.type === "clip"
+      : false;
 
   if (
     prevStack &&
     prevStack.overlayEl &&
-    prevStack.isOverlayClip &&
-    props.isOverlayClip
+    prevStack.overlay === "clip" &&
+    isOverlayClip
   ) {
     const paths = prevStack.overlayEl!.querySelectorAll(
       "path"
@@ -48,7 +55,7 @@ export const removeDismissStack = (id: string) => {
   if (foundIdx === -1) return;
   const prevStack = dismissStack[foundIdx - 1];
 
-  if (prevStack && prevStack.overlayEl && prevStack.isOverlayClip) {
+  if (prevStack && prevStack.overlayEl && prevStack.overlay === "clip") {
     const paths = prevStack.overlayEl!.querySelectorAll(
       "path"
     ) as NodeListOf<SVGPathElement>;

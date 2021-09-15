@@ -2,6 +2,7 @@ import { dismissStack, TDismissStack } from "./dismissStack";
 import {
   getNextTabbableElement,
   inverseQuerySelector,
+  queryElement,
   _tabbableSelectors as tabbableSelectors,
 } from "./utils";
 
@@ -17,6 +18,7 @@ export const onWindowBlur = () => {
   const onBlurWindow = (item: TDismissStack) => {
     if (!item.closeWhenDocumentBlurs) return;
     item.menuBtnEl.focus();
+
     item.setOpen(false);
   };
 
@@ -50,7 +52,14 @@ export const onWindowBlur = () => {
 
         return item;
       },
-      (item) => item.setOpen(false)
+      (item) => {
+        const { setOpen, setFocus, menuBtnEl } = item;
+        setOpen(false);
+
+        if (setFocus && activeElement !== menuBtnEl) {
+          setFocus(false);
+        }
+      }
     );
   });
 };
@@ -58,6 +67,7 @@ export const onWindowBlur = () => {
 export const onKeyDown = (e: KeyboardEvent) => {
   const {
     setOpen,
+    setFocus,
     menuBtnEl,
     cursorKeys,
     closeWhenEscapeKeyIsPressed,
@@ -71,8 +81,18 @@ export const onKeyDown = (e: KeyboardEvent) => {
   if (e.key !== "Escape" || !closeWhenEscapeKeyIsPressed) return;
 
   const el =
-    queryElement(focusElementOnClose, "focusElementOnClose", "escapeKey") ||
-    menuBtnEl;
+    queryElement(
+      {},
+      {
+        inputElement: focusElementOnClose,
+        type: "focusElementOnClose",
+        subType: "escapeKey",
+      }
+    ) || menuBtnEl;
+
+  if (el !== menuBtnEl && setFocus) {
+    setFocus(false);
+  }
 
   if (el) {
     el.focus();
@@ -101,14 +121,23 @@ export const onScrollClose = (e: Event) => {
       return item;
     },
     (item) => {
-      item.setOpen(false);
+      const { setOpen, setFocus, focusElementOnClose, menuBtnEl } = item;
+
+      setOpen(false);
 
       const el =
         queryElement(
-          item.focusElementOnClose,
-          "focusElementOnClose",
-          "scrolling"
-        ) || item.menuBtnEl;
+          {},
+          {
+            inputElement: focusElementOnClose,
+            type: "focusElementOnClose",
+            subType: "scrolling",
+          }
+        ) || menuBtnEl;
+
+      if (el !== menuBtnEl && setFocus) {
+        setFocus(false);
+      }
 
       if (el) {
         el.focus();
@@ -271,7 +300,13 @@ const pollingIframe = () => {
         return item;
       },
       (item) => {
-        item.setOpen(false);
+        const { setOpen, setFocus, menuBtnEl } = item;
+
+        setOpen(false);
+        if (setFocus && activeElement !== menuBtnEl) {
+          setFocus(false);
+        }
+
         cachedPolledElement = null;
         pollTimeoutId = null;
         document.removeEventListener("visibilitychange", onVisibilityChange);
@@ -280,50 +315,4 @@ const pollingIframe = () => {
   };
 
   pollTimeoutId = window.setTimeout(poll, duration);
-};
-
-const queryElement = (
-  inputElement: any,
-  type?: "focusElementOnClose",
-  subType?: "tabForwards" | "tabBackwards" | "click" | "escapeKey" | "scrolling"
-): HTMLElement => {
-  if (typeof inputElement === "string") {
-    return document.querySelector(inputElement) as HTMLElement;
-  }
-  if (inputElement instanceof Element) {
-    return inputElement as HTMLElement;
-  }
-
-  if (typeof inputElement === "function") {
-    const result = inputElement();
-    if (result instanceof Element) {
-      return result as HTMLElement;
-    }
-  }
-
-  if (type === "focusElementOnClose") {
-    if (!inputElement) return null as any;
-
-    switch (subType) {
-      case "tabForwards":
-        return queryElement(inputElement.tabForwards);
-      case "tabBackwards":
-        return queryElement(inputElement.tabBackwards);
-      case "click":
-        return queryElement(inputElement.click);
-      case "escapeKey":
-        return queryElement(inputElement.escapeKey);
-      case "scrolling":
-        return queryElement(inputElement.scrolling);
-    }
-  }
-
-  if (inputElement == null) return null as any;
-
-  for (const key in inputElement as { [key: string]: any }) {
-    const item = (inputElement as { [key: string]: any })[key];
-    return queryElement(item);
-  }
-
-  return null as any;
 };

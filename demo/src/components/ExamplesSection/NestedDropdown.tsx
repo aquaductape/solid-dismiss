@@ -4,7 +4,7 @@ import FocusGutter from "../FocusGutter";
 
 const NestedDropdown: Component<{
   focusOnLeave?: boolean;
-  overlay?: "clipped" | "backdrop";
+  overlay?: "clip" | "backdrop" | boolean;
 }> = ({ focusOnLeave, overlay }) => {
   let codeEl!: HTMLDivElement;
 

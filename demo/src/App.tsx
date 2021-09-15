@@ -20,8 +20,8 @@ const App: Component = () => {
         <BasicDropdown></BasicDropdown>
         {/* <NestedDropdown></NestedDropdown> */}
         <IFrames />
-        <NestedDropdown focusOnLeave={true} overlay="backdrop"></NestedDropdown>
-        <NestedDropdown focusOnLeave={true} overlay="clipped"></NestedDropdown>
+        <NestedDropdown focusOnLeave={true} overlay></NestedDropdown>
+        {/* <NestedDropdown focusOnLeave={true} overlay="clip"></NestedDropdown> */}
         <NestedDropdown focusOnLeave={true}></NestedDropdown>
         <DropdownWithCloseButtons></DropdownWithCloseButtons>
         <Mixed />

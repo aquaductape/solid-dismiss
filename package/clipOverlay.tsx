@@ -21,7 +21,7 @@ const isTopStackOverlayBlock = () =>
 const getTopOverlayClipStack = () => {
   for (let i = dismissStack.length - 1; i >= 0; i--) {
     const stack = dismissStack[i];
-    if (stack.isOverlayClip) {
+    if (stack.overlay === "clip") {
       return stack;
     }
   }
@@ -312,7 +312,7 @@ export const removeOverlayEvents = (stack: TDismissStack | undefined) => {
   if (!stack) return;
   const { containerEl, menuBtnEl, menuPopupEl } = stack;
 
-  if (!dismissStack.filter((stack) => stack.isOverlayClip).length) {
+  if (!dismissStack.filter((stack) => stack.overlay === "clip").length) {
     console.log("remove ResizeEvent MutationObserver Scroll");
 
     addedScrollEvent = false;
