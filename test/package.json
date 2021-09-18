@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^2.4.2",
+    "vite-plugin-solid": "^2.0.1"
+  },
+  "dependencies": {
+    "sass": "^1.38.0",
+    "smoothscroll-polyfill": "^0.4.4",
+    "solid-js": "^1.0.7",
+    "solid-transition-group": "^0.0.8"
+  }
+}

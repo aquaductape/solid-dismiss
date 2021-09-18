@@ -1,0 +1,174 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  touch-action: manipulation;
+}
+
+body {
+  font-size: 16px;
+  padding: 50px 5vw;
+  padding-bottom: 300px;
+}
+
+p {
+  line-height: 1.5;
+}
+
+:focus {
+  outline: 3px solid #000;
+  outline-offset: 5px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.menu-button {
+  border-radius: 0;
+  border: 2px solid rgba(0, 0, 0, 0.452);
+  padding: 10px 5px;
+  background: #f1f1f1;
+  color: #000;
+
+  .menu-button-small-content {
+    display: none;
+  }
+
+  &.btn-small {
+    .menu-button-small-content {
+      display: inline;
+    }
+    .menu-button-large-content {
+      display: none;
+    }
+  }
+
+  &:focus {
+    position: relative;
+    z-index: 1;
+    border: 2px solid rgba(0, 0, 0, 0.8);
+  }
+
+  &.opened {
+    background: #446b9e;
+    color: #fff;
+  }
+}
+
+@media not all and (pointer: coarse) {
+  .menu-button {
+    &:hover {
+      background: #b9c9dd;
+    }
+
+    &.opened {
+      &:hover {
+        background: #2e4c74;
+      }
+    }
+  }
+}
+
+.dropdown {
+  border: 2px solid rgb(146, 146, 146);
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.37);
+  margin: 0;
+  background: #fff;
+
+  .menu-button {
+    margin: 5px 0;
+  }
+}
+
+.nested {
+  .dropdown {
+    padding: 5px;
+  }
+}
+
+section {
+  margin: 25vh 0;
+  &:first-child {
+    margin-top: 0;
+    margin-bottom: 25vh;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  > * {
+    justify-self: start;
+  }
+}
+
+.lone-scrolling {
+  position: relative;
+  top: -30px;
+  max-height: 500px;
+  min-width: 95px;
+  height: 20vh;
+  overflow: scroll;
+  border: 2px solid #727272;
+  box-shadow: 0 0 12px 0 #00000061 inset;
+  justify-self: stretch;
+}
+
+.iframe {
+  display: block;
+  max-width: 500px;
+  min-width: 100px;
+  width: 30vw;
+  max-height: 275px;
+  height: 40vh;
+  border: 2px solid #727272;
+}
+
+.popup {
+  &-enter {
+    transform: scale(0);
+    opacity: 0;
+  }
+  &-enter-to {
+    transform: scale(1);
+    opacity: 1;
+  }
+  &-exit {
+    transform: scale(1);
+    opacity: 1;
+  }
+  &-exit-to {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  &-enter,
+  &-enter-to,
+  &-exit,
+  &-exit-to {
+    transition: transform 2000ms, opacity 2000ms;
+    transform-origin: top left;
+  }
+}
+
+@media (max-width: 350px) {
+  .menu-button {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 700px) {
+  .menu-button {
+    &.btn-small {
+      .menu-button-small-content {
+        display: none;
+      }
+      .menu-button-large-content {
+        display: inline;
+      }
+    }
+  }
+}
