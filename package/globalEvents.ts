@@ -11,9 +11,29 @@ let scrollEventAdded = false;
 let cachedScrollTarget: Element | null = null;
 let cachedPolledElement: Element | null = null;
 let pollTimeoutId: number | null = null;
+let timestampOfTabkey: number = 0;
+export const globalState = {
+  closeByFocusSentinel: false,
+};
 
-export const onWindowBlur = () => {
+export const onWindowBlur = (e: Event) => {
   const item = dismissStack[dismissStack.length - 1];
+
+  // menuPopup item was the last tabbable item in the document and current focused item is outside of document, such as browser URL bar, then menuPopup/stacks will close
+  if (!document.hasFocus()) {
+    const difference = e.timeStamp - timestampOfTabkey;
+    if (difference < 50) {
+      checkThenClose(
+        dismissStack,
+        (item) => item,
+        (item) => {
+          const { setOpen } = item;
+          setOpen(false);
+        }
+      );
+      return;
+    }
+  }
 
   const onBlurWindow = (item: TDismissStack) => {
     if (!item.closeWhenDocumentBlurs) return;
@@ -73,6 +93,10 @@ export const onKeyDown = (e: KeyboardEvent) => {
     closeWhenEscapeKeyIsPressed,
     focusElementOnClose,
   } = dismissStack[dismissStack.length - 1];
+
+  if (e.key === "Tab") {
+    timestampOfTabkey = e.timeStamp;
+  }
 
   if (cursorKeys) {
     onCursorKeys(e);

@@ -1,5 +1,7 @@
 import "./browserInfo";
 import {
+  untrack,
+  batch,
   Accessor,
   onMount,
   createEffect,
@@ -8,9 +10,13 @@ import {
   JSX,
   on,
   createUniqueId,
+  createMemo,
   Show,
+  createComputed,
+  createSignal,
+  children,
+  mergeProps,
 } from "solid-js";
-import { Portal } from "solid-js/web";
 import { queryElement } from "./utils";
 import {
   dismissStack,
@@ -45,6 +51,7 @@ import {
 } from "./menuButton";
 import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
 import { onClickOverlay } from "./overlay";
+import CreatePortal from "./CreatePortal";
 
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
@@ -198,6 +205,27 @@ export type TDismiss = {
    * Automatically set to `true` for the following:  `overlay` prop is `true`,  this component's root container is not an adjacent sibling of menuButton, or `focusElWhenClosed` prop has a value.
    */
   mountedElseWhere?: boolean;
+  mount?: string | Node;
+  /**
+   * Default: `false`
+   */
+  stopComponentEventPropagation?: boolean;
+  animation?: {
+    name?: string;
+    enterActiveClass?: string;
+    enterClass?: string;
+    enterToClass?: string;
+    exitActiveClass?: string;
+    exitClass?: string;
+    exitToClass?: string;
+    onBeforeEnter?: (el: Element) => void;
+    onEnter?: (el: Element, done: () => void) => void;
+    onAfterEnter?: (el: Element) => void;
+    onBeforeExit?: (el: Element) => void;
+    onExit?: (el: Element, done: () => void) => void;
+    onAfterExit?: (el: Element) => void;
+    appear?: boolean;
+  };
 };
 
 export type TFocusElementOnClose =
@@ -256,7 +284,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     focusElementOnClose,
     focusElementOnOpen,
     closeButtons,
-    children,
     cursorKeys = false,
     closeWhenMenuButtonIsTabbed = false,
     closeWhenMenuButtonIsClicked = true,
@@ -269,11 +296,14 @@ const Dismiss: Component<TDismiss> = (props) => {
     removeScrollbar = false,
     useAriaExpanded = false,
     mountedElseWhere = false,
+    stopComponentEventPropagation = false,
+    mount,
     onOpen,
   } = props;
+
   const state: TLocalState = {
+    mount: !!mount,
     addedFocusOutAppEvents: false,
-    children,
     closeBtns: [],
     closeBtnsAdded: false,
     closeButtons,
@@ -293,6 +323,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     menuButton,
     containerFocusTimeoutId: null,
     menuButtonBlurTimeoutId: null,
+    upperStackRemovedByFocusOut: false,
     menuPopup,
     menuPopupAdded: false,
     mountedElseWhere,
@@ -306,7 +337,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     setOpen: props.setOpen,
     onClickDocumentRef: (e) => onClickDocument(state, e),
     onClickOverlayRef: () => onClickOverlay(state),
-    onFocusInContainerRef: () => onFocusInContainer(state),
+    onFocusInContainerRef: (e) => onFocusInContainer(state, e),
     onFocusOutContainerRef: (e) => onFocusOutContainer(state, e),
     onBlurMenuButtonRef: (e) => onBlurMenuButton(state, e),
     onClickMenuButtonRef: () => onClickMenuButton(state),
@@ -337,6 +368,9 @@ const Dismiss: Component<TDismiss> = (props) => {
     },
   };
 
+  let marker: Text | null = stopComponentEventPropagation
+    ? null
+    : document.createTextNode("");
   const initDefer = !props.open();
 
   const runRemoveScrollbar = (open: boolean) => {
@@ -358,9 +392,20 @@ const Dismiss: Component<TDismiss> = (props) => {
       inputElement: menuButton,
       type: "menuButton",
     });
+    // console.log("onMount!!!", state.menuBtnEl, state.menuBtnEl.isConnected);
     state.menuBtnEl.setAttribute("type", "button");
     state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
     state.menuBtnEl.addEventListener("focus", state.onFocusMenuButtonRef);
+    if (
+      props.open() &&
+      (!state.focusElementOnOpen ||
+        state.focusElementOnOpen === "menuButton" ||
+        state.focusElementOnOpen === state.menuBtnEl)
+    ) {
+      state.menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
+        once: true,
+      });
+    }
     state.menuBtnId = state.menuBtnEl.id;
 
     runAriaExpanded(state, props.open());
@@ -371,15 +416,163 @@ const Dismiss: Component<TDismiss> = (props) => {
     }
   });
 
+  let containerEl: HTMLElement | null;
+  let mountEl: Element | Node | null;
+  let endExitTransitionRef: () => void;
+  let endEnterTransitionRef: () => void;
+
+  function enterTransition(el: Element) {
+    if (!props.animation) return;
+    if (!props.animation.appear && !initDefer) return;
+
+    const name = props.animation.name;
+    let {
+      onBeforeEnter,
+      onEnter,
+      onAfterEnter,
+      enterActiveClass = name + "-enter-active",
+      enterClass = name + "-enter",
+      enterToClass = name + "-enter-to",
+      exitActiveClass = name + "-exit-active",
+      exitClass = name + "-exit",
+      exitToClass = name + "-exit-to",
+    } = props.animation;
+    console.log("enterTransition");
+
+    const enterClasses = enterClass!.split(" ");
+    const enterActiveClasses = enterActiveClass!.split(" ");
+    const enterToClasses = enterToClass!.split(" ");
+    const exitClasses = exitClass!.split(" ");
+    const exitActiveClasses = exitActiveClass!.split(" ");
+    const exitToClasses = exitToClass!.split(" ");
+    el.removeEventListener("transitionend", endExitTransitionRef);
+    el.removeEventListener("animationend", endExitTransitionRef);
+
+    onBeforeEnter && onBeforeEnter(el);
+    el.classList.remove(...exitClasses, ...exitActiveClasses, ...exitToClasses);
+    el.classList.add(...enterClasses);
+    el.classList.add(...enterActiveClasses);
+
+    requestAnimationFrame(() => {
+      el.classList.remove(...enterClasses);
+      el.classList.add(...enterToClasses);
+      onEnter && onEnter(el, endTransition);
+      if (!onEnter || onEnter!.length < 2) {
+        endEnterTransitionRef = endTransition;
+        el.addEventListener("transitionend", endTransition, {
+          once: true,
+        });
+        el.addEventListener("animationend", endTransition, {
+          once: true,
+        });
+      }
+    });
+
+    function endTransition() {
+      if (el) {
+        el.classList.remove(...enterActiveClasses);
+        el.classList.remove(...enterToClasses);
+        onAfterEnter && onAfterEnter(el);
+      }
+    }
+  }
+
+  function exitTransition(el: Element) {
+    if (!props.animation) return;
+
+    const name = props.animation.name;
+    let {
+      onBeforeExit,
+      onExit,
+      onAfterExit,
+      exitActiveClass = name + "-exit-active",
+      exitClass = name + "-exit",
+      exitToClass = name + "-exit-to",
+    } = props.animation;
+
+    const exitClasses = exitClass!.split(" ");
+    const exitActiveClasses = exitActiveClass!.split(" ");
+    const exitToClasses = exitToClass!.split(" ");
+    el.removeEventListener("transitionend", endEnterTransitionRef);
+    el.removeEventListener("animationend", endEnterTransitionRef);
+    if (!el.parentNode) return endTransition();
+    onBeforeExit && onBeforeExit(el);
+    el.classList.add(...exitClasses);
+    el.classList.add(...exitActiveClasses);
+    requestAnimationFrame(() => {
+      el.classList.remove(...exitClasses);
+      el.classList.add(...exitToClasses);
+    });
+    onExit && onExit(el, endTransition);
+    if (!onExit || onExit.length < 2) {
+      endExitTransitionRef = endTransition;
+      el.addEventListener("transitionend", endTransition, { once: true });
+      el.addEventListener("animationend", endTransition, { once: true });
+    }
+
+    function endTransition() {
+      mountEl?.removeChild(containerEl!);
+      onAfterExit && onAfterExit(containerEl?.firstElementChild!);
+      containerEl = null;
+      mountEl = null;
+    }
+  }
+
+  if (mount) {
+    createComputed(
+      on(
+        () => !!props.open(),
+        (open, prevOpen) => {
+          console.log("lib computed");
+          if (open === prevOpen) return;
+
+          if (open) {
+            if (!mountEl) {
+              CreatePortal({
+                mount:
+                  typeof mount === "string"
+                    ? document.querySelector(mount)!
+                    : mount!,
+                children: render(),
+                marker,
+                useCleanup: false,
+                onCreate: (mount, container) => {
+                  mountEl = mount;
+                  containerEl = container;
+                },
+              });
+            }
+
+            const foundItem = dismissStack.find(
+              (item) => item.uniqueId === state.uniqueId
+            );
+            if (foundItem) foundItem.queueRemoval = false;
+            enterTransition(containerEl?.firstElementChild!);
+          } else {
+            const foundItem = dismissStack.find(
+              (item) => item.uniqueId === state.uniqueId
+            );
+            if (foundItem) foundItem.queueRemoval = true;
+            console.log("exit", state.uniqueId);
+            exitTransition(containerEl?.firstElementChild!);
+          }
+        },
+        { defer: initDefer }
+      )
+    );
+  }
+
   createEffect(
     on(
       () => !!props.open(),
       (open, prevOpen) => {
         if (open === prevOpen) return;
+        // console.log("init cE");
 
         runAriaExpanded(state, open);
 
         if (open) {
+          // console.log("createEffect");
           addCloseButtons(state);
           addMenuPopupEl(state);
           runFocusOnActive(state);
@@ -401,7 +594,9 @@ const Dismiss: Component<TDismiss> = (props) => {
             closeWhenEscapeKeyIsPressed,
             cursorKeys,
             focusElementOnClose,
+            upperStackRemovedByFocusOut: false,
             detectIfMenuButtonObscured: false,
+            queueRemoval: false,
           });
 
           runRemoveScrollbar(open);
@@ -432,11 +627,17 @@ const Dismiss: Component<TDismiss> = (props) => {
     removeOutsideFocusEvents(state);
     removeDismissStack(state.uniqueId);
     removeGlobalEvents();
-    console.log("onCleanup");
+
+    // if (mount && mountEl) {
+    //   mountEl?.removeChild(containerEl!);
+    //   containerEl = null;
+    //   mountEl = null;
+    // }
+    console.log("onCleanup", props.open());
   });
 
-  return (
-    <Show when={props.open()}>
+  function render(children?: JSX.Element) {
+    return (
       <div
         id={state.id}
         class={props.class}
@@ -446,7 +647,7 @@ const Dismiss: Component<TDismiss> = (props) => {
         style={state.overlay ? `z-index: ${1000 + dismissStack.length}` : ""}
         ref={state.refContainerCb}
       >
-        {state.overlay && (
+        {/* {state.overlay && (
           <Portal>
             <div
               class={
@@ -465,7 +666,7 @@ const Dismiss: Component<TDismiss> = (props) => {
               ref={state.refOverlayCb}
             ></div>
           </Portal>
-        )}
+        )} */}
         <div
           tabindex="0"
           onFocus={(e) => {
@@ -475,7 +676,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           aria-hidden="true"
           ref={state.focusSentinelFirstEl}
         ></div>
-        {state.children}
+        {props.children}
         <div
           tabindex={state.hasFocusSentinels ? "0" : "-1"}
           onFocus={() => onFocusSentinel(state, "last")}
@@ -484,8 +685,158 @@ const Dismiss: Component<TDismiss> = (props) => {
           ref={state.focusSentinelLastEl}
         ></div>
       </div>
-    </Show>
+    );
+  }
+
+  if (props.mount) return marker;
+
+  let strictEqual = false;
+  const condition = createMemo<boolean>(() => props.open(), undefined, {
+    equals: (a, b) => (strictEqual ? a === b : !a === !b),
+  });
+
+  const finalRender = createMemo(() => {
+    const c = condition();
+    if (c) {
+      console.log("inner createMemo c", c);
+      const child = props.children;
+      return (strictEqual = typeof child === "function" && child.length > 0)
+        ? untrack(() => (child as any)(c))
+        : render(child);
+    }
+    console.log("inner createMemo c", c);
+  });
+
+  if (props.animation) {
+    return <Transition {...props.animation}>{finalRender()}</Transition>;
+  }
+
+  return finalRender;
+};
+
+type TransitionProps = {
+  name?: string;
+  enterActiveClass?: string;
+  enterClass?: string;
+  enterToClass?: string;
+  exitActiveClass?: string;
+  exitClass?: string;
+  exitToClass?: string;
+  onBeforeEnter?: (el: Element) => void;
+  onEnter?: (el: Element, done: () => void) => void;
+  onAfterEnter?: (el: Element) => void;
+  onBeforeExit?: (el: Element) => void;
+  onExit?: (el: Element, done: () => void) => void;
+  onAfterExit?: (el: Element) => void;
+  children?: JSX.Element;
+  appear?: boolean;
+  mode?: "inout" | "outin";
+};
+
+const Transition: Component<TransitionProps> = (props) => {
+  let el: Element;
+  let first = true;
+  const [s1, set1] = createSignal<Element | undefined>();
+  const [s2, set2] = createSignal<Element | undefined>();
+  const resolved = children(() => props.children);
+  const name = props.name || "s";
+  props = mergeProps(
+    {
+      name,
+      enterActiveClass: name + "-enter-active",
+      enterClass: name + "-enter",
+      enterToClass: name + "-enter-to",
+      exitActiveClass: name + "-exit-active",
+      exitClass: name + "-exit",
+      exitToClass: name + "-exit-to",
+    },
+    props
   );
+  const {
+    onBeforeEnter,
+    onEnter,
+    onAfterEnter,
+    onBeforeExit,
+    onExit,
+    onAfterExit,
+  } = props;
+
+  function enterTransition(el: Element, prev: Element | undefined) {
+    if (!first || props.appear) {
+      const enterClasses = props.enterClass!.split(" ");
+      const enterActiveClasses = props.enterActiveClass!.split(" ");
+      const enterToClasses = props.enterToClass!.split(" ");
+      onBeforeEnter && onBeforeEnter(el);
+      el.classList.add(...enterClasses);
+      el.classList.add(...enterActiveClasses);
+      requestAnimationFrame(() => {
+        el.classList.remove(...enterClasses);
+        el.classList.add(...enterToClasses);
+        onEnter && onEnter(el, endTransition);
+        if (!onEnter || onEnter.length < 2) {
+          el.addEventListener("transitionend", endTransition, { once: true });
+          el.addEventListener("animationend", endTransition, { once: true });
+        }
+      });
+
+      function endTransition() {
+        if (el) {
+          el.classList.remove(...enterActiveClasses);
+          el.classList.remove(...enterToClasses);
+          batch(() => {
+            s1() !== el && set1(el);
+            s2() === el && set2(undefined);
+          });
+          onAfterEnter && onAfterEnter(el);
+          if (props.mode === "inout") exitTransition(el, prev!);
+        }
+      }
+    }
+    prev && !props.mode ? set2(el) : set1(el);
+  }
+
+  function exitTransition(el: Element, prev: Element) {
+    const exitClasses = props.exitClass!.split(" ");
+    const exitActiveClasses = props.exitActiveClass!.split(" ");
+    const exitToClasses = props.exitToClass!.split(" ");
+    if (!prev.parentNode) return endTransition();
+    onBeforeExit && onBeforeExit(prev);
+    prev.classList.add(...exitClasses);
+    prev.classList.add(...exitActiveClasses);
+    requestAnimationFrame(() => {
+      prev.classList.remove(...exitClasses);
+      prev.classList.add(...exitToClasses);
+    });
+    onExit && onExit(prev, endTransition);
+    if (!onExit || onExit.length < 2) {
+      prev.addEventListener("transitionend", endTransition, { once: true });
+      prev.addEventListener("animationend", endTransition, { once: true });
+    }
+
+    function endTransition() {
+      prev.classList.remove(...exitActiveClasses);
+      prev.classList.remove(...exitToClasses);
+      s1() === prev && set1(undefined);
+      onAfterExit && onAfterExit(prev);
+      if (props.mode === "outin") enterTransition(el, prev);
+    }
+  }
+
+  createComputed<Element>((prev) => {
+    el = resolved() as Element;
+    while (typeof el === "function") el = (el as Function)();
+    return untrack(() => {
+      if (el && el !== prev) {
+        if (props.mode !== "outin") enterTransition(el, prev);
+        else if (first) set1(el);
+      }
+      if (prev && prev !== el && props.mode !== "inout")
+        exitTransition(el, prev);
+      first = false;
+      return el;
+    });
+  });
+  return [s1, s2];
 };
 
 export default Dismiss;

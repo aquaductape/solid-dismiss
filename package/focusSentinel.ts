@@ -1,3 +1,5 @@
+import { dismissStack } from "./dismissStack";
+import { globalState } from "./globalEvents";
 import { TLocalState } from "./localState";
 import {
   getNextTabbableElement,
@@ -38,6 +40,7 @@ export const onFocusSentinel = (
     focusSentinelLastEl,
     closeWhenMenuButtonIsTabbed,
     focusElementOnClose,
+    mount,
     setOpen,
     setFocus,
   } = state;
@@ -116,6 +119,11 @@ export const onFocusSentinel = (
     setFocus(false);
   }
 
+  if (mount) {
+    globalState.closeByFocusSentinel = true;
+  }
+
+  console.log("sentinel", { el });
   if (el) {
     el.focus();
   }

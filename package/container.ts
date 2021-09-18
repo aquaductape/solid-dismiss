@@ -1,17 +1,31 @@
+import { dismissStack } from "./dismissStack";
+import { globalState } from "./globalEvents";
 import { TLocalState } from "./localState";
 import { queryElement } from "./utils";
 
 export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const {
+    id,
+    uniqueId,
     overlay,
     open,
+    containerEl,
+    mount,
     onClickDocumentRef,
     onFocusFromOutsideAppOrTabRef,
     setOpen,
     setFocus,
   } = state;
   const relatedTarget = e.relatedTarget as HTMLElement | null;
+
   if (overlay) return;
+
+  if (mount && globalState.closeByFocusSentinel) {
+    if (dismissStack.findIndex((item) => item.uniqueId === uniqueId) <= 0) {
+      globalState.closeByFocusSentinel = false;
+    }
+    return;
+  }
 
   if (!open()) return;
 
@@ -32,8 +46,6 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   }
 
   state.containerFocusTimeoutId = window.setTimeout(() => {
-    console.log("focusout");
-
     setOpen(false);
 
     if (setFocus) {
@@ -42,7 +54,11 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   });
 };
 
-export const onFocusInContainer = (state: TLocalState) => {
+export const onFocusInContainer = (state: TLocalState, e: FocusEvent) => {
+  console.log("FocusIN", state.uniqueId);
+  // if (state.stopPropagateFocusInAndFocusOut) {
+  //   e.stopPropagation();
+  // }
   clearTimeout(state.containerFocusTimeoutId!);
   clearTimeout(state.menuButtonBlurTimeoutId!);
 

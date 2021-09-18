@@ -1,5 +1,6 @@
 import { Accessor, JSX } from "solid-js";
 import { TFocusElementOnClose } from ".";
+import { TLocalState } from "./localState";
 
 export type TDismissStack = {
   id: string;
@@ -17,6 +18,8 @@ export type TDismissStack = {
   cursorKeys: boolean;
   closeWhenEscapeKeyIsPressed: boolean;
   focusElementOnClose: TFocusElementOnClose;
+  queueRemoval: boolean;
+  upperStackRemovedByFocusOut: boolean;
 };
 
 export const dismissStack: TDismissStack[] = [];

@@ -15,7 +15,6 @@ export type TLocalState = {
     | (string | JSX.Element)[]
     | (() => JSX.Element)
     | (() => (string | JSX.Element)[]);
-  children: JSX.Element;
   cursorKeys: boolean;
   closeWhenMenuButtonIsTabbed: boolean;
   closeWhenMenuButtonIsClicked: boolean;
@@ -35,6 +34,7 @@ export type TLocalState = {
     | boolean
     | ((open: boolean, dismissStack: TDismissStack[]) => void);
   useAriaExpanded: boolean;
+  mount: boolean;
   mountedElseWhere: boolean;
   hasFocusSentinels: boolean;
   closeBtns: HTMLElement[];
@@ -55,7 +55,7 @@ export type TLocalState = {
   refContainerCb: (el: HTMLElement) => void;
   refOverlayCb: (el: HTMLElement) => void;
   onClickOverlayRef: (e: Event) => void;
-  onFocusInContainerRef: (e: Event) => void;
+  onFocusInContainerRef: (e: FocusEvent) => void;
   onFocusOutContainerRef: (e: FocusEvent) => void;
   onFocusFromOutsideAppOrTabRef: (e: FocusEvent) => void;
   onClickDocumentRef: (e: MouseEvent) => void;
@@ -67,4 +67,5 @@ export type TLocalState = {
   setOpen: (v: boolean) => void;
   setFocus?: (v: boolean) => void;
   open: Accessor<boolean>;
+  upperStackRemovedByFocusOut: boolean;
 };

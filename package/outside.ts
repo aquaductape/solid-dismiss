@@ -17,6 +17,7 @@ export const onFocusFromOutsideAppOrTab = (
 export const onClickDocument = (state: TLocalState, e: MouseEvent) => {
   const { containerEl, setOpen, onFocusFromOutsideAppOrTabRef } = state;
 
+  if (!containerEl) return;
   if (containerEl!.contains(e.target as HTMLElement)) return;
 
   if (state.prevFocusedEl) {
