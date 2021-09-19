@@ -1,7 +1,7 @@
 import { dismissStack } from "./dismissStack";
 import { globalState } from "./globalEvents";
 import { TLocalState } from "./localState";
-import { queryElement } from "./utils";
+import { findItemReverse, queryElement } from "./utils";
 
 export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const {
@@ -30,7 +30,10 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   if (!open()) return;
 
   if (!relatedTarget) {
-    const overlayIdx = dismissStack.findIndex((item) => item.overlay);
+    const [_, overlayIdx] = findItemReverse(
+      dismissStack,
+      (item) => item.overlay
+    );
     const currentIdx = dismissStack.findIndex(
       (item) => item.uniqueId === uniqueId
     );

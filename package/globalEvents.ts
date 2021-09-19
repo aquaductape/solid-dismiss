@@ -130,8 +130,6 @@ export const onScrollClose = (e: Event) => {
 
   if (cachedScrollTarget === target) return;
 
-  console.log("run expensive");
-
   checkThenClose(
     dismissStack,
     (item) => {
@@ -185,7 +183,6 @@ export const addGlobalEvents = (closeWhenScrolling: boolean) => {
 
   if (dismissStack.length) return;
 
-  console.log("addGlobalEvents");
   document.addEventListener("keydown", onKeyDown);
   window.addEventListener("blur", onWindowBlur);
 };
@@ -194,7 +191,6 @@ export const removeGlobalEvents = () => {
   if (dismissStack.length) return;
 
   scrollEventAdded = false;
-  console.log("removeGlobalEvents");
   document.removeEventListener("keydown", onKeyDown);
   window.removeEventListener("blur", onWindowBlur);
   window.removeEventListener("wheel", onScrollClose, {

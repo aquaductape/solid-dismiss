@@ -674,7 +674,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     if (mount && mountEl && !exitRunning) {
       exitTransition("popup", containerEl?.firstElementChild!);
     }
-    console.log("onCleanup", props.open());
   });
 
   function renderOverlay() {
