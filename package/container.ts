@@ -30,6 +30,11 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   if (!open()) return;
 
   if (!relatedTarget) {
+    const overlayIdx = dismissStack.findIndex((item) => item.overlay);
+    const currentIdx = dismissStack.findIndex(
+      (item) => item.uniqueId === uniqueId
+    );
+    if (overlayIdx > currentIdx) return;
     if (state.addedFocusOutAppEvents) return;
     state.addedFocusOutAppEvents = true;
     state.prevFocusedEl = e.target as HTMLElement;
@@ -55,7 +60,6 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
 };
 
 export const onFocusInContainer = (state: TLocalState, e: FocusEvent) => {
-  console.log("FocusIN", state.uniqueId);
   // if (state.stopPropagateFocusInAndFocusOut) {
   //   e.stopPropagation();
   // }
@@ -75,6 +79,8 @@ export const runFocusOnActive = (state: TLocalState) => {
 
   const el = queryElement(state, { inputElement: focusElementOnOpen });
   if (el) {
-    el.focus();
+    setTimeout(() => {
+      el.focus();
+    });
   }
 };

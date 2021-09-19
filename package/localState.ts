@@ -26,7 +26,7 @@ export type TLocalState = {
     | boolean
     | {
         ref?: (el: HTMLElement) => void;
-        className?: string;
+        class?: string;
         classList?: { [key: string]: boolean };
       };
   trapFocus: boolean;

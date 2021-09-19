@@ -1,5 +1,15 @@
-import { createSignal, onMount } from "solid-js";
+import {
+  Component,
+  createSignal,
+  Match,
+  onCleanup,
+  onMount,
+  Show,
+  Switch,
+} from "solid-js";
+import { Portal } from "solid-js/web";
 import Dismiss from "../../../../package/index";
+import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 
 const Basic = () => {
@@ -18,38 +28,73 @@ const Basic = () => {
       </ul>
       <div class="grid">
         <Popup />
-        <Popup />
-        <Popup />
+        {/* <Popup />
+        <Popup /> */}
       </div>
     </section>
+  );
+};
+
+const Content: Component = (props) => {
+  onMount(() => {
+    console.log("mount!!");
+  });
+  return (
+    <ul
+      class="dropdown"
+      onClick={(e) => {
+        console.log(e.target.tagName);
+      }}
+    >
+      <li>
+        <a class="item" href="javascript:void(0)">
+          cat
+        </a>
+      </li>
+      <li>
+        <a class="item" href="javascript:void(0)">
+          dog
+        </a>
+      </li>
+      <li>
+        <a class="item" href="javascript:void(0)">
+          fish
+        </a>
+      </li>
+    </ul>
   );
 };
 
 const Popup = () => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
+  const [className, setClassName] = createSignal("popup");
+
+  setTimeout(() => {
+    setClassName("foo");
+  }, 5000);
 
   return (
-    <div style="display: inline-block; position: relative;">
-      <Button open={open()} ref={btnEl} />
-      <Dismiss menuButton={btnEl} open={open} setOpen={setOpen}>
-        <ul class="dropdown">
-          <li>
-            <a class="item" href="javascript:void(0)">
-              cat
-            </a>
-          </li>
-          <li>
-            <a class="item" href="javascript:void(0)">
-              dog
-            </a>
-          </li>
-          <li>
-            <a class="item" href="javascript:void(0)">
-              fish
-            </a>
-          </li>
-        </ul>
+    <div
+      style="display: inline-block; position: relative;"
+      onClick={() => {
+        console.log("container clicked!");
+      }}
+    >
+      <Button
+        open={open()}
+        // onClick={() => setOpen((prev) => !prev)}
+        ref={btnEl}
+      />
+      <p>{className()}</p>
+      <Dismiss
+        menuButton={btnEl}
+        open={open}
+        setOpen={setOpen}
+        mount="body"
+        animation={{ name: className() }}
+      >
+        <Content></Content>
       </Dismiss>
     </div>
   );

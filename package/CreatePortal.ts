@@ -5,11 +5,11 @@ function CreatePortal(props: {
   mount?: Node;
   useShadow?: boolean;
   isSVG?: boolean;
-  children: JSX.Element;
+  popupChildren: JSX.Element;
+  overlayChildren: JSX.Element;
   stopComponentEventPropagation?: boolean;
   marker?: Text | null;
   onCreate?: (mount: HTMLElement, container: HTMLElement, marker: Text) => void;
-  useCleanup?: boolean;
 }) {
   const { useShadow } = props,
     marker = props.marker || document.createTextNode(""),
@@ -20,8 +20,8 @@ function CreatePortal(props: {
     if (sharedConfig.context) {
       const [s, set] = createSignal(false);
       queueMicrotask(() => set(true));
-      return () => s() && props.children;
-    } else return () => props.children;
+      return () => s() && props.popupChildren;
+    } else return () => props.popupChildren;
   }
 
   const container = document.createElement("div"),
@@ -39,19 +39,17 @@ function CreatePortal(props: {
   // }
 
   insert(renderRoot, renderPortal());
+  // mount.appendChild(props.overlayChildren as HTMLElement);
+  const overlayChildren = props.overlayChildren;
+  if (overlayChildren) {
+    container.appendChild(overlayChildren as HTMLElement);
+  }
   mount.appendChild(container);
   (props as any).ref && (props as any).ref(container);
 
   if (props.onCreate != null) {
     // @ts-ignore
     props.onCreate(mount, container, marker);
-  }
-
-  if (props.useCleanup == null || props.useCleanup) {
-    console.log("don use cleanup");
-    onCleanup(() => {
-      mount.removeChild(container);
-    });
   }
 
   return !props.stopComponentEventPropagation ? marker : null;

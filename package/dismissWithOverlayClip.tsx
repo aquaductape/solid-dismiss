@@ -353,7 +353,7 @@ const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay?: TOverlay }> = (
             <div
               class={
                 typeof state.overlay === "object"
-                  ? state.overlay.className
+                  ? state.overlay.class
                   : undefined
               }
               classList={
@@ -374,7 +374,7 @@ const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay?: TOverlay }> = (
             <div
               class={
                 typeof state.overlay === "object"
-                  ? state.overlay.className
+                  ? state.overlay.class
                   : undefined
               }
               classList={

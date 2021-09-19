@@ -1,6 +1,5 @@
 import Dismiss from "../../../../package/index";
 import { createSignal, onMount } from "solid-js";
-import IFrame from "../IFrame";
 
 const Dropdown = () => {
   const [open, setOpen] = createSignal(false);

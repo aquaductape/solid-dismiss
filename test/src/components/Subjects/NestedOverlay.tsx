@@ -1,32 +1,13 @@
-import {
-  untrack,
-  batch,
-  Accessor,
-  onMount,
-  createEffect,
-  onCleanup,
-  Component,
-  JSX,
-  on,
-  createUniqueId,
-  Show,
-  createComputed,
-  createSignal,
-  children,
-  mergeProps,
-  createMemo,
-  createRenderEffect,
-} from "solid-js";
-import { Transition } from "solid-transition-group";
+import { createEffect, createComputed, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, reflow } from "../../utils";
 import Button from "../Button/Button";
 
-const NestedPopupMounted = () => {
+const NestedOverlay = () => {
   return (
     <section class="nested">
-      <h2>Nested mounted body menuPopup</h2>
-      <p>No overlay, page is interactable</p>
+      <h2>Nested overlay menuPopup</h2>
+      <p>Overlay used, page is not interactable</p>
       <p>
         menuPopups are <strong>mounted</strong> to the body.
       </p>
@@ -35,11 +16,8 @@ const NestedPopupMounted = () => {
         item after menuButton.
       </p>
       <p>
-        Since there is no overlay, and there's a stack of menuPops opened,
-        wherever the click/focus target is, it checks through the
-        stack(iterating backwards). If the target is contained withined
-        menuPopup item, then any stack "above" it that did not contain it, will
-        be dismissed.
+        Click on outside(which would be overlay, that covers the page), should
+        only close that current stack
       </p>
 
       <div class="grid">
@@ -57,20 +35,15 @@ const Popup = () => {
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
 
-  createComputed(() => {
-    if (!open()) return;
-    const btnBCR = btnEl.getBoundingClientRect();
-
-    console.log({ btnBCR });
-  });
-  createRenderEffect(() => {
+  createEffect(() => {
     if (!open()) return;
 
     const btnBCR = btnEl.getBoundingClientRect();
 
     console.log({ btnBCR });
     containerEl.style.position = "absolute";
-
+    // containerEl.style.width = btnBCR.width + "px";
+    // reflow();
     containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
     containerEl.style.left = getLeft(btnBCR, 310) + "px";
   });
@@ -86,10 +59,12 @@ const Popup = () => {
         open={open}
         setOpen={setOpen}
         mount="body"
+        overlay={{ class: "overlay" }}
+        closeWhenMenuButtonIsTabbed
         // stopComponentEventPropagation
-        animation={{
-          name: "popup",
-        }}
+        // animation={{
+        //   name: "popup",
+        // }}
         ref={containerEl}
       >
         <div class="dropdown" ref={dropdownEl}>
@@ -104,4 +79,4 @@ const Popup = () => {
   );
 };
 
-export default NestedPopupMounted;
+export default NestedOverlay;

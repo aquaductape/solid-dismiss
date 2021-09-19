@@ -7,6 +7,9 @@ export const parseValToNum = (value?: string | number) => {
   return value || 0;
 };
 
+export const camelize = (s: string) =>
+  s.replace(/-./g, (x) => x.toUpperCase()[1]);
+
 export const _tabbableSelectors = [
   "a[href]",
   "area[href]",

@@ -128,5 +128,6 @@ export const onFocusSentinel = (
     el.focus();
   }
 
+  console.log(dismissStack);
   setOpen(false);
 };

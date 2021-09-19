@@ -1,7 +1,6 @@
 import "./browserInfo";
 import {
   untrack,
-  batch,
   Accessor,
   onMount,
   createEffect,
@@ -11,11 +10,7 @@ import {
   on,
   createUniqueId,
   createMemo,
-  Show,
   createComputed,
-  createSignal,
-  children,
-  mergeProps,
 } from "solid-js";
 import { queryElement } from "./utils";
 import {
@@ -52,6 +47,8 @@ import {
 import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
 import { onClickOverlay } from "./overlay";
 import CreatePortal from "./CreatePortal";
+import { Transition } from "./Transition";
+// import { Transition } from "solid-transition-group";
 
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
@@ -188,8 +185,9 @@ export type TDismiss = {
     | boolean
     | {
         ref?: (el: HTMLElement) => void;
-        className?: string;
+        class?: string;
         classList?: { [key: string]: boolean };
+        animation?: TAnimation;
       };
   /**
    * Default: `false`
@@ -210,22 +208,24 @@ export type TDismiss = {
    * Default: `false`
    */
   stopComponentEventPropagation?: boolean;
-  animation?: {
-    name?: string;
-    enterActiveClass?: string;
-    enterClass?: string;
-    enterToClass?: string;
-    exitActiveClass?: string;
-    exitClass?: string;
-    exitToClass?: string;
-    onBeforeEnter?: (el: Element) => void;
-    onEnter?: (el: Element, done: () => void) => void;
-    onAfterEnter?: (el: Element) => void;
-    onBeforeExit?: (el: Element) => void;
-    onExit?: (el: Element, done: () => void) => void;
-    onAfterExit?: (el: Element) => void;
-    appear?: boolean;
-  };
+  animation?: TAnimation;
+};
+
+type TAnimation = {
+  name?: string;
+  enterActiveClass?: string;
+  enterClass?: string;
+  enterToClass?: string;
+  exitActiveClass?: string;
+  exitClass?: string;
+  exitToClass?: string;
+  onBeforeEnter?: (el: Element) => void;
+  onEnter?: (el: Element, done: () => void) => void;
+  onAfterEnter?: (el: Element) => void;
+  onBeforeExit?: (el: Element) => void;
+  onExit?: (el: Element, done: () => void) => void;
+  onAfterExit?: (el: Element) => void;
+  appear?: boolean;
 };
 
 export type TFocusElementOnClose =
@@ -346,6 +346,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
     onClickCloseButtonsRef: () => onClickCloseButtons(state),
     refContainerCb: (el: HTMLElement) => {
+      el.style.zIndex = `${1000 + dismissStack.length}`;
       if (props.ref) {
         // @ts-ignore
         props.ref(el);
@@ -420,12 +421,24 @@ const Dismiss: Component<TDismiss> = (props) => {
   let mountEl: Element | Node | null;
   let endExitTransitionRef: () => void;
   let endEnterTransitionRef: () => void;
+  let endExitTransitionOverlayRef: () => void;
+  let endEnterTransitionOverlayRef: () => void;
+  let exitRunning = false;
 
-  function enterTransition(el: Element) {
-    if (!props.animation) return;
-    if (!props.animation.appear && !initDefer) return;
+  function enterTransition(type: "popup" | "overlay", el: Element) {
+    // @ts-ignore
+    if (type === "overlay" && (!props.overlay || !props.overlay.animation))
+      return;
+    const animation: TAnimation =
+      type === "popup"
+        ? props.animation // @ts-ignore
+        : props.overlay.animation;
 
-    const name = props.animation.name;
+    if (!animation) return;
+    if (!animation.appear && !initDefer) return;
+    exitRunning = false;
+
+    const name = animation.name;
     let {
       onBeforeEnter,
       onEnter,
@@ -436,7 +449,7 @@ const Dismiss: Component<TDismiss> = (props) => {
       exitActiveClass = name + "-exit-active",
       exitClass = name + "-exit",
       exitToClass = name + "-exit-to",
-    } = props.animation;
+    } = animation;
     console.log("enterTransition");
 
     const enterClasses = enterClass!.split(" ");
@@ -445,8 +458,14 @@ const Dismiss: Component<TDismiss> = (props) => {
     const exitClasses = exitClass!.split(" ");
     const exitActiveClasses = exitActiveClass!.split(" ");
     const exitToClasses = exitToClass!.split(" ");
-    el.removeEventListener("transitionend", endExitTransitionRef);
-    el.removeEventListener("animationend", endExitTransitionRef);
+
+    if (type === "popup") {
+      el.removeEventListener("transitionend", endExitTransitionRef);
+      el.removeEventListener("animationend", endExitTransitionRef);
+    } else {
+      el.removeEventListener("transitionend", endExitTransitionOverlayRef);
+      el.removeEventListener("animationend", endExitTransitionOverlayRef);
+    }
 
     onBeforeEnter && onBeforeEnter(el);
     el.classList.remove(...exitClasses, ...exitActiveClasses, ...exitToClasses);
@@ -458,7 +477,11 @@ const Dismiss: Component<TDismiss> = (props) => {
       el.classList.add(...enterToClasses);
       onEnter && onEnter(el, endTransition);
       if (!onEnter || onEnter!.length < 2) {
-        endEnterTransitionRef = endTransition;
+        if (type === "popup") {
+          endEnterTransitionRef = endTransition;
+        } else {
+          endEnterTransitionOverlayRef = endTransition;
+        }
         el.addEventListener("transitionend", endTransition, {
           once: true,
         });
@@ -477,10 +500,25 @@ const Dismiss: Component<TDismiss> = (props) => {
     }
   }
 
-  function exitTransition(el: Element) {
-    if (!props.animation) return;
+  function exitTransition(type: "overlay" | "popup", el: Element) {
+    if (!props.animation) {
+      mountEl?.removeChild(containerEl!);
+      containerEl = null;
+      mountEl = null;
+      return;
+    }
+    // @ts-ignore
+    if (type === "overlay" && (!props.overlay || !props.overlay.animation))
+      return;
+    // @ts-ignore
+    const animation: TAnimation =
+      type === "popup"
+        ? props.animation
+        : // @ts-ignore
+          props.overlay.animation;
+    exitRunning = true;
 
-    const name = props.animation.name;
+    const name = animation.name;
     let {
       onBeforeExit,
       onExit,
@@ -488,13 +526,20 @@ const Dismiss: Component<TDismiss> = (props) => {
       exitActiveClass = name + "-exit-active",
       exitClass = name + "-exit",
       exitToClass = name + "-exit-to",
-    } = props.animation;
+    } = animation;
 
     const exitClasses = exitClass!.split(" ");
     const exitActiveClasses = exitActiveClass!.split(" ");
     const exitToClasses = exitToClass!.split(" ");
-    el.removeEventListener("transitionend", endEnterTransitionRef);
-    el.removeEventListener("animationend", endEnterTransitionRef);
+
+    if (type === "popup") {
+      el.removeEventListener("transitionend", endEnterTransitionRef);
+      el.removeEventListener("animationend", endEnterTransitionRef);
+    } else {
+      el.removeEventListener("transitionend", endEnterTransitionOverlayRef);
+      el.removeEventListener("animationend", endEnterTransitionOverlayRef);
+    }
+
     if (!el.parentNode) return endTransition();
     onBeforeExit && onBeforeExit(el);
     el.classList.add(...exitClasses);
@@ -505,12 +550,17 @@ const Dismiss: Component<TDismiss> = (props) => {
     });
     onExit && onExit(el, endTransition);
     if (!onExit || onExit.length < 2) {
-      endExitTransitionRef = endTransition;
+      if (type === "popup") {
+        endExitTransitionRef = endTransition;
+      } else {
+        endExitTransitionOverlayRef = endTransition;
+      }
       el.addEventListener("transitionend", endTransition, { once: true });
       el.addEventListener("animationend", endTransition, { once: true });
     }
 
     function endTransition() {
+      exitRunning = false;
       mountEl?.removeChild(containerEl!);
       onAfterExit && onAfterExit(containerEl?.firstElementChild!);
       containerEl = null;
@@ -533,9 +583,9 @@ const Dismiss: Component<TDismiss> = (props) => {
                   typeof mount === "string"
                     ? document.querySelector(mount)!
                     : mount!,
-                children: render(),
+                popupChildren: render(props.children),
+                overlayChildren: overlay ? renderOverlay() : null,
                 marker,
-                useCleanup: false,
                 onCreate: (mount, container) => {
                   mountEl = mount;
                   containerEl = container;
@@ -543,18 +593,11 @@ const Dismiss: Component<TDismiss> = (props) => {
               });
             }
 
-            const foundItem = dismissStack.find(
-              (item) => item.uniqueId === state.uniqueId
-            );
-            if (foundItem) foundItem.queueRemoval = false;
-            enterTransition(containerEl?.firstElementChild!);
+            enterTransition("popup", containerEl?.firstElementChild!);
+            enterTransition("overlay", state.overlayEl!);
           } else {
-            const foundItem = dismissStack.find(
-              (item) => item.uniqueId === state.uniqueId
-            );
-            if (foundItem) foundItem.queueRemoval = true;
-            console.log("exit", state.uniqueId);
-            exitTransition(containerEl?.firstElementChild!);
+            exitTransition("popup", containerEl?.firstElementChild!);
+            exitTransition("overlay", state.overlayEl!);
           }
         },
         { defer: initDefer }
@@ -628,15 +671,30 @@ const Dismiss: Component<TDismiss> = (props) => {
     removeDismissStack(state.uniqueId);
     removeGlobalEvents();
 
-    // if (mount && mountEl) {
-    //   mountEl?.removeChild(containerEl!);
-    //   containerEl = null;
-    //   mountEl = null;
-    // }
+    if (mount && mountEl && !exitRunning) {
+      exitTransition("popup", containerEl?.firstElementChild!);
+    }
     console.log("onCleanup", props.open());
   });
 
-  function render(children?: JSX.Element) {
+  function renderOverlay() {
+    return (
+      <div
+        class={
+          typeof state.overlay === "object" ? state.overlay.class : undefined
+        }
+        classList={
+          typeof state.overlay === "object" ? state.overlay.classList || {} : {}
+        }
+        role="presentation"
+        data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
+        onClick={state.onClickOverlayRef}
+        ref={state.refOverlayCb}
+      ></div>
+    );
+  }
+
+  function render(children: JSX.Element) {
     return (
       <div
         id={state.id}
@@ -644,29 +702,8 @@ const Dismiss: Component<TDismiss> = (props) => {
         classList={props.classList || {}}
         onFocusIn={state.onFocusInContainerRef}
         onFocusOut={state.onFocusOutContainerRef}
-        style={state.overlay ? `z-index: ${1000 + dismissStack.length}` : ""}
         ref={state.refContainerCb}
       >
-        {/* {state.overlay && (
-          <Portal>
-            <div
-              class={
-                typeof state.overlay === "object"
-                  ? state.overlay.className
-                  : undefined
-              }
-              classList={
-                typeof state.overlay === "object"
-                  ? state.overlay.classList || {}
-                  : {}
-              }
-              role="presentation"
-              data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
-              onClick={state.onClickOverlayRef}
-              ref={state.refOverlayCb}
-            ></div>
-          </Portal>
-        )} */}
         <div
           tabindex="0"
           onFocus={(e) => {
@@ -676,10 +713,12 @@ const Dismiss: Component<TDismiss> = (props) => {
           aria-hidden="true"
           ref={state.focusSentinelFirstEl}
         ></div>
-        {props.children}
+        {children}
         <div
           tabindex={state.hasFocusSentinels ? "0" : "-1"}
-          onFocus={() => onFocusSentinel(state, "last")}
+          onFocus={() => {
+            onFocusSentinel(state, "last");
+          }}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
           ref={state.focusSentinelLastEl}
@@ -698,145 +737,31 @@ const Dismiss: Component<TDismiss> = (props) => {
   const finalRender = createMemo(() => {
     const c = condition();
     if (c) {
-      console.log("inner createMemo c", c);
       const child = props.children;
       return (strictEqual = typeof child === "function" && child.length > 0)
         ? untrack(() => (child as any)(c))
         : render(child);
     }
-    console.log("inner createMemo c", c);
   });
 
   if (props.animation) {
-    return <Transition {...props.animation}>{finalRender()}</Transition>;
+    return (
+      <Transition
+        name={props.animation.name}
+        enterClass={props.animation.enterClass}
+        enterActiveClass={props.animation.enterActiveClass}
+        enterToClass={props.animation.enterToClass}
+        exitClass={props.animation.exitClass}
+        exitActiveClass={props.animation.exitActiveClass}
+        exitToClass={props.animation.exitToClass}
+        appear={props.animation.appear}
+      >
+        {finalRender()}
+      </Transition>
+    );
   }
 
   return finalRender;
-};
-
-type TransitionProps = {
-  name?: string;
-  enterActiveClass?: string;
-  enterClass?: string;
-  enterToClass?: string;
-  exitActiveClass?: string;
-  exitClass?: string;
-  exitToClass?: string;
-  onBeforeEnter?: (el: Element) => void;
-  onEnter?: (el: Element, done: () => void) => void;
-  onAfterEnter?: (el: Element) => void;
-  onBeforeExit?: (el: Element) => void;
-  onExit?: (el: Element, done: () => void) => void;
-  onAfterExit?: (el: Element) => void;
-  children?: JSX.Element;
-  appear?: boolean;
-  mode?: "inout" | "outin";
-};
-
-const Transition: Component<TransitionProps> = (props) => {
-  let el: Element;
-  let first = true;
-  const [s1, set1] = createSignal<Element | undefined>();
-  const [s2, set2] = createSignal<Element | undefined>();
-  const resolved = children(() => props.children);
-  const name = props.name || "s";
-  props = mergeProps(
-    {
-      name,
-      enterActiveClass: name + "-enter-active",
-      enterClass: name + "-enter",
-      enterToClass: name + "-enter-to",
-      exitActiveClass: name + "-exit-active",
-      exitClass: name + "-exit",
-      exitToClass: name + "-exit-to",
-    },
-    props
-  );
-  const {
-    onBeforeEnter,
-    onEnter,
-    onAfterEnter,
-    onBeforeExit,
-    onExit,
-    onAfterExit,
-  } = props;
-
-  function enterTransition(el: Element, prev: Element | undefined) {
-    if (!first || props.appear) {
-      const enterClasses = props.enterClass!.split(" ");
-      const enterActiveClasses = props.enterActiveClass!.split(" ");
-      const enterToClasses = props.enterToClass!.split(" ");
-      onBeforeEnter && onBeforeEnter(el);
-      el.classList.add(...enterClasses);
-      el.classList.add(...enterActiveClasses);
-      requestAnimationFrame(() => {
-        el.classList.remove(...enterClasses);
-        el.classList.add(...enterToClasses);
-        onEnter && onEnter(el, endTransition);
-        if (!onEnter || onEnter.length < 2) {
-          el.addEventListener("transitionend", endTransition, { once: true });
-          el.addEventListener("animationend", endTransition, { once: true });
-        }
-      });
-
-      function endTransition() {
-        if (el) {
-          el.classList.remove(...enterActiveClasses);
-          el.classList.remove(...enterToClasses);
-          batch(() => {
-            s1() !== el && set1(el);
-            s2() === el && set2(undefined);
-          });
-          onAfterEnter && onAfterEnter(el);
-          if (props.mode === "inout") exitTransition(el, prev!);
-        }
-      }
-    }
-    prev && !props.mode ? set2(el) : set1(el);
-  }
-
-  function exitTransition(el: Element, prev: Element) {
-    const exitClasses = props.exitClass!.split(" ");
-    const exitActiveClasses = props.exitActiveClass!.split(" ");
-    const exitToClasses = props.exitToClass!.split(" ");
-    if (!prev.parentNode) return endTransition();
-    onBeforeExit && onBeforeExit(prev);
-    prev.classList.add(...exitClasses);
-    prev.classList.add(...exitActiveClasses);
-    requestAnimationFrame(() => {
-      prev.classList.remove(...exitClasses);
-      prev.classList.add(...exitToClasses);
-    });
-    onExit && onExit(prev, endTransition);
-    if (!onExit || onExit.length < 2) {
-      prev.addEventListener("transitionend", endTransition, { once: true });
-      prev.addEventListener("animationend", endTransition, { once: true });
-    }
-
-    function endTransition() {
-      prev.classList.remove(...exitActiveClasses);
-      prev.classList.remove(...exitToClasses);
-      s1() === prev && set1(undefined);
-      onAfterExit && onAfterExit(prev);
-      if (props.mode === "outin") enterTransition(el, prev);
-    }
-  }
-
-  createComputed<Element>((prev) => {
-    el = resolved() as Element;
-    while (typeof el === "function") el = (el as Function)();
-    return untrack(() => {
-      if (el && el !== prev) {
-        if (props.mode !== "outin") enterTransition(el, prev);
-        else if (first) set1(el);
-      }
-      if (prev && prev !== el && props.mode !== "inout")
-        exitTransition(el, prev);
-      first = false;
-      return el;
-    });
-  });
-  return [s1, s2];
 };
 
 export default Dismiss;

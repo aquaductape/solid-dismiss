@@ -1,132 +1,155 @@
-import { Transition } from "solid-transition-group";
-import { Portal } from "solid-js/web";
+import { createEffect, createComputed, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
-import {
-  Component,
-  createSignal,
-  Show,
-  Match,
-  Switch,
-  createEffect,
-} from "solid-js";
+import { getLeft } from "../../utils";
+import Button from "../Button/Button";
+import IFrame from "../IFrame";
 
-const Mixed: Component = () => {
-  const [toggleNorm, setToggleNorm] = createSignal(false);
-  const [toggleBlock, setToggleBlock] = createSignal(false);
-  const [toggleClip, setToggleClip] = createSignal(false);
-  const [inputTextNorm, setInputTextNorm] = createSignal("");
-  const [inputTextBlock, setInputTextBlock] = createSignal("");
-  const [inputTextClip, setInputTextClip] = createSignal("");
-  let btnElNorm!: HTMLButtonElement;
-  let btnElBlock!: HTMLButtonElement;
-  let btnElClip!: HTMLButtonElement;
-  let menuDropdown!: HTMLElement;
+const Mixed = () => {
+  return (
+    <section class="nested">
+      <h2>Mixed</h2>
 
-  console.log("render");
+      <div class="grid">
+        <RegularPopup></RegularPopup>
+        <MountedPopup></MountedPopup>
+        <OverlayPopup></OverlayPopup>
+      </div>
+    </section>
+  );
+};
+
+const PopupContent = () => {
+  return (
+    <>
+      <RegularPopup></RegularPopup>
+      <MountedPopup></MountedPopup>
+      <OverlayPopup></OverlayPopup>
+    </>
+  );
+};
+
+const RegularPopup = () => {
+  const [open, setOpen] = createSignal(false);
+  let btnEl!: HTMLButtonElement;
+  let containerEl!: HTMLElement;
+  let dropdownEl!: HTMLDivElement;
+
+  return (
+    <div
+      style="display: inline-block; position: relative; padding: 5px;"
+      onClick={() => console.log("click container")}
+    >
+      <Button class="medium" open={open()} ref={btnEl}>
+        Regular
+      </Button>
+      <Dismiss
+        menuButton={btnEl}
+        open={open}
+        setOpen={setOpen}
+        ref={containerEl}
+      >
+        <div class="dropdown" ref={dropdownEl}>
+          <p>
+            Click on outside, should close stacks that don't contain the click
+          </p>
+          <PopupContent />
+        </div>
+      </Dismiss>
+    </div>
+  );
+};
+
+const MountedPopup = () => {
+  const [open, setOpen] = createSignal(false);
+  let btnEl!: HTMLButtonElement;
+  let containerEl!: HTMLElement;
+  let dropdownEl!: HTMLDivElement;
 
   createEffect(() => {
-    if (!toggleBlock()) return;
+    if (!open()) return;
 
-    const btnBCR = btnElBlock.getBoundingClientRect();
-    menuDropdown.style.position = "absolute";
-    menuDropdown.style.top =
-      btnBCR.top + btnBCR.height + window.scrollY + 10 + "px";
-    menuDropdown.style.left = btnBCR.left + window.scrollX + "px";
+    const btnBCR = btnEl.getBoundingClientRect();
+
+    const containerWidth = 250;
+    containerEl.style.position = "absolute";
+    containerEl.style.width = 250 + "px";
+
+    containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
+    containerEl.style.left = getLeft(btnBCR, containerWidth) + "px";
   });
 
   return (
-    <div style="position: relative">
-      <button class="btn-primary btn-nested" ref={btnElNorm}>
-        {!toggleNorm() ? "Norm" : "Norm ✅"}
-      </button>
-      <button class="btn-primary btn-nested" ref={btnElBlock}>
-        {!toggleBlock() ? "Block" : "Block ✅"}
-      </button>
-      <button class="btn-primary btn-nested" ref={btnElClip}>
-        {!toggleClip() ? "Clip" : "Clip ✅"}
-      </button>
+    <div
+      style="display: inline-block; position: relative; padding: 5px;"
+      onClick={() => console.log("click container")}
+    >
+      <Button class="medium" open={open()} ref={btnEl}>
+        Mounted
+      </Button>
       <Dismiss
-        class="nested-dropdown"
-        menuButton={btnElNorm}
-        open={toggleNorm}
-        setOpen={setToggleNorm}
-        // ref={menuDropdown}
+        menuButton={btnEl}
+        open={open}
+        setOpen={setOpen}
+        mount="body"
+        ref={containerEl}
       >
-        <div>
-          <h3>Nested Dropdown Text Norm</h3>
-          <input
-            type="text"
-            placeholder={"input text..."}
-            onInput={(e) => setInputTextNorm(e.currentTarget.value)}
-          />
-          {inputTextNorm()}
-          <br />
-          <select name="" id="">
-            <option value="car">car</option>
-            <option value="rat">rat</option>
-            <option value="cat">cat</option>
-          </select>
-          <Show when={toggleNorm()}>
-            <Mixed></Mixed>
-          </Show>
+        <div class="dropdown" ref={dropdownEl}>
+          <p>
+            Click on outside, should close stacks that don't contain the click
+          </p>
+          <PopupContent />
         </div>
       </Dismiss>
-      <Portal>
-        <Dismiss
-          class="nested-dropdown"
-          menuButton={btnElBlock}
-          open={toggleBlock}
-          setOpen={setToggleBlock}
-          overlay={"block"}
-          ref={menuDropdown}
-        >
-          <div>
-            <h3>Nested Dropdown Text Block</h3>
-            <input
-              type="text"
-              placeholder={"input text..."}
-              onInput={(e) => setInputTextBlock(e.currentTarget.value)}
-            />
-            {inputTextBlock()}
-            <br />
-            <select name="" id="">
-              <option value="car">car</option>
-              <option value="rat">rat</option>
-              <option value="cat">cat</option>
-            </select>
-            <Show when={toggleBlock()}>
-              <Mixed></Mixed>
-            </Show>
-          </div>
-        </Dismiss>
-      </Portal>
+    </div>
+  );
+};
 
-      {/* <Dismiss
-        class="nested-dropdown"
-        menuButton={btnElClip}
-        open={toggleClip}
-        setOpen={setToggleClip}
-        overlay={"clipped"}
+const OverlayPopup = () => {
+  const [open, setOpen] = createSignal(false);
+  let btnEl!: HTMLButtonElement;
+  let containerEl!: HTMLElement;
+  let dropdownEl!: HTMLDivElement;
+
+  createComputed(() => {
+    if (!open()) return;
+    const btnBCR = btnEl.getBoundingClientRect();
+
+    console.log({ btnBCR });
+  });
+  createEffect(() => {
+    if (!open()) return;
+
+    const btnBCR = btnEl.getBoundingClientRect();
+
+    const containerWidth = 250;
+    containerEl.style.position = "absolute";
+    containerEl.style.width = 250 + "px";
+
+    containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
+    containerEl.style.left = getLeft(btnBCR, containerWidth) + "px";
+  });
+
+  return (
+    <div
+      style="display: inline-block; position: relative; padding: 5px;"
+      onClick={() => console.log("click container")}
+    >
+      <Button class="medium" open={open()} ref={btnEl}>
+        Overlay
+      </Button>
+      <Dismiss
+        menuButton={btnEl}
+        open={open}
+        setOpen={setOpen}
+        mount="body"
+        overlay={{ class: "overlay" }}
+        ref={containerEl}
       >
-        <div>
-          <h3>Nested Dropdown Text Clip</h3>
-          <input
-            type="text"
-            placeholder={"input text..."}
-            onInput={(e) => setInputTextClip(e.currentTarget.value)}
-          />
-          {inputTextClip()}
-          <br />
-          <select name="" id="">
-            <option value="car">car</option>
-            <option value="rat">rat</option>
-            <option value="cat">cat</option>
-          </select>
-          <Show when={toggleClip()}>
-            <Mixed></Mixed>
-          </Show>
+        <div class="dropdown" ref={dropdownEl}>
+          <p>Click on outside overlay, should only close that current stack</p>
+          <PopupContent />
         </div>
-      </Dismiss> */}
+      </Dismiss>
     </div>
   );
 };

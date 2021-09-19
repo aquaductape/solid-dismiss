@@ -1,7 +1,7 @@
 import { Component } from "solid-js";
 
 const Button: Component<{
-  open: boolean;
+  open?: boolean;
   active?: boolean;
   class?: string;
   onClick?: (e: MouseEvent) => void;
@@ -11,11 +11,20 @@ const Button: Component<{
     <button
       class={`menu-button ${props.class ? props.class : ""}`}
       classList={{ opened: props.open }}
-      onClick={props.onClick}
+      onClick={(e) => {
+        e.currentTarget.focus();
+        props.onClick && props.onClick(e);
+      }}
       ref={props.ref}
     >
-      <span class="menu-button-large-content">menuButton</span>
-      <span class="menu-button-small-content">mBtn</span>
+      {props.children ? (
+        props.children
+      ) : (
+        <>
+          <span class="menu-button-large-content">menuButton</span>
+          <span class="menu-button-small-content">mBtn</span>
+        </>
+      )}
     </button>
   );
 };

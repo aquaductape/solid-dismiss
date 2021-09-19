@@ -59,9 +59,9 @@ export const onWindowBlur = (e: Event) => {
     checkThenClose(
       dismissStack,
       (item) => {
-        const { menuPopupEl } = item;
+        const { containerEl } = item;
 
-        if (menuPopupEl.contains(activeElement)) {
+        if (containerEl.contains(activeElement)) {
           cachedPolledElement = activeElement;
 
           pollingIframe();
@@ -289,7 +289,7 @@ const onVisibilityChange = () => {
     return;
   }
 
-  clearInterval(pollTimeoutId!);
+  clearTimeout(pollTimeoutId!);
 };
 
 // polls iframe to deal with edge case if menuPopup item selected is an iframe and then select another iframe that is "outside" of menuPopup
@@ -313,15 +313,16 @@ const pollingIframe = () => {
     checkThenClose(
       dismissStack,
       (item) => {
-        const { menuPopupEl } = item;
+        const { containerEl } = item;
 
-        if (menuPopupEl && menuPopupEl.contains(activeElement)) {
+        if (activeElement.tagName === "IFRAME") {
+          if (containerEl && !containerEl.contains(activeElement)) {
+            return item;
+          }
           cachedPolledElement = activeElement;
           pollTimeoutId = window.setTimeout(poll, duration);
-          return;
         }
-
-        return item;
+        return;
       },
       (item) => {
         const { setOpen, setFocus, menuBtnEl } = item;
