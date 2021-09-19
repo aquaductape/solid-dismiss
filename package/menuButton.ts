@@ -25,6 +25,7 @@ export const onClickMenuButton = (state: TLocalState) => {
 };
 
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
+  console.log("blurrrr!!!!");
   const { onClickDocumentRef, containerEl, overlay, setOpen, open, setFocus } =
     state;
 
