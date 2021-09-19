@@ -48,6 +48,7 @@ import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
 import { onClickOverlay } from "./overlay";
 import CreatePortal from "./CreatePortal";
 import { Transition } from "./Transition";
+import { removeLocalEvents } from "./manageLocalEvents";
 // import { Transition } from "solid-transition-group";
 
 // Safari iOS notes
@@ -646,7 +647,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           onOpen && onOpen(open, dismissStack);
           activateLastFocusSentinel(state);
         } else {
-          document.removeEventListener("click", state.onClickDocumentRef);
+          removeLocalEvents(state);
 
           removeOutsideFocusEvents(state);
           removeMenuPopupEl(state);
@@ -662,8 +663,7 @@ const Dismiss: Component<TDismiss> = (props) => {
   );
 
   onCleanup(() => {
-    state.menuBtnEl!.removeEventListener("click", state.onClickMenuButtonRef);
-    document.removeEventListener("click", state.onClickDocumentRef);
+    removeLocalEvents(state, { onCleanup: true });
 
     removeCloseButtons(state);
     removeMenuPopupEl(state);
