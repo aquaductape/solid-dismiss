@@ -108,7 +108,7 @@ export const onFocusMenuButton = (state: TLocalState) => {
     clearTimeout(containerFocusTimeoutId!);
   }
   menuBtnEl!.addEventListener("keydown", onKeydownMenuButtonRef);
-  menuBtnEl!.addEventListener("blur", onBlurMenuButtonRef);
+  // menuBtnEl!.addEventListener("blur", onBlurMenuButtonRef, { once: true });
 };
 
 export const runAriaExpanded = (state: TLocalState, open: boolean) => {
