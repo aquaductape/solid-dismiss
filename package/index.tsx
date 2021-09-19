@@ -339,7 +339,10 @@ const Dismiss: Component<TDismiss> = (props) => {
     onClickOverlayRef: () => onClickOverlay(state),
     onFocusInContainerRef: (e) => onFocusInContainer(state, e),
     onFocusOutContainerRef: (e) => onFocusOutContainer(state, e),
-    onBlurMenuButtonRef: (e) => onBlurMenuButton(state, e),
+    onBlurMenuButtonRef: (e) => {
+      console.log("wtf???");
+      onBlurMenuButton(state, e);
+    },
     onClickMenuButtonRef: () => onClickMenuButton(state),
     onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
     onFocusMenuButtonRef: () => onFocusMenuButton(state),
