@@ -1,6 +1,6 @@
-import { Show, createSignal, onMount, For, createEffect } from "solid-js";
+import { createSignal, For, createEffect } from "solid-js";
 import Dismiss from "../../../../package/index";
-import { getLeft, getWidth, parseValToNum, reflow } from "../../utils";
+import { getLeft, getWidth, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 
 const Scrolling = () => {
@@ -83,6 +83,7 @@ const Popup = () => {
         mount="body"
         closeWhenScrolling
         ref={containerEl}
+        {...toggleAnimation()}
       >
         <ol
           class="dropdown"

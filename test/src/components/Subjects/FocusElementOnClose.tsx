@@ -1,6 +1,7 @@
 import { Show, createSignal, onMount, For, createEffect } from "solid-js";
 import { Portal } from "solid-js/web";
 import Dismiss from "../../../../package/index";
+import { toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 import IFrame from "../IFrame";
 
@@ -87,6 +88,7 @@ const Popup = () => {
         closeWhenScrolling
         mount="body"
         ref={containerEl}
+        {...toggleAnimation()}
       >
         <div class="dropdown">
           <Button>Placeholder</Button>

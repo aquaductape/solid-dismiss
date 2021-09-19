@@ -1,7 +1,7 @@
 import { Show, createSignal, onMount, For, createEffect } from "solid-js";
 import { Portal } from "solid-js/web";
 import Dismiss from "../../../../package/index";
-import { getLeft, reflow } from "../../utils";
+import { getLeft, reflow, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 import IFrame from "../IFrame";
 
@@ -71,6 +71,7 @@ const Popup = () => {
         setOpen={setOpen}
         mount="body"
         ref={containerEl}
+        {...toggleAnimation()}
       >
         <div class="dropdown">
           <div style="display: flex;">

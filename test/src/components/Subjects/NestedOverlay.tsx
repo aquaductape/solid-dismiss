@@ -1,6 +1,6 @@
 import { createEffect, createComputed, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
-import { getLeft, reflow } from "../../utils";
+import { getLeft, reflow, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 
 const NestedOverlay = () => {
@@ -61,11 +61,8 @@ const Popup = () => {
         mount="body"
         overlay={{ class: "overlay" }}
         closeWhenMenuButtonIsTabbed
-        // stopComponentEventPropagation
-        // animation={{
-        //   name: "popup",
-        // }}
         ref={containerEl}
+        {...toggleAnimation({ includeOverlay: true })}
       >
         <div class="dropdown" ref={dropdownEl}>
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">

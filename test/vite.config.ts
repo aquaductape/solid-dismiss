@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     target: "esnext",
     polyfillDynamicImport: false,
-    outDir: "../build",
+    outDir: "../test-dist",
   },
   server: {
     fs: {

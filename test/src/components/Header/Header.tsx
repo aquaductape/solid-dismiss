@@ -1,17 +1,10 @@
 import settings, { setSettings } from "../../utils/globalSettings";
-import { Show } from "solid-js";
 
 const Header = () => {
   return (
     <header>
-      <p
-        style="display: block; position: absolute; top: 0;
-        left: 0; margin: 0; font-size: 14px;"
-      >
-        Note: Dismiss props are not reactive, refreshes page to update
-      </p>
       <div>
-        <label style="margin-right: 50px;">
+        <label>
           enable animations{" "}
           <input
             type="checkbox"

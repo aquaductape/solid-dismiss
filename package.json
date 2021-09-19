@@ -33,6 +33,7 @@
   },
   "scripts": {
     "build": "rollup -c",
+    "build-test": "cd test && pnpm build",
     "prepublishOnly": "npm run build",
     "release": "release-it",
     "dev": "cd demo && pnpm start",

@@ -1,25 +1,6 @@
-import {
-  untrack,
-  batch,
-  Accessor,
-  onMount,
-  createEffect,
-  onCleanup,
-  Component,
-  JSX,
-  on,
-  createUniqueId,
-  Show,
-  createComputed,
-  createSignal,
-  children,
-  mergeProps,
-  createMemo,
-  createRenderEffect,
-} from "solid-js";
-import { Transition } from "solid-transition-group";
+import { createComputed, createSignal, createRenderEffect } from "solid-js";
 import Dismiss from "../../../../package/index";
-import { getLeft, reflow } from "../../utils";
+import { getLeft, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 
 const NestedPopupMounted = () => {
@@ -87,10 +68,8 @@ const Popup = () => {
         setOpen={setOpen}
         mount="body"
         // stopComponentEventPropagation
-        animation={{
-          name: "popup",
-        }}
         ref={containerEl}
+        {...toggleAnimation()}
       >
         <div class="dropdown" ref={dropdownEl}>
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">

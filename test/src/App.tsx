@@ -17,14 +17,14 @@ const Content = () => {
   return (
     <>
       <Basic></Basic>
-      {/* <Scrolling></Scrolling>
+      <Scrolling></Scrolling>
       <NestedPopupMounted></NestedPopupMounted>
       <NestedPopup></NestedPopup>
       <NestedOverlay></NestedOverlay>
       <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
       <IFrames></IFrames>
       <FocusElementOnClose></FocusElementOnClose>
-      <Mixed></Mixed> */}
+      <Mixed></Mixed>
     </>
   );
 };
@@ -33,14 +33,18 @@ const App: Component = () => {
     <>
       <Header></Header>
       <main class="main">
-        {/* <Switch>
-          <Match when={settings.animation.enable}> */}
-        <Content></Content>
-        {/* </Match>
+        <p style=" font-size: 14px; margin-bottom: -15vh;">
+          Note: Dismiss animation props are reactive, but "enable animation"
+          checkbox refreshes page to update components for testing purpose
+        </p>
+        <Switch>
+          <Match when={settings.animation.enable}>
+            <Content></Content>
+          </Match>
           <Match when={!settings.animation.enable}>
             <Content></Content>
           </Match>
-        </Switch> */}
+        </Switch>
       </main>
     </>
   );

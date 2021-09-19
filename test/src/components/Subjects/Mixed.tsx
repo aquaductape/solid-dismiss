@@ -1,6 +1,6 @@
 import { createEffect, createComputed, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
-import { getLeft } from "../../utils";
+import { getLeft, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 import IFrame from "../IFrame";
 
@@ -47,6 +47,7 @@ const RegularPopup = () => {
         open={open}
         setOpen={setOpen}
         ref={containerEl}
+        {...toggleAnimation()}
       >
         <div class="dropdown" ref={dropdownEl}>
           <p>
@@ -92,6 +93,7 @@ const MountedPopup = () => {
         setOpen={setOpen}
         mount="body"
         ref={containerEl}
+        {...toggleAnimation()}
       >
         <div class="dropdown" ref={dropdownEl}>
           <p>
@@ -144,6 +146,7 @@ const OverlayPopup = () => {
         mount="body"
         overlay={{ class: "overlay" }}
         ref={containerEl}
+        {...toggleAnimation({ includeOverlay: true })}
       >
         <div class="dropdown" ref={dropdownEl}>
           <p>Click on outside overlay, should only close that current stack</p>

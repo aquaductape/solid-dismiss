@@ -1,14 +1,7 @@
-import {
-  Component,
-  createSignal,
-  Match,
-  onCleanup,
-  onMount,
-  Show,
-  Switch,
-} from "solid-js";
+import { Component, createSignal, onMount } from "solid-js";
 import { Portal } from "solid-js/web";
 import Dismiss from "../../../../package/index";
+import { toggleAnimation } from "../../utils";
 import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 
@@ -28,17 +21,14 @@ const Basic = () => {
       </ul>
       <div class="grid">
         <Popup />
-        {/* <Popup />
-        <Popup /> */}
+        <Popup />
+        <Popup />
       </div>
     </section>
   );
 };
 
 const Content: Component = (props) => {
-  onMount(() => {
-    console.log("mount!!");
-  });
   return (
     <ul
       class="dropdown"
@@ -81,18 +71,12 @@ const Popup = () => {
         console.log("container clicked!");
       }}
     >
-      <Button
-        open={open()}
-        // onClick={() => setOpen((prev) => !prev)}
-        ref={btnEl}
-      />
-      <p>{className()}</p>
+      <Button open={open()} ref={btnEl} />
       <Dismiss
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
-        mount="body"
-        animation={{ name: className() }}
+        {...toggleAnimation()}
       >
         <Content></Content>
       </Dismiss>

@@ -99,8 +99,8 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  height: 70px;
-  padding: 25px;
+  height: 50px;
+  padding: 5px;
   padding-bottom: 5px;
   display: flex;
   align-items: center;
@@ -154,7 +154,7 @@ section {
   max-width: 500px;
   min-width: 100px;
   width: 30vw;
-  max-height: 140px;
+  max-height: 155px;
   height: 40vh;
   border: 2px solid #727272;
 }
@@ -182,31 +182,10 @@ section {
   &-exit,
   &-exit-to {
     transition: transform 300ms, opacity 300ms;
-    transform-origin: top left;
+    transform-origin: center;
   }
 }
 
-.foo {
-  &-enter {
-    opacity: 0;
-  }
-  &-enter-to {
-    opacity: 1;
-  }
-  &-exit {
-    opacity: 1;
-  }
-  &-exit-to {
-    opacity: 0;
-  }
-
-  &-enter,
-  &-enter-to,
-  &-exit,
-  &-exit-to {
-    transition: opacity 5000ms;
-  }
-}
 .overlay-a {
   &-enter {
     opacity: 0;
@@ -232,6 +211,9 @@ section {
 @media (max-width: 350px) {
   .menu-button {
     font-size: 14px;
+  }
+  .iframe {
+    max-height: 185px;
   }
 }
 

@@ -1,29 +1,7 @@
-import {
-  untrack,
-  batch,
-  Accessor,
-  onMount,
-  createEffect,
-  onCleanup,
-  Component,
-  JSX,
-  on,
-  createUniqueId,
-  Show,
-  createComputed,
-  createSignal,
-  children,
-  mergeProps,
-} from "solid-js";
-import { createStore } from "solid-js/store";
+import { createEffect, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
+import { toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
-
-type TTree = {
-  [key: number]: {
-    childIds: number[];
-  };
-};
 
 const NestedPopup = () => {
   return (
@@ -69,10 +47,8 @@ const Popup = () => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
-        animation={{
-          name: "popup",
-        }}
         ref={containerEl}
+        {...toggleAnimation()}
       >
         <div class="dropdown">
           <Popup />

@@ -1,3 +1,5 @@
+import settings from "./globalSettings";
+
 export const getLeft = (bcr: DOMRect, containerWidth: number) => {
   const vw = document.documentElement.clientWidth;
   if (bcr.left + containerWidth >= vw) {
@@ -32,4 +34,22 @@ export const getWidth = ({
   if (width < minWidth) return minWidth;
   if (width > maxWidth) return maxWidth;
   return width;
+};
+
+export const toggleAnimation = ({
+  includeOverlay,
+}: {
+  includeOverlay?: boolean;
+} = {}) => {
+  if (!settings.animation.enable) {
+    return {};
+  }
+  const overlay = includeOverlay
+    ? { overlay: { class: "overlay", animation: { name: "overlay-a" } } }
+    : {};
+
+  return {
+    animation: { name: "popup" },
+    ...overlay,
+  };
 };
