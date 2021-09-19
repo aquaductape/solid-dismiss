@@ -16,6 +16,25 @@ export const onClickMenuButton = (state: TLocalState) => {
   menuBtnEl!.focus();
   state.containerFocusTimeoutId = null;
 
+  if (!open()) {
+    state.menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
+      once: true,
+    });
+    menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
+    menuBtnEl!.addEventListener("blur", state.onBlurMenuButtonRef, {
+      once: true,
+    });
+  } else {
+    if (closeWhenMenuButtonIsClicked) {
+      state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
+      state.menuBtnEl!.removeEventListener(
+        "keydown",
+        state.onKeydownMenuButtonRef
+      );
+      state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
+    }
+  }
+
   if (!closeWhenMenuButtonIsClicked) {
     setOpen(true);
     return;
@@ -107,8 +126,8 @@ export const onFocusMenuButton = (state: TLocalState) => {
     console.log("clear!!");
     clearTimeout(containerFocusTimeoutId!);
   }
-  menuBtnEl!.addEventListener("keydown", onKeydownMenuButtonRef);
-  menuBtnEl!.addEventListener("blur", onBlurMenuButtonRef, { once: true });
+  // menuBtnEl!.addEventListener("keydown", onKeydownMenuButtonRef);
+  // menuBtnEl!.addEventListener("blur", onBlurMenuButtonRef, { once: true });
 };
 
 export const runAriaExpanded = (state: TLocalState, open: boolean) => {

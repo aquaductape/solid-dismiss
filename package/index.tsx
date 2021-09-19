@@ -397,7 +397,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     // console.log("onMount!!!", state.menuBtnEl, state.menuBtnEl.isConnected);
     state.menuBtnEl.setAttribute("type", "button");
     state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
-    state.menuBtnEl.addEventListener("focus", state.onFocusMenuButtonRef);
     if (
       props.open() &&
       (!state.focusElementOnOpen ||
