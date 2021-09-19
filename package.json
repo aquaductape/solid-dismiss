@@ -37,7 +37,8 @@
     "release": "release-it",
     "dev": "cd demo && pnpm start",
     "demo-deploy": "cd demo && ./deploy.sh",
-    "demo-deploy-quick": "git add . && git commit -m 'update' && cd demo && ./deploy.sh"
+    "demo-deploy-quick": "git add . && git commit -m 'update' && cd demo && ./deploy.sh",
+    "quick": "git add . && git commit -m 'update' && git  push"
   },
   "repository": {
     "type": "git",
