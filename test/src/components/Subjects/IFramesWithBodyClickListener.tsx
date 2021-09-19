@@ -1,7 +1,15 @@
-import { Show, createSignal, onMount, For, createEffect } from "solid-js";
+import {
+  Show,
+  createSignal,
+  onMount,
+  For,
+  createEffect,
+  createRenderEffect,
+} from "solid-js";
 import { Portal } from "solid-js/web";
 import Dismiss from "../../../../package/index";
 import { getLeft, reflow, toggleAnimation } from "../../utils";
+import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 import IFrame from "../IFrame";
 
@@ -43,16 +51,17 @@ const Popup = () => {
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
 
-  createEffect(() => {
-    if (!open()) return;
+  if (!settings.animation.enable) {
+    createEffect(() => {
+      if (!open()) return;
 
-    const btnBCR = btnEl.getBoundingClientRect();
-    containerEl.style.position = "absolute";
-    reflow();
-    containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
-    containerEl.style.left =
-      getLeft(btnBCR, containerEl.getBoundingClientRect().width) + "px";
-  });
+      const btnBCR = btnEl.getBoundingClientRect();
+      containerEl.style.position = "absolute";
+      reflow();
+      containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
+      containerEl.style.left = getLeft(btnBCR, containerEl.clientWidth) + "px";
+    });
+  }
 
   return (
     <div style="display: inline-block; position: relative;">
@@ -62,10 +71,18 @@ const Popup = () => {
         open={open}
         setOpen={setOpen}
         mount="body"
-        {...toggleAnimation()}
         ref={containerEl}
+        {...toggleAnimation({
+          onBeforeEnter: (_el) => {
+            const el = _el as HTMLElement;
+            const btnBCR = btnEl.getBoundingClientRect();
+            el.style.position = "absolute";
+            el.style.top = btnBCR.bottom + window.scrollY + "px";
+            el.style.left = getLeft(btnBCR, el.clientWidth) + "px";
+          },
+        })}
       >
-        <div class="dropdown">
+        <div class="dropdown" style="height: 100%;">
           <div style="display: flex;">
             <IFrame bodyHasClickListener></IFrame>
             <IFrame bodyHasClickListener></IFrame>

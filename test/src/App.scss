@@ -160,6 +160,9 @@ section {
 }
 
 .popup {
+  transition: transform 0ms, opacity 0ms;
+  transform-origin: center;
+
   &-enter {
     transform: scale(0);
     opacity: 0;
@@ -177,7 +180,6 @@ section {
     opacity: 0;
   }
 
-  &-enter,
   &-enter-to,
   &-exit,
   &-exit-to {

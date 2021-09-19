@@ -33,7 +33,6 @@ export const onClickOverlay = (state: TLocalState) => {
   if (el) {
     el.focus();
   }
-  debugger;
   dismissStack.find((item) => item.uniqueId === uniqueId)!.queueRemoval = true;
 
   setOpen(false);

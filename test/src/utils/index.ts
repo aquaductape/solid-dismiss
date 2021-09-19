@@ -38,8 +38,10 @@ export const getWidth = ({
 
 export const toggleAnimation = ({
   includeOverlay,
+  onBeforeEnter,
 }: {
   includeOverlay?: boolean;
+  onBeforeEnter?: (el: Element) => void;
 } = {}) => {
   if (!settings.animation.enable) {
     return {};
@@ -48,8 +50,9 @@ export const toggleAnimation = ({
     ? { overlay: { class: "overlay", animation: { name: "overlay-a" } } }
     : {};
 
+  const onBeforeEnterCb = onBeforeEnter ? { onBeforeEnter } : {};
   return {
-    animation: { name: "popup" },
+    animation: { name: "popup", ...onBeforeEnterCb },
     ...overlay,
   };
 };

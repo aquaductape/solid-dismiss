@@ -119,7 +119,6 @@ export const Transition: Component<TransitionProps> = (props) => {
     el = resolved() as Element;
     while (typeof el === "function") el = (el as Function)();
     return untrack(() => {
-      if (prev || el) debugger;
       if (el && el !== prev) {
         enterTransition(el, prev);
       }
