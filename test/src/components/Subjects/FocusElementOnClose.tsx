@@ -66,7 +66,7 @@ const Popup = () => {
     const btnBCR = btnEl.getBoundingClientRect();
     containerEl.style.position = "absolute";
     containerEl.style.top = `${btnBCR.bottom + window.scrollY}px`;
-    containerEl.style.left = `${btnBCR.left + window.scrollX + 20}px`;
+    containerEl.style.left = `${btnBCR.left + window.scrollX}px`;
   });
 
   return (
@@ -90,7 +90,10 @@ const Popup = () => {
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown">
+        <div class="dropdown" style="padding: 10px;">
+          <p>
+            Some <a href="javascript:void(0)">random</a> text
+          </p>
           <Button>Placeholder</Button>
           <br />
           <Button ref={focusedBtnEl}>

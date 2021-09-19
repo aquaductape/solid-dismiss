@@ -50,7 +50,10 @@ const Popup = () => {
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown">
+        <div class="dropdown" style="padding: 10px 25px 25px 25px;">
+          <p>
+            Some <a href="javascript:void(0)">random</a> text
+          </p>
           <Popup />
           <br />
           <Popup />

@@ -51,7 +51,8 @@ const RegularPopup = () => {
       >
         <div class="dropdown" ref={dropdownEl}>
           <p>
-            Click on outside, should close stacks that don't contain the click
+            <strong>Regular</strong>: Click on outside, should close stacks that
+            don't contain the click
           </p>
           <PopupContent />
         </div>
@@ -97,7 +98,8 @@ const MountedPopup = () => {
       >
         <div class="dropdown" ref={dropdownEl}>
           <p>
-            Click on outside, should close stacks that don't contain the click
+            <strong>Mounted</strong>: Click on outside, should close stacks that
+            don't contain the click
           </p>
           <PopupContent />
         </div>
@@ -149,7 +151,10 @@ const OverlayPopup = () => {
         {...toggleAnimation({ includeOverlay: true })}
       >
         <div class="dropdown" ref={dropdownEl}>
-          <p>Click on outside overlay, should only close that current stack</p>
+          <p>
+            <strong>Overlay</strong>: Click on overlay, should only close that
+            current stack
+          </p>
           <PopupContent />
         </div>
       </Dismiss>

@@ -53,7 +53,7 @@ const Popup = () => {
     containerEl.style.position = "absolute";
 
     containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
-    containerEl.style.left = getLeft(btnBCR, 310) + "px";
+    containerEl.style.left = getLeft(btnBCR, 320) + "px";
   });
 
   return (
@@ -71,7 +71,10 @@ const Popup = () => {
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown" ref={dropdownEl}>
+        <div class="dropdown middle" ref={dropdownEl}>
+          <p>
+            Some <a href="javascript:void(0)">random</a> text
+          </p>
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
             <Popup></Popup>
             <Popup></Popup>
