@@ -403,9 +403,10 @@ const Dismiss: Component<TDismiss> = (props) => {
         state.focusElementOnOpen === "menuButton" ||
         state.focusElementOnOpen === state.menuBtnEl)
     ) {
-      state.menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
-        once: true,
-      });
+      console.log("DONT ADD");
+      // state.menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
+      //   once: true,
+      // });
     }
     state.menuBtnId = state.menuBtnEl.id;
 
