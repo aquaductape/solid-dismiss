@@ -101,6 +101,11 @@ const Popup = () => {
             }}
           </For>
           <Popup />
+          <br />
+          <Popup />
+          <br />
+          <Popup />
+          <br />
           <For each={list}>
             {(item) => {
               return (
