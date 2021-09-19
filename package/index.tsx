@@ -339,10 +339,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     onClickOverlayRef: () => onClickOverlay(state),
     onFocusInContainerRef: (e) => onFocusInContainer(state, e),
     onFocusOutContainerRef: (e) => onFocusOutContainer(state, e),
-    onBlurMenuButtonRef: (e) => {
-      console.log("wtf???");
-      onBlurMenuButton(state, e);
-    },
+    onBlurMenuButtonRef: (e) => onBlurMenuButton(state, e),
     onClickMenuButtonRef: () => onClickMenuButton(state),
     onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
     onFocusMenuButtonRef: () => onFocusMenuButton(state),
@@ -406,10 +403,9 @@ const Dismiss: Component<TDismiss> = (props) => {
         state.focusElementOnOpen === "menuButton" ||
         state.focusElementOnOpen === state.menuBtnEl)
     ) {
-      console.log("DONT ADD");
-      // state.menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
-      //   once: true,
-      // });
+      state.menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
+        once: true,
+      });
     }
     state.menuBtnId = state.menuBtnEl.id;
 

@@ -25,7 +25,6 @@ export const onClickMenuButton = (state: TLocalState) => {
 };
 
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
-  console.log("blurrrr!!!!");
   const { onClickDocumentRef, containerEl, overlay, setOpen, open, setFocus } =
     state;
 
@@ -109,7 +108,7 @@ export const onFocusMenuButton = (state: TLocalState) => {
     clearTimeout(containerFocusTimeoutId!);
   }
   menuBtnEl!.addEventListener("keydown", onKeydownMenuButtonRef);
-  // menuBtnEl!.addEventListener("blur", onBlurMenuButtonRef, { once: true });
+  menuBtnEl!.addEventListener("blur", onBlurMenuButtonRef, { once: true });
 };
 
 export const runAriaExpanded = (state: TLocalState, open: boolean) => {
