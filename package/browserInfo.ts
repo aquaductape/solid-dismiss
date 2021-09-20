@@ -13,6 +13,7 @@ const iOS13 =
 if (iOS && !iOS13) {
   const html = document.querySelector("html")!;
   html.style.cursor = "pointer";
+  // @ts-ignore
   html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
 }
 

@@ -4,6 +4,7 @@ import { queryElement } from "./utils";
 
 export const onClickCloseButtons = (state: TLocalState) => {
   state.setOpen(false);
+  state.menuBtnEl!.focus();
 };
 
 export const addCloseButtons = (state: TLocalState) => {

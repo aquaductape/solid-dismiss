@@ -17,7 +17,15 @@ const IFrame: Component<{
       `<html><body ${event} style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
     );
 
-    doc.close();
+    setTimeout(() => {
+      if (bodyHasClickListener) {
+        const html = doc.querySelector("html")!;
+        html.style.cursor = "pointer";
+        // @ts-ignore
+        html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
+      }
+      doc.close();
+    });
   });
   return <iframe class={"iframe"} src="" ref={el}></iframe>;
 };

@@ -6,7 +6,7 @@ import IFrame from "../IFrame";
 
 const Mixed = () => {
   return (
-    <section class="nested">
+    <section class="nested mixed">
       <h2>Mixed</h2>
 
       <div class="grid">
@@ -35,6 +35,7 @@ const RegularPopup = () => {
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
+  let btnCloseEl!: HTMLButtonElement;
 
   return (
     <div
@@ -48,10 +49,11 @@ const RegularPopup = () => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
+        closeButtons={() => btnCloseEl}
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown" ref={dropdownEl}>
+        <div class="dropdown padding-top" ref={dropdownEl}>
           <p>
             <strong>Regular</strong>: Click on outside, should close stacks that
             don't contain the click
@@ -59,6 +61,7 @@ const RegularPopup = () => {
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
           <PopupContent />
+          <button aria-label="close" class="close" ref={btnCloseEl}></button>
         </div>
       </Dismiss>
     </div>
@@ -70,6 +73,7 @@ const MountedPopup = () => {
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
+  let btnCloseEl!: HTMLButtonElement;
 
   createEffect(() => {
     if (!open()) return;
@@ -97,10 +101,11 @@ const MountedPopup = () => {
         open={open}
         setOpen={setOpen}
         mount="body"
+        closeButtons={() => btnCloseEl}
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown" ref={dropdownEl}>
+        <div class="dropdown padding-top" ref={dropdownEl}>
           <p>
             <strong>Mounted</strong>: Click on outside, should close stacks that
             don't contain the click
@@ -108,6 +113,7 @@ const MountedPopup = () => {
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
           <PopupContent />
+          <button aria-label="close" class="close" ref={btnCloseEl}></button>
         </div>
       </Dismiss>
     </div>
@@ -119,6 +125,7 @@ const OverlayPopup = () => {
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
+  let btnCloseEl!: HTMLButtonElement;
 
   createComputed(() => {
     if (!open()) return;
@@ -153,10 +160,11 @@ const OverlayPopup = () => {
         setOpen={setOpen}
         mount="body"
         overlay={{ class: "overlay" }}
+        closeButtons={() => btnCloseEl}
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
       >
-        <div class="dropdown" ref={dropdownEl}>
+        <div class="dropdown padding-top" ref={dropdownEl}>
           <p>
             <strong>Overlay</strong>: Click on overlay, should only close that
             current stack
@@ -164,6 +172,7 @@ const OverlayPopup = () => {
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
           <PopupContent />
+          <button aria-label="close" class="close" ref={btnCloseEl}></button>
         </div>
       </Dismiss>
     </div>
@@ -175,6 +184,7 @@ const OverlayDisabledClickPopup = () => {
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
+  let btnCloseEl!: HTMLButtonElement;
 
   createComputed(() => {
     if (!open()) return;
@@ -209,19 +219,21 @@ const OverlayDisabledClickPopup = () => {
         setOpen={setOpen}
         mount="body"
         overlay={{ class: "overlay" }}
+        closeButtons={() => btnCloseEl}
         closeWhenOverlayClicked={false}
         trapFocus={true}
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
       >
-        <div class="dropdown" ref={dropdownEl}>
+        <div class="dropdown padding-top" ref={dropdownEl}>
           <p>
             <strong>Overlay</strong>: Click overlay to close is disabled! Press
-            Escape to close.
+            Escape or click "X" to close.
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
           <PopupContent />
+          <button aria-label="close" class="close" ref={btnCloseEl}></button>
         </div>
       </Dismiss>
     </div>
