@@ -65,10 +65,12 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   if (!containerEl) return;
   if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
 
-  // console.log("blurr", state.menuBtnEl, e.relatedTarget);
+  // Solves Safari issue
+  if (state.containerEl?.contains(e.relatedTarget as HTMLElement)) {
+    return;
+  }
+
   const run = () => {
-    if (state.menuBtnEl === e.relatedTarget) return;
-    console.log("blurr", e.relatedTarget, state.menuBtnEl);
     setOpen(false);
   };
 
