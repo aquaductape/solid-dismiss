@@ -18,9 +18,9 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     return;
   }
 
-  menuBtnEl!.focus();
+  // menuBtnEl!.focus();
   console.log("onclick btn");
-  // clearTimeout(state.containerFocusTimeoutId!);
+  clearTimeout(state.containerFocusTimeoutId!);
   clearTimeout(menuButtonBlurTimeoutId!);
   state.containerFocusTimeoutId = null;
 

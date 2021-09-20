@@ -6,6 +6,7 @@ import { findItemReverse, queryElement } from "./utils";
 export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const { uniqueId, overlay, open, mount, setOpen } = state;
   const relatedTarget = e.relatedTarget as HTMLElement | null;
+  const activeElement = document.activeElement as HTMLElement;
 
   if (overlay) return;
 
@@ -18,7 +19,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
 
   if (!open()) return;
 
-  console.log("focusout");
+  console.log("focusout", { relatedTarget });
   if (!relatedTarget) {
     const [_, overlayIdx] = findItemReverse(
       dismissStack,
@@ -34,7 +35,6 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     //
 
     if (!globalState.addedDocumentClick) {
-      console.log("add click doc 111");
       globalState.addedDocumentClick = true;
       document.addEventListener("click", onDocumentClick, { once: true });
     }
