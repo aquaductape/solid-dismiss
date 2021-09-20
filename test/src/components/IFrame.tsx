@@ -12,12 +12,15 @@ const IFrame: Component<{
       : "body doesn't have click listener!!";
     const event = bodyHasClickListener ? `onclick="(function(){})();"` : "";
     const interactiveContent =
-      '<button id="${id}">Button</button> <br><br> <a href="#">Link</a> <br><br> <input type="text" placeholder="Text input...">';
+      '<button id="${id}" >Button</button> <br><br> <a href="#">Link</a> <br><br> <input type="text" placeholder="Text input...">';
     doc.write(
       `<html style="cursor: pointer"><body ${event} style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
     );
     setTimeout(() => {
       doc.addEventListener("touchstart", () => {});
+      doc.querySelector("button")!.addEventListener("click", (e) => {
+        (e.currentTarget as HTMLElement).focus();
+      });
       doc.close();
     });
   });
