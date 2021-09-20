@@ -34,7 +34,7 @@ const IFramesWithBodyClickListener = () => {
         When menuPopup active, click/tab menuPopup iframe, then click/tab
         "outside" iframe. menuPopup should be closed
       </p>
-      <p>Doesn't</p>
+      <p>For iOS, supports 13+</p>
 
       <div class="grid" style="grid-template-columns: repeat(4, 1fr)">
         <Popup />

@@ -26,9 +26,10 @@ const IFrames = () => {
         When menuPopup active, click/tab menuPopup iframe, then click/tab
         "outside" iframe. menuPopup should be closed
       </p>
+      <p>For iOS, supports 13+</p>
       <p>
-        Unfortunatly iOS 13+ in you must tap interactive elements(buttons,
-        links, ect) within the iframe, in order to close menuPopup.{" "}
+        Unfortunatly for iOS, you must tap interactive elements(buttons, links,
+        ect) within the iframe, in order to close menuPopup.{" "}
       </p>
       <p>
         If you have control over editing Same Domain iframe, make sure to add
