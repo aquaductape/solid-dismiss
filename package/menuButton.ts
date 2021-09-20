@@ -18,10 +18,10 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     return;
   }
 
-  console.log("onclick btn");
-  clearTimeout(state.containerFocusTimeoutId!);
-  clearTimeout(menuButtonBlurTimeoutId!);
   menuBtnEl!.focus();
+  console.log("onclick btn");
+  // clearTimeout(state.containerFocusTimeoutId!);
+  clearTimeout(menuButtonBlurTimeoutId!);
   state.containerFocusTimeoutId = null;
 
   // iOS triggers refocus i think...
