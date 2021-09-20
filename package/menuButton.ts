@@ -10,7 +10,6 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     setOpen,
     open,
   } = state;
-  e.stopImmediatePropagation();
 
   console.log("onclick btn");
   clearTimeout(state.containerFocusTimeoutId!);
