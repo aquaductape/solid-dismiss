@@ -6,14 +6,14 @@ export default defineConfig({
   plugins: [solidPlugin(), viteSingleFile()],
   build: {
     target: "esnext",
-    // polyfillDynamicImport: false,
-    assetsInlineLimit: 100000000,
-    chunkSizeWarningLimit: 100000000,
-    cssCodeSplit: false,
-    brotliSize: false,
-    rollupOptions: {
-      inlineDynamicImports: true,
-    },
+    polyfillDynamicImport: false,
+    // assetsInlineLimit: 100000000,
+    // chunkSizeWarningLimit: 100000000,
+    // cssCodeSplit: false,
+    // brotliSize: false,
+    // rollupOptions: {
+    //   inlineDynamicImports: true,
+    // },
   },
   server: {
     fs: {
