@@ -402,7 +402,6 @@ const Dismiss: Component<TDismiss> = (props) => {
       exitClass = name + "-exit",
       exitToClass = name + "-exit-to",
     } = animation;
-    console.log("enterTransition");
 
     const enterClasses = enterClass!.split(" ");
     const enterActiveClasses = enterActiveClass!.split(" ");
@@ -539,7 +538,6 @@ const Dismiss: Component<TDismiss> = (props) => {
       inputElement: menuButton,
       type: "menuButton",
     });
-    // console.log("onMount!!!", state.menuBtnEl, state.menuBtnEl.isConnected);
     state.menuBtnEl.setAttribute("type", "button");
     state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
     if (
@@ -567,7 +565,6 @@ const Dismiss: Component<TDismiss> = (props) => {
       on(
         () => !!props.open(),
         (open, prevOpen) => {
-          console.log("lib computed");
           if (open === prevOpen) return;
 
           if (open) {

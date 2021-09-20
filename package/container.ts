@@ -53,6 +53,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   }
 
   state.containerFocusTimeoutId = window.setTimeout(() => {
+    console.log("remove");
     setOpen(false);
   });
 };

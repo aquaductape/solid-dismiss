@@ -38,18 +38,11 @@ const Popup = () => {
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
 
-  createComputed(() => {
-    if (!open()) return;
-    const btnBCR = btnEl.getBoundingClientRect();
-
-    console.log({ btnBCR });
-  });
   createRenderEffect(() => {
     if (!open()) return;
 
     const btnBCR = btnEl.getBoundingClientRect();
 
-    console.log({ btnBCR });
     containerEl.style.position = "absolute";
 
     containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
@@ -57,10 +50,7 @@ const Popup = () => {
   });
 
   return (
-    <div
-      style="display: inline-block; position: relative;"
-      onClick={() => console.log("click container")}
-    >
+    <div style="display: inline-block; position: relative;">
       <Button open={open()} ref={btnEl} />
       <Dismiss
         menuButton={btnEl}
