@@ -1,4 +1,4 @@
-import Dismiss from "../../../../package/experimentalOverlayClip";
+// import Dismiss from "../../../../package/experimentalOverlayClip";
 import {
   For,
   Component,
@@ -12,6 +12,7 @@ import {
 import { createStore } from "solid-js/store";
 import c from "./Select.module.scss";
 import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+import Dismiss from "../../../../package/index";
 
 const classM = scopeModuleClasses(c);
 // https://codepen.io/chriscoyier/pen/zYYZaGP
@@ -274,6 +275,7 @@ const Select: Component<{
       props.onInput!(selectedItem.value || selectedItem.content);
     }
 
+    if (!listEl) return;
     const itemEl = listEl.querySelector(
       `[data-value="${selectedItem.value || selectedItem.content}"]`
     ) as HTMLElement;
@@ -282,8 +284,8 @@ const Select: Component<{
   });
 
   createEffect(() => {
-    console.log("focus", focus());
-    if (focus()) {
+    // console.log("focus", open());
+    if (toggle()) {
       document.addEventListener("keydown", onKeyDown);
       return;
     }
@@ -334,9 +336,7 @@ const Select: Component<{
         menuButton={btnEl}
         open={toggle}
         setOpen={setToggle}
-        setFocus={setFocus}
         menuPopup={() => listEl}
-        overlay={"clip"}
         focusElementOnClose={btnEl}
       >
         <div class={classM("list-outer")}>

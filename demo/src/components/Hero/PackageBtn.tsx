@@ -75,7 +75,7 @@ const PackageBtn = () => {
         <button
           class="btn-secondary"
           aria-label={`copy text to clipboard: ${packageText()}`}
-          onClick={onClickClipboard}
+          // onClick={onClickClipboard}
         >
           <span class="btn-fusion-icon">
             <Transition
@@ -117,11 +117,9 @@ const PackageBtn = () => {
           </span>
         </button>
         <span class="text-wrapper">
-          {/* <div className="fake-el-start"></div> */}
           <div className="text-scroll-container">
             <code class="text-content">{packageText()}</code>
           </div>
-          {/* <div className="fake-el-end"></div> */}
         </span>
       </span>
     </div>
