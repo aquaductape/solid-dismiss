@@ -13,10 +13,33 @@ let timestampOfTabkey: number = 0;
 let cachedScrollTarget: Element | null = null;
 let cachedPolledElement: Element | null = null;
 
-export const globalState: {
-  closeByFocusSentinel: boolean;
-} = {
+export const globalState = {
   closeByFocusSentinel: false,
+  addedDocumentClick: false,
+};
+
+export const onDocumentClick = (e: Event) => {
+  const target = e.target as HTMLElement;
+
+  checkThenClose(
+    dismissStack,
+    (item) => {
+      if (
+        item.overlay ||
+        item.menuBtnEl.contains(target) ||
+        item.containerEl.contains(target)
+      )
+        return;
+
+      return item;
+    },
+    (item) => {
+      const { setOpen } = item;
+      setOpen(false);
+    }
+  );
+
+  globalState.addedDocumentClick = false;
 };
 
 export const onWindowBlur = (e: Event) => {
@@ -182,6 +205,7 @@ export const removeGlobalEvents = () => {
 
   scrollEventAdded = false;
   document.removeEventListener("keydown", onKeyDown);
+  document.removeEventListener("click", onDocumentClick);
   window.removeEventListener("blur", onWindowBlur);
   window.removeEventListener("wheel", onScrollClose, {
     capture: true,

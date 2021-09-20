@@ -19,7 +19,18 @@ export const onClickDocument = (state: TLocalState, e: MouseEvent) => {
   const { containerEl, setOpen, onFocusFromOutsideAppOrTabRef } = state;
 
   if (!containerEl) return;
-  if (containerEl!.contains(e.target as HTMLElement)) return;
+  if (containerEl!.contains(e.target as HTMLElement)) {
+    state.addedFocusOutAppEvents = false;
+
+    if (state.prevFocusedEl) {
+      state.prevFocusedEl.removeEventListener(
+        "focus",
+        onFocusFromOutsideAppOrTabRef
+      );
+    }
+    state.prevFocusedEl = null;
+    return;
+  }
 
   if (state.prevFocusedEl) {
     state.prevFocusedEl.removeEventListener(

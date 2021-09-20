@@ -91,7 +91,7 @@ const MountedPopup = () => {
   return (
     <div
       style="display: inline-block; position: relative; padding: 5px;"
-      onClick={() => console.log("click container")}
+      onClick={() => console.log("click container MOUNTED")}
     >
       <Button class="medium" open={open()} ref={btnEl}>
         Mounted
@@ -208,7 +208,7 @@ const OverlayDisabledClickPopup = () => {
   return (
     <div
       style="display: inline-block; position: relative; padding: 5px;"
-      onClick={() => console.log("click container")}
+      onClick={() => console.log("click container OVERLAY DISABLED")}
     >
       <Button class="medium" open={open()} ref={btnEl}>
         Overlay Disabled Click

@@ -679,6 +679,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           typeof state.overlay === "object" ? state.overlay.classList || {} : {}
         }
         role="presentation"
+        // tabindex="0"
         data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
         onClick={state.onClickOverlayRef}
         ref={state.refOverlayCb}

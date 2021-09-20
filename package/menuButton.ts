@@ -3,7 +3,6 @@ import { removeOutsideFocusEvents } from "./outside";
 import { getNextTabbableElement } from "./utils";
 
 let mousedownFired = false;
-let blurFired = false;
 
 export const onClickMenuButton = (state: TLocalState, e: Event) => {
   const {
@@ -15,7 +14,6 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
   } = state;
 
   if (mousedownFired && !open()) {
-    console.log("reset");
     mousedownFired = false;
     return;
   }
