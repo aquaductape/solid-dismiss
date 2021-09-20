@@ -13,6 +13,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     open,
   } = state;
 
+  isMouseDown = false;
   console.log("onclick btn");
   clearTimeout(state.containerFocusTimeoutId!);
   clearTimeout(menuButtonBlurTimeoutId!);
@@ -54,6 +55,7 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     isMouseDown = false;
     return;
   }
+
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
     return;
