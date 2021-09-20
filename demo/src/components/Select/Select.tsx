@@ -1,4 +1,4 @@
-import Dismiss from "../../../../package/dismissWithOverlayClip";
+import Dismiss from "../../../../package/experimentalOverlayClip";
 import {
   For,
   Component,

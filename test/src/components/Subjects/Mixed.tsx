@@ -13,6 +13,7 @@ const Mixed = () => {
         <RegularPopup></RegularPopup>
         <MountedPopup></MountedPopup>
         <OverlayPopup></OverlayPopup>
+        <OverlayDisabledClickPopup></OverlayDisabledClickPopup>
       </div>
     </section>
   );
@@ -24,6 +25,7 @@ const PopupContent = () => {
       <RegularPopup></RegularPopup>
       <MountedPopup></MountedPopup>
       <OverlayPopup></OverlayPopup>
+      <OverlayDisabledClickPopup></OverlayDisabledClickPopup>
     </>
   );
 };
@@ -158,6 +160,64 @@ const OverlayPopup = () => {
           <p>
             <strong>Overlay</strong>: Click on overlay, should only close that
             current stack
+          </p>
+          <input type="text" placeholder="text input..." class="input-test" />
+          <br />
+          <PopupContent />
+        </div>
+      </Dismiss>
+    </div>
+  );
+};
+
+const OverlayDisabledClickPopup = () => {
+  const [open, setOpen] = createSignal(false);
+  let btnEl!: HTMLButtonElement;
+  let containerEl!: HTMLElement;
+  let dropdownEl!: HTMLDivElement;
+
+  createComputed(() => {
+    if (!open()) return;
+    const btnBCR = btnEl.getBoundingClientRect();
+
+    console.log({ btnBCR });
+  });
+  createEffect(() => {
+    if (!open()) return;
+
+    const btnBCR = btnEl.getBoundingClientRect();
+
+    const containerWidth = 250;
+    containerEl.style.position = "absolute";
+    containerEl.style.width = 250 + "px";
+
+    containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
+    containerEl.style.left = getLeft(btnBCR, containerWidth) + "px";
+  });
+
+  return (
+    <div
+      style="display: inline-block; position: relative; padding: 5px;"
+      onClick={() => console.log("click container")}
+    >
+      <Button class="medium" open={open()} ref={btnEl}>
+        Overlay Disabled Click
+      </Button>
+      <Dismiss
+        menuButton={btnEl}
+        open={open}
+        setOpen={setOpen}
+        mount="body"
+        overlay={{ class: "overlay" }}
+        closeWhenOverlayClicked={false}
+        trapFocus={true}
+        ref={containerEl}
+        {...toggleAnimation({ includeOverlay: true })}
+      >
+        <div class="dropdown" ref={dropdownEl}>
+          <p>
+            <strong>Overlay</strong>: Click overlay to close is disabled! Press
+            Escape to close.
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <br />

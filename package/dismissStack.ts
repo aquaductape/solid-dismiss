@@ -6,7 +6,6 @@ export type TDismissStack = {
   id: string;
   uniqueId: string;
   setOpen: (v: boolean) => void;
-  setFocus?: (v: boolean) => void;
   open: Accessor<boolean>;
   menuBtnEl: HTMLElement;
   menuPopupEl: HTMLElement;

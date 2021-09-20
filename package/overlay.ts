@@ -5,15 +5,14 @@ import { queryElement } from "./utils";
 export const onClickOverlay = (state: TLocalState) => {
   const {
     uniqueId,
-    closeWhenClickedOutside,
+    closeWhenOverlayClicked,
     menuPopupEl,
     focusElementOnClose,
     menuBtnEl,
     setOpen,
-    setFocus,
   } = state;
 
-  if (!closeWhenClickedOutside) {
+  if (!closeWhenOverlayClicked) {
     menuPopupEl!.focus();
     return;
   }
@@ -24,10 +23,6 @@ export const onClickOverlay = (state: TLocalState) => {
       type: "focusElementOnClose",
       subType: "click",
     }) || menuBtnEl;
-
-  if (el !== menuBtnEl && setFocus) {
-    setFocus(false);
-  }
 
   if (el) {
     el.focus();

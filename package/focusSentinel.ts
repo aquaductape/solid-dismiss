@@ -42,7 +42,6 @@ export const onFocusSentinel = (
     focusElementOnClose,
     mount,
     setOpen,
-    setFocus,
   } = state;
 
   clearTimeout(containerFocusTimeoutId!);
@@ -80,10 +79,6 @@ export const onFocusSentinel = (
         subType: "tabBackwards",
       }) || menuBtnEl;
 
-    if (el !== menuBtnEl && setFocus) {
-      setFocus(false);
-    }
-
     if (el) {
       el.focus();
     }
@@ -114,10 +109,6 @@ export const onFocusSentinel = (
       from: menuBtnEl!,
       ignoreElement: [containerEl!],
     });
-
-  if (el !== menuBtnEl && setFocus) {
-    setFocus(false);
-  }
 
   if (mount) {
     globalState.closeByFocusSentinel = true;

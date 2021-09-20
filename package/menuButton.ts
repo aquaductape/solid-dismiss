@@ -45,12 +45,7 @@ export const onClickMenuButton = (state: TLocalState) => {
 };
 
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
-  const { onClickDocumentRef, containerEl, overlay, setOpen, open, setFocus } =
-    state;
-
-  if (!open()) {
-    setFocus && setFocus(false);
-  }
+  const { onClickDocumentRef, containerEl, overlay, setOpen, open } = state;
 
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
@@ -71,9 +66,6 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
 
   const run = () => {
     setOpen(false);
-    if (setFocus) {
-      setFocus(false);
-    }
   };
 
   state.menuButtonBlurTimeoutId = window.setTimeout(run);
@@ -112,23 +104,12 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
 };
 
 export const onFocusMenuButton = (state: TLocalState) => {
-  const {
-    menuBtnEl,
-    closeWhenMenuButtonIsTabbed,
-    containerFocusTimeoutId,
-    onKeydownMenuButtonRef,
-    onBlurMenuButtonRef,
-    setFocus,
-  } = state;
-
-  setFocus && setFocus(true);
+  const { closeWhenMenuButtonIsTabbed, containerFocusTimeoutId } = state;
 
   if (!closeWhenMenuButtonIsTabbed) {
     console.log("clear!!");
     clearTimeout(containerFocusTimeoutId!);
   }
-  // menuBtnEl!.addEventListener("keydown", onKeydownMenuButtonRef);
-  // menuBtnEl!.addEventListener("blur", onBlurMenuButtonRef, { once: true });
 };
 
 export const runAriaExpanded = (state: TLocalState, open: boolean) => {

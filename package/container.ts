@@ -14,7 +14,6 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     onClickDocumentRef,
     onFocusFromOutsideAppOrTabRef,
     setOpen,
-    setFocus,
   } = state;
   const relatedTarget = e.relatedTarget as HTMLElement | null;
 
@@ -55,10 +54,6 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
 
   state.containerFocusTimeoutId = window.setTimeout(() => {
     setOpen(false);
-
-    if (setFocus) {
-      setFocus(false);
-    }
   });
 };
 
@@ -70,10 +65,6 @@ export const onFocusInContainer = (state: TLocalState, e: FocusEvent) => {
   clearTimeout(state.menuButtonBlurTimeoutId!);
 
   state.containerFocusTimeoutId = null;
-
-  if (state.setFocus) {
-    state.setFocus(true);
-  }
 };
 
 export const runFocusOnActive = (state: TLocalState) => {

@@ -20,7 +20,7 @@ export type TLocalState = {
   closeWhenMenuButtonIsClicked: boolean;
   closeWhenScrolling: boolean;
   closeWhenDocumentBlurs: boolean;
-  closeWhenClickedOutside: boolean;
+  closeWhenOverlayClicked: boolean;
   closeWhenEscapeKeyIsPressed: boolean;
   overlay:
     | boolean
@@ -65,7 +65,6 @@ export type TLocalState = {
   onFocusMenuButtonRef: (e: Event) => void;
   onClickCloseButtonsRef: (e: Event) => void;
   setOpen: (v: boolean) => void;
-  setFocus?: (v: boolean) => void;
   open: Accessor<boolean>;
   upperStackRemovedByFocusOut: boolean;
 };

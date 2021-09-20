@@ -70,10 +70,6 @@ export type TDismiss = {
    */
   onOpen?: (open: boolean, dismissStack: DismissStack[]) => void;
   /**
-   * pass set signal to keep track if whether menuButton or container are focused
-   */
-  setFocus?: (v: boolean) => void;
-  /**
    * css selector, queried from document, to get menu button element. Or pass JSX element
    */
   menuButton: string | JSX.Element | (() => JSX.Element);
@@ -152,9 +148,9 @@ export type TDismiss = {
   /**
    * Default: `true`
    *
-   * If `false`, menuPopup won't close when overlay backdrop is clicked, should use `overlay` prop to work. When backdrop clicked, menuPopup will recieve focus.
+   * If `false`, menuPopup won't close when overlay backdrop is clicked. When overlay clicked, menuPopup will recieve focus.
    */
-  closeWhenClickedOutside?: boolean;
+  closeWhenOverlayClicked?: boolean;
   /**
    * Default: `true`
    *
@@ -204,12 +200,10 @@ export type TDismiss = {
    */
   mountedElseWhere?: boolean;
   mount?: string | Node;
-  /**
-   * Default: `false`
-   */
-  stopComponentEventPropagation?: boolean;
   animation?: TAnimation;
 };
+// stopComponentEventPropagation?: boolean;
+//
 
 type TAnimation = {
   name?: string;
@@ -289,14 +283,14 @@ const Dismiss: Component<TDismiss> = (props) => {
     closeWhenMenuButtonIsClicked = true,
     closeWhenScrolling = false,
     closeWhenDocumentBlurs = false,
-    closeWhenClickedOutside = true,
+    closeWhenOverlayClicked = true,
     closeWhenEscapeKeyIsPressed = true,
     overlay = false,
     trapFocus = false,
     removeScrollbar = false,
     useAriaExpanded = false,
     mountedElseWhere = false,
-    stopComponentEventPropagation = false,
+    // stopComponentEventPropagation = false,
     mount,
     onOpen,
   } = props;
@@ -307,7 +301,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     closeBtns: [],
     closeBtnsAdded: false,
     closeButtons,
-    closeWhenClickedOutside,
+    closeWhenOverlayClicked,
     closeWhenDocumentBlurs,
     closeWhenEscapeKeyIsPressed,
     closeWhenMenuButtonIsClicked,
@@ -369,52 +363,11 @@ const Dismiss: Component<TDismiss> = (props) => {
     },
   };
 
-  let marker: Text | null = stopComponentEventPropagation
-    ? null
-    : document.createTextNode("");
+  // let marker: Text | null = stopComponentEventPropagation
+  //   ? null
+  //   : document.createTextNode("");
+  let marker = document.createTextNode("");
   const initDefer = !props.open();
-
-  const runRemoveScrollbar = (open: boolean) => {
-    if (!removeScrollbar) return;
-
-    if (dismissStack.length > 1) return;
-
-    if (open) {
-      const el = document.scrollingElement as HTMLElement;
-      el.style.overflow = "hidden";
-    } else {
-      const el = document.scrollingElement as HTMLElement;
-      el.style.overflow = "";
-    }
-  };
-
-  onMount(() => {
-    state.menuBtnEl = queryElement(state, {
-      inputElement: menuButton,
-      type: "menuButton",
-    });
-    // console.log("onMount!!!", state.menuBtnEl, state.menuBtnEl.isConnected);
-    state.menuBtnEl.setAttribute("type", "button");
-    state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
-    if (
-      props.open() &&
-      (!state.focusElementOnOpen ||
-        state.focusElementOnOpen === "menuButton" ||
-        state.focusElementOnOpen === state.menuBtnEl)
-    ) {
-      state.menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
-        once: true,
-      });
-    }
-    state.menuBtnId = state.menuBtnEl.id;
-
-    runAriaExpanded(state, props.open());
-
-    if (!state.menuBtnId) {
-      state.menuBtnId = id || state.uniqueId;
-      state.menuBtnEl.id = state.menuBtnId;
-    }
-  });
 
   let containerEl: HTMLElement | null;
   let mountEl: Element | Node | null;
@@ -567,6 +520,48 @@ const Dismiss: Component<TDismiss> = (props) => {
     }
   }
 
+  const runRemoveScrollbar = (open: boolean) => {
+    if (!removeScrollbar) return;
+
+    if (dismissStack.length > 1) return;
+
+    if (open) {
+      const el = document.scrollingElement as HTMLElement;
+      el.style.overflow = "hidden";
+    } else {
+      const el = document.scrollingElement as HTMLElement;
+      el.style.overflow = "";
+    }
+  };
+
+  onMount(() => {
+    state.menuBtnEl = queryElement(state, {
+      inputElement: menuButton,
+      type: "menuButton",
+    });
+    // console.log("onMount!!!", state.menuBtnEl, state.menuBtnEl.isConnected);
+    state.menuBtnEl.setAttribute("type", "button");
+    state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+    if (
+      props.open() &&
+      (!state.focusElementOnOpen ||
+        state.focusElementOnOpen === "menuButton" ||
+        state.focusElementOnOpen === state.menuBtnEl)
+    ) {
+      state.menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
+        once: true,
+      });
+    }
+    state.menuBtnId = state.menuBtnEl.id;
+
+    runAriaExpanded(state, props.open());
+
+    if (!state.menuBtnId) {
+      state.menuBtnId = id || state.uniqueId;
+      state.menuBtnEl.id = state.menuBtnId;
+    }
+  });
+
   if (mount) {
     createComputed(
       on(
@@ -624,7 +619,6 @@ const Dismiss: Component<TDismiss> = (props) => {
             uniqueId: state.uniqueId,
             open: props.open,
             setOpen: props.setOpen,
-            setFocus: props.setFocus,
             containerEl: state.containerEl!,
             menuBtnEl: state.menuBtnEl!,
             overlayEl: state.overlayEl!,

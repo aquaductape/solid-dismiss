@@ -76,12 +76,8 @@ export const onWindowBlur = (e: Event) => {
         return item;
       },
       (item) => {
-        const { setOpen, setFocus, menuBtnEl } = item;
+        const { setOpen, menuBtnEl } = item;
         setOpen(false);
-
-        if (setFocus && activeElement !== menuBtnEl) {
-          setFocus(false);
-        }
       }
     );
   });
@@ -90,7 +86,6 @@ export const onWindowBlur = (e: Event) => {
 export const onKeyDown = (e: KeyboardEvent) => {
   const {
     setOpen,
-    setFocus,
     menuBtnEl,
     cursorKeys,
     closeWhenEscapeKeyIsPressed,
@@ -117,10 +112,6 @@ export const onKeyDown = (e: KeyboardEvent) => {
       }
     ) || menuBtnEl;
 
-  if (el !== menuBtnEl && setFocus) {
-    setFocus(false);
-  }
-
   if (el) {
     el.focus();
   }
@@ -146,7 +137,7 @@ export const onScrollClose = (e: Event) => {
       return item;
     },
     (item) => {
-      const { setOpen, setFocus, focusElementOnClose, menuBtnEl } = item;
+      const { setOpen, focusElementOnClose, menuBtnEl } = item;
 
       setOpen(false);
 
@@ -159,10 +150,6 @@ export const onScrollClose = (e: Event) => {
             subType: "scrolling",
           }
         ) || menuBtnEl;
-
-      if (el !== menuBtnEl && setFocus) {
-        setFocus(false);
-      }
 
       if (el) {
         el.focus();
@@ -324,12 +311,9 @@ const pollingIframe = () => {
         return;
       },
       (item) => {
-        const { setOpen, setFocus, menuBtnEl } = item;
+        const { setOpen, menuBtnEl } = item;
 
         setOpen(false);
-        if (setFocus && activeElement !== menuBtnEl) {
-          setFocus(false);
-        }
 
         cachedPolledElement = null;
         pollTimeoutId = null;
