@@ -18,9 +18,11 @@ const IFrame: Component<{
     );
     setTimeout(() => {
       doc.addEventListener("touchstart", () => {});
-      doc.querySelector("button")!.addEventListener("click", (e) => {
+      const btn = doc.querySelector("button")!;
+      btn.addEventListener("click", (e) => {
         (e.currentTarget as HTMLElement).focus();
       });
+      btn.textContent = "hi";
       doc.close();
     });
   });
