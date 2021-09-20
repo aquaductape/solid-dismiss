@@ -334,7 +334,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     onFocusInContainerRef: (e) => onFocusInContainer(state, e),
     onFocusOutContainerRef: (e) => onFocusOutContainer(state, e),
     onBlurMenuButtonRef: (e) => onBlurMenuButton(state, e),
-    onClickMenuButtonRef: () => onClickMenuButton(state),
+    onClickMenuButtonRef: (e) => onClickMenuButton(state, e),
     onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
     onFocusMenuButtonRef: () => onFocusMenuButton(state),
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),

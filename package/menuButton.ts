@@ -2,7 +2,7 @@ import { TLocalState } from "./localState";
 import { removeOutsideFocusEvents } from "./outside";
 import { getNextTabbableElement } from "./utils";
 
-export const onClickMenuButton = (state: TLocalState) => {
+export const onClickMenuButton = (state: TLocalState, e: Event) => {
   const {
     menuButtonBlurTimeoutId,
     menuBtnEl,
@@ -10,6 +10,7 @@ export const onClickMenuButton = (state: TLocalState) => {
     setOpen,
     open,
   } = state;
+  e.stopImmediatePropagation();
 
   console.log("onclick btn");
   clearTimeout(state.containerFocusTimeoutId!);
