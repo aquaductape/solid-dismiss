@@ -23,7 +23,7 @@ const IFrame: Component<{
       class={"iframe"}
       style="overflow:auto;-webkit-overflow-scrolling:touch"
     >
-      <iframe src="" ref={el}></iframe>
+      <iframe src="" ref={el} width="100%" height="100%"></iframe>
     </div>
   );
 };
