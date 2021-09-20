@@ -21,6 +21,7 @@ export const globalState = {
 export const onDocumentClick = (e: Event) => {
   const target = e.target as HTMLElement;
 
+  console.log("click doc");
   checkThenClose(
     dismissStack,
     (item) => {
@@ -204,6 +205,7 @@ export const removeGlobalEvents = () => {
   if (dismissStack.length) return;
 
   scrollEventAdded = false;
+  globalState.addedDocumentClick = false;
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("click", onDocumentClick);
   window.removeEventListener("blur", onWindowBlur);

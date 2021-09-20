@@ -34,6 +34,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     //
 
     if (!globalState.addedDocumentClick) {
+      console.log("add click doc");
       globalState.addedDocumentClick = true;
       document.addEventListener("click", onDocumentClick, { once: true });
     }

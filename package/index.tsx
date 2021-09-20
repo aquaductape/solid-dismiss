@@ -666,6 +666,7 @@ const Dismiss: Component<TDismiss> = (props) => {
 
     if (mount && mountEl && !exitRunning) {
       exitTransition("popup", containerEl?.firstElementChild!);
+      exitTransition("overlay", state.overlayEl!);
     }
   });
 
