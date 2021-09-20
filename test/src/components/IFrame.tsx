@@ -27,7 +27,15 @@ const IFrame: Component<{
       doc.close();
     });
   });
-  return <iframe class={"iframe"} src="" ref={el}></iframe>;
+  return (
+    <iframe
+      class={"iframe"}
+      src=""
+      // @ts-ignore
+      scrolling="no"
+      ref={el}
+    ></iframe>
+  );
 };
 
 export default IFrame;
