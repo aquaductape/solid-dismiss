@@ -16,5 +16,3 @@ if (iOS && !iOS13) {
   // @ts-ignore
   html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
 }
-
-export {};

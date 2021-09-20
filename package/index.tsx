@@ -42,6 +42,7 @@ import {
   onClickMenuButton,
   onFocusMenuButton,
   onKeydownMenuButton,
+  onMouseDownMenuButton,
   runAriaExpanded,
 } from "./menuButton";
 import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
@@ -335,6 +336,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     onFocusOutContainerRef: (e) => onFocusOutContainer(state, e),
     onBlurMenuButtonRef: (e) => onBlurMenuButton(state, e),
     onClickMenuButtonRef: (e) => onClickMenuButton(state, e),
+    onMouseDownMenuButtonRef: () => onMouseDownMenuButton(state),
     onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
     onFocusMenuButtonRef: () => onFocusMenuButton(state),
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
@@ -540,6 +542,10 @@ const Dismiss: Component<TDismiss> = (props) => {
     });
     state.menuBtnEl.setAttribute("type", "button");
     state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+    state.menuBtnEl.addEventListener(
+      "mousedown",
+      state.onMouseDownMenuButtonRef
+    );
     if (
       props.open() &&
       (!state.focusElementOnOpen ||

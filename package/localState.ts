@@ -64,6 +64,7 @@ export type TLocalState = {
   onBlurMenuButtonRef: (e: FocusEvent) => void;
   onFocusMenuButtonRef: (e: Event) => void;
   onClickCloseButtonsRef: (e: Event) => void;
+  onMouseDownMenuButtonRef: () => void;
   setOpen: (v: boolean) => void;
   open: Accessor<boolean>;
   upperStackRemovedByFocusOut: boolean;

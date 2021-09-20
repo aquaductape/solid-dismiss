@@ -2,6 +2,8 @@ import { TLocalState } from "./localState";
 import { removeOutsideFocusEvents } from "./outside";
 import { getNextTabbableElement } from "./utils";
 
+let isMouseDown = false;
+
 export const onClickMenuButton = (state: TLocalState, e: Event) => {
   const {
     menuButtonBlurTimeoutId,
@@ -48,6 +50,10 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   const { onClickDocumentRef, containerEl, overlay, setOpen, open } = state;
 
+  if (isMouseDown) {
+    isMouseDown = false;
+    return;
+  }
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
     return;
@@ -66,20 +72,15 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
 
   const run = () => {
-    // Solves Safari issue
-    if ((e.relatedTarget as HTMLElement).contains(state.menuBtnEl!)) {
-      return;
-    }
-    console.log("blurr", state.containerEl, state.menuBtnEl, e.relatedTarget);
-    console.log(
-      "containerEl, menuBtnEl",
-      state.containerEl?.isConnected,
-      state.menuBtnEl?.isConnected
-    );
     setOpen(false);
   };
 
   state.menuButtonBlurTimeoutId = window.setTimeout(run);
+};
+
+export const onMouseDownMenuButton = (state: TLocalState) => {
+  if (!state.open()) return;
+  isMouseDown = true;
 };
 
 export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
