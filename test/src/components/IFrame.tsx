@@ -14,20 +14,18 @@ const IFrame: Component<{
     const interactiveContent =
       '<button id="${id}">Button</button> <br><br> <a href="#">Link</a> <br><br> <input type="text" placeholder="Text input...">';
     doc.write(
-      `<html><body ${event} style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
+      `<html style="cursor: pointer"><body ${event} style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
     );
-
-    setTimeout(() => {
-      if (bodyHasClickListener) {
-        const html = doc.querySelector("html")!;
-        html.style.cursor = "pointer";
-        // @ts-ignore
-        html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
-      }
-      doc.close();
-    });
+    doc.close();
   });
-  return <iframe class={"iframe"} src="" ref={el}></iframe>;
+  return (
+    <div
+      class={"iframe"}
+      style="overflow:auto;-webkit-overflow-scrolling:touch"
+    >
+      <iframe src="" ref={el}></iframe>
+    </div>
+  );
 };
 
 export default IFrame;

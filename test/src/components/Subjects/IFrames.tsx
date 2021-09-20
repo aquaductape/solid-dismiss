@@ -27,8 +27,8 @@ const IFrames = () => {
         "outside" iframe. menuPopup should be closed
       </p>
       <p>
-        Unfortunatly in iOS in you must tap interactive elements(buttons, links,
-        ect) within the iframe, in order to close menuPopup.{" "}
+        Unfortunatly iOS 13+ in you must tap interactive elements(buttons,
+        links, ect) within the iframe, in order to close menuPopup.{" "}
       </p>
       <p>
         If you have control over editing Same Domain iframe, make sure to add
