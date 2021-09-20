@@ -10,10 +10,6 @@ body {
   font-size: 16px;
   padding: 80px 5vw;
   padding-bottom: 300px;
-  -webkit-text-size-adjust: none;
-  -moz-text-size-adjust: none;
-  -ms-text-size-adjust: none;
-  text-size-adjust: none;
 }
 
 p {
@@ -216,7 +212,7 @@ section {
 .input-test {
   width: calc(100% - 4px);
   margin: 2px;
-  max-width: 100px;
+  max-width: 80px;
 }
 
 .middle {

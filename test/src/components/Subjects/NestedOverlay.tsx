@@ -2,6 +2,7 @@ import { createEffect, createComputed, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, getWidth, reflow, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
+import MiniForm from "../MiniForm/MiniForm";
 
 const NestedOverlay = () => {
   return (
@@ -73,7 +74,7 @@ const Popup = () => {
           <p>
             Some <a href="javascript:void(0)">random</a> text
           </p>
-          <input type="text" placeholder="text input..." class="input-test" />
+          <MiniForm></MiniForm>
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
             <Popup></Popup>
             <Popup></Popup>
