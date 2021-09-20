@@ -16,6 +16,7 @@ export const onClickMenuButton = (state: TLocalState) => {
   menuBtnEl!.focus();
   state.containerFocusTimeoutId = null;
 
+  // iOS triggers refocus i think...
   if (!open()) {
     state.menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
       once: true,

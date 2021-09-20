@@ -8,11 +8,14 @@ import {
 
 let scrollEventAddedViaTouch = false;
 let scrollEventAdded = false;
-let cachedScrollTarget: Element | null = null;
-let cachedPolledElement: Element | null = null;
 let pollTimeoutId: number | null = null;
 let timestampOfTabkey: number = 0;
-export const globalState = {
+let cachedScrollTarget: Element | null = null;
+let cachedPolledElement: Element | null = null;
+
+export const globalState: {
+  closeByFocusSentinel: boolean;
+} = {
   closeByFocusSentinel: false,
 };
 
@@ -290,8 +293,8 @@ const onVisibilityChange = () => {
 
 // polls iframe to deal with edge case if menuPopup item selected is an iframe and then select another iframe that is "outside" of menuPopup
 const pollingIframe = () => {
-  // worst case scenerio is user has to wait for up to 300ms for menuPop to close, while average case is 150ms
-  const duration = 300;
+  // worst case scenerio is user has to wait for up to 250ms for menuPopup to close, while average case is 125ms
+  const duration = 250;
 
   const poll = () => {
     const activeElement = document.activeElement as HTMLElement;

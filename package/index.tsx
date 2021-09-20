@@ -49,7 +49,6 @@ import { onClickOverlay } from "./overlay";
 import CreatePortal from "./CreatePortal";
 import { Transition } from "./Transition";
 import { removeLocalEvents } from "./manageLocalEvents";
-// import { Transition } from "solid-transition-group";
 
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
@@ -610,12 +609,10 @@ const Dismiss: Component<TDismiss> = (props) => {
       () => !!props.open(),
       (open, prevOpen) => {
         if (open === prevOpen) return;
-        // console.log("init cE");
 
         runAriaExpanded(state, open);
 
         if (open) {
-          // console.log("createEffect");
           addCloseButtons(state);
           addMenuPopupEl(state);
           runFocusOnActive(state);

@@ -5,6 +5,7 @@ import {
   For,
   createEffect,
   createRenderEffect,
+  Component,
 } from "solid-js";
 import { Portal } from "solid-js/web";
 import Dismiss from "../../../../package/index";
@@ -34,7 +35,7 @@ const IFramesWithBodyClickListener = () => {
         "outside" iframe. menuPopup should be closed
       </p>
 
-      <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr">
+      <div class="grid" style="grid-template-columns: repeat(4, 1fr)">
         <Popup />
         <Popup />
         <Popup />
@@ -46,7 +47,7 @@ const IFramesWithBodyClickListener = () => {
   );
 };
 
-const Popup = () => {
+const Popup: Component<{ id?: string }> = ({ id }) => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
@@ -65,8 +66,10 @@ const Popup = () => {
 
   return (
     <div style="display: inline-block; position: relative;">
+      {/* {open() ? "open" : "closed"} */}
       <Button class="btn-small" open={open()} ref={btnEl} />
       <Dismiss
+        id={id}
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}

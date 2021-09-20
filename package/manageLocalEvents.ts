@@ -8,7 +8,6 @@ export const removeLocalEvents = (
   state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
   state.menuBtnEl!.removeEventListener("keydown", state.onKeydownMenuButtonRef);
   state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
-  // state.menuBtnEl?.removeEventListener("blur", state.onBlurMenuButtonRef);
   if (onCleanup) {
     state.menuBtnEl!.removeEventListener("click", state.onClickMenuButtonRef);
     state.menuBtnEl?.removeEventListener("focus", state.onFocusMenuButtonRef);
