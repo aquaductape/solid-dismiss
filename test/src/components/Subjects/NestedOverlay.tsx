@@ -1,6 +1,6 @@
 import { createEffect, createComputed, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
-import { getLeft, reflow, toggleAnimation } from "../../utils";
+import { getLeft, getWidth, reflow, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 
 const NestedOverlay = () => {
@@ -42,10 +42,15 @@ const Popup = () => {
 
     console.log({ btnBCR });
     containerEl.style.position = "absolute";
-    // containerEl.style.width = btnBCR.width + "px";
+    const containerWidth = getWidth({
+      viewportUnit: 90,
+      minWidth: 100,
+      maxWidth: 320,
+    });
+    containerEl.style.width = containerWidth + "px";
     // reflow();
     containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
-    containerEl.style.left = getLeft(btnBCR, 320) + "px";
+    containerEl.style.left = getLeft(btnBCR, containerWidth) + "px";
   });
 
   return (
