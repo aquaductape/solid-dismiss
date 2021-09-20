@@ -14,17 +14,9 @@ const IFrame: Component<{
     const interactiveContent =
       '<button id="${id}" >Button</button> <br><br> <a href="#">Link</a> <br><br> <input type="text" placeholder="Text input...">';
     doc.write(
-      `<html style="cursor: pointer"><body ${event} style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
+      `<html><body ${event} style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
     );
-    setTimeout(() => {
-      doc.addEventListener("touchstart", () => {});
-      const btn = doc.querySelector("button")!;
-      btn.addEventListener("click", (e) => {
-        (e.currentTarget as HTMLElement).focus();
-      });
-      btn.textContent = "hi";
-      doc.close();
-    });
+    doc.close();
   });
   return (
     <div
