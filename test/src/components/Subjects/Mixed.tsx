@@ -54,6 +54,8 @@ const RegularPopup = () => {
             <strong>Regular</strong>: Click on outside, should close stacks that
             don't contain the click
           </p>
+          <input type="text" placeholder="text input..." class="input-test" />
+          <br />
           <PopupContent />
         </div>
       </Dismiss>
@@ -101,6 +103,8 @@ const MountedPopup = () => {
             <strong>Mounted</strong>: Click on outside, should close stacks that
             don't contain the click
           </p>
+          <input type="text" placeholder="text input..." class="input-test" />
+          <br />
           <PopupContent />
         </div>
       </Dismiss>
@@ -155,6 +159,8 @@ const OverlayPopup = () => {
             <strong>Overlay</strong>: Click on overlay, should only close that
             current stack
           </p>
+          <input type="text" placeholder="text input..." class="input-test" />
+          <br />
           <PopupContent />
         </div>
       </Dismiss>

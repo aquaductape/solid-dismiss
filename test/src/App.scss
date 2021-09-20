@@ -209,6 +209,11 @@ section {
     transition: opacity 300ms;
   }
 }
+.input-test {
+  width: calc(100% - 4px);
+  margin: 2px;
+  max-width: 100px;
+}
 
 .middle {
   padding: 20px 5px 5px 5px;

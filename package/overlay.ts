@@ -12,7 +12,6 @@ export const onClickOverlay = (state: TLocalState) => {
     setOpen,
     setFocus,
   } = state;
-  console.log({ closeWhenClickedOutside });
 
   if (!closeWhenClickedOutside) {
     menuPopupEl!.focus();

@@ -90,6 +90,7 @@ const Popup: Component<{ id?: string }> = ({ id }) => {
             <IFrame bodyHasClickListener></IFrame>
             <IFrame bodyHasClickListener></IFrame>
           </div>
+          <input type="text" placeholder="text input..." class="input-test" />
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
             <Popup></Popup>
             <Popup></Popup>

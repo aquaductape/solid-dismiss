@@ -106,6 +106,7 @@ const Popup = () => {
           <br />
           <Popup />
           <br />
+          <input type="text" placeholder="text input..." class="input-test" />
           <For each={list}>
             {(item) => {
               return (

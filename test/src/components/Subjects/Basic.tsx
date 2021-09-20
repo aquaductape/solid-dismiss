@@ -51,6 +51,7 @@ const Content: Component = (props) => {
           fish
         </a>
       </li>
+      <input type="text" placeholder="text input..." class="input-test" />
     </ul>
   );
 };

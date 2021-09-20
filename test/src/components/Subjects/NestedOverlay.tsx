@@ -68,6 +68,7 @@ const Popup = () => {
           <p>
             Some <a href="javascript:void(0)">random</a> text
           </p>
+          <input type="text" placeholder="text input..." class="input-test" />
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
             <Popup></Popup>
             <Popup></Popup>

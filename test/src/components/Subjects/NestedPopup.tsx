@@ -54,6 +54,8 @@ const Popup = () => {
           <p>
             Some <a href="javascript:void(0)">random</a> text
           </p>
+          <input type="text" placeholder="text input..." class="input-test" />
+          <br />
           <Popup />
           <br />
           <Popup />
