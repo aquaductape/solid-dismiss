@@ -68,7 +68,7 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   // console.log("blurr", state.menuBtnEl, e.relatedTarget);
   const run = () => {
     if (state.menuBtnEl === e.relatedTarget) return;
-    console.log("blurr");
+    console.log("blurr", e.relatedTarget, state.menuBtnEl);
     setOpen(false);
   };
 
