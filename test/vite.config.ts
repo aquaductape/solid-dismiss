@@ -3,7 +3,7 @@ import solidPlugin from "vite-plugin-solid";
 import { viteSingleFile } from "vite-plugin-singlefile";
 
 export default defineConfig({
-  plugins: [solidPlugin(), viteSingleFile()],
+  plugins: [solidPlugin()],
   build: {
     target: "esnext",
     polyfillDynamicImport: false,
