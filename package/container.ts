@@ -1,7 +1,7 @@
 import { dismissStack } from "./dismissStack";
 import { globalState, onDocumentClick } from "./globalEvents";
 import { TLocalState } from "./localState";
-import { findItemReverse, queryElement } from "./utils";
+import { queryElement } from "./utils";
 
 // Safari, if relatedTarget is not contained within focusout, it will be null
 export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
@@ -13,6 +13,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   if (overlay) return;
 
   if (mount && globalState.closeByFocusSentinel) {
+    console.log("closebysentinel");
     if (dismissStack.findIndex((item) => item.uniqueId === uniqueId) <= 0) {
       globalState.closeByFocusSentinel = false;
     }
@@ -22,23 +23,32 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   if (!open()) return;
 
   if (!relatedTarget) {
-    const [_, overlayIdx] = findItemReverse(
-      dismissStack,
-      (item) => item.overlay
-    );
-    const currentIdx = dismissStack.findIndex(
-      (item) => item.uniqueId === uniqueId
-    );
-
-    if (overlayIdx > currentIdx) {
-      if (!globalState.addedDocumentClick) {
-        globalState.addedDocumentClick = true;
-        globalState.documentClickTimeout = window.setTimeout(() => {
-          document.addEventListener("click", onDocumentClick, { once: true });
-        });
-      }
-      return;
-    }
+    if (dismissStack.find((item) => item.overlay)) return;
+    //     const [_, overlayIdx] = findItemReverse(
+    //       dismissStack,
+    //       (item) => item.overlay
+    //     );
+    //     const currentIdx = dismissStack.findIndex(
+    //       (item) => item.uniqueId === uniqueId
+    //     );
+    //
+    //     if (overlayIdx > currentIdx) {
+    //       if (!globalState.addedDocumentClick) {
+    //         globalState.addedDocumentClick = true;
+    //         // globalState.documentClickTimeout = window.setTimeout(() => {
+    //         document.addEventListener(
+    //           "click",
+    //           () => {
+    //             document.addEventListener("click", onDocumentClick, {
+    //               once: true,
+    //             });
+    //           },
+    //           { once: true }
+    //         );
+    //         // });
+    //       }
+    //       return;
+    //     }
     //     if (state.addedFocusOutAppEvents) return;
     //     state.addedFocusOutAppEvents = true;
     //     state.prevFocusedEl = e.target as HTMLElement;
@@ -47,6 +57,12 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     if (!globalState.addedDocumentClick) {
       globalState.addedDocumentClick = true;
       document.addEventListener("click", onDocumentClick, { once: true });
+      // document.addEventListener(
+      //   "click",
+      //   () => {
+      //   },
+      //   { once: true }
+      // );
     }
 
     //     state.prevFocusedEl!.addEventListener(

@@ -1,15 +1,13 @@
 import { dismissStack } from "./dismissStack";
 import { TLocalState } from "./localState";
-import { queryElement } from "./utils";
+import { checkThenClose, queryElement } from "./utils";
 
 export const onClickOverlay = (state: TLocalState) => {
   const {
-    uniqueId,
     closeWhenOverlayClicked,
     menuPopupEl,
     focusElementOnClose,
     menuBtnEl,
-    setOpen,
   } = state;
 
   if (!closeWhenOverlayClicked) {
@@ -27,7 +25,18 @@ export const onClickOverlay = (state: TLocalState) => {
   if (el) {
     el.focus();
   }
-  dismissStack.find((item) => item.uniqueId === uniqueId)!.queueRemoval = true;
 
-  setOpen(false);
+  checkThenClose(
+    dismissStack,
+    (item) => {
+      if (item.overlay) return;
+      return item;
+    },
+    (item) => {
+      const { setOpen } = item;
+      setOpen(false);
+    }
+  );
+
+  state.setOpen(false);
 };

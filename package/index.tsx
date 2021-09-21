@@ -185,6 +185,12 @@ export type TDismiss = {
         class?: string;
         classList?: { [key: string]: boolean };
         animation?: TAnimation;
+        /**
+         * Default: `false`
+         *
+         * Even if menuPopup is mounted to body, events still propagate through the menuButton's Component Hierarchy.
+         */
+        stopComponentEventPropagation?: boolean;
       };
   /**
    * Default: `false`
@@ -291,7 +297,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     removeScrollbar = false,
     useAriaExpanded = false,
     mountedElseWhere = false,
-    // stopComponentEventPropagation = false,
     mount,
     onOpen,
   } = props;
@@ -365,9 +370,12 @@ const Dismiss: Component<TDismiss> = (props) => {
     },
   };
 
-  // let marker: Text | null = stopComponentEventPropagation
-  //   ? null
-  //   : document.createTextNode("");
+  // let marker: Text | null =
+  //   props.overlay &&
+  //   typeof props.overlay === "object" &&
+  //   !props.overlay.stopComponentEventPropagation
+  //     ? null
+  //     : document.createTextNode("");
   let marker = document.createTextNode("");
   const initDefer = !props.open();
 
@@ -683,7 +691,6 @@ const Dismiss: Component<TDismiss> = (props) => {
           typeof state.overlay === "object" ? state.overlay.classList || {} : {}
         }
         role="presentation"
-        tabindex="0"
         data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
         onClick={state.onClickOverlayRef}
         ref={state.refOverlayCb}
@@ -725,6 +732,7 @@ const Dismiss: Component<TDismiss> = (props) => {
   }
 
   if (props.mount) return marker;
+  // if (props.mount) return null;
 
   let strictEqual = false;
   const condition = createMemo<boolean>(() => props.open(), undefined, {

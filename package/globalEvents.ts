@@ -1,5 +1,6 @@
 import { dismissStack, TDismissStack } from "./dismissStack";
 import {
+  checkThenClose,
   getNextTabbableElement,
   inverseQuerySelector,
   queryElement,
@@ -240,26 +241,6 @@ const onTouchMove = () => {
     passive: true,
     once: true,
   });
-};
-
-/**
- *  Iterate stack backwards, checks item, pass it close callback. First falsy value breaks iteration.
- */
-const checkThenClose = <T extends unknown>(
-  arr: T[],
-  checkCb: (item: T) => T | null | undefined,
-  destroyCb: (item: T) => void
-) => {
-  for (let i = arr.length - 1; i >= 0; i--) {
-    const item = checkCb(arr[i]);
-
-    if (item) {
-      destroyCb(item);
-      continue;
-    }
-
-    return;
-  }
 };
 
 const onCursorKeys = (e: KeyboardEvent) => {

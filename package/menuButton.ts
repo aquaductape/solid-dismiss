@@ -1,7 +1,7 @@
 import { dismissStack } from "./dismissStack";
 import { TLocalState } from "./localState";
 import { removeOutsideFocusEvents } from "./outside";
-import { getNextTabbableElement } from "./utils";
+import { checkThenClose, getNextTabbableElement } from "./utils";
 
 let mousedownFired = false;
 
@@ -102,22 +102,6 @@ export const onMouseDownMenuButton = (state: TLocalState) => {
   mousedownFired = true;
 };
 
-const checkThenClose = <T extends unknown>(
-  arr: T[],
-  checkCb: (item: T) => T | null | undefined,
-  destroyCb: (item: T) => void
-) => {
-  for (let i = arr.length - 1; i >= 0; i--) {
-    const item = checkCb(arr[i]);
-
-    if (item) {
-      destroyCb(item);
-      continue;
-    }
-
-    return;
-  }
-};
 export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
   const {
     focusSentinelFirstEl,
