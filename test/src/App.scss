@@ -165,7 +165,8 @@ section {
   // transform-origin: center;
 
   &-enter {
-    transform: scale(0.5);
+    // Desktop Safari render issues
+    transform: scale(0.1);
     opacity: 0.1;
   }
   &-enter-to {
