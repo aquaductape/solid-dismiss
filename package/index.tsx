@@ -542,6 +542,9 @@ const Dismiss: Component<TDismiss> = (props) => {
     });
     state.menuBtnEl.setAttribute("type", "button");
     state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+    state.menuBtnEl.addEventListener("focus", () =>
+      console.log("menuButton focused", state.uniqueId)
+    );
     state.menuBtnEl.addEventListener(
       "mousedown",
       state.onMouseDownMenuButtonRef

@@ -3,6 +3,8 @@ import { globalState, onDocumentClick } from "./globalEvents";
 import { TLocalState } from "./localState";
 import { findItemReverse, queryElement } from "./utils";
 
+// I think... In Safari when a focusable element is mousedown, then focus events run
+// while in other browsers, when a focusable element is clicked, then focus events run
 export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const { uniqueId, overlay, open, mount, setOpen } = state;
   const relatedTarget = e.relatedTarget as HTMLElement | null;
