@@ -29,7 +29,16 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     const currentIdx = dismissStack.findIndex(
       (item) => item.uniqueId === uniqueId
     );
-    if (overlayIdx > currentIdx) return;
+
+    if (overlayIdx > currentIdx) {
+      if (!globalState.addedDocumentClick) {
+        globalState.addedDocumentClick = true;
+        globalState.documentClickTimeout = window.setTimeout(() => {
+          document.addEventListener("click", onDocumentClick, { once: true });
+        });
+      }
+      return;
+    }
     //     if (state.addedFocusOutAppEvents) return;
     //     state.addedFocusOutAppEvents = true;
     //     state.prevFocusedEl = e.target as HTMLElement;

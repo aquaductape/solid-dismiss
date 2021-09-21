@@ -13,9 +13,14 @@ let timestampOfTabkey: number = 0;
 let cachedScrollTarget: Element | null = null;
 let cachedPolledElement: Element | null = null;
 
-export const globalState = {
+export const globalState: {
+  closeByFocusSentinel: boolean;
+  addedDocumentClick: boolean;
+  documentClickTimeout: number | null;
+} = {
   closeByFocusSentinel: false,
   addedDocumentClick: false,
+  documentClickTimeout: null,
 };
 
 export const onDocumentClick = (e: Event) => {
@@ -206,6 +211,8 @@ export const removeGlobalEvents = () => {
 
   scrollEventAdded = false;
   globalState.addedDocumentClick = false;
+  window.clearTimeout(globalState.documentClickTimeout!);
+  globalState.documentClickTimeout = null;
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("click", onDocumentClick);
   window.removeEventListener("blur", onWindowBlur);
