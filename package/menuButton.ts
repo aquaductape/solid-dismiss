@@ -86,7 +86,7 @@ export const onMouseDownMenuButton = (state: TLocalState) => {
     checkThenClose(
       dismissStack,
       (item) => {
-        if (item.menuBtnEl!.contains(state.menuBtnEl!)) return;
+        if (item.containerEl!.contains(state.menuBtnEl!)) return;
         return item;
       },
       (item) => {
