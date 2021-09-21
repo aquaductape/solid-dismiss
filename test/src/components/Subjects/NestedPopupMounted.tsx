@@ -1,9 +1,4 @@
-import {
-  createComputed,
-  createSignal,
-  createRenderEffect,
-  createEffect,
-} from "solid-js";
+import { createSignal, createEffect } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
