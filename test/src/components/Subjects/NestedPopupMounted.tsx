@@ -46,14 +46,12 @@ const Popup = () => {
   createEffect(() => {
     if (!open()) return;
 
-    setTimeout(() => {
-      const btnBCR = btnEl.getBoundingClientRect();
+    const btnBCR = btnEl.getBoundingClientRect();
 
-      containerEl.style.position = "absolute";
+    containerEl.style.position = "absolute";
 
-      containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
-      containerEl.style.left = getLeft(btnBCR, 320) + "px";
-    });
+    containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
+    containerEl.style.left = getLeft(btnBCR, 320) + "px";
   });
 
   return (
