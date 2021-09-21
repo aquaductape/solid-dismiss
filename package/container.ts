@@ -21,7 +21,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
 
   if (!open()) return;
 
-  console.log("focusout", { relatedTarget });
+  console.log("focusout", { relatedTarget, activeElement });
   if (!relatedTarget) {
     const [_, overlayIdx] = findItemReverse(
       dismissStack,
