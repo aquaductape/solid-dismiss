@@ -1,3 +1,4 @@
+import { dismissStack } from "./dismissStack";
 import { TLocalState } from "./localState";
 import { removeOutsideFocusEvents } from "./outside";
 import { getNextTabbableElement } from "./utils";
@@ -82,6 +83,18 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
 // When reclicking menuButton for closing intention, Safari will trigger blur upon mousedown, which the click event fires after. This results menuPopup close then reopen. This mousedown event prevents that bug.
 export const onMouseDownMenuButton = (state: TLocalState) => {
   if (!state.open()) {
+    checkThenClose(
+      dismissStack,
+      (item) => {
+        if (item.menuBtnEl!.contains(state.menuBtnEl!)) return;
+        return item;
+      },
+      (item) => {
+        console.log("mousedown destroy!");
+        item.setOpen(false);
+      }
+    );
+
     mousedownFired = false;
     return;
   }
@@ -89,6 +102,22 @@ export const onMouseDownMenuButton = (state: TLocalState) => {
   mousedownFired = true;
 };
 
+const checkThenClose = <T extends unknown>(
+  arr: T[],
+  checkCb: (item: T) => T | null | undefined,
+  destroyCb: (item: T) => void
+) => {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const item = checkCb(arr[i]);
+
+    if (item) {
+      destroyCb(item);
+      continue;
+    }
+
+    return;
+  }
+};
 export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
   const {
     focusSentinelFirstEl,
