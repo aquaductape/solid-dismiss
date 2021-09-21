@@ -1,4 +1,9 @@
-import { createComputed, createSignal, createRenderEffect } from "solid-js";
+import {
+  createComputed,
+  createSignal,
+  createRenderEffect,
+  createEffect,
+} from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
@@ -38,15 +43,17 @@ const Popup = () => {
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
 
-  createRenderEffect(() => {
+  createEffect(() => {
     if (!open()) return;
 
-    const btnBCR = btnEl.getBoundingClientRect();
+    setTimeout(() => {
+      const btnBCR = btnEl.getBoundingClientRect();
 
-    containerEl.style.position = "absolute";
+      containerEl.style.position = "absolute";
 
-    containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
-    containerEl.style.left = getLeft(btnBCR, 320) + "px";
+      containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
+      containerEl.style.left = getLeft(btnBCR, 320) + "px";
+    });
   });
 
   return (
