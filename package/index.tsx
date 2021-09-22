@@ -69,7 +69,11 @@ export type TDismiss = {
   /**
    * callback when setOpen signal changes
    */
-  onOpen?: (open: boolean, dismissStack: DismissStack[]) => void;
+  onOpen?: (
+    open: boolean,
+    uniqueId: string,
+    dismissStack: DismissStack[]
+  ) => void;
   /**
    * css selector, queried from document, to get menu button element. Or pass JSX element
    */
@@ -124,7 +128,48 @@ export type TDismiss = {
    *
    *
    */
-  focusElementOnClose?: TFocusElementOnClose;
+  focusElementOnClose?:
+    | "menuButton"
+    | string
+    | JSX.Element
+    | {
+        /**
+         * Default: menuButton
+         *
+         * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
+         *
+         */
+        tabBackwards?: "menuButton" | string | JSX.Element;
+        /**
+         * Default: next tabbable element after menuButton;
+         *
+         * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
+         *
+         * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
+         */
+        tabForwards?: "menuButton" | string | JSX.Element;
+        /**
+         * focus on element when exiting menuPopup via click outside popup.
+         *
+         * If overlay present, and popup closes via click, then menuButton will be focused.
+         *
+         * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
+         */
+        click?: "menuButton" | string | JSX.Element;
+        /**
+         * Default: menuButton
+         *
+         * focus on element when exiting menuPopup via "Escape" key
+         */
+        escapeKey?: "menuButton" | string | JSX.Element;
+        /**
+         * Default: menuButton
+         *
+         * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
+         */
+        scrolling?: "menuButton" | string | JSX.Element;
+      };
+
   /**
    * Default: `false`
    *
@@ -229,48 +274,6 @@ type TAnimation = {
   appear?: boolean;
 };
 
-export type TFocusElementOnClose =
-  | "menuButton"
-  | string
-  | JSX.Element
-  | {
-      /**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
-       *
-       */
-      tabBackwards?: "menuButton" | string | JSX.Element;
-      /**
-       * Default: next tabbable element after menuButton;
-       *
-       * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
-       *
-       * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
-       */
-      tabForwards?: "menuButton" | string | JSX.Element;
-      /**
-       * focus on element when exiting menuPopup via click outside popup.
-       *
-       * If overlay present, and popup closes via click, then menuButton will be focused.
-       *
-       * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
-       */
-      click?: "menuButton" | string | JSX.Element;
-      /**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via "Escape" key
-       */
-      escapeKey?: "menuButton" | string | JSX.Element;
-      /**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
-       */
-      scrolling?: "menuButton" | string | JSX.Element;
-    };
-
 export type DismissStack = TDismissStack;
 
 /**
@@ -302,7 +305,7 @@ const Dismiss: Component<TDismiss> = (props) => {
   } = props;
 
   const state: TLocalState = {
-    mount: !!mount,
+    mount,
     addedFocusOutAppEvents: false,
     closeBtns: [],
     closeBtnsAdded: false,
@@ -321,8 +324,10 @@ const Dismiss: Component<TDismiss> = (props) => {
     menuBtnId: "",
     menuBtnKeyupTabFired: false,
     menuButton,
-    containerFocusTimeoutId: null,
-    menuButtonBlurTimeoutId: null,
+    timeouts: {
+      containerFocusTimeoutId: null,
+      menuButtonBlurTimeoutId: null,
+    },
     upperStackRemovedByFocusOut: false,
     menuPopup,
     menuPopupAdded: false,
@@ -640,15 +645,17 @@ const Dismiss: Component<TDismiss> = (props) => {
             overlay: !!overlay,
             closeWhenDocumentBlurs,
             closeWhenEscapeKeyIsPressed,
+            closeWhenMenuButtonIsTabbed,
             cursorKeys,
             focusElementOnClose,
             upperStackRemovedByFocusOut: false,
             detectIfMenuButtonObscured: false,
             queueRemoval: false,
+            timeouts: state.timeouts,
           });
 
           runRemoveScrollbar(open);
-          onOpen && onOpen(open, dismissStack);
+          onOpen && onOpen(open, state.uniqueId, dismissStack);
           activateLastFocusSentinel(state);
         } else {
           removeLocalEvents(state);
@@ -659,7 +666,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           removeDismissStack(state.uniqueId);
           removeGlobalEvents();
           runRemoveScrollbar(open);
-          onOpen && onOpen(open, dismissStack);
+          onOpen && onOpen(open, state.uniqueId, dismissStack);
         }
       },
       { defer: initDefer }
@@ -685,10 +692,10 @@ const Dismiss: Component<TDismiss> = (props) => {
     return (
       <div
         class={
-          typeof state.overlay === "object" ? state.overlay.class : undefined
+          typeof props.overlay === "object" ? props.overlay.class : undefined
         }
         classList={
-          typeof state.overlay === "object" ? state.overlay.classList || {} : {}
+          typeof props.overlay === "object" ? props.overlay.classList || {} : {}
         }
         role="presentation"
         data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
@@ -711,6 +718,7 @@ const Dismiss: Component<TDismiss> = (props) => {
         <div
           tabindex="0"
           onFocus={(e) => {
+            debugger;
             onFocusSentinel(state, "first", e.relatedTarget as HTMLElement);
           }}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"

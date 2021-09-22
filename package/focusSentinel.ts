@@ -2,6 +2,7 @@ import { dismissStack } from "./dismissStack";
 import { globalState } from "./globalEvents";
 import { TLocalState } from "./localState";
 import {
+  checkThenClose,
   getNextTabbableElement,
   matchByFirstChild,
   queryElement,
@@ -32,7 +33,7 @@ export const onFocusSentinel = (
   relatedTarget?: HTMLElement
 ) => {
   const {
-    containerFocusTimeoutId,
+    uniqueId,
     containerEl,
     menuBtnEl,
     focusSentinelFirstEl,
@@ -44,7 +45,48 @@ export const onFocusSentinel = (
     setOpen,
   } = state;
 
-  clearTimeout(containerFocusTimeoutId!);
+  // clearTimeout(containerFocusTimeoutId!);
+  // if (mount) {
+  dismissStack.forEach((item) =>
+    window.clearTimeout(item.timeouts.containerFocusTimeoutId!)
+  );
+  // }
+
+  const runIfMounted = (el: HTMLElement, isFirst?: boolean) => {
+    // globalState.closeByFocusSentinel = true;
+    checkThenClose(
+      dismissStack,
+      (item) => {
+        if (isFirst) {
+          if (item.menuBtnEl === el && !item.closeWhenMenuButtonIsTabbed) {
+            menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
+              once: true,
+            });
+            menuBtnEl!.addEventListener(
+              "keydown",
+              state.onKeydownMenuButtonRef
+            );
+            menuBtnEl!.addEventListener("blur", state.onBlurMenuButtonRef, {
+              once: true,
+            });
+            return;
+          }
+        }
+        if (item.uniqueId === uniqueId || !item.containerEl.contains(el)) {
+          return item;
+        }
+
+        return;
+      },
+      (item) => {
+        item.setOpen(false);
+      }
+    );
+
+    if (el) {
+      el.focus();
+    }
+  };
 
   if (relatedTarget === containerEl || relatedTarget === menuBtnEl) {
     const el = getNextTabbableElement({
@@ -79,6 +121,11 @@ export const onFocusSentinel = (
         subType: "tabBackwards",
       }) || menuBtnEl;
 
+    // if (mount) {
+    runIfMounted(el, true);
+    return;
+    // }
+
     if (el) {
       el.focus();
     }
@@ -111,10 +158,10 @@ export const onFocusSentinel = (
     });
 
   if (mount) {
-    globalState.closeByFocusSentinel = true;
+    runIfMounted(el);
+    return;
   }
 
-  console.log("sentinel", { el });
   if (el) {
     el.focus();
   }

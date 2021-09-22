@@ -1,8 +1,7 @@
 import { Accessor, JSX } from "solid-js";
-import { TFocusElementOnClose } from ".";
-import { TLocalState } from "./localState";
+import { TDismiss } from ".";
 
-export type TDismissStack = {
+export type TDismissStack = Pick<TDismiss, "focusElementOnClose"> & {
   id: string;
   uniqueId: string;
   setOpen: (v: boolean) => void;
@@ -14,11 +13,15 @@ export type TDismissStack = {
   overlay: "backdrop" | "clip" | boolean;
   detectIfMenuButtonObscured: boolean;
   closeWhenDocumentBlurs: boolean;
+  closeWhenMenuButtonIsTabbed: boolean;
   cursorKeys: boolean;
   closeWhenEscapeKeyIsPressed: boolean;
-  focusElementOnClose: TFocusElementOnClose;
   queueRemoval: boolean;
   upperStackRemovedByFocusOut: boolean;
+  timeouts: {
+    containerFocusTimeoutId: number | null;
+    menuButtonBlurTimeoutId: number | null;
+  };
 };
 
 export const dismissStack: TDismissStack[] = [];

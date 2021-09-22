@@ -41,6 +41,15 @@ const Scrolling = () => {
                 );
               }}
             </For>
+            <li>
+              <a
+                id="lone-scrolling-item"
+                class="item"
+                href="javascript:void(0)"
+              >
+                chicken
+              </a>
+            </li>
           </ol>
         </div>
       </div>
@@ -118,6 +127,11 @@ const Popup = () => {
               );
             }}
           </For>
+          <li>
+            <a class="item" href="javascript:void(0)">
+              chicken
+            </a>
+          </li>
         </ol>
       </Dismiss>
     </div>

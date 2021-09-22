@@ -1,6 +1,7 @@
 import { Component } from "solid-js";
 
 const Button: Component<{
+  id?: string;
   open?: boolean;
   active?: boolean;
   class?: string;
@@ -9,6 +10,7 @@ const Button: Component<{
 }> = (props) => {
   return (
     <button
+      id={props.id}
       class={`menu-button ${props.class ? props.class : ""}`}
       classList={{ opened: props.open }}
       onClick={(e) => {

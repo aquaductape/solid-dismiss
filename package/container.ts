@@ -5,20 +5,20 @@ import { queryElement } from "./utils";
 
 // Safari, if relatedTarget is not contained within focusout, it will be null
 export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
-  const { uniqueId, overlay, open, mount, setOpen } = state;
+  const { uniqueId, overlay, open, mount, setOpen, timeouts } = state;
   const relatedTarget = e.relatedTarget as HTMLElement | null;
   const activeElement = document.activeElement as HTMLElement;
 
   console.log("focusout", { relatedTarget, activeElement });
   if (overlay) return;
 
-  if (mount && globalState.closeByFocusSentinel) {
-    console.log("closebysentinel");
-    if (dismissStack.findIndex((item) => item.uniqueId === uniqueId) <= 0) {
-      globalState.closeByFocusSentinel = false;
-    }
-    return;
-  }
+  // if (mount && globalState.closeByFocusSentinel) {
+  //   console.log("closebysentinel");
+  //   if (dismissStack.findIndex((item) => item.uniqueId === uniqueId) <= 0) {
+  //     globalState.closeByFocusSentinel = false;
+  //   }
+  //   return;
+  // }
 
   if (!open()) return;
 
@@ -75,21 +75,22 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     return;
   }
 
-  state.containerFocusTimeoutId = window.setTimeout(() => {
+  timeouts.containerFocusTimeoutId = window.setTimeout(() => {
     console.log("remove", relatedTarget);
     setOpen(false);
   });
 };
 
 export const onFocusInContainer = (state: TLocalState, e: FocusEvent) => {
+  const { timeouts } = state;
   // if (state.stopPropagateFocusInAndFocusOut) {
   //   e.stopPropagation();
   // }
   console.log("focusin");
-  clearTimeout(state.containerFocusTimeoutId!);
-  clearTimeout(state.menuButtonBlurTimeoutId!);
+  clearTimeout(timeouts.containerFocusTimeoutId!);
+  clearTimeout(timeouts.menuButtonBlurTimeoutId!);
 
-  state.containerFocusTimeoutId = null;
+  timeouts.containerFocusTimeoutId = null;
 };
 
 export const runFocusOnActive = (state: TLocalState) => {

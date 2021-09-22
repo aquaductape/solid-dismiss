@@ -1,41 +1,13 @@
 import { JSX, Accessor } from "solid-js";
-import { TFocusElementOnClose } from ".";
+import { TDismiss } from ".";
 import { TDismissStack } from "./dismissStack";
 
-export type TLocalState = {
+export type TLocalState = Omit<
+  TDismiss,
+  "id" | "ref" | "animation" | "onOpen" | "class" | "classList"
+> & {
   uniqueId: string;
   id: string;
-  menuButton: JSX.Element | (() => JSX.Element);
-  menuPopup: string | JSX.Element | (() => JSX.Element);
-  focusElementOnOpen: "menuPopup" | string | JSX.Element | (() => JSX.Element);
-  focusElementOnClose: TFocusElementOnClose;
-  closeButtons:
-    | string
-    | JSX.Element
-    | (string | JSX.Element)[]
-    | (() => JSX.Element)
-    | (() => (string | JSX.Element)[]);
-  cursorKeys: boolean;
-  closeWhenMenuButtonIsTabbed: boolean;
-  closeWhenMenuButtonIsClicked: boolean;
-  closeWhenScrolling: boolean;
-  closeWhenDocumentBlurs: boolean;
-  closeWhenOverlayClicked: boolean;
-  closeWhenEscapeKeyIsPressed: boolean;
-  overlay:
-    | boolean
-    | {
-        ref?: (el: HTMLElement) => void;
-        class?: string;
-        classList?: { [key: string]: boolean };
-      };
-  trapFocus: boolean;
-  removeScrollbar:
-    | boolean
-    | ((open: boolean, dismissStack: TDismissStack[]) => void);
-  useAriaExpanded: boolean;
-  mount: boolean;
-  mountedElseWhere: boolean;
   hasFocusSentinels: boolean;
   closeBtns: HTMLElement[];
   menuPopupEl?: HTMLElement | null;
@@ -50,8 +22,10 @@ export type TLocalState = {
   addedFocusOutAppEvents: boolean;
   menuBtnKeyupTabFired: boolean;
   prevFocusedEl?: HTMLElement | null;
-  containerFocusTimeoutId: number | null;
-  menuButtonBlurTimeoutId: number | null;
+  timeouts: {
+    containerFocusTimeoutId: number | null;
+    menuButtonBlurTimeoutId: number | null;
+  };
   refContainerCb: (el: HTMLElement) => void;
   refOverlayCb: (el: HTMLElement) => void;
   onClickOverlayRef: (e: Event) => void;

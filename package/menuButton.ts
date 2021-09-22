@@ -6,13 +6,8 @@ import { checkThenClose, getNextTabbableElement } from "./utils";
 let mousedownFired = false;
 
 export const onClickMenuButton = (state: TLocalState, e: Event) => {
-  const {
-    menuButtonBlurTimeoutId,
-    menuBtnEl,
-    closeWhenMenuButtonIsClicked,
-    setOpen,
-    open,
-  } = state;
+  const { timeouts, menuBtnEl, closeWhenMenuButtonIsClicked, setOpen, open } =
+    state;
 
   if (mousedownFired && !open()) {
     mousedownFired = false;
@@ -21,13 +16,13 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 
   menuBtnEl!.focus();
   console.log("onclick btn");
-  clearTimeout(state.containerFocusTimeoutId!);
-  clearTimeout(menuButtonBlurTimeoutId!);
-  state.containerFocusTimeoutId = null;
+  clearTimeout(timeouts.containerFocusTimeoutId!);
+  clearTimeout(timeouts.menuButtonBlurTimeoutId!);
+  timeouts.containerFocusTimeoutId = null;
 
   // iOS triggers refocus i think...
   if (!open()) {
-    state.menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
+    menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
       once: true,
     });
     menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
@@ -54,7 +49,8 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 };
 
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
-  const { onClickDocumentRef, containerEl, overlay, setOpen, open } = state;
+  const { onClickDocumentRef, containerEl, overlay, setOpen, open, timeouts } =
+    state;
 
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
@@ -77,7 +73,7 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     setOpen(false);
   };
 
-  state.menuButtonBlurTimeoutId = window.setTimeout(run);
+  timeouts.menuButtonBlurTimeoutId = window.setTimeout(run);
 };
 
 // When reclicking menuButton for closing intention, Safari will trigger blur upon mousedown, which the click event fires after. This results menuPopup close then reopen. This mousedown event prevents that bug.
@@ -135,11 +131,11 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
 };
 
 export const onFocusMenuButton = (state: TLocalState) => {
-  const { closeWhenMenuButtonIsTabbed, containerFocusTimeoutId } = state;
+  const { closeWhenMenuButtonIsTabbed, timeouts } = state;
 
   if (!closeWhenMenuButtonIsTabbed) {
     console.log("clear!!");
-    clearTimeout(containerFocusTimeoutId!);
+    clearTimeout(timeouts.containerFocusTimeoutId!);
   }
 };
 

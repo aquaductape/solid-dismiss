@@ -7,8 +7,8 @@ import Button from "../Button/Button";
 
 const Basic = () => {
   return (
-    <section class="basic">
-      <h2>Basic Popup</h2>
+    <section id="basic" class="basic">
+      <h2 tabindex="0">Basic Popup</h2>
       <p>No overlay, page is interactable</p>
       <p>Open menuPopup, then close it by:</p>
       <ul>
@@ -20,9 +20,9 @@ const Basic = () => {
         <li>clicking outside of menuPopup</li>
       </ul>
       <div class="grid">
-        <Popup />
-        <Popup />
-        <Popup />
+        <Popup id={"basic-1"} />
+        <Popup id={"basic-2"} />
+        <Popup id={"basic-3"} />
       </div>
     </section>
   );
@@ -56,7 +56,7 @@ const Content: Component = (props) => {
   );
 };
 
-const Popup = () => {
+const Popup: Component<{ id: string }> = ({ id }) => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   const [className, setClassName] = createSignal("popup");
@@ -72,8 +72,9 @@ const Popup = () => {
         console.log("container clicked!");
       }}
     >
-      <Button open={open()} ref={btnEl} />
+      <Button id={id + "-button"} open={open()} ref={btnEl} />
       <Dismiss
+        id={id + "-popup"}
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
