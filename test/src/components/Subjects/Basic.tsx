@@ -61,9 +61,9 @@ const Popup: Component<{ id: string }> = ({ id }) => {
   let btnEl!: HTMLButtonElement;
   const [className, setClassName] = createSignal("popup");
 
-  setTimeout(() => {
-    setClassName("foo");
-  }, 5000);
+  // setTimeout(() => {
+  //   setClassName("foo");
+  // }, 5000);
 
   return (
     <div
@@ -72,7 +72,7 @@ const Popup: Component<{ id: string }> = ({ id }) => {
         console.log("container clicked!");
       }}
     >
-      <Button id={id + "-button"} open={open()} ref={btnEl} />
+      <Button id={id + "-btn"} open={open()} ref={btnEl} />
       <Dismiss
         id={id + "-popup"}
         menuButton={btnEl}

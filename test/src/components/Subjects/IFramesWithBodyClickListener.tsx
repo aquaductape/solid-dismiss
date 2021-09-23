@@ -1,23 +1,15 @@
-import {
-  Show,
-  createSignal,
-  onMount,
-  For,
-  createEffect,
-  createRenderEffect,
-  Component,
-} from "solid-js";
-import { Portal } from "solid-js/web";
+import { createSignal, createEffect, Component } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, reflow, toggleAnimation } from "../../utils";
 import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 import IFrame from "../IFrame";
 
+const id = "iframes-bcl";
 const IFramesWithBodyClickListener = () => {
   return (
-    <section>
-      <h2>menuPopup with iframes(body click listener)</h2>
+    <section id={id}>
+      <h2 tabindex="0">menuPopup with iframes(body click listener)</h2>
       <p>No overlay, page is interactable</p>
       <p>
         menuPopups are <strong>mounted</strong> to the body.
@@ -37,9 +29,9 @@ const IFramesWithBodyClickListener = () => {
       <p>For iOS, supports 13+</p>
 
       <div class="grid" style="grid-template-columns: repeat(4, 1fr)">
-        <Popup />
-        <Popup />
-        <Popup />
+        <Popup id={id + "-1"} />
+        <Popup id={id + "-2"} />
+        <Popup id={id + "-3"} />
         <div class="lone-iframe">
           <IFrame bodyHasClickListener />
         </div>
@@ -48,10 +40,12 @@ const IFramesWithBodyClickListener = () => {
   );
 };
 
-const Popup: Component<{ id?: string }> = ({ id }) => {
+const Popup: Component<{ id: string; idx?: number }> = (props) => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
+  const idx = props.idx || 1;
+  let id = `${props.id}-level-${idx}`;
 
   if (!settings.animation.enable) {
     createEffect(() => {
@@ -66,11 +60,13 @@ const Popup: Component<{ id?: string }> = ({ id }) => {
   }
 
   return (
-    <div style="display: inline-block; position: relative;">
+    <div
+      class={`${id + "-container"}`}
+      style="display: inline-block; position: relative;"
+    >
       {/* {open() ? "open" : "closed"} */}
       <Button class="btn-small" open={open()} ref={btnEl} />
       <Dismiss
-        id={id}
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
@@ -86,16 +82,16 @@ const Popup: Component<{ id?: string }> = ({ id }) => {
           },
         })}
       >
-        <div class="dropdown" style="height: 100%;">
+        <div id={id + "-popup"} class="dropdown" style="height: 100%;">
           <div style="display: flex;">
-            <IFrame bodyHasClickListener></IFrame>
-            <IFrame bodyHasClickListener></IFrame>
+            <IFrame class="f-1" bodyHasClickListener></IFrame>
+            <IFrame class="f-2" bodyHasClickListener></IFrame>
           </div>
           <input type="text" placeholder="text input..." class="input-test" />
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
-            <Popup></Popup>
-            <Popup></Popup>
-            <Popup></Popup>
+            <Popup id={props.id} idx={idx + 1}></Popup>
+            <Popup id={props.id} idx={idx + 1}></Popup>
+            <Popup id={props.id} idx={idx + 1}></Popup>
           </div>
         </div>
       </Dismiss>

@@ -1,12 +1,13 @@
-import { createEffect, createSignal } from "solid-js";
+import { Component, createEffect, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 
+const id = "nested-regular";
 const NestedPopup = () => {
   return (
-    <section class="nested">
-      <h2>Nested menuPopup</h2>
+    <section id={id} class="nested">
+      <h2 tabindex="0">Nested menuPopup</h2>
       <p>No overlay, page is interactable</p>
       <p>
         menuPopups are adjecent sibling to menuButton, this means stacks are
@@ -21,18 +22,20 @@ const NestedPopup = () => {
       </p>
 
       <div class="grid">
-        <Popup />
-        <Popup />
-        <Popup />
+        <Popup id={id + "-1"} />
+        <Popup id={id + "-2"} />
+        <Popup id={id + "-3"} />
       </div>
     </section>
   );
 };
 
-const Popup = () => {
+const Popup: Component<{ id: string; idx?: number }> = (props) => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
+  const idx = props.idx || 1;
+  let id = `${props.id}-level-${idx}`;
 
   createEffect(() => {
     if (!open()) return;
@@ -41,7 +44,10 @@ const Popup = () => {
   });
 
   return (
-    <div style="display: inline-block; position: relative;">
+    <div
+      class={`${id + "-container"}`}
+      style="display: inline-block; position: relative;"
+    >
       <Button open={open()} ref={btnEl} />
       <Dismiss
         menuButton={btnEl}
@@ -50,17 +56,23 @@ const Popup = () => {
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown" style="padding: 10px 25px 25px 25px;">
+        <div
+          id={id + "-popup"}
+          class="dropdown"
+          style="padding: 10px 25px 25px 25px;"
+        >
           <p>
             Some <a href="javascript:void(0)">random</a> text
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
-          <br />
-          <Popup />
-          <br />
-          <Popup />
-          <br />
-          <Popup />
+          <div>
+            {/* <br /> */}
+            <Popup id={props.id} idx={idx + 1}></Popup>
+            {/* <br /> */}
+            <Popup id={props.id} idx={idx + 1}></Popup>
+            {/* <br /> */}
+            <Popup id={props.id} idx={idx + 1}></Popup>
+          </div>
         </div>
       </Dismiss>
     </div>

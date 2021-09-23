@@ -1,12 +1,13 @@
-import { createSignal, createEffect } from "solid-js";
+import { createSignal, createEffect, Component } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 
+const id = "nested-mounted";
 const NestedPopupMounted = () => {
   return (
-    <section class="nested">
-      <h2>Nested mounted body menuPopup</h2>
+    <section id={id} class="nested">
+      <h2 tabindex="0">Nested mounted body menuPopup</h2>
       <p>No overlay, page is interactable</p>
       <p>
         menuPopups are <strong>mounted</strong> to the body.
@@ -24,15 +25,17 @@ const NestedPopupMounted = () => {
       </p>
 
       <div class="grid">
-        <Popup />
-        <Popup />
-        <Popup />
+        <Popup id={id + "-1"} />
+        <Popup id={id + "-2"} />
+        <Popup id={id + "-3"} />
       </div>
     </section>
   );
 };
 
-const Popup = () => {
+const Popup: Component<{ id: string; idx?: number }> = (props) => {
+  const idx = props.idx || 1;
+  let id = `${props.id}-level-${idx}`;
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
@@ -50,7 +53,10 @@ const Popup = () => {
   });
 
   return (
-    <div style="display: inline-block; position: relative;">
+    <div
+      class={`${id + "-container"}`}
+      style="display: inline-block; position: relative;"
+    >
       <Button open={open()} ref={btnEl} />
       <Dismiss
         menuButton={btnEl}
@@ -61,15 +67,15 @@ const Popup = () => {
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown middle" ref={dropdownEl}>
+        <div id={id + "-popup"} class="dropdown middle" ref={dropdownEl}>
           <p>
             Some <a href="javascript:void(0)">random</a> text
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
-            <Popup></Popup>
-            <Popup></Popup>
-            <Popup></Popup>
+            <Popup id={props.id} idx={idx + 1}></Popup>
+            <Popup id={props.id} idx={idx + 1}></Popup>
+            <Popup id={props.id} idx={idx + 1}></Popup>
           </div>
         </div>
       </Dismiss>

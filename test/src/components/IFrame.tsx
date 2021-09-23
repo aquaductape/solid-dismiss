@@ -2,8 +2,9 @@ import { onMount, Component } from "solid-js";
 
 const IFrame: Component<{
   id?: string;
+  class?: string;
   bodyHasClickListener?: boolean;
-}> = ({ bodyHasClickListener = false, id }) => {
+}> = ({ bodyHasClickListener = false, id, class: className }) => {
   let el!: HTMLIFrameElement;
   onMount(() => {
     const doc = el.contentWindow?.document!;
@@ -20,10 +21,16 @@ const IFrame: Component<{
   });
   return (
     <div
-      class={"iframe"}
+      class={`iframe `}
       style="overflow:auto;-webkit-overflow-scrolling:touch"
     >
-      <iframe src="" ref={el} width="100%" height="100%"></iframe>
+      <iframe
+        class={className || ""}
+        src=""
+        ref={el}
+        width="100%"
+        height="100%"
+      ></iframe>
     </div>
   );
 };
