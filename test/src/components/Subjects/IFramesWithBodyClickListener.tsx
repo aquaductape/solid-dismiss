@@ -84,6 +84,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
       >
         <div id={id + "-popup"} class="dropdown" style="height: 100%;">
           <div style="display: flex;">
+            {/* <input type="text" placeholder="text input..." class="input-test" /> */}
             <IFrame class="f-1" bodyHasClickListener></IFrame>
             <IFrame class="f-2" bodyHasClickListener></IFrame>
           </div>

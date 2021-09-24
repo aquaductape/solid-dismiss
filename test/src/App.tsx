@@ -29,6 +29,7 @@ const Content = () => {
   );
 };
 const App: Component = () => {
+  // document.documentElement.setAttribute("iframe-src", "true");
   return (
     <>
       <Header></Header>

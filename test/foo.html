@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="first-button">first button</button>
+  <br>
+  <iframe id="first-iframe" frameborder="0"></iframe>
+  <br>
+  <iframe id="second-iframe" frameborder="0"></iframe>
+  <br>
+  <iframe id="third-iframe" frameborder="0"></iframe>
+  <br>
+  <button id="last-button">last button</button>
+  <script type="module">
+    const iframe1 = document.getElementById('first-iframe');
+    const iframe2 = document.getElementById('second-iframe');
+    const iframe3 = document.getElementById('third-iframe');
+
+    const createIframeContent = (iframe) => {
+      setTimeout(() => {
+        const doc = iframe.contentWindow.document;
+        doc.write('<html><body style="background: #f5f5df;"><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <button>Button</button> <br><br> <a href="#">Link</a> <br><br> <input type="text" placeholder="Text input..."></body> </html>');
+        doc.close()
+      })
+    }
+
+    [iframe1, iframe2, iframe3].forEach(createIframeContent)
+  </script>
+</body>
+
+</html>

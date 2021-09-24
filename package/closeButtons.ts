@@ -1,10 +1,14 @@
 import { TLocalState } from "./localState";
 import { JSX } from "solid-js";
 import { queryElement } from "./utils";
+import { dismissStack } from "./dismissStack";
 
 export const onClickCloseButtons = (state: TLocalState) => {
-  state.setOpen(false);
   state.menuBtnEl!.focus();
+  dismissStack.forEach((item) => {
+    clearTimeout(item.timeouts.containerFocusTimeoutId!);
+  });
+  state.setOpen(false);
 };
 
 export const addCloseButtons = (state: TLocalState) => {

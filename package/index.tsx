@@ -352,7 +352,9 @@ const Dismiss: Component<TDismiss> = (props) => {
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
     onClickCloseButtonsRef: () => onClickCloseButtons(state),
     refContainerCb: (el: HTMLElement) => {
-      el.style.zIndex = `${1000 + dismissStack.length}`;
+      if (mount) {
+        el.style.zIndex = `${1000 + dismissStack.length}`;
+      }
       if (props.ref) {
         // @ts-ignore
         props.ref(el);
@@ -698,7 +700,6 @@ const Dismiss: Component<TDismiss> = (props) => {
           typeof props.overlay === "object" ? props.overlay.classList || {} : {}
         }
         role="presentation"
-        data-solid-dismiss-overlay-backdrop-level={dismissStack.length}
         onClick={state.onClickOverlayRef}
         ref={state.refOverlayCb}
       ></div>
@@ -718,7 +719,6 @@ const Dismiss: Component<TDismiss> = (props) => {
         <div
           tabindex="0"
           onFocus={(e) => {
-            debugger;
             onFocusSentinel(state, "first", e.relatedTarget as HTMLElement);
           }}
           style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"

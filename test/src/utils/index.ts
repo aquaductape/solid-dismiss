@@ -1,10 +1,26 @@
 import settings from "./globalSettings";
 
-export const getLeft = (bcr: DOMRect, containerWidth: number) => {
+export const wait = (timeout: number) =>
+  new Promise<boolean>((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, timeout);
+  });
+
+export const getLeft = (
+  bcr: DOMRect,
+  containerWidth: number,
+  isMounted: boolean = true
+) => {
   const vw = document.documentElement.clientWidth;
   if (bcr.left + containerWidth >= vw) {
+    if (!isMounted) {
+      return vw - (bcr.left + containerWidth) - 5 + window.scrollX;
+    }
     return bcr.left - (bcr.left + containerWidth - vw) - 5 + window.scrollX;
   }
+
+  if (!isMounted) return "0";
 
   return bcr.left + window.scrollX;
 };

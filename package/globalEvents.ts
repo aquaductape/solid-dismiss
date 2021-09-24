@@ -53,20 +53,22 @@ export const onWindowBlur = (e: Event) => {
   const item = dismissStack[dismissStack.length - 1];
 
   // menuPopup item was the last tabbable item in the document and current focused item is outside of document, such as browser URL bar, then menuPopup/stacks will close
-  if (!document.hasFocus()) {
+  setTimeout(() => {
     const difference = e.timeStamp - timestampOfTabkey;
-    if (difference < 50) {
-      checkThenClose(
-        dismissStack,
-        (item) => item,
-        (item) => {
-          const { setOpen } = item;
-          setOpen(false);
-        }
-      );
-      return;
+    if (!document.hasFocus()) {
+      if (difference < 50) {
+        checkThenClose(
+          dismissStack,
+          (item) => item,
+          (item) => {
+            const { setOpen } = item;
+            setOpen(false);
+          }
+        );
+        return;
+      }
     }
-  }
+  });
 
   const onBlurWindow = (item: TDismissStack) => {
     if (!item.closeWhenDocumentBlurs) return;
@@ -299,7 +301,7 @@ const pollingIframe = () => {
 
   const poll = () => {
     const activeElement = document.activeElement as HTMLElement;
-    console.log("polling");
+    console.log("polling", "document.hasFocus()", document.hasFocus());
 
     if (!activeElement) {
       return;
@@ -327,6 +329,7 @@ const pollingIframe = () => {
       (item) => {
         const { setOpen, menuBtnEl } = item;
 
+        console.log("close!!!");
         setOpen(false);
 
         cachedPolledElement = null;

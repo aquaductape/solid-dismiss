@@ -1,51 +1,78 @@
-import { createEffect, createComputed, createSignal } from "solid-js";
+import {
+  createEffect,
+  createComputed,
+  createSignal,
+  Component,
+} from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 import IFrame from "../IFrame";
 
+const id = "mixed";
 const Mixed = () => {
   return (
-    <section class="nested mixed">
-      <h2>Mixed</h2>
+    <section id={id} class="nested mixed">
+      <h2 tabindex="0">Mixed</h2>
 
       <div class="grid">
-        <RegularPopup></RegularPopup>
-        <MountedPopup></MountedPopup>
-        <OverlayPopup></OverlayPopup>
-        <OverlayDisabledClickPopup></OverlayDisabledClickPopup>
+        <RegularPopup id={id}></RegularPopup>
+        <MountedPopup id={id}></MountedPopup>
+        <OverlayPopup id={id}></OverlayPopup>
+        <OverlayDisabledClickPopup id={id}></OverlayDisabledClickPopup>
       </div>
     </section>
   );
 };
 
-const PopupContent = () => {
+const PopupContent: Component<{ id: string; idx: number }> = (props) => {
   return (
     <>
-      <RegularPopup></RegularPopup>
-      <MountedPopup></MountedPopup>
-      <OverlayPopup></OverlayPopup>
-      <OverlayDisabledClickPopup></OverlayDisabledClickPopup>
+      <RegularPopup id={props.id} idx={props.idx + 1}></RegularPopup>
+      <MountedPopup id={props.id} idx={props.idx + 1}></MountedPopup>
+      <OverlayPopup id={props.id} idx={props.idx + 1}></OverlayPopup>
+      <OverlayDisabledClickPopup
+        id={props.id}
+        idx={props.idx + 1}
+      ></OverlayDisabledClickPopup>
     </>
   );
 };
 
-const RegularPopup = () => {
+const RegularPopup: Component<{ id: string; idx?: number }> = (props) => {
+  const idx = props.idx || 1;
+  let id = `${props.id}-level-${idx}`;
+
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
   let btnCloseEl!: HTMLButtonElement;
 
+  createEffect(() => {
+    if (!open()) return;
+
+    const btnBCR = btnEl.getBoundingClientRect();
+    // debugger;
+
+    const containerWidth = 250;
+    containerEl.style.width = 250 + "px";
+
+    containerEl.style.top = btnBCR.height + 5 + "px";
+    // containerEl.style.left = "0";
+    containerEl.style.left = getLeft(btnBCR, containerWidth, false) + "px";
+  });
+
   return (
     <div
       style="display: inline-block; position: relative; padding: 5px;"
       onClick={() => console.log("click container")}
     >
-      <Button class="medium" open={open()} ref={btnEl}>
+      <Button class="medium btn-regular" open={open()} ref={btnEl}>
         Regular
       </Button>
       <Dismiss
+        class="popup-regular-absolute"
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
@@ -53,14 +80,17 @@ const RegularPopup = () => {
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown padding-top" ref={dropdownEl}>
+        <div
+          class={`${id + "-popup"} popup-regular dropdown padding-top`}
+          ref={dropdownEl}
+        >
           <p>
             <strong>Regular</strong>: Click on outside, should close stacks that
             don't contain the click
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
-          <PopupContent />
+          <PopupContent id={props.id} idx={idx} />
           <button aria-label="close" class="close" ref={btnCloseEl}></button>
         </div>
       </Dismiss>
@@ -68,7 +98,9 @@ const RegularPopup = () => {
   );
 };
 
-const MountedPopup = () => {
+const MountedPopup: Component<{ id: string; idx?: number }> = (props) => {
+  const idx = props.idx || 1;
+  let id = `${props.id}-level-${idx}`;
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
@@ -93,7 +125,7 @@ const MountedPopup = () => {
       style="display: inline-block; position: relative; padding: 5px;"
       onClick={() => console.log("click container MOUNTED")}
     >
-      <Button class="medium" open={open()} ref={btnEl}>
+      <Button class="medium btn-mounted" open={open()} ref={btnEl}>
         Mounted
       </Button>
       <Dismiss
@@ -105,14 +137,17 @@ const MountedPopup = () => {
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div class="dropdown padding-top" ref={dropdownEl}>
+        <div
+          class={`${id + "-popup"} popup-mounted dropdown padding-top`}
+          ref={dropdownEl}
+        >
           <p>
             <strong>Mounted</strong>: Click on outside, should close stacks that
             don't contain the click
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
-          <PopupContent />
+          <PopupContent id={props.id} idx={idx} />
           <button aria-label="close" class="close" ref={btnCloseEl}></button>
         </div>
       </Dismiss>
@@ -120,7 +155,9 @@ const MountedPopup = () => {
   );
 };
 
-const OverlayPopup = () => {
+const OverlayPopup: Component<{ id: string; idx?: number }> = (props) => {
+  const idx = props.idx || 1;
+  let id = `${props.id}-level-${idx}`;
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
@@ -151,7 +188,7 @@ const OverlayPopup = () => {
       style="display: inline-block; position: relative; padding: 5px;"
       onClick={() => console.log("click container")}
     >
-      <Button class="medium" open={open()} ref={btnEl}>
+      <Button class="medium btn-overlay" open={open()} ref={btnEl}>
         Overlay
       </Button>
       <Dismiss
@@ -164,14 +201,17 @@ const OverlayPopup = () => {
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
       >
-        <div class="dropdown padding-top" ref={dropdownEl}>
+        <div
+          class={`${id + "-popup"} popup-overlay dropdown padding-top`}
+          ref={dropdownEl}
+        >
           <p>
             <strong>Overlay</strong>: Click on overlay, should only close that
             current stack
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
-          <PopupContent />
+          <PopupContent id={props.id} idx={idx} />
           <button aria-label="close" class="close" ref={btnCloseEl}></button>
         </div>
       </Dismiss>
@@ -179,7 +219,11 @@ const OverlayPopup = () => {
   );
 };
 
-const OverlayDisabledClickPopup = () => {
+const OverlayDisabledClickPopup: Component<{ id: string; idx?: number }> = (
+  props
+) => {
+  const idx = props.idx || 1;
+  let id = `${props.id}-level-${idx}`;
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
@@ -210,7 +254,7 @@ const OverlayDisabledClickPopup = () => {
       style="display: inline-block; position: relative; padding: 5px;"
       onClick={() => console.log("click container OVERLAY DISABLED")}
     >
-      <Button class="medium" open={open()} ref={btnEl}>
+      <Button class="medium btn-overlay-d" open={open()} ref={btnEl}>
         Overlay Disabled Click
       </Button>
       <Dismiss
@@ -225,14 +269,17 @@ const OverlayDisabledClickPopup = () => {
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
       >
-        <div class="dropdown padding-top" ref={dropdownEl}>
+        <div
+          class={`${id + "-popup"} popup-overlay-d dropdown padding-top`}
+          ref={dropdownEl}
+        >
           <p>
             <strong>Overlay</strong>: Click overlay to close is disabled! Press
             Escape or click "X" to close.
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
-          <PopupContent />
+          <PopupContent id={props.id} idx={idx} />
           <button aria-label="close" class="close" ref={btnCloseEl}></button>
         </div>
       </Dismiss>

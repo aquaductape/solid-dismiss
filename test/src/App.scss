@@ -9,7 +9,7 @@ html {
 body {
   font-size: 16px;
   padding: 80px 5vw;
-  padding-bottom: 300px;
+  padding-bottom: 800px;
 }
 
 p {
@@ -158,6 +158,14 @@ section {
   max-height: 155px;
   height: 40vh;
   border: 2px solid #727272;
+}
+
+.popup-regular-absolute {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 250px;
+  z-index: 5;
 }
 
 .popup {

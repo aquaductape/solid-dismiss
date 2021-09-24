@@ -1,12 +1,13 @@
-import { createSignal, For, createEffect } from "solid-js";
+import { createSignal, For, createEffect, Component } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, getWidth, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
 
+const id = "scrolling";
 const Scrolling = () => {
   return (
-    <section>
-      <h2>Close when scrolling</h2>
+    <section id={id}>
+      <h2 tabindex="0">Close when scrolling</h2>
       <p>No overlay, page is interactable.</p>
       <p>
         menuPopups are <strong>mounted</strong> to the body.
@@ -25,9 +26,9 @@ const Scrolling = () => {
       </p>
 
       <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr">
-        <Popup />
-        <Popup />
-        <Popup />
+        <Popup id={id + "-1"} />
+        <Popup id={id + "-2"} />
+        <Popup id={id + "-3"} />
         <div class="lone-scrolling">
           <ol>
             <For each={Array(8).fill(["cat", "dog", "fish"]).flat()}>
@@ -42,11 +43,7 @@ const Scrolling = () => {
               }}
             </For>
             <li>
-              <a
-                id="lone-scrolling-item"
-                class="item"
-                href="javascript:void(0)"
-              >
+              <a class="item scrolling-item" href="javascript:void(0)">
                 chicken
               </a>
             </li>
@@ -57,7 +54,9 @@ const Scrolling = () => {
   );
 };
 
-const Popup = () => {
+const Popup: Component<{ id: string; idx?: number }> = (props) => {
+  const idx = props.idx || 1;
+  let id = `${props.id}-level-${idx}`;
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
@@ -83,7 +82,10 @@ const Popup = () => {
   });
 
   return (
-    <div style="display: inline-block; position: relative;">
+    <div
+      class={`${id + "-container"}`}
+      style="display: inline-block; position: relative;"
+    >
       <Button class="btn-small" open={open()} ref={btnEl} />
       <Dismiss
         menuButton={btnEl}
@@ -95,6 +97,7 @@ const Popup = () => {
         {...toggleAnimation()}
       >
         <ol
+          id={id + "-popup"}
           class="dropdown"
           style="max-height: 300px; height: 40vh; overflow: scroll;"
         >
@@ -109,12 +112,13 @@ const Popup = () => {
               );
             }}
           </For>
-          <Popup />
-          <br />
-          <Popup />
-          <br />
-          <Popup />
-          <br />
+          <div>
+            <Popup id={props.id} idx={idx + 1}></Popup>
+            <br />
+            <Popup id={props.id} idx={idx + 1}></Popup>
+            <br />
+            <Popup id={props.id} idx={idx + 1}></Popup>
+          </div>
           <input type="text" placeholder="text input..." class="input-test" />
           <For each={list}>
             {(item) => {
@@ -128,7 +132,7 @@ const Popup = () => {
             }}
           </For>
           <li>
-            <a class="item" href="javascript:void(0)">
+            <a class="item scrolling-item" href="javascript:void(0)">
               chicken
             </a>
           </li>

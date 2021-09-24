@@ -46,7 +46,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
   return (
     <div
       class={`${id + "-container"}`}
-      style="display: inline-block; position: relative;"
+      style="display: block; position: relative;"
     >
       <Button open={open()} ref={btnEl} />
       <Dismiss

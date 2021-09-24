@@ -8,7 +8,7 @@ import IFrame from "../IFrame";
 
 const IFrames = () => {
   return (
-    <section>
+    <section id="foobar">
       <h2>menuPopup with iframes(without body click listener!)</h2>
       <p>No overlay, page is interactable</p>
       <p>

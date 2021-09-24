@@ -4,7 +4,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "test": "testcafe chrome testcafe/index.ts"
+    "test": "testcafe"
   },
   "devDependencies": {
     "testcafe": "^1.16.0",
