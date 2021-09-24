@@ -4,7 +4,7 @@ const path = "tests";
 module.exports = {
   skipJsErrors: false,
   hostname: os.hostname(),
-  browsers: ["firefox"],
+  browsers: ["chrome", "firefox", "safari"],
   src: [
     `${path}/nested-mounted.ts`,
     `${path}/basic-dropdown.ts`,
