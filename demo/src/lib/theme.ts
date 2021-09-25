@@ -73,7 +73,7 @@ type ILight = {
   "--color-scheme": "light";
   "--nav-item-bg": "var(--main-grey)";
   "--code-actual-text": "#000000";
-  "--code-bg": "#e2e1f5";
+  "--code-bg": "#e7e6f7";
   "--code-text": "var(--code-actual-text)";
   "--token-keyword": "#4141ab";
   "--token-punctuation": "#196191";
@@ -82,7 +82,7 @@ type ILight = {
   "--token-function": "#cd02c5";
   "--token-string": "#0000c6";
   "--token-attr-value": "#0000c6";
-  "--token-class-name": "#db29b5";
+  "--token-class-name": "#db2982";
   "--token-attr-name": "#3500e7";
   "--token-tag": "#1d1dac";
   "--token-plain-text": "#304463";
@@ -172,7 +172,7 @@ export const themeConfig: IThemeConfig = {
     "--color-scheme": "light",
     "--nav-item-bg": "var(--main-grey)",
     "--code-actual-text": "#000000",
-    "--code-bg": "#e2e1f5",
+    "--code-bg": "#e7e6f7",
     "--code-text": "var(--code-actual-text)",
     "--token-keyword": "#4141ab",
     "--token-punctuation": "#196191",
@@ -181,7 +181,7 @@ export const themeConfig: IThemeConfig = {
     "--token-function": "#cd02c5",
     "--token-string": "#0000c6",
     "--token-attr-value": "#0000c6",
-    "--token-class-name": "#db29b5",
+    "--token-class-name": "#db2982",
     "--token-attr-name": "#3500e7",
     "--token-tag": "#1d1dac",
     "--token-plain-text": "#304463",

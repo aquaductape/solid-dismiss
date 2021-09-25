@@ -42,7 +42,10 @@ function CreatePortal(props: {
   // mount.appendChild(props.overlayChildren as HTMLElement);
   const overlayChildren = props.overlayChildren;
   if (overlayChildren) {
-    container.appendChild(overlayChildren as HTMLElement);
+    container.insertAdjacentElement(
+      "afterbegin",
+      overlayChildren as HTMLElement
+    );
   }
   mount.appendChild(container);
   (props as any).ref && (props as any).ref(container);

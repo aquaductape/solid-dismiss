@@ -344,8 +344,8 @@ const Dismiss: Component<TDismiss> = (props) => {
     onFocusMenuButtonRef: () => onFocusMenuButton(state),
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
     refContainerCb: (el: HTMLElement) => {
-      if (mount) {
-        el.style.zIndex = `${1000 + dismissStack.length}`;
+      if (overlay) {
+        el.style.zIndex = "1000";
       }
       if (props.ref) {
         // @ts-ignore
@@ -359,7 +359,7 @@ const Dismiss: Component<TDismiss> = (props) => {
       el.style.left = "0";
       el.style.width = "100%";
       el.style.height = "100%";
-      el.style.zIndex = `${999 + dismissStack.length}`;
+      el.style.zIndex = "1000";
 
       if (typeof overlay === "object" && overlay.ref) {
         overlay.ref(el);
@@ -733,7 +733,6 @@ const Dismiss: Component<TDismiss> = (props) => {
         classList={props.classList || {}}
         onFocusIn={state.onFocusInContainerRef}
         onFocusOut={state.onFocusOutContainerRef}
-        onClick={() => {}}
         ref={state.refContainerCb}
       >
         <div
@@ -741,7 +740,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           onFocus={(e) => {
             onFocusSentinel(state, "first", e.relatedTarget as HTMLElement);
           }}
-          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
+          style="position: fixed; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
           ref={state.focusSentinelFirstEl}
         ></div>
@@ -751,7 +750,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           onFocus={() => {
             onFocusSentinel(state, "last");
           }}
-          style="position: absolute; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
+          style="position: fixed; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
           ref={state.focusSentinelLastEl}
         ></div>

@@ -1,10 +1,17 @@
+import c from "./Dropdown.module.scss";
+import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+
+const s = scopeModuleClasses(c);
 import Dismiss from "../../../../package/index";
-import { createSignal, onMount } from "solid-js";
-import IFrame from "../IFrame";
+import { createSignal } from "solid-js";
 
 const Dropdown = () => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
+
+  const onClickItem = (e: Event) => {
+    e.preventDefault();
+  };
 
   return (
     <div style="position: relative;">
@@ -12,19 +19,19 @@ const Dropdown = () => {
         Dropdown
       </button>
       <Dismiss menuButton={btnEl} open={open} setOpen={setOpen} useAriaExpanded>
-        <ul class="dropdown">
+        <ul class={s("dropdown")}>
           <li>
-            <a class="item" href="#">
+            <a class={s("item")} href="#" onClick={onClickItem}>
               cat
             </a>
           </li>
           <li>
-            <a class="item" href="#">
+            <a class={s("item")} href="#" onClick={onClickItem}>
               dog
             </a>
           </li>
           <li>
-            <a class="item" href="#">
+            <a class={s("item")} href="#" onClick={onClickItem}>
               fish
             </a>
           </li>
@@ -33,5 +40,37 @@ const Dropdown = () => {
     </div>
   );
 };
+
+// import Dismiss from "solid-dismiss";
+// import { createSignal } from "solid-js";
+//
+// const Dropdown = () => {
+//   const [open, setOpen] = createSignal(false);
+//   let btnEl;
+//
+//   return (
+//     <div style="position: relative;">
+//       <button ref={btnEl}>Dropdown</button>
+//       <Dismiss
+//         menuButton={btnEl}
+//         open={open}
+//         setOpen={setOpen}
+//         useAriaExpanded
+//       >
+//         <ul class="dropdown">
+//           <li>
+//             <a class="item" href="#">cat</a>
+//           </li>
+//           <li>
+//             <a class="item" href="#">dog</a>
+//           </li>
+//           <li>
+//             <a class="item" href="#">fish</a>
+//           </li>
+//         </ul>
+//       </Dismiss>
+//     </div>
+//   );
+// };
 
 export default Dropdown;
