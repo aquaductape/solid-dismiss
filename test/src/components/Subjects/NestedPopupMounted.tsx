@@ -63,7 +63,6 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         open={open}
         setOpen={setOpen}
         mount="body"
-        // stopComponentEventPropagation
         ref={containerEl}
         {...toggleAnimation()}
       >

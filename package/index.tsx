@@ -19,7 +19,12 @@ import {
   removeDismissStack,
   TDismissStack,
 } from "./dismissStack";
-import { addGlobalEvents, removeGlobalEvents } from "./globalEvents";
+import {
+  addGlobalEvents,
+  globalState,
+  onDocumentClick,
+  removeGlobalEvents,
+} from "./globalEvents";
 import { TLocalState } from "./localState";
 import {
   onFocusInContainer,
@@ -32,11 +37,6 @@ import {
   removeOutsideFocusEvents,
 } from "./outside";
 import { addMenuPopupEl, removeMenuPopupEl } from "./menuPopup";
-import {
-  addCloseButtons,
-  onClickCloseButtons,
-  removeCloseButtons,
-} from "./closeButtons";
 import {
   onBlurMenuButton,
   onClickMenuButton,
@@ -83,17 +83,6 @@ export type TDismiss = {
    * css selector, queried from document, to get menu popup element. Or pass JSX element
    */
   menuPopup?: string | JSX.Element | (() => JSX.Element);
-  /**
-   * Default: `undefined`
-   *
-   * css selector, queried from container element, to get close button element(s). Or pass JSX element(s)
-   */
-  closeButtons?:
-    | string
-    | JSX.Element
-    | (string | JSX.Element)[]
-    | (() => JSX.Element)
-    | (() => (string | JSX.Element)[]);
   /**
    * Default: `false`
    *
@@ -168,6 +157,12 @@ export type TDismiss = {
          * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
          */
         scrolling?: "menuButton" | string | JSX.Element;
+        /**
+         * Default: menuButton
+         *
+         * focuse on element when exiting via setting open signal to false.
+         */
+        programmatic?: "menuButton" | string | JSX.Element;
       };
 
   /**
@@ -253,8 +248,8 @@ export type TDismiss = {
   mountedElseWhere?: boolean;
   mount?: string | Node;
   animation?: TAnimation;
+  stopComponentEventPropagation?: boolean;
 };
-// stopComponentEventPropagation?: boolean;
 //
 
 type TAnimation = {
@@ -287,7 +282,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     menuPopup,
     focusElementOnClose,
     focusElementOnOpen,
-    closeButtons,
     cursorKeys = false,
     closeWhenMenuButtonIsTabbed = false,
     closeWhenMenuButtonIsClicked = true,
@@ -301,16 +295,15 @@ const Dismiss: Component<TDismiss> = (props) => {
     useAriaExpanded = false,
     mountedElseWhere = false,
     mount,
+    stopComponentEventPropagation = false,
     onOpen,
   } = props;
 
   const state: TLocalState = {
     mount,
     addedFocusOutAppEvents: false,
-    closeBtns: [],
-    closeBtnsAdded: false,
-    closeButtons,
     closeWhenOverlayClicked,
+    stopComponentEventPropagation,
     closeWhenDocumentBlurs,
     closeWhenEscapeKeyIsPressed,
     closeWhenMenuButtonIsClicked,
@@ -350,7 +343,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
     onFocusMenuButtonRef: () => onFocusMenuButton(state),
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
-    onClickCloseButtonsRef: () => onClickCloseButtons(state),
     refContainerCb: (el: HTMLElement) => {
       if (mount) {
         el.style.zIndex = `${1000 + dismissStack.length}`;
@@ -383,7 +375,9 @@ const Dismiss: Component<TDismiss> = (props) => {
   //   !props.overlay.stopComponentEventPropagation
   //     ? null
   //     : document.createTextNode("");
-  let marker = document.createTextNode("");
+  let marker: Text | null = !stopComponentEventPropagation
+    ? document.createTextNode("")
+    : null;
   const initDefer = !props.open();
 
   let containerEl: HTMLElement | null;
@@ -557,9 +551,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     });
     state.menuBtnEl.setAttribute("type", "button");
     state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
-    state.menuBtnEl.addEventListener("focus", () =>
-      console.log("menuButton focused", state.uniqueId)
-    );
     state.menuBtnEl.addEventListener(
       "mousedown",
       state.onMouseDownMenuButtonRef
@@ -584,41 +575,72 @@ const Dismiss: Component<TDismiss> = (props) => {
     }
   });
 
-  if (mount) {
-    createComputed(
-      on(
-        () => !!props.open(),
-        (open, prevOpen) => {
-          if (open === prevOpen) return;
+  createComputed(
+    on(
+      () => !!props.open(),
+      (open, prevOpen) => {
+        if (open === prevOpen) return;
 
-          if (open) {
-            if (!mountEl) {
-              CreatePortal({
-                mount:
-                  typeof mount === "string"
-                    ? document.querySelector(mount)!
-                    : mount!,
-                popupChildren: render(props.children),
-                overlayChildren: overlay ? renderOverlay() : null,
-                marker,
-                onCreate: (mount, container) => {
-                  mountEl = mount;
-                  containerEl = container;
-                },
-              });
-            }
+        if (!open) {
+          // used to detect programmatic removal
+          // to detect if it was programmatic have state {click, tab} to be marked when toggled by events
+          // if none of those properties are marked, it means it was programmatic
+          // programmatic should be global variable
+          //  meanwhile focusout events will be ignored
+          // tell author if they choose to programmatically remove it, they must set focus to correct logical place
+          console.log("run computed!!");
+          if (!globalState.closedBySetOpen) {
+            globalState.closedBySetOpen = true;
+            globalState.menuBtnEl = state.menuBtnEl;
+            // console.log("closedBySetOpen", document.activeElement);
+            setTimeout(() => {
+              const menuBtnExists = globalState.menuBtnEl;
+              globalState.closedBySetOpen = false;
+              globalState.menuBtnEl = null;
 
-            enterTransition("popup", containerEl?.firstElementChild!);
-            enterTransition("overlay", state.overlayEl!);
-          } else {
-            exitTransition("popup", containerEl?.firstElementChild!);
-            exitTransition("overlay", state.overlayEl!);
+              if (!menuBtnExists) return;
+
+              if (
+                document.activeElement &&
+                document.activeElement !== document.body
+              ) {
+                return;
+              }
+              state.menuBtnEl?.focus();
+            });
+            // document.addEventListener("click", onDocumentClick, { once: true });
           }
-        },
-        { defer: initDefer }
-      )
-    );
-  }
+        }
+
+        if (!mount) return;
+
+        if (open) {
+          if (!mountEl) {
+            CreatePortal({
+              mount:
+                typeof mount === "string"
+                  ? document.querySelector(mount)!
+                  : mount!,
+              popupChildren: render(props.children),
+              overlayChildren: overlay ? renderOverlay() : null,
+              marker,
+              onCreate: (mount, container) => {
+                mountEl = mount;
+                containerEl = container;
+              },
+            });
+          }
+
+          enterTransition("popup", containerEl?.firstElementChild!);
+          enterTransition("overlay", state.overlayEl!);
+        } else {
+          exitTransition("popup", containerEl?.firstElementChild!);
+          exitTransition("overlay", state.overlayEl!);
+        }
+      },
+      { defer: initDefer }
+    )
+  );
 
   createEffect(
     on(
@@ -629,7 +651,6 @@ const Dismiss: Component<TDismiss> = (props) => {
         runAriaExpanded(state, open);
 
         if (open) {
-          addCloseButtons(state);
           addMenuPopupEl(state);
           runFocusOnActive(state);
 
@@ -664,7 +685,6 @@ const Dismiss: Component<TDismiss> = (props) => {
 
           removeOutsideFocusEvents(state);
           removeMenuPopupEl(state);
-          removeCloseButtons(state);
           removeDismissStack(state.uniqueId);
           removeGlobalEvents();
           runRemoveScrollbar(open);
@@ -678,7 +698,6 @@ const Dismiss: Component<TDismiss> = (props) => {
   onCleanup(() => {
     removeLocalEvents(state, { onCleanup: true });
 
-    removeCloseButtons(state);
     removeMenuPopupEl(state);
     removeOutsideFocusEvents(state);
     removeDismissStack(state.uniqueId);
@@ -714,6 +733,7 @@ const Dismiss: Component<TDismiss> = (props) => {
         classList={props.classList || {}}
         onFocusIn={state.onFocusInContainerRef}
         onFocusOut={state.onFocusOutContainerRef}
+        onClick={() => {}}
         ref={state.refContainerCb}
       >
         <div
@@ -740,7 +760,6 @@ const Dismiss: Component<TDismiss> = (props) => {
   }
 
   if (props.mount) return marker;
-  // if (props.mount) return null;
 
   let strictEqual = false;
   const condition = createMemo<boolean>(() => props.open(), undefined, {

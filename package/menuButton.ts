@@ -15,7 +15,6 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
   }
 
   menuBtnEl!.focus();
-  console.log("onclick btn");
   clearTimeout(timeouts.containerFocusTimeoutId!);
   clearTimeout(timeouts.menuButtonBlurTimeoutId!);
   timeouts.containerFocusTimeoutId = null;
@@ -86,7 +85,6 @@ export const onMouseDownMenuButton = (state: TLocalState) => {
         return item;
       },
       (item) => {
-        console.log("mousedown destroy!");
         item.setOpen(false);
       }
     );
@@ -94,7 +92,6 @@ export const onMouseDownMenuButton = (state: TLocalState) => {
     mousedownFired = false;
     return;
   }
-  console.log("set");
   mousedownFired = true;
 };
 
@@ -134,7 +131,6 @@ export const onFocusMenuButton = (state: TLocalState) => {
   const { closeWhenMenuButtonIsTabbed, timeouts } = state;
 
   if (!closeWhenMenuButtonIsTabbed) {
-    console.log("clear!!");
     clearTimeout(timeouts.containerFocusTimeoutId!);
   }
 };

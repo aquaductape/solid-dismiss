@@ -1,4 +1,3 @@
-import { t } from "testcafe";
 import { clickOverlay, exists, loopStacks, pressSequentialKeys } from "./utils";
 
 fixture`Mixed: regular, mounted, overlay, overlay-disabled`
@@ -136,7 +135,8 @@ test("open regular > regular > overlay-d, click disabled overlay, no stacks shou
   await t.expect(exists(`${idClass}-level-2-popup.popup-regular`)).ok();
   await t.expect(exists(`${idClass}-level-3-popup.popup-overlay-d`)).ok();
 });
-test("open regular > regular > regular, click every close button, all stacks should be closed", async (t) => {
+
+test("open regular > regular > regular, click every close button to close one stack at a time, all stacks should be closed", async (t) => {
   await t.click(`${id} .btn-regular`);
   await t.click(`${idClass}-level-1-popup .btn-regular`);
   await t.click(`${idClass}-level-2-popup .btn-regular`);
@@ -160,6 +160,32 @@ test("open regular > regular > regular, click every close button, all stacks sho
 
   await t.expect(exists(`${idClass}-level-1-popup.popup-regular`)).notOk();
 });
+
+test("open mounted > mounted > mounted, click every close button to close one stack at a time, all stacks should be closed", async (t) => {
+  await t.click(`${id} .btn-mounted`);
+  await t.click(`${idClass}-level-1-popup .btn-mounted`);
+  await t.click(`${idClass}-level-2-popup .btn-mounted`);
+
+  await t.expect(exists(`${idClass}-level-1-popup.popup-mounted`)).ok();
+  await t.expect(exists(`${idClass}-level-2-popup.popup-mounted`)).ok();
+  await t.expect(exists(`${idClass}-level-3-popup.popup-mounted`)).ok();
+
+  await t.click(`${idClass}-level-3-popup .close`);
+
+  await t.expect(exists(`${idClass}-level-1-popup.popup-mounted`)).ok();
+  await t.expect(exists(`${idClass}-level-2-popup.popup-mounted`)).ok();
+  await t.expect(exists(`${idClass}-level-3-popup.popup-mounted`)).notOk();
+
+  await t.click(`${idClass}-level-2-popup .close`);
+
+  await t.expect(exists(`${idClass}-level-1-popup.popup-regular`)).ok();
+  await t.expect(exists(`${idClass}-level-2-popup.popup-regular`)).notOk();
+
+  await t.click(`${idClass}-level-1-popup .close`);
+
+  await t.expect(exists(`${idClass}-level-1-popup.popup-regular`)).notOk();
+});
+
 test("open regular > regular > regular, click top close button, top stack should close. Then click 1st stack, 2nd stack should close", async (t) => {
   await t.click(`${id} .btn-regular`);
   await t.click(`${idClass}-level-1-popup .btn-regular`);
@@ -180,6 +206,7 @@ test("open regular > regular > regular, click top close button, top stack should
   await t.expect(exists(`${idClass}-level-1-popup.popup-regular`)).ok();
   await t.expect(exists(`${idClass}-level-2-popup.popup-regular`)).notOk();
 });
+
 test("open regular > regular > mounted. on 2nd stack click regular. This should close stack opened from mounted, but open new stack from 2nd stack regular button", async (t) => {
   await t.click(`${id} .btn-regular`);
   await t.click(`${idClass}-level-1-popup .btn-regular`);
@@ -196,6 +223,7 @@ test("open regular > regular > mounted. on 2nd stack click regular. This should 
   await t.expect(exists(`${idClass}-level-3-popup.popup-mounted`)).notOk();
   await t.expect(exists(`${idClass}-level-3-popup.popup-regular`)).ok();
 });
+
 test("open mounted > mounted > regular. on 2nd stack click mounted. This should close stack opened from regular, but open new stack from 2nd stack mounted button", async (t) => {
   await t.click(`${id} .btn-mounted`);
   await t.click(`${idClass}-level-1-popup .btn-mounted`);
@@ -205,7 +233,7 @@ test("open mounted > mounted > regular. on 2nd stack click mounted. This should 
   await t.expect(exists(`${idClass}-level-2-popup.popup-mounted`)).ok();
   await t.expect(exists(`${idClass}-level-3-popup.popup-regular`)).ok();
 
-  await t.click(`${idClass}-level-2-popup .btn-mounted`);
+  await t.click(`${idClass}-level-2-popup > div > .btn-mounted`);
 
   await t.expect(exists(`${idClass}-level-1-popup.popup-mounted`)).ok();
   await t.expect(exists(`${idClass}-level-2-popup.popup-mounted`)).ok();

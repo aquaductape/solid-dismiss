@@ -17,9 +17,12 @@ let cachedPolledElement: Element | null = null;
 export const globalState: {
   closeByFocusSentinel: boolean;
   addedDocumentClick: boolean;
+  closedBySetOpen: boolean;
   documentClickTimeout: number | null;
+  menuBtnEl?: HTMLElement | null;
 } = {
   closeByFocusSentinel: false,
+  closedBySetOpen: false,
   addedDocumentClick: false,
   documentClickTimeout: null,
 };

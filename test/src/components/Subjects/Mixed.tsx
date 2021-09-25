@@ -1,13 +1,7 @@
-import {
-  createEffect,
-  createComputed,
-  createSignal,
-  Component,
-} from "solid-js";
+import { createEffect, createSignal, Component } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, toggleAnimation } from "../../utils";
 import Button from "../Button/Button";
-import IFrame from "../IFrame";
 
 const id = "mixed";
 const Mixed = () => {
@@ -47,13 +41,15 @@ const RegularPopup: Component<{ id: string; idx?: number }> = (props) => {
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
-  let btnCloseEl!: HTMLButtonElement;
+
+  const onClickClose = () => {
+    setOpen(false);
+  };
 
   createEffect(() => {
     if (!open()) return;
 
     const btnBCR = btnEl.getBoundingClientRect();
-    // debugger;
 
     const containerWidth = 250;
     containerEl.style.width = 250 + "px";
@@ -64,10 +60,7 @@ const RegularPopup: Component<{ id: string; idx?: number }> = (props) => {
   });
 
   return (
-    <div
-      style="display: inline-block; position: relative; padding: 5px;"
-      onClick={() => console.log("click container")}
-    >
+    <div style="display: inline-block; position: relative; padding: 5px;">
       <Button class="medium btn-regular" open={open()} ref={btnEl}>
         Regular
       </Button>
@@ -76,7 +69,6 @@ const RegularPopup: Component<{ id: string; idx?: number }> = (props) => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
-        closeButtons={() => btnCloseEl}
         ref={containerEl}
         {...toggleAnimation()}
       >
@@ -91,7 +83,11 @@ const RegularPopup: Component<{ id: string; idx?: number }> = (props) => {
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
           <PopupContent id={props.id} idx={idx} />
-          <button aria-label="close" class="close" ref={btnCloseEl}></button>
+          <button
+            aria-label="close"
+            class="close"
+            onClick={onClickClose}
+          ></button>
         </div>
       </Dismiss>
     </div>
@@ -105,7 +101,10 @@ const MountedPopup: Component<{ id: string; idx?: number }> = (props) => {
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
-  let btnCloseEl!: HTMLButtonElement;
+
+  const onClickClose = () => {
+    setOpen(false);
+  };
 
   createEffect(() => {
     if (!open()) return;
@@ -121,10 +120,7 @@ const MountedPopup: Component<{ id: string; idx?: number }> = (props) => {
   });
 
   return (
-    <div
-      style="display: inline-block; position: relative; padding: 5px;"
-      onClick={() => console.log("click container MOUNTED")}
-    >
+    <div style="display: inline-block; position: relative; padding: 5px;">
       <Button class="medium btn-mounted" open={open()} ref={btnEl}>
         Mounted
       </Button>
@@ -133,7 +129,6 @@ const MountedPopup: Component<{ id: string; idx?: number }> = (props) => {
         open={open}
         setOpen={setOpen}
         mount="body"
-        closeButtons={() => btnCloseEl}
         ref={containerEl}
         {...toggleAnimation()}
       >
@@ -148,7 +143,11 @@ const MountedPopup: Component<{ id: string; idx?: number }> = (props) => {
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
           <PopupContent id={props.id} idx={idx} />
-          <button aria-label="close" class="close" ref={btnCloseEl}></button>
+          <button
+            aria-label="close"
+            class="close"
+            onClick={onClickClose}
+          ></button>
         </div>
       </Dismiss>
     </div>
@@ -162,14 +161,11 @@ const OverlayPopup: Component<{ id: string; idx?: number }> = (props) => {
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
-  let btnCloseEl!: HTMLButtonElement;
 
-  createComputed(() => {
-    if (!open()) return;
-    const btnBCR = btnEl.getBoundingClientRect();
+  const onClickClose = () => {
+    setOpen(false);
+  };
 
-    console.log({ btnBCR });
-  });
   createEffect(() => {
     if (!open()) return;
 
@@ -184,10 +180,7 @@ const OverlayPopup: Component<{ id: string; idx?: number }> = (props) => {
   });
 
   return (
-    <div
-      style="display: inline-block; position: relative; padding: 5px;"
-      onClick={() => console.log("click container")}
-    >
+    <div style="display: inline-block; position: relative; padding: 5px;">
       <Button class="medium btn-overlay" open={open()} ref={btnEl}>
         Overlay
       </Button>
@@ -197,7 +190,6 @@ const OverlayPopup: Component<{ id: string; idx?: number }> = (props) => {
         setOpen={setOpen}
         mount="body"
         overlay={{ class: "overlay" }}
-        closeButtons={() => btnCloseEl}
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
       >
@@ -212,7 +204,11 @@ const OverlayPopup: Component<{ id: string; idx?: number }> = (props) => {
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
           <PopupContent id={props.id} idx={idx} />
-          <button aria-label="close" class="close" ref={btnCloseEl}></button>
+          <button
+            aria-label="close"
+            class="close"
+            onClick={onClickClose}
+          ></button>
         </div>
       </Dismiss>
     </div>
@@ -228,14 +224,11 @@ const OverlayDisabledClickPopup: Component<{ id: string; idx?: number }> = (
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
-  let btnCloseEl!: HTMLButtonElement;
 
-  createComputed(() => {
-    if (!open()) return;
-    const btnBCR = btnEl.getBoundingClientRect();
+  const onClickClose = () => {
+    setOpen(false);
+  };
 
-    console.log({ btnBCR });
-  });
   createEffect(() => {
     if (!open()) return;
 
@@ -250,10 +243,7 @@ const OverlayDisabledClickPopup: Component<{ id: string; idx?: number }> = (
   });
 
   return (
-    <div
-      style="display: inline-block; position: relative; padding: 5px;"
-      onClick={() => console.log("click container OVERLAY DISABLED")}
-    >
+    <div style="display: inline-block; position: relative; padding: 5px;">
       <Button class="medium btn-overlay-d" open={open()} ref={btnEl}>
         Overlay Disabled Click
       </Button>
@@ -263,7 +253,6 @@ const OverlayDisabledClickPopup: Component<{ id: string; idx?: number }> = (
         setOpen={setOpen}
         mount="body"
         overlay={{ class: "overlay" }}
-        closeButtons={() => btnCloseEl}
         closeWhenOverlayClicked={false}
         trapFocus={true}
         ref={containerEl}
@@ -280,7 +269,11 @@ const OverlayDisabledClickPopup: Component<{ id: string; idx?: number }> = (
           <input type="text" placeholder="text input..." class="input-test" />
           <br />
           <PopupContent id={props.id} idx={idx} />
-          <button aria-label="close" class="close" ref={btnCloseEl}></button>
+          <button
+            aria-label="close"
+            class="close"
+            onClick={onClickClose}
+          ></button>
         </div>
       </Dismiss>
     </div>

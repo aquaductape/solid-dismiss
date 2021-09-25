@@ -9,19 +9,18 @@ export type TLocalState = Omit<
   uniqueId: string;
   id: string;
   hasFocusSentinels: boolean;
-  closeBtns: HTMLElement[];
   menuPopupEl?: HTMLElement | null;
   menuBtnEl?: HTMLElement;
   focusSentinelFirstEl?: HTMLDivElement;
   focusSentinelLastEl?: HTMLDivElement;
   containerEl?: HTMLDivElement;
   overlayEl?: HTMLDivElement;
-  closeBtnsAdded: boolean;
   menuPopupAdded: boolean;
   menuBtnId: string;
   addedFocusOutAppEvents: boolean;
   menuBtnKeyupTabFired: boolean;
   prevFocusedEl?: HTMLElement | null;
+  stopComponentEventPropagation?: boolean;
   timeouts: {
     containerFocusTimeoutId: number | null;
     menuButtonBlurTimeoutId: number | null;
@@ -37,7 +36,6 @@ export type TLocalState = Omit<
   onClickMenuButtonRef: (e: Event) => void;
   onBlurMenuButtonRef: (e: FocusEvent) => void;
   onFocusMenuButtonRef: (e: Event) => void;
-  onClickCloseButtonsRef: (e: Event) => void;
   onMouseDownMenuButtonRef: () => void;
   setOpen: (v: boolean) => void;
   open: Accessor<boolean>;
