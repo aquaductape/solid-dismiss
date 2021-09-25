@@ -178,12 +178,12 @@ test("open mounted > mounted > mounted, click every close button to close one st
 
   await t.click(`${idClass}-level-2-popup .close`);
 
-  await t.expect(exists(`${idClass}-level-1-popup.popup-regular`)).ok();
-  await t.expect(exists(`${idClass}-level-2-popup.popup-regular`)).notOk();
+  await t.expect(exists(`${idClass}-level-1-popup.popup-mounted`)).ok();
+  await t.expect(exists(`${idClass}-level-2-popup.popup-mounted`)).notOk();
 
   await t.click(`${idClass}-level-1-popup .close`);
 
-  await t.expect(exists(`${idClass}-level-1-popup.popup-regular`)).notOk();
+  await t.expect(exists(`${idClass}-level-1-popup.popup-mounted`)).notOk();
 });
 
 test("open regular > regular > regular, click top close button, top stack should close. Then click 1st stack, 2nd stack should close", async (t) => {
