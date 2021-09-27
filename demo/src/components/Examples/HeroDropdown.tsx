@@ -1,5 +1,6 @@
 import Dismiss from "../../../../package/index";
 import { createSignal } from "solid-js";
+import FocusGutter from "../FocusGutter";
 
 // instead of having property to toggle scrollbar, developers can have more control on removing scrollbar such as preserving "space" when removing scrollbar without causing a page shift. This will be different depending on how the header bar or body is styled.
 export const toggleScrollbarWithoutPageShift = (type: "add" | "remove") => {
@@ -44,9 +45,9 @@ const HeroDropdown = () => {
             key, or press <code>Tab</code> key until focus is outside of popup
           </p>
           <div class="gutters">
-            <button className="focus-gutter"></button>
-            <button className="focus-gutter"></button>
-            <button className="focus-gutter"></button>
+            <FocusGutter></FocusGutter>
+            <FocusGutter></FocusGutter>
+            <FocusGutter></FocusGutter>
           </div>
         </div>
       </Dismiss>

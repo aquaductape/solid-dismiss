@@ -44,6 +44,8 @@ type IDark = {
   "--token-comment": "#4a6078";
   "--inline-code-bg": "var(--code-bg)";
   "--inline-code-color": "#fff";
+  "--scrollbar-bg": "#30323b";
+  "--scrollbar-bg-active": "var(--secondary-blue)";
 };
 type ILight = {
   "--main-blue": "#142cb0";
@@ -81,16 +83,18 @@ type ILight = {
   "--token-boolean": "#c428e7";
   "--token-function": "#cd02c5";
   "--token-string": "#0000c6";
-  "--token-attr-value": "#0000c6";
-  "--token-class-name": "#db2982";
+  "--token-attr-value": "#00768a";
+  "--token-class-name": "#db29b4";
   "--token-attr-name": "#3500e7";
-  "--token-tag": "#1d1dac";
+  "--token-tag": "#1969a4";
   "--token-plain-text": "#304463";
   "--token-script": "var(--code-actual-text)";
   "--token-language-javascript": "#000";
-  "--token-comment": "#8a9fb5";
+  "--token-comment": "#6c87a2";
   "--inline-code-bg": "var(--code-bg)";
   "--inline-code-color": "#000";
+  "--scrollbar-bg": "#dddcef";
+  "--scrollbar-bg-active": "var(--main-blue)";
 };
 type IThemeConfig = {
   dark: IDark;
@@ -143,6 +147,8 @@ export const themeConfig: IThemeConfig = {
     "--token-comment": "#4a6078",
     "--inline-code-bg": "var(--code-bg)",
     "--inline-code-color": "#fff",
+    "--scrollbar-bg": "#30323b",
+    "--scrollbar-bg-active": "var(--secondary-blue)",
   },
   light: {
     "--main-blue": "#142cb0",
@@ -180,16 +186,18 @@ export const themeConfig: IThemeConfig = {
     "--token-boolean": "#c428e7",
     "--token-function": "#cd02c5",
     "--token-string": "#0000c6",
-    "--token-attr-value": "#0000c6",
-    "--token-class-name": "#db2982",
+    "--token-attr-value": "#00768a",
+    "--token-class-name": "#db29b4",
     "--token-attr-name": "#3500e7",
-    "--token-tag": "#1d1dac",
+    "--token-tag": "#1969a4",
     "--token-plain-text": "#304463",
     "--token-script": "var(--code-actual-text)",
     "--token-language-javascript": "#000",
-    "--token-comment": "#8a9fb5",
+    "--token-comment": "#6c87a2",
     "--inline-code-bg": "var(--code-bg)",
     "--inline-code-color": "#000",
+    "--scrollbar-bg": "#dddcef",
+    "--scrollbar-bg-active": "var(--main-blue)",
   },
 };
 export const changeTheme = (inputTheme: string) => {

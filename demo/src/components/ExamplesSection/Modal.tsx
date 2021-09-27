@@ -71,7 +71,7 @@ const Modal = () => {
 
   return (
     <div class="section">
-      <h2>Modal</h2>
+      <h3>Modal</h3>
       <div class="split-view">
         <div>
           <div class="dropdown-area">

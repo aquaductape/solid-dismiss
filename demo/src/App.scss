@@ -48,6 +48,50 @@
   box-sizing: border-box;
 }
 
+@media (orientation: landscape) {
+  ::-webkit-scrollbar {
+    width: 20px;
+    height: 20px; //this height is for when the scrollbar is in horizontal mode
+    background-color: inherit;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: var(--scrollbar-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #777e95;
+    background-clip: content-box;
+    border: 4px solid transparent;
+
+    &:hover {
+      background-color: #838fb4;
+    }
+
+    &:active {
+      background-color: var(--scrollbar-bg-active);
+    }
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.sibling-nested-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.dropdown-area {
+  & > .sibling-nested-buttons {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 html {
   color-scheme: var(--color-scheme);
   touch-action: manipulation;
@@ -145,13 +189,14 @@ h1 {
 }
 
 h2 {
-  font-size: 50px;
+  font-size: 60px;
   font-family: "Anton";
   font-weight: 400;
   font-style: normal;
 }
+
 h3 {
-  font-size: 20px;
+  font-size: 40px;
 }
 
 ul {
@@ -458,6 +503,28 @@ button {
   box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.411);
   z-index: 50;
   outline: none;
+
+  &:focus {
+    outline: none;
+
+    &:after {
+      position: absolute;
+      content: "";
+      top: -8px;
+      left: -8px;
+      width: calc(100% + 8px + 2px);
+      height: calc(100% + 8px + 2px);
+      border-radius: inherit;
+      pointer-events: none;
+      background: none;
+      border: 3px solid var(--focus);
+      box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
+    }
+  }
+}
+
+.focusable {
+  position: relative;
 
   &:focus {
     outline: none;

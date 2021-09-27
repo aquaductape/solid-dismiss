@@ -3,18 +3,32 @@ import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 
 const s = scopeModuleClasses(c);
 import Dismiss from "../../../../package/index";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 
-const Dropdown = () => {
+const DropdownMounted = () => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
+  let dropdownEl!: HTMLUListElement;
 
   const onClickItem = (e: Event) => {
     e.preventDefault();
   };
 
+  createEffect(() => {
+    if (open()) {
+      const { bottom, left, width } = btnEl.getBoundingClientRect();
+      const { scrollX, scrollY } = window;
+
+      dropdownEl.style.position = "absolute";
+      dropdownEl.style.top = bottom + scrollY + "px";
+      dropdownEl.style.left = left + scrollX + "px";
+      dropdownEl.style.width = width + "px";
+      dropdownEl.style.zIndex = "100";
+    }
+  });
+
   return (
-    <div style="position: relative;">
+    <>
       <button class="btn-primary" ref={btnEl}>
         Dropdown
       </button>
@@ -22,10 +36,11 @@ const Dropdown = () => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
+        mount="body"
         cursorKeys
         useAriaExpanded
       >
-        <ul class={s("dropdown")}>
+        <ul class={s("dropdown")} ref={dropdownEl}>
           <li>
             <a class={s("item")} href="#" onClick={onClickItem}>
               cat
@@ -43,7 +58,7 @@ const Dropdown = () => {
           </li>
         </ul>
       </Dismiss>
-    </div>
+    </>
   );
 };
 
@@ -61,7 +76,6 @@ const Dropdown = () => {
 //         menuButton={btnEl}
 //         open={open}
 //         setOpen={setOpen}
-//         cursorKeys
 //         useAriaExpanded
 //       >
 //         <ul class="dropdown">
@@ -80,4 +94,4 @@ const Dropdown = () => {
 //   );
 // };
 
-export default Dropdown;
+export default DropdownMounted;

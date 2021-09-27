@@ -1,8 +1,9 @@
 import { onMount } from "solid-js";
 import Dropdown from "../Examples/Dropdown";
+import _DropdownMounted from "../Examples/DropdownMounted";
 import FocusGutter from "../FocusGutter";
 
-const BasicDropdown = () => {
+const DropdownMounted = () => {
   let codeEl!: HTMLDivElement;
   onMount(() => {
     codeEl.innerHTML = `<pre class=" language-markup" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -40,13 +41,20 @@ const BasicDropdown = () => {
 
   return (
     <div class="section">
-      <h3>Dropdown</h3>
-
+      <h3>Dropdown Mounted</h3>
+      <p>
+        The dropdown doesn't live in the same markup area as the button, but is
+        mounted at the body.
+      </p>
+      <p>
+        This is so that the dropdown isn't covered by other elements and be the
+        topmost interacted element.
+      </p>
       <div class="split-view">
         <div>
           <div class="dropdown-area">
             <FocusGutter />
-            <Dropdown></Dropdown>
+            <_DropdownMounted></_DropdownMounted>
             <FocusGutter />
           </div>
         </div>
@@ -61,4 +69,4 @@ const BasicDropdown = () => {
   );
 };
 
-export default BasicDropdown;
+export default DropdownMounted;

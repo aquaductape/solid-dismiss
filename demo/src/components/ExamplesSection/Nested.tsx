@@ -1,8 +1,8 @@
 import { onMount } from "solid-js";
-import Dropdown from "../Examples/Dropdown";
+import _Nested from "../Examples/Nested";
 import FocusGutter from "../FocusGutter";
 
-const BasicDropdown = () => {
+const DropdownOverlay = () => {
   let codeEl!: HTMLDivElement;
   onMount(() => {
     codeEl.innerHTML = `<pre class=" language-markup" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -40,13 +40,12 @@ const BasicDropdown = () => {
 
   return (
     <div class="section">
-      <h3>Dropdown</h3>
-
+      <h3>Nested</h3>
       <div class="split-view">
         <div>
           <div class="dropdown-area">
             <FocusGutter />
-            <Dropdown></Dropdown>
+            <_Nested></_Nested>
             <FocusGutter />
           </div>
         </div>
@@ -61,4 +60,4 @@ const BasicDropdown = () => {
   );
 };
 
-export default BasicDropdown;
+export default DropdownOverlay;

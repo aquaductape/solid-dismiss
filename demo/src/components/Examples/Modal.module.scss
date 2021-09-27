@@ -21,6 +21,13 @@
   }
 }
 
+.popup,
+.modal {
+  h4 {
+    margin: 0;
+  }
+}
+
 .close-btns {
   display: flex;
   justify-content: flex-end;
@@ -79,7 +86,7 @@
       left: 0;
       height: 2px;
       width: 100%;
-      background: #000;
+      background: currentColor;
     }
 
     div:nth-child(1) {
@@ -89,4 +96,14 @@
       transform: rotate(-45deg);
     }
   }
+}
+
+.popup {
+  padding: 5px;
+  background: var(--dropdown-bg);
+  border-radius: 8px;
+  width: 75vw;
+  max-width: 300px;
+  transform: translateX(-50%);
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.811);
 }

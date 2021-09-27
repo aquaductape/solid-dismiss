@@ -56,6 +56,14 @@ import { removeLocalEvents } from "./manageLocalEvents";
 // blur (tested so far on only buttons) will fire even on tapping same focused button (which would be invoked `focus()` )
 // For Nested Dropdowns. Since button has to be refocused, when nested button(1) is tapped, it also triggers focusout container(1) for some reason
 
+export type OnOpenHandler = (
+  open: boolean,
+  props: {
+    uniqueId: string;
+    dismissStack: DismissStack[];
+  }
+) => void;
+
 export type TDismiss = {
   /**
    * sets id attribute for root component
@@ -69,11 +77,7 @@ export type TDismiss = {
   /**
    * callback when setOpen signal changes
    */
-  onOpen?: (
-    open: boolean,
-    uniqueId: string,
-    dismissStack: DismissStack[]
-  ) => void;
+  onOpen?: OnOpenHandler;
   /**
    * css selector, queried from document, to get menu button element. Or pass JSX element
    */
@@ -114,8 +118,6 @@ export type TDismiss = {
    * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However if that next tabbable element is inside an iframe that has different origin, then this library won't be able to grab tabbable elements inside it, instead the iframe will be focused.
    *
    * *² selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
-   *
-   *
    */
   focusElementOnClose?:
     | "menuButton"
@@ -157,12 +159,6 @@ export type TDismiss = {
          * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
          */
         scrolling?: "menuButton" | string | JSX.Element;
-        /**
-         * Default: menuButton
-         *
-         * focuse on element when exiting via setting open signal to false.
-         */
-        programmatic?: "menuButton" | string | JSX.Element;
       };
 
   /**
@@ -208,14 +204,12 @@ export type TDismiss = {
    * Default: `false`
    *
    * If `true`, sets "overflow: hidden" declaration to Document.scrollingElement.
-   *
-   * Use callback function if author wants customize how the scrollbar is removed.
    */
   removeScrollbar?: boolean;
   /**
    * Default `false`
    *
-   * Adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element, that way menuPopup is the only element that can be interacted with. Author must ensure that menuPopup is placed above overlay element, one of the ways, is to nest this Component inside Solid's {@link https://www.solidjs.com/docs/latest/api#%3Cportal%3E Portal}.
+   * Adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element, that way menuPopup is the only element that can be interacted with.
    *
    */
   overlay?:
@@ -225,12 +219,6 @@ export type TDismiss = {
         class?: string;
         classList?: { [key: string]: boolean };
         animation?: TAnimation;
-        /**
-         * Default: `false`
-         *
-         * Even if menuPopup is mounted to body, events still propagate through the menuButton's Component Hierarchy.
-         */
-        stopComponentEventPropagation?: boolean;
       };
   /**
    * Default: `false`
@@ -678,7 +666,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           });
 
           runRemoveScrollbar(open);
-          onOpen && onOpen(open, state.uniqueId, dismissStack);
+          onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
           activateLastFocusSentinel(state);
         } else {
           removeLocalEvents(state);
@@ -688,7 +676,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           removeDismissStack(state.uniqueId);
           removeGlobalEvents();
           runRemoveScrollbar(open);
-          onOpen && onOpen(open, state.uniqueId, dismissStack);
+          onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
         }
       },
       { defer: initDefer }

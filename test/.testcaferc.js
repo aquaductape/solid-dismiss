@@ -13,6 +13,6 @@ module.exports = {
     `${path}/mixed.ts`,
     `${path}/nested-regular.ts`,
   ],
-  // speed: 0.3,
+  // speed: 0.8,
   concurrent: 3,
 };

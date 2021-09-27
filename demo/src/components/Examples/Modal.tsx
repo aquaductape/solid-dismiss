@@ -1,4 +1,4 @@
-import c from "./DropdownWithCloseButtons.module.scss";
+import c from "./Modal.module.scss";
 import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 
 const s = scopeModuleClasses(c);
@@ -20,8 +20,23 @@ const Modal: Component<{ animated?: boolean }> = ({ animated }) => {
     setOpen(false);
   };
 
+  createEffect(() => {
+    // Dismiss has does have `removeScrollbar` prop where it just removes the scrollbar, but instead we're customizing the removal where we add margin to prevent visual page "jank".
+    if (open()) {
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      const scrollingElement = document.scrollingElement as HTMLElement;
+      scrollingElement.style.overflow = "hidden";
+      scrollingElement.style.marginRight = scrollbarWidth + "px";
+    } else {
+      const scrollingElement = document.scrollingElement as HTMLElement;
+      scrollingElement.style.overflow = "";
+      scrollingElement.style.marginRight = "";
+    }
+  });
+
   return (
-    <div style="position: relative">
+    <>
       <button class="btn-primary" ref={btnEl}>
         Modal
       </button>
@@ -39,7 +54,7 @@ const Modal: Component<{ animated?: boolean }> = ({ animated }) => {
           role="presentation"
         >
           <div class={s("modal")} role="dialog" aria-modal="true" tabindex="-1">
-            <h3>Modal Text</h3>
+            <h4>Modal Text</h4>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
             <div class={s("close-btns")}>
               <button class="btn-secondary" onClick={onClickClose}>
@@ -66,7 +81,7 @@ const Modal: Component<{ animated?: boolean }> = ({ animated }) => {
           </div>
         </div>
       </Dismiss>
-    </div>
+    </>
   );
 };
 //
