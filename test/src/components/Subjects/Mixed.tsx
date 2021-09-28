@@ -190,7 +190,7 @@ const OverlayPopup: Component<{ id: string; idx?: number }> = (props) => {
         open={open}
         setOpen={setOpen}
         mount="body"
-        overlay={{ class: "overlay" }}
+        overlayElement={{ class: "overlay" }}
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
       >
@@ -253,7 +253,7 @@ const OverlayDisabledClickPopup: Component<{ id: string; idx?: number }> = (
         open={open}
         setOpen={setOpen}
         mount="body"
-        overlay={{ class: "overlay" }}
+        overlayElement={{ class: "overlay" }}
         closeWhenOverlayClicked={false}
         trapFocus={true}
         ref={containerEl}

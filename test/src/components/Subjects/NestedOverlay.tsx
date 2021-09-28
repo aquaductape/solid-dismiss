@@ -74,7 +74,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         open={open}
         setOpen={setOpen}
         mount="body"
-        overlay={{ class: "overlay" }}
+        overlayElement={{ class: "overlay" }}
         closeWhenMenuButtonIsTabbed
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
