@@ -14,12 +14,14 @@ const IFrame: Component<{
       const message = bodyHasClickListener
         ? "body has click listener"
         : "body doesn't have click listener!!";
-      const event = bodyHasClickListener ? `onclick="(function(){})();"` : "";
       const interactiveContent =
         '<button id="${id}" >Button</button> <br><br> <a href="#">Link</a> <br><br> <input type="text" placeholder="Text input...">';
       doc.write(
-        `<html><body ${event} style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
+        `<html><body style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
       );
+      if (bodyHasClickListener) {
+        doc.body.addEventListener("click", () => {});
+      }
       doc.close();
     }, 50); // timeout to solve testcafe Firefox rendering issue
   });
