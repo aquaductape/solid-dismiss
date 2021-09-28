@@ -6,9 +6,13 @@ import {
   createSignal,
   children,
 } from "solid-js";
+import { TDismiss } from ".";
 import { camelize } from "./utils";
 
-type TransitionProps = {
+export type TAnimation = {
+  /**
+   * Used to automatically generate transition CSS class names. e.g. name: 'fade' will auto expand to .fade-enter, .fade-enter-active, etc.
+   */
   name?: string;
   enterActiveClass?: string;
   enterClass?: string;
@@ -22,11 +26,27 @@ type TransitionProps = {
   onBeforeExit?: (el: Element) => void;
   onExit?: (el: Element, done: () => void) => void;
   onAfterExit?: (el: Element) => void;
-  children?: JSX.Element;
+  /**
+   * Change where classes are appended
+   *
+   * css selector, queried from root component, to get menu popup element. Or pass JSX element
+   *
+   * Using `"container"` value will append to the root of the component
+   *
+   * @defaultValue classes are appended to the child of the component
+   */
+  appendToElement?: "container" | string | Node;
+  /**
+   * Whether to apply transition on initial render.
+   *
+   * @defaultValue `false`
+   */
   appear?: boolean;
 };
 
-export const Transition: Component<TransitionProps> = (props) => {
+export const Transition: Component<TAnimation & { children: JSX.Element }> = (
+  props
+) => {
   let el: Element;
   let first = true;
   const [s1, set1] = createSignal<Element | undefined>();
@@ -39,6 +59,7 @@ export const Transition: Component<TransitionProps> = (props) => {
     onBeforeExit,
     onExit,
     onAfterExit,
+    appendToElement,
   } = props;
 
   function getClassState(
@@ -57,10 +78,23 @@ export const Transition: Component<TransitionProps> = (props) => {
     return classState ? classState : `${name}-${type}`;
   }
 
-  function enterTransition(el: Element, prev: Element | undefined) {
+  const getElement = (el: Element) => {
+    if (appendToElement) {
+      if (appendToElement === "container") {
+        return el;
+      }
+      return typeof appendToElement === "string"
+        ? el.querySelector(appendToElement)!
+        : (appendToElement as Element);
+    }
+    return el.children[1]!;
+  };
+
+  function enterTransition(_el: Element, prev: Element | undefined) {
     const enterClasses = getClassState("enter");
     const enterActiveClasses = getClassState("enter-active");
     const enterToClasses = getClassState("enter-to");
+    const el = getElement(_el);
 
     onBeforeEnter && onBeforeEnter(el);
 
@@ -80,20 +114,21 @@ export const Transition: Component<TransitionProps> = (props) => {
       if (el) {
         el.classList.remove(enterActiveClasses);
         el.classList.remove(enterToClasses);
-        s1() !== el && set1(el);
+        s1() !== _el && set1(_el);
         onAfterEnter && onAfterEnter(el);
       }
     }
-    set1(el);
+    set1(_el);
   }
 
-  function exitTransition(el: Element) {
+  function exitTransition(_el: Element) {
     const exitClasses = getClassState("exit");
     const exitActiveClasses = getClassState("exit-active");
     const exitToClasses = getClassState("exit-to");
+    const el = getElement(_el);
 
-    if (!el.parentNode) return endTransition();
-    onBeforeExit && onBeforeExit(el);
+    if (!_el.parentNode) return endTransition();
+    onBeforeExit && onBeforeExit(_el);
 
     el.classList.add(exitClasses);
     el.classList.add(exitActiveClasses);
@@ -110,8 +145,8 @@ export const Transition: Component<TransitionProps> = (props) => {
     function endTransition() {
       el.classList.remove(exitActiveClasses);
       el.classList.remove(exitToClasses);
-      s1() === el && set1(undefined);
-      onAfterExit && onAfterExit(el);
+      s1() === _el && set1(undefined);
+      onAfterExit && onAfterExit(_el);
     }
   }
 
@@ -122,7 +157,7 @@ export const Transition: Component<TransitionProps> = (props) => {
       if (el && el !== prev) {
         enterTransition(el, prev);
       }
-      if (prev && prev !== el) exitTransition(prev!);
+      if (prev && prev !== el) exitTransition(prev);
       first = false;
       return el;
     });

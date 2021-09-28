@@ -10,11 +10,16 @@ const Popup = () => {
   let btnEl!: HTMLButtonElement;
 
   return (
-    <div style="position: relative">
+    <div style="position: relative;">
       <button class="btn-primary" ref={btnEl}>
         Popup
       </button>
-      <Dismiss menuButton={btnEl} open={open} setOpen={setOpen}>
+      <Dismiss
+        menuButton={btnEl}
+        open={open}
+        setOpen={setOpen}
+        // animation={{ name: "popup" }}
+      >
         <div class={s("dropdown")}>
           <p>Popup text!</p>
           <p>

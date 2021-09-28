@@ -242,7 +242,12 @@ export const queryElement = (
     subType,
   }: {
     inputElement: any;
-    type?: "menuButton" | "menuPopup" | "closeButton" | "focusElementOnClose";
+    type?:
+      | "menuButton"
+      | "menuPopup"
+      | "closeButton"
+      | "focusElementOnClose"
+      | "focusElementOnOpen";
     subType?:
       | "tabForwards"
       | "tabBackwards"
@@ -256,6 +261,15 @@ export const queryElement = (
   }
   if (inputElement === "menuPopup") {
     return state.menuPopupEl!;
+  }
+  if (type === "focusElementOnOpen") {
+    if (typeof inputElement === "string") {
+      return state.containerEl?.querySelector(inputElement) as HTMLElement;
+    }
+    if (inputElement instanceof Element) {
+      return inputElement as HTMLElement;
+    }
+    return inputElement();
   }
   if (inputElement == null && type === "menuPopup") {
     if (!state.containerEl) return null as any;

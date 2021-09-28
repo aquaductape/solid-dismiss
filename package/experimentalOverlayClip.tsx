@@ -126,7 +126,7 @@ const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay?: TOverlay }> = (
     trapFocus = false,
     removeScrollbar = false,
     useAriaExpanded = false,
-    mountedElseWhere = false,
+    enableLastFocusSentinel: mountedElseWhere = false,
     onOpen,
   } = props;
   const state: TLocalState = {
@@ -153,7 +153,7 @@ const Dismiss: Component<Omit<TDismiss, "overlay"> & { overlay?: TOverlay }> = (
     menuButtonBlurTimeoutId: null,
     menuPopup,
     menuPopupAdded: false,
-    mountedElseWhere,
+    enableLastFocusSentinel: mountedElseWhere,
     // @ts-ignore
     overlay,
     removeScrollbar,

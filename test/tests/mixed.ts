@@ -32,6 +32,7 @@ test("open each type: mounted > regular > overlay > overlay-disabled, with click
   await t.expect(exists(`${idClass}-level-4-popup.popup-overlay-d`)).ok();
 });
 
+//
 test("open each type: overlay > mounted > regular > overlay-disabled, with click", async (t) => {
   await t.click(`${id} h2`);
   await t.click(`${id} .btn-overlay`);

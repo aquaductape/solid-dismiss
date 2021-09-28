@@ -9,6 +9,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const {
     uniqueId,
     overlay,
+    overlayElement,
     open,
     mount,
     setOpen,
@@ -18,8 +19,9 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const relatedTarget = e.relatedTarget as HTMLElement | null;
   const activeElement = document.activeElement as HTMLElement;
 
-  console.log("focusout", { relatedTarget, activeElement });
+  // console.log("focusout", { relatedTarget, activeElement });
   if (overlay) return;
+  if (overlayElement) return;
 
   if (!open()) return;
 
@@ -40,6 +42,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     if (dismissStack.find((item) => item.overlay)) return;
 
     if (!globalState.addedDocumentClick) {
+      console.log("add doc click");
       globalState.addedDocumentClick = true;
       document.addEventListener("click", onDocumentClick, { once: true });
     }
@@ -47,7 +50,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   }
 
   timeouts.containerFocusTimeoutId = window.setTimeout(() => {
-    console.log("remove", relatedTarget);
+    // console.log("remove", relatedTarget);
     setOpen(false);
   });
 };
@@ -57,7 +60,7 @@ export const onFocusInContainer = (state: TLocalState, e: FocusEvent) => {
   // if (state.stopPropagateFocusInAndFocusOut) {
   //   e.stopPropagation();
   // }
-  console.log("focusin");
+  // console.log("focusin");
   clearTimeout(timeouts.containerFocusTimeoutId!);
   clearTimeout(timeouts.menuButtonBlurTimeoutId!);
 
@@ -68,7 +71,10 @@ export const runFocusOnActive = (state: TLocalState) => {
   const { focusElementOnOpen } = state;
   if (focusElementOnOpen == null) return;
 
-  const el = queryElement(state, { inputElement: focusElementOnOpen });
+  const el = queryElement(state, {
+    inputElement: focusElementOnOpen,
+    type: "focusElementOnOpen",
+  });
   if (el) {
     setTimeout(() => {
       el.focus();

@@ -43,6 +43,7 @@ const DropdownOverlay = () => {
         open={open}
         setOpen={setOpen}
         mount="body"
+        overlay
         cursorKeys
         useAriaExpanded
       >

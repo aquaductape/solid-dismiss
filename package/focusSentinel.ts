@@ -9,10 +9,14 @@ import {
 } from "./utils";
 
 export const activateLastFocusSentinel = (state: TLocalState) => {
-  const { mountedElseWhere, menuBtnEl, containerEl, focusSentinelLastEl } =
-    state;
+  const {
+    enableLastFocusSentinel,
+    menuBtnEl,
+    containerEl,
+    focusSentinelLastEl,
+  } = state;
 
-  if (mountedElseWhere) return;
+  if (enableLastFocusSentinel) return;
 
   const menuBtnSibling = menuBtnEl!.nextElementSibling!;
 

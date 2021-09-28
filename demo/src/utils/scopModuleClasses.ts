@@ -17,8 +17,8 @@ export const scopeModuleClasses =
     //         .join(" ");
     //     }
 
-    return selectors.reduce((acc, item) => {
+    return selectors.reduce((acc, item, index) => {
       if (typeof item === "boolean") return acc + "";
-      return acc + " " + inputModuleClasses[item];
+      return acc + (index ? " " : "") + inputModuleClasses[item];
     }, "") as string;
   };

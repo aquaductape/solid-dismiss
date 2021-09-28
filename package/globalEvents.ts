@@ -36,6 +36,7 @@ export const onDocumentClick = (e: Event) => {
     (item) => {
       if (
         item.overlay ||
+        item.overlayElement ||
         item.menuBtnEl.contains(target) ||
         item.containerEl.contains(target)
       )
@@ -217,6 +218,7 @@ export const removeGlobalEvents = () => {
 
   scrollEventAdded = false;
   globalState.addedDocumentClick = false;
+  // globalState.menuBtnEl = null;
   window.clearTimeout(globalState.documentClickTimeout!);
   globalState.documentClickTimeout = null;
   document.removeEventListener("keydown", onKeyDown);

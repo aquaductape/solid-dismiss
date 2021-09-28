@@ -6,7 +6,7 @@ const s = scopeModuleClasses(c);
 import Dismiss, { OnOpenHandler } from "../../../../package/index";
 import { Component, createSignal, createEffect } from "solid-js";
 
-let modalStep = 0;
+let modalStep = -1;
 let popupCount = 0;
 const Nested = () => {
   return (
@@ -18,25 +18,19 @@ const Nested = () => {
 };
 
 const getPointFromCircle = (
-  index: number,
+  step: number,
   {
-    centerX,
-    centerY,
+    h,
+    k,
     radius,
     steps,
-  }: { radius: number; steps: number; centerX: number; centerY: number }
+  }: { radius: number; steps: number; h: number; k: number }
 ) => {
-  let xValues = centerX;
-  let yValues = centerY;
-  for (let i = 1; i <= steps; i++) {
-    if (i === index) {
-      xValues = centerX + radius * Math.cos((2 * Math.PI * i) / steps);
-      yValues = centerY + radius * Math.sin((2 * Math.PI * i) / steps);
-      return { x: xValues, y: yValues };
-    }
-  }
+  const theta = ((2 * Math.PI) / steps) * step;
+  const x = h + radius * Math.cos(theta);
+  const y = k - radius * Math.sin(theta);
 
-  return { x: xValues, y: yValues };
+  return { x, y };
 };
 
 const Modal = () => {
@@ -53,7 +47,7 @@ const Modal = () => {
     setOpen(false);
   };
 
-  const onOpen: OnOpenHandler = (open, { dismissStack }) => {
+  const onOpen: OnOpenHandler = (open, { dismissStack, uniqueId }) => {
     if (open) {
       if (dismissStack.length <= 1) {
         const scrollbarWidth =
@@ -68,21 +62,22 @@ const Modal = () => {
       const { x, y } = getPointFromCircle(modalStep, {
         radius: 2,
         steps: 10,
-        centerX: 0,
-        centerY: 25,
+        h: 0,
+        k: 23,
       });
-      console.log({ x, y }, modalStep, modalStep);
       modalEl.style.top = `-${y}vh`;
       modalEl.style.left = `${x}vw`;
     } else {
       --modalStep;
-      if (modalStep < 1) modalStep = 1;
+      if (modalStep < 0) modalStep = -1;
       // if there happened to be a stack of modals, we don't want the scrollbar to return when topmost modal is removed while there's more modals below.
       if (dismissStack.length) return;
 
-      const scrollingElement = document.scrollingElement as HTMLElement;
-      scrollingElement.style.overflow = "";
-      scrollingElement.style.marginRight = "";
+      setTimeout(() => {
+        const scrollingElement = document.scrollingElement as HTMLElement;
+        scrollingElement.style.overflow = "";
+        scrollingElement.style.marginRight = "";
+      }, 300);
     }
   };
 
@@ -95,10 +90,15 @@ const Modal = () => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
+        onOpen={onOpen}
         mount="body"
         trapFocus
-        onOpen={onOpen}
+        overlay
+        focusElementOnClose="menuButton"
         focusElementOnOpen={() => modalEl}
+        animation={{
+          name: "fade-modal",
+        }}
       >
         <div
           class={s("modal-container")}
@@ -173,6 +173,9 @@ const Popup = () => {
         open={open}
         setOpen={setOpen}
         onOpen={onOpen}
+        animation={{
+          name: "fade",
+        }}
         mount="body"
       >
         <div class={s("popup")} ref={dropdownEl}>

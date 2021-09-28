@@ -24,6 +24,7 @@ export const toggleScrollbarWithoutPageShift = (type: "add" | "remove") => {
 const HeroDropdown = () => {
   const [toggle, setToggle] = createSignal(false);
   let btnEl!: HTMLButtonElement;
+  let dropdownEl!: HTMLDivElement;
 
   return (
     <div style="position: relative; display: inline-block;">
@@ -36,9 +37,9 @@ const HeroDropdown = () => {
         menuButton={btnEl}
         open={toggle}
         setOpen={setToggle}
-        animation={{ name: "hero-animate" }}
+        animation={{ name: "hero-animate", appendToElement: "container" }}
+        ref={dropdownEl}
       >
-        <div className="shadow"></div>
         <div class="hero-dropdown-content">
           <p style="margin-top: 0;">
             To close: <strong>click</strong> outside, or press <code>Esc</code>{" "}
@@ -50,6 +51,7 @@ const HeroDropdown = () => {
             <FocusGutter></FocusGutter>
           </div>
         </div>
+        <div className="shadow"></div>
       </Dismiss>
     </div>
   );

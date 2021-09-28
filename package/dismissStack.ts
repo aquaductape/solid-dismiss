@@ -1,7 +1,10 @@
 import { Accessor, JSX } from "solid-js";
 import { TDismiss } from ".";
 
-export type TDismissStack = Pick<TDismiss, "focusElementOnClose"> & {
+export type TDismissStack = Pick<
+  TDismiss,
+  "focusElementOnClose" | "overlayElement"
+> & {
   id: string;
   uniqueId: string;
   setOpen: (v: boolean) => void;

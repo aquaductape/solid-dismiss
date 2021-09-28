@@ -48,7 +48,7 @@ import {
 import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
 import { onClickOverlay } from "./overlay";
 import CreatePortal from "./CreatePortal";
-import { Transition } from "./Transition";
+import { TAnimation, Transition } from "./Transition";
 import { removeLocalEvents } from "./manageLocalEvents";
 
 // Safari iOS notes
@@ -83,41 +83,49 @@ export type TDismiss = {
    */
   menuButton: string | JSX.Element | (() => JSX.Element);
   /**
-   * Default: root component element queries first child element
+   *
    * css selector, queried from document, to get menu popup element. Or pass JSX element
+   *
+   * @defaultValue root component element queries first child element
    */
   menuPopup?: string | JSX.Element | (() => JSX.Element);
   /**
-   * Default: `false`
    *
    * Have the behavior to move through a list of "dropdown items" using cursor keys.
    *
+   * @defaultValue `false`
    */
   cursorKeys?: boolean;
   /**
-   * Default: `false`
    *
    * Focus will remain inside menuPopup when pressing Tab key
+   *
+   * @defaultValue `false`
    */
   trapFocus?: boolean;
   /**
-   * Default: focus remains on `"menuButton"`
    *
    * which element, via selector*, to recieve focus after popup opens.
    *
-   * *css string queried from document, or if string value is `"menuPopup"` uses menuPopup element.
+   * *css string queried from root component, or if string value is `"menuPopup"` uses menuPopup element.
+   *
+   * @defaultValue focus remains on `"menuButton"`
    */
   focusElementOnOpen?: "menuPopup" | string | JSX.Element | (() => JSX.Element);
   /**
-   * Default: When Tabbing forwards, focuses on tabbable element*¹ after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click", user-agent determines which element recieves focus, however if overlay is `true`, then menuButton will be focused instead.
    *
-   * Which element, via selector*², to recieve focus after popup closes.
+   * Which element, via selector*, to recieve focus after popup closes.
    *
-   * An example would be to emulate native <select> element behavior, set which sets focus to menuButton after dismiss.
+   * * selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
-   * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However if that next tabbable element is inside an iframe that has different origin, then this library won't be able to grab tabbable elements inside it, instead the iframe will be focused.
+   * @remarks
    *
-   * *² selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
+   * If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However if that next tabbable element is inside an iframe that has different origin, then this library won't be able to grab tabbable elements inside it, instead the iframe will be focused.
+   *
+   *
+   * @defaultValue
+   *
+   * When Tabbing forwards, focuses on tabbable element after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click", user-agent determines which element recieves focus, however if overlay is `true`, then menuButton will be focused instead.
    */
   focusElementOnClose?:
     | "menuButton"
@@ -125,94 +133,119 @@ export type TDismiss = {
     | JSX.Element
     | {
         /**
-         * Default: menuButton
          *
          * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
+         *
+         * @defaultValue `"menuButton"`
          *
          */
         tabBackwards?: "menuButton" | string | JSX.Element;
         /**
-         * Default: next tabbable element after menuButton;
          *
          * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
          *
-         * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
+         * @remarks
+         *
+         *  If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
+         *
+         * @defaultValue next tabbable element after menuButton;
          */
         tabForwards?: "menuButton" | string | JSX.Element;
         /**
          * focus on element when exiting menuPopup via click outside popup.
          *
-         * If overlay present, and popup closes via click, then menuButton will be focused.
+         * If mounted overlay present, and popup closes via click, then menuButton will be focused.
          *
-         * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use `overlay` prop.
+         * @remarks
+         *
+         * When clicking, user-agent determines which element recieves focus.
          */
         click?: "menuButton" | string | JSX.Element;
         /**
-         * Default: menuButton
          *
          * focus on element when exiting menuPopup via "Escape" key
+         *
+         * @defaultValue `"menuButton"`
          */
         escapeKey?: "menuButton" | string | JSX.Element;
         /**
-         * Default: menuButton
          *
          * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
+         *
+         * @dafaultValue `"menuButton"`
          */
         scrolling?: "menuButton" | string | JSX.Element;
       };
 
   /**
-   * Default: `false`
    *
    * When `true`, after focusing within menuPopup, if focused back to menu button via keyboard (Tab key), the menuPopup will close.
    *
+   * @defaultValue `false`
    */
   closeWhenMenuButtonIsTabbed?: boolean;
   /**
-   * Default: `true`
    *
    * If `overlay` is `true`, menuPopup will always close when menu button is clicked
+   *
+   * @defaultValue `false`
    */
   closeWhenMenuButtonIsClicked?: boolean;
   /**
-   * Default: `false`
    *
    * Closes menuPopup when any scrollable container (except inside menuPopup) is scrolled
    *
-   * Note: Even when `true`, scrolling in "outside" scrollable iframe won't be able to close menuPopup.
+   * @remark
+   *
+   * Even when `true`, scrolling in "outside" scrollable iframe won't be able to close menuPopup.
+   *
+   * @defaultValue `false`
    */
   closeWhenScrolling?: boolean;
   /**
-   * Default: `true`
    *
    * If `false`, menuPopup won't close when overlay backdrop is clicked. When overlay clicked, menuPopup will recieve focus.
+   *
+   * @defaultValue `true`
    */
+
   closeWhenOverlayClicked?: boolean;
   /**
-   * Default: `true`
    *
    * Closes menuPopup when escape key is pressed
+   *
+   * @defaultValue `true`
    */
   closeWhenEscapeKeyIsPressed?: boolean;
   /**
-   * Default: `false`
    *
    * Closes when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.
    */
   closeWhenDocumentBlurs?: boolean;
   /**
-   * Default: `false`
    *
    * If `true`, sets "overflow: hidden" declaration to Document.scrollingElement.
+   *
+   * @defaultValue `false`
    */
   removeScrollbar?: boolean;
   /**
-   * Default `false`
+   * Prevent page interaction when clicking outside to close menuPopup
+   *
+   * Author must create overlay element within menuPopup, this way page elements underneath the menuPopup can't be interacted with.
+   *
+   *
+   * @defaultValue `false`
+   */
+  overlay?: boolean;
+  /**
+   * Prevent page interaction when clicking outside to close menuPopup
    *
    * Adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element, that way menuPopup is the only element that can be interacted with.
    *
+   * @defaultValue `false`
    */
-  overlay?:
+  overlayElement?:
     | boolean
     | {
         ref?: (el: HTMLElement) => void;
@@ -221,41 +254,34 @@ export type TDismiss = {
         animation?: TAnimation;
       };
   /**
-   * Default: `false`
    *
    * If `true` add aria attributes for generic expand/collapse dropdown.
+   *
+   * @defaultValue `false`
    */
   useAriaExpanded?: boolean;
   /**
-   * Default: `false`
    *
-   * If `true` activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.
+   * activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.
    *
-   * Automatically set to `true` for the following:  `overlay` prop is `true`,  this component's root container is not an adjacent sibling of menuButton, or `focusElWhenClosed` prop has a value.
+   *
+   * @defaultValue `false` unless `Dismiss.mount` is set, `Dismiss.focusElementOnClosed` is set, `Dismiss.overlay` prop is `true`, or this component's root container is not an adjacent sibling of menuButton.
    */
-  mountedElseWhere?: boolean;
+  enableLastFocusSentinel?: boolean;
+  /**
+   *
+   * Inserts menuPopup in the mount node. Useful for inserting menuPopup outside of page layout. Events still propagate through the Component Hierarchy.
+   */
   mount?: string | Node;
+  /**
+   * Place CSS class names or JS Web Animation to fire animation as menuPopup enters/exits
+   *
+   * @defaultValue none
+   */
   animation?: TAnimation;
   stopComponentEventPropagation?: boolean;
 };
 //
-
-type TAnimation = {
-  name?: string;
-  enterActiveClass?: string;
-  enterClass?: string;
-  enterToClass?: string;
-  exitActiveClass?: string;
-  exitClass?: string;
-  exitToClass?: string;
-  onBeforeEnter?: (el: Element) => void;
-  onEnter?: (el: Element, done: () => void) => void;
-  onAfterEnter?: (el: Element) => void;
-  onBeforeExit?: (el: Element) => void;
-  onExit?: (el: Element, done: () => void) => void;
-  onAfterExit?: (el: Element) => void;
-  appear?: boolean;
-};
 
 export type DismissStack = TDismissStack;
 
@@ -278,10 +304,11 @@ const Dismiss: Component<TDismiss> = (props) => {
     closeWhenOverlayClicked = true,
     closeWhenEscapeKeyIsPressed = true,
     overlay = false,
+    overlayElement = false,
     trapFocus = false,
     removeScrollbar = false,
     useAriaExpanded = false,
-    mountedElseWhere = false,
+    enableLastFocusSentinel = false,
     mount,
     stopComponentEventPropagation = false,
     onOpen,
@@ -312,13 +339,18 @@ const Dismiss: Component<TDismiss> = (props) => {
     upperStackRemovedByFocusOut: false,
     menuPopup,
     menuPopupAdded: false,
-    mountedElseWhere,
+    enableLastFocusSentinel,
     overlay,
+    overlayElement,
     removeScrollbar,
     trapFocus,
     useAriaExpanded,
     hasFocusSentinels:
-      !!focusElementOnClose || !!overlay || trapFocus || mountedElseWhere,
+      !!focusElementOnClose ||
+      overlay ||
+      !!overlayElement ||
+      trapFocus ||
+      enableLastFocusSentinel,
     open: props.open,
     setOpen: props.setOpen,
     onClickDocumentRef: (e) => onClickDocument(state, e),
@@ -349,8 +381,8 @@ const Dismiss: Component<TDismiss> = (props) => {
       el.style.height = "100%";
       el.style.zIndex = "1000";
 
-      if (typeof overlay === "object" && overlay.ref) {
-        overlay.ref(el);
+      if (typeof overlayElement === "object" && overlayElement.ref) {
+        overlayElement.ref(el);
       }
 
       state.overlayEl = el as any;
@@ -376,6 +408,20 @@ const Dismiss: Component<TDismiss> = (props) => {
   let endEnterTransitionOverlayRef: () => void;
   let exitRunning = false;
 
+  function getElement(el: Element, appendToElement?: string | Node) {
+    if (appendToElement) {
+      if (appendToElement === "container") {
+        return el;
+      }
+
+      return typeof appendToElement === "string"
+        ? el.querySelector(appendToElement)!
+        : (appendToElement as Element);
+    }
+
+    return el.children[1];
+  }
+
   function enterTransition(type: "popup" | "overlay", el: Element) {
     // @ts-ignore
     if (type === "overlay" && (!props.overlay || !props.overlay.animation))
@@ -388,6 +434,8 @@ const Dismiss: Component<TDismiss> = (props) => {
     if (!animation) return;
     if (!animation.appear && !initDefer) return;
     exitRunning = false;
+
+    el = getElement(el, animation.appendToElement);
 
     const name = animation.name;
     let {
@@ -468,6 +516,8 @@ const Dismiss: Component<TDismiss> = (props) => {
           props.overlay.animation;
     exitRunning = true;
 
+    el = getElement(el, animation.appendToElement);
+
     const name = animation.name;
     let {
       onBeforeExit,
@@ -510,8 +560,13 @@ const Dismiss: Component<TDismiss> = (props) => {
     }
 
     function endTransition() {
+      console.log("ended TRANSITION", state.uniqueId);
       exitRunning = false;
       mountEl?.removeChild(containerEl!);
+      globalState.closedBySetOpen = false;
+
+      resetFocusOnClose();
+
       onAfterExit && onAfterExit(containerEl?.firstElementChild!);
       containerEl = null;
       mountEl = null;
@@ -530,6 +585,23 @@ const Dismiss: Component<TDismiss> = (props) => {
       const el = document.scrollingElement as HTMLElement;
       el.style.overflow = "";
     }
+  };
+
+  const resetFocusOnClose = () => {
+    const menuBtnExists = globalState.menuBtnEl;
+    const activeElement = document.activeElement;
+
+    if (!state.overlay && !state.overlayElement) return;
+    if (!menuBtnExists) return;
+
+    if (
+      !state.containerEl?.contains(activeElement) &&
+      activeElement !== document.body
+    ) {
+      return;
+    }
+
+    state.menuBtnEl?.focus();
   };
 
   onMount(() => {
@@ -570,35 +642,18 @@ const Dismiss: Component<TDismiss> = (props) => {
         if (open === prevOpen) return;
 
         if (!open) {
-          // used to detect programmatic removal
-          // to detect if it was programmatic have state {click, tab} to be marked when toggled by events
-          // if none of those properties are marked, it means it was programmatic
-          // programmatic should be global variable
-          //  meanwhile focusout events will be ignored
-          // tell author if they choose to programmatically remove it, they must set focus to correct logical place
           console.log("run computed!!");
+          // used to detect programmatic removal
           if (!globalState.closedBySetOpen) {
             globalState.closedBySetOpen = true;
             globalState.menuBtnEl = state.menuBtnEl;
-            // console.log("closedBySetOpen", document.activeElement);
+
             setTimeout(() => {
-              const menuBtnExists = globalState.menuBtnEl;
               globalState.closedBySetOpen = false;
-              globalState.menuBtnEl = null;
-
-              if (!menuBtnExists) return;
-
-              if (
-                document.activeElement &&
-                document.activeElement !== document.body
-              ) {
-                return;
-              }
-              state.menuBtnEl?.focus();
+              resetFocusOnClose();
             });
-            // document.addEventListener("click", onDocumentClick, { once: true });
           }
-        }
+        } //
 
         if (!mount) return;
 
@@ -610,7 +665,7 @@ const Dismiss: Component<TDismiss> = (props) => {
                   ? document.querySelector(mount)!
                   : mount!,
               popupChildren: render(props.children),
-              overlayChildren: overlay ? renderOverlay() : null,
+              overlayChildren: overlayElement ? renderOverlay() : null,
               marker,
               onCreate: (mount, container) => {
                 mountEl = mount;
@@ -653,10 +708,11 @@ const Dismiss: Component<TDismiss> = (props) => {
             menuBtnEl: state.menuBtnEl!,
             overlayEl: state.overlayEl!,
             menuPopupEl: state.menuPopupEl!,
-            overlay: !!overlay,
+            overlay,
             closeWhenDocumentBlurs,
             closeWhenEscapeKeyIsPressed,
             closeWhenMenuButtonIsTabbed,
+            overlayElement,
             cursorKeys,
             focusElementOnClose,
             upperStackRemovedByFocusOut: false,
@@ -701,10 +757,14 @@ const Dismiss: Component<TDismiss> = (props) => {
     return (
       <div
         class={
-          typeof props.overlay === "object" ? props.overlay.class : undefined
+          typeof props.overlayElement === "object"
+            ? props.overlayElement.class
+            : undefined
         }
         classList={
-          typeof props.overlay === "object" ? props.overlay.classList || {} : {}
+          typeof props.overlayElement === "object"
+            ? props.overlayElement.classList || {}
+            : {}
         }
         role="presentation"
         onClick={state.onClickOverlayRef}
@@ -766,6 +826,7 @@ const Dismiss: Component<TDismiss> = (props) => {
   if (props.animation) {
     return (
       <Transition
+        {...props.animation}
         name={props.animation.name}
         enterClass={props.animation.enterClass}
         enterActiveClass={props.animation.enterActiveClass}

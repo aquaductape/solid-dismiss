@@ -7,13 +7,13 @@ import Hero from "./components/Hero/Hero";
 import BasicDropdown from "./components/ExamplesSection/BasicDropdown";
 import IOSDebugger from "./components/iOSDebugger";
 import Modal from "./components/ExamplesSection/Modal";
-import Mixed from "./components/Examples/Mixed";
-import IFrames from "./components/Examples/IFrames";
+import IFrame from "./components/Examples/IFrame";
 import Docs from "./components/Docs/Docs";
 import Popup from "./components/ExamplesSection/Popup";
 import DropdownMounted from "./components/ExamplesSection/DropdownMounted";
 import DropdownOverlay from "./components/ExamplesSection/DropdownOverlay";
 import Nested from "./components/ExamplesSection/Nested";
+import Animation from "./components/ExamplesSection/Animations";
 
 const App: Component = () => {
   return (
@@ -28,6 +28,7 @@ const App: Component = () => {
           <DropdownMounted></DropdownMounted>
           <DropdownOverlay></DropdownOverlay>
           <Modal></Modal>
+          <Animation></Animation>
           <Nested></Nested>
         </section>
         <section>

@@ -114,6 +114,7 @@ const MountedPopup: Component<{ id: string; idx?: number }> = (props) => {
     const containerWidth = 250;
     containerEl.style.position = "absolute";
     containerEl.style.width = 250 + "px";
+    containerEl.style.zIndex = "1000";
 
     containerEl.style.top = btnBCR.bottom + window.scrollY + "px";
     containerEl.style.left = getLeft(btnBCR, containerWidth) + "px";

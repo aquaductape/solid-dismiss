@@ -45,6 +45,7 @@ const Modal: Component<{ animated?: boolean }> = ({ animated }) => {
         open={open}
         setOpen={setOpen}
         mount="body"
+        overlay
         trapFocus
         focusElementOnOpen={() => btnSaveEl}
       >
