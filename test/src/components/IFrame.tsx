@@ -19,10 +19,12 @@ const IFrame: Component<{
       doc.write(
         `<html><body style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
       );
-      if (bodyHasClickListener) {
-        doc.body.addEventListener("click", () => {});
-      }
-      doc.close();
+      setTimeout(() => {
+        if (bodyHasClickListener) {
+          doc.body.addEventListener("click", () => {});
+        }
+        doc.close();
+      }, 0);
     }, 50); // timeout to solve testcafe Firefox rendering issue
   });
   return (
