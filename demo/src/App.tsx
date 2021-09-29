@@ -1,4 +1,4 @@
-import type { Component } from "solid-js";
+import { Component, lazy } from "solid-js";
 
 import "./App.scss";
 import "./codeTheme.scss";
@@ -8,7 +8,7 @@ import BasicDropdown from "./components/ExamplesSection/BasicDropdown";
 import IOSDebugger from "./components/iOSDebugger";
 import Modal from "./components/ExamplesSection/Modal";
 import IFrame from "./components/Examples/IFrame";
-import Docs from "./components/Docs/Docs";
+const Docs = lazy(() => import("./components/Docs/Docs"));
 import Popup from "./components/ExamplesSection/Popup";
 import DropdownMounted from "./components/ExamplesSection/DropdownMounted";
 import DropdownOverlay from "./components/ExamplesSection/DropdownOverlay";
@@ -22,7 +22,9 @@ const App: Component = () => {
       <main class="main">
         <Hero />
         <section>
-          <h2>Examples</h2>
+          <h2 id="examples" tabindex="0">
+            Examples
+          </h2>
           <Popup></Popup>
           <BasicDropdown></BasicDropdown>
           <DropdownMounted></DropdownMounted>
@@ -32,10 +34,29 @@ const App: Component = () => {
           <Nested></Nested>
         </section>
         <section>
-          <h2>Docs</h2>
+          <h2 id="docs" tabindex="0">
+            Docs
+          </h2>
           <Docs></Docs>
         </section>
       </main>
+      <svg>
+        <defs>
+          <linearGradient
+            id="dismiss-logo-a"
+            x1="104.71"
+            x2="94.151"
+            y1="59.781"
+            y2="77.909"
+            gradientTransform="translate(-78.46 -53.379)"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#142cb0" offset="0" />
+            <stop stop-color="#00bcd4" offset="1" />
+          </linearGradient>
+        </defs>
+      </svg>
+
       {/* <IOSDebugger /> */}
     </>
   );

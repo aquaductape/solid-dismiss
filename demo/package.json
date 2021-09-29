@@ -13,6 +13,7 @@
     "@amoutonbrady/solid-heroicons": "^0.8.0",
     "@types/prismjs": "^1.16.6",
     "focus-visible": "^5.2.0",
+    "hamburgers": "^1.1.3",
     "prismjs": "^1.24.1",
     "sass": "^1.38.0",
     "simplebar": "^5.3.5",

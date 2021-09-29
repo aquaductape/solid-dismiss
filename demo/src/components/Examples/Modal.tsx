@@ -26,12 +26,16 @@ const Modal: Component<{ animated?: boolean }> = ({ animated }) => {
       const scrollbarWidth =
         window.innerWidth - document.documentElement.clientWidth;
       const scrollingElement = document.scrollingElement as HTMLElement;
+      const navbar = document.getElementById("navbar-content")!;
       scrollingElement.style.overflow = "hidden";
       scrollingElement.style.marginRight = scrollbarWidth + "px";
+      navbar.style.marginRight = scrollbarWidth + "px";
     } else {
       const scrollingElement = document.scrollingElement as HTMLElement;
+      const navbar = document.getElementById("navbar-content")!;
       scrollingElement.style.overflow = "";
       scrollingElement.style.marginRight = "";
+      navbar.style.marginRight = "";
     }
   });
 

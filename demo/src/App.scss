@@ -1,3 +1,9 @@
+$hamburger-layer-color: currentColor !default;
+$hamburger-layer-width: 30px !default;
+$hamburger-layer-height: 3px !default;
+
+@import "./hamburgers/hamburgers.scss";
+
 :root {
   --main-blue: #142cb0;
   --secondary-blue: #00bcd4;
@@ -95,6 +101,7 @@
 html {
   color-scheme: var(--color-scheme);
   touch-action: manipulation;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -193,10 +200,12 @@ h2 {
   font-family: "Anton";
   font-weight: 400;
   font-style: normal;
+  margin: 0;
+  padding: 60px 0;
 }
 
 h3 {
-  font-size: 40px;
+  font-size: 35px;
 }
 
 ul {
@@ -209,7 +218,7 @@ li {
 }
 
 .main {
-  padding-top: 60px;
+  padding-top: 10vh;
   width: 85%;
   max-width: 1200px;
   margin: 0 auto;
@@ -572,72 +581,6 @@ button {
   }
 }
 
-.navbar {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
-
-  .logo {
-    display: none;
-  }
-
-  .content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px;
-    height: 60px;
-    border-bottom: 2px solid var(--bg);
-    background: var(--bg);
-  }
-
-  .utils {
-    display: flex;
-    justify-content: space-between;
-
-    & > * {
-      margin: 0 5px;
-      border-radius: 5px;
-      transition: background-color 250ms;
-      &:hover {
-        background: var(--nav-item-bg);
-      }
-    }
-  }
-
-  .dark-toggle,
-  .github {
-    box-sizing: border-box;
-    display: flex;
-    width: 45px;
-    height: 45px;
-    padding: 5px;
-    justify-content: center;
-    align-items: center;
-    color: var(--text);
-
-    svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .github {
-    padding: 8px;
-  }
-
-  .dark-toggle {
-    svg {
-      position: relative;
-      left: 3px;
-      top: 3px;
-    }
-  }
-}
-
 .hero-dropdown {
   position: absolute;
   max-width: 350px;
@@ -686,8 +629,16 @@ button {
     "content demo"
     "package package";
   grid-template-rows: auto auto 1fr;
-  height: calc(100vh - 60px);
+  height: 90vh;
   gap: min(50px, 10vw);
+
+  .title-sentinel {
+    position: absolute;
+    top: 25%;
+    left: 0;
+    height: 1px;
+    width: 100%;
+  }
 
   .title {
     grid-area: title;
@@ -825,7 +776,7 @@ button {
 }
 
 p {
-  & > code {
+  & > .code {
     background: var(--inline-code-bg);
     color: var(--inline-code-color);
     padding: 3px;

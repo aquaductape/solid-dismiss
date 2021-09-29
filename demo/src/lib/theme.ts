@@ -11,13 +11,14 @@ type IDark = {
   "--focus-blur": "#625cff";
   "--focus-blur-spread": "2px";
   "--logo-shadow": "drop-shadow(-1px 2px 0px #000)";
-  "--bg": "#201d26";
+  "--bg": "#1d1e28";
   "--text": "#cfcfcf";
-  "--dropdown-bg": "#2c2835";
+  "--dropdown-bg": "#2a293c";
   "--dropdown-btn": "rgb(0, 0, 0)";
   "--dropdown-root-bg": "#2d2837";
   "--dropdown-root-border": "#635f75";
   "--dropdown-root-shadow": "#000";
+  "--overlay-bg": "rgb(1 9 49 / 35%)";
   "--list-item-hover": "#3e384a";
   "--list-item-active": "#ccc6e4";
   "--list-item-active-txt": "#000";
@@ -46,6 +47,12 @@ type IDark = {
   "--inline-code-color": "#fff";
   "--scrollbar-bg": "#30323b";
   "--scrollbar-bg-active": "var(--secondary-blue)";
+  "--docs-panel-bg": "#252436";
+  "--docs-code-bg": "rgb(47 43 68)";
+  "--docs-comment-tag": "#9f9f9f";
+  "--docs-divider-bg": "rgba(255, 255, 2555, 0.1)";
+  "--docs-func-border-bg": "rgba(255, 255, 2555, 0.15)";
+  "--docs-signature-type-link": "var(--secondary-blue)";
 };
 type ILight = {
   "--main-blue": "#142cb0";
@@ -66,7 +73,8 @@ type ILight = {
   "--dropdown-btn": "rgba(10, 10, 60, 57%)";
   "--dropdown-root-bg": "#fff";
   "--dropdown-root-border": "#bcb7d4";
-  "--dropdown-root-shadow": "#22243ab8";
+  "--dropdown-root-shadow": "#0b1d8266";
+  "--overlay-bg": "rgb(1 9 49 / 22%)";
   "--list-item-hover": "#dbd8eb";
   "--list-item-active": "#3b374c";
   "--list-item-active-txt": "#fff";
@@ -95,6 +103,12 @@ type ILight = {
   "--inline-code-color": "#000";
   "--scrollbar-bg": "#dddcef";
   "--scrollbar-bg-active": "var(--main-blue)";
+  "--docs-panel-bg": "#faf9fe";
+  "--docs-code-bg": "rgba(38, 0, 146, 0.06)";
+  "--docs-comment-tag": "#707070";
+  "--docs-divider-bg": "rgba(0, 0, 0, 0.07)";
+  "--docs-func-border-bg": "rgba(0, 0, 0, 0.12)";
+  "--docs-signature-type-link": "var(--main-blue)";
 };
 type IThemeConfig = {
   dark: IDark;
@@ -114,13 +128,14 @@ export const themeConfig: IThemeConfig = {
     "--focus-blur": "#625cff",
     "--focus-blur-spread": "2px",
     "--logo-shadow": "drop-shadow(-1px 2px 0px #000)",
-    "--bg": "#201d26",
+    "--bg": "#1d1e28",
     "--text": "#cfcfcf",
-    "--dropdown-bg": "#2c2835",
+    "--dropdown-bg": "#2a293c",
     "--dropdown-btn": "rgb(0, 0, 0)",
     "--dropdown-root-bg": "#2d2837",
     "--dropdown-root-border": "#635f75",
     "--dropdown-root-shadow": "#000",
+    "--overlay-bg": "rgb(1 9 49 / 35%)",
     "--list-item-hover": "#3e384a",
     "--list-item-active": "#ccc6e4",
     "--list-item-active-txt": "#000",
@@ -149,6 +164,12 @@ export const themeConfig: IThemeConfig = {
     "--inline-code-color": "#fff",
     "--scrollbar-bg": "#30323b",
     "--scrollbar-bg-active": "var(--secondary-blue)",
+    "--docs-panel-bg": "#252436",
+    "--docs-code-bg": "rgb(47 43 68)",
+    "--docs-comment-tag": "#9f9f9f",
+    "--docs-divider-bg": "rgba(255, 255, 2555, 0.1)",
+    "--docs-func-border-bg": "rgba(255, 255, 2555, 0.15)",
+    "--docs-signature-type-link": "var(--secondary-blue)",
   },
   light: {
     "--main-blue": "#142cb0",
@@ -169,7 +190,8 @@ export const themeConfig: IThemeConfig = {
     "--dropdown-btn": "rgba(10, 10, 60, 57%)",
     "--dropdown-root-bg": "#fff",
     "--dropdown-root-border": "#bcb7d4",
-    "--dropdown-root-shadow": "#22243ab8",
+    "--dropdown-root-shadow": "#0b1d8266",
+    "--overlay-bg": "rgb(1 9 49 / 22%)",
     "--list-item-hover": "#dbd8eb",
     "--list-item-active": "#3b374c",
     "--list-item-active-txt": "#fff",
@@ -198,6 +220,12 @@ export const themeConfig: IThemeConfig = {
     "--inline-code-color": "#000",
     "--scrollbar-bg": "#dddcef",
     "--scrollbar-bg-active": "var(--main-blue)",
+    "--docs-panel-bg": "#faf9fe",
+    "--docs-code-bg": "rgba(38, 0, 146, 0.06)",
+    "--docs-comment-tag": "#707070",
+    "--docs-divider-bg": "rgba(0, 0, 0, 0.07)",
+    "--docs-func-border-bg": "rgba(0, 0, 0, 0.12)",
+    "--docs-signature-type-link": "var(--main-blue)",
   },
 };
 export const changeTheme = (inputTheme: string) => {

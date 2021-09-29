@@ -48,13 +48,48 @@ import {
 import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
 import { onClickOverlay } from "./overlay";
 import CreatePortal from "./CreatePortal";
-import { TAnimation, Transition } from "./Transition";
+import { Transition } from "./Transition";
 import { removeLocalEvents } from "./manageLocalEvents";
 
 // Safari iOS notes
 // buttons can't receive focus on tap, only through invoking `focus()` method
 // blur (tested so far on only buttons) will fire even on tapping same focused button (which would be invoked `focus()` )
 // For Nested Dropdowns. Since button has to be refocused, when nested button(1) is tapped, it also triggers focusout container(1) for some reason
+
+export type DismissAnimation = {
+  /**
+   * Used to automatically generate transition CSS class names. e.g. name: 'fade' will auto expand to .fade-enter, .fade-enter-active, etc.
+   */
+  name?: string;
+  enterActiveClass?: string;
+  enterClass?: string;
+  enterToClass?: string;
+  exitActiveClass?: string;
+  exitClass?: string;
+  exitToClass?: string;
+  onBeforeEnter?: (el: Element) => void;
+  onEnter?: (el: Element, done: () => void) => void;
+  onAfterEnter?: (el: Element) => void;
+  onBeforeExit?: (el: Element) => void;
+  onExit?: (el: Element, done: () => void) => void;
+  onAfterExit?: (el: Element) => void;
+  /**
+   * Change element where CSS classes are appended and passed to callbacks.
+   *
+   * css selector, queried from root component, to get menu popup element. Or pass JSX element
+   *
+   * Using `"container"` value will use root element of the component
+   *
+   * @defaultValue The element is the child of the component, where CSS classes are appended to, and element is passed to callbacks
+   */
+  appendToElement?: "container" | string | Node;
+  /**
+   * Whether to apply transition on initial render.
+   *
+   * @defaultValue `false`
+   */
+  appear?: boolean;
+};
 
 export type OnOpenHandler = (
   open: boolean,
@@ -116,7 +151,7 @@ export type TDismiss = {
    *
    * Which element, via selector*, to recieve focus after popup closes.
    *
-   * * selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
+   * *selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
    * @remarks
    *
@@ -251,7 +286,7 @@ export type TDismiss = {
         ref?: (el: HTMLElement) => void;
         class?: string;
         classList?: { [key: string]: boolean };
-        animation?: TAnimation;
+        animation?: DismissAnimation;
       };
   /**
    *
@@ -278,7 +313,7 @@ export type TDismiss = {
    *
    * @defaultValue none
    */
-  animation?: TAnimation;
+  animation?: DismissAnimation;
   stopComponentEventPropagation?: boolean;
 };
 //
@@ -426,7 +461,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     // @ts-ignore
     if (type === "overlay" && (!props.overlay || !props.overlay.animation))
       return;
-    const animation: TAnimation =
+    const animation: DismissAnimation =
       type === "popup"
         ? props.animation // @ts-ignore
         : props.overlay.animation;

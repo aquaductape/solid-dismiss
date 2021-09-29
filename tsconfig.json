@@ -9,5 +9,6 @@
     "strict": true,
     "strictNullChecks": true,
     "jsxImportSource": "solid-js"
-  }
+  },
+  "exclude": ["demo", "test", "node_modules"]
 }

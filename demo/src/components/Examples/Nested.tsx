@@ -53,8 +53,10 @@ const Modal = () => {
         const scrollbarWidth =
           window.innerWidth - document.documentElement.clientWidth;
         const scrollingElement = document.scrollingElement as HTMLElement;
+        const navbar = document.getElementById("navbar-content")!;
         scrollingElement.style.overflow = "hidden";
         scrollingElement.style.marginRight = scrollbarWidth + "px";
+        navbar.style.marginRight = scrollbarWidth + "px";
       }
 
       modalStep = (modalStep + 1) % 10;
@@ -75,8 +77,10 @@ const Modal = () => {
 
       setTimeout(() => {
         const scrollingElement = document.scrollingElement as HTMLElement;
+        const navbar = document.getElementById("navbar-content")!;
         scrollingElement.style.overflow = "";
         scrollingElement.style.marginRight = "";
+        navbar.style.marginRight = "";
       }, 300);
     }
   };

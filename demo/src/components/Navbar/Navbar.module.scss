@@ -1,0 +1,156 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.logo {
+  display: block;
+  opacity: 0;
+  width: 45px;
+  height: 45px;
+  margin-left: 5px;
+  transition: opacity 200ms;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  &.active {
+    opacity: 1;
+  }
+}
+
+.shadow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: inherit;
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+  filter: drop-shadow(0 0 15px var(--dropdown-root-shadow));
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 200ms;
+
+  &.active {
+    opacity: 1;
+  }
+}
+
+.content-container {
+  position: relative;
+  background: var(--bg);
+}
+
+.content {
+  position: relative;
+  background: inherit;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  height: 60px;
+  border-bottom: 2px solid var(--bg);
+}
+
+.utils {
+  display: flex;
+  justify-content: space-between;
+  margin-left: auto;
+
+  & > * {
+    margin: 0 5px;
+    border-radius: 5px;
+    transition: background-color 250ms;
+    &:hover {
+      background: var(--nav-item-bg);
+    }
+  }
+}
+
+.dark-toggle,
+.github {
+  box-sizing: border-box;
+  display: flex;
+  width: 45px;
+  height: 45px;
+  padding: 5px;
+  justify-content: center;
+  align-items: center;
+  color: var(--text);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.github {
+  padding: 8px;
+}
+
+.dark-toggle {
+  svg {
+    position: relative;
+    left: 3px;
+    top: 3px;
+  }
+}
+
+.nav {
+  display: none;
+  margin-left: auto;
+}
+.nav-list {
+  display: flex;
+}
+
+.nav-item {
+  display: block;
+  padding: 10px;
+  font-size: 22px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.hamburger-container {
+  display: flex;
+}
+
+.nav-mobile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+
+  .nav-list {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 600px) {
+  .nav {
+    display: block;
+  }
+
+  .utils {
+    margin-left: 100px;
+  }
+
+  .hamburger-container {
+    display: none;
+  }
+
+  .content {
+    width: 85%;
+    max-width: 1200px;
+    margin: auto;
+  }
+}

@@ -1,199 +1,79 @@
 import { createSignal, Show, createEffect, onMount } from "solid-js";
+import "./Docs.scss";
 
 const Docs = () => {
   let codeEl!: HTMLDivElement;
   onMount(() => {
-    codeEl.innerHTML = `<pre class=" language-markup" tabindex="0"><code class="  language-typescript"><span class="token keyword">type</span> <span class="token class-name">TDismiss</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
-<span class="token comment">/**
- * sets id attribute for root component
- */</span>
-id<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>
-ref<span class="token operator">?</span><span class="token operator">:</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">;</span>
-<span class="token keyword">class</span><span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>
-classList<span class="token operator">?</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span>key<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">:</span> <span class="token builtin">boolean</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
-open<span class="token operator">:</span> Accessor<span class="token operator">&lt;</span><span class="token builtin">boolean</span><span class="token operator">&gt;</span><span class="token punctuation">;</span>
-<span class="token function-variable function">setOpen</span><span class="token operator">:</span> <span class="token punctuation">(</span>v<span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token keyword">void</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * callback when setOpen signal changes
- */</span>
-onOpen<span class="token operator">?</span><span class="token operator">:</span> <span class="token punctuation">(</span>
-  open<span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">,</span>
-  uniqueId<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">,</span>
-  dismissStack<span class="token operator">:</span> DismissStack<span class="token punctuation">[</span><span class="token punctuation">]</span>
-<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token keyword">void</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * css selector, queried from document, to get menu button element. Or pass JSX element
- */</span>
-menuButton<span class="token operator">:</span> <span class="token builtin">string</span> <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element <span class="token operator">|</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: root component element queries first child element
- * css selector, queried from document, to get menu popup element. Or pass JSX element
- */</span>
-menuPopup<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">string</span> <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element <span class="token operator">|</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`false\`
- *
- * Have the behavior to move through a list of "dropdown items" using cursor keys.
- *
- */</span>
-cursorKeys<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`false\`
- *
- * Focus will remain inside menuPopup when pressing Tab key
- */</span>
-trapFocus<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: focus remains on \`"menuButton"\`
- *
- * which element, via selector*, to recieve focus after popup opens.
- *
- * *css string queried from document, or if string value is \`"menuPopup"\` uses menuPopup element.
- */</span>
-focusElementOnOpen<span class="token operator">?</span><span class="token operator">:</span> <span class="token string">"menuPopup"</span> <span class="token operator">|</span> <span class="token builtin">string</span> <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element <span class="token operator">|</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: When Tabbing forwards, focuses on tabbable element*¹ after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click", user-agent determines which element recieves focus, however if overlay is \`true\`, then menuButton will be focused instead.
- *
- * Which element, via selector*², to recieve focus after popup closes.
- *
- * An example would be to emulate native &lt;select&gt; element behavior, set which sets focus to menuButton after dismiss.
- *
- * *¹ If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However if that next tabbable element is inside an iframe that has different origin, then this library won't be able to grab tabbable elements inside it, instead the iframe will be focused.
- *
- * *² selector: css string queried from document, or if string value is \`"menuButton"\` uses menuButton element
- */</span>
-focusElementOnClose<span class="token operator">?</span><span class="token operator">:</span>
-  <span class="token operator">|</span> <span class="token string">"menuButton"</span>
-  <span class="token operator">|</span> <span class="token builtin">string</span>
-  <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element
-  <span class="token operator">|</span> <span class="token punctuation">{</span>
-      <span class="token comment">/**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
-       *
-       */</span>
-      tabBackwards<span class="token operator">?</span><span class="token operator">:</span> <span class="token string">"menuButton"</span> <span class="token operator">|</span> <span class="token builtin">string</span> <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">;</span>
-      <span class="token comment">/**
-       * Default: next tabbable element after menuButton;
-       *
-       * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
-       *
-       * Note: If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
-       */</span>
-      tabForwards<span class="token operator">?</span><span class="token operator">:</span> <span class="token string">"menuButton"</span> <span class="token operator">|</span> <span class="token builtin">string</span> <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">;</span>
-      <span class="token comment">/**
-       * focus on element when exiting menuPopup via click outside popup.
-       *
-       * If overlay present, and popup closes via click, then menuButton will be focused.
-       *
-       * Note: When clicking, user-agent determines which element recieves focus, to prevent this, use \`overlay\` prop.
-       */</span>
-      click<span class="token operator">?</span><span class="token operator">:</span> <span class="token string">"menuButton"</span> <span class="token operator">|</span> <span class="token builtin">string</span> <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">;</span>
-      <span class="token comment">/**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via "Escape" key
-       */</span>
-      escapeKey<span class="token operator">?</span><span class="token operator">:</span> <span class="token string">"menuButton"</span> <span class="token operator">|</span> <span class="token builtin">string</span> <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">;</span>
-      <span class="token comment">/**
-       * Default: menuButton
-       *
-       * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
-       */</span>
-      scrolling<span class="token operator">?</span><span class="token operator">:</span> <span class="token string">"menuButton"</span> <span class="token operator">|</span> <span class="token builtin">string</span> <span class="token operator">|</span> <span class="token constant">JSX</span><span class="token punctuation">.</span>Element<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span><span class="token punctuation">;</span>
-
-<span class="token comment">/**
- * Default: \`false\`
- *
- * When \`true\`, after focusing within menuPopup, if focused back to menu button via keyboard (Tab key), the menuPopup will close.
- *
- */</span>
-closeWhenMenuButtonIsTabbed<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`true\`
- *
- * If \`overlay\` is \`true\`, menuPopup will always close when menu button is clicked
- */</span>
-closeWhenMenuButtonIsClicked<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`false\`
- *
- * Closes menuPopup when any scrollable container (except inside menuPopup) is scrolled
- *
- * Note: Even when \`true\`, scrolling in "outside" scrollable iframe won't be able to close menuPopup.
- */</span>
-closeWhenScrolling<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`true\`
- *
- * If \`false\`, menuPopup won't close when overlay backdrop is clicked. When overlay clicked, menuPopup will recieve focus.
- */</span>
-closeWhenOverlayClicked<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`true\`
- *
- * Closes menuPopup when escape key is pressed
- */</span>
-closeWhenEscapeKeyIsPressed<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`false\`
- *
- * Closes when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.
- */</span>
-closeWhenDocumentBlurs<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`false\`
- *
- * If \`true\`, sets "overflow: hidden" declaration to Document.scrollingElement.
- *
- * Use callback function if author wants customize how the scrollbar is removed.
- */</span>
-removeScrollbar<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default \`false\`
- *
- * Adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element, that way menuPopup is the only element that can be interacted with. Author must ensure that menuPopup is placed above overlay element, one of the ways, is to nest this Component inside Solid's {@link https://www.solidjs.com/docs/latest/api#%3Cportal%3E Portal}.
- *
- */</span>
-overlay<span class="token operator">?</span><span class="token operator">:</span>
-  <span class="token operator">|</span> <span class="token builtin">boolean</span>
-  <span class="token operator">|</span> <span class="token punctuation">{</span>
-      ref<span class="token operator">?</span><span class="token operator">:</span> <span class="token punctuation">(</span>el<span class="token operator">:</span> HTMLElement<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token keyword">void</span><span class="token punctuation">;</span>
-      <span class="token keyword">class</span><span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>
-      classList<span class="token operator">?</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span>key<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">:</span> <span class="token builtin">boolean</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
-      animation<span class="token operator">?</span><span class="token operator">:</span> TAnimation<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`false\`
- *
- * If \`true\` add aria attributes for generic expand/collapse dropdown.
- */</span>
-useAriaExpanded<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token comment">/**
- * Default: \`false\`
- *
- * If \`true\` activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.
- *
- * Automatically set to \`true\` for the following:  \`overlay\` prop is \`true\`,  this component's root container is not an adjacent sibling of menuButton, or \`focusElWhenClosed\` prop has a value.
- */</span>
-mountedElseWhere<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-mount<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">string</span> <span class="token operator">|</span> Node<span class="token punctuation">;</span>
-animation<span class="token operator">?</span><span class="token operator">:</span> TAnimation<span class="token punctuation">;</span>
-stopComponentEventPropagation<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>`;
+    codeEl.innerHTML = `<section class="tsd-panel tsd-member tsd-kind-type-alias"><a name="TDismiss" class="tsd-anchor"></a><h3>TDismiss</h3><ul><li>Defined in <a href="https://github.com/aquaductape/solid-dismiss/blob/695d368/package/index.tsx#L102">index.tsx:102</a></li></ul></aside><div class="tsd-type-declaration"><h4>Type declaration</h4><ul class="tsd-parameters"><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>sets id attribute for root component</p>
+</div></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> ref<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">JSX.Element</span></h5></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> class<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> class<wbr>List<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{}</span></h5><ul class="tsd-parameters"><li class="tsd-parameter-index-signature"><h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">boolean</span></h5></li></ul></li><li class="tsd-parameter"><h5>open<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Accessor</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h5></li><li class="tsd-parameter"><h5>set<wbr>Open<span class="tsd-signature-symbol">:</span>function</h5><ul class="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal" data-has-instance="true"><li class="tsd-signature tsd-kind-icon">set<wbr>Open<span class="tsd-signature-symbol">(</span>v<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/aquaductape/solid-dismiss/blob/695d368/package/index.tsx#L111">index.tsx:111</a></li></ul></aside><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameters"><li><h5>v: <span class="tsd-signature-type">boolean</span></h5></li></ul><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> on<wbr>Open<span class="tsd-signature-symbol">?: </span><a href="#OnOpenHandler" class="tsd-signature-type" data-tsd-kind="Type alias">OnOpenHandler</a></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>callback when setOpen signal changes</p>
+</div></div></li><li class="tsd-parameter"><h5>menu<wbr>Button<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol">)</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>css selector, queried from document, to get menu button element. Or pass JSX element</p>
+</div></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> menu<wbr>Popup<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol">)</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>css selector, queried from document, to get menu popup element. Or pass JSX element</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p>root component element queries first child element</p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> cursor<wbr>Keys<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Have the behavior to move through a list of "dropdown items" using cursor keys.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> trap<wbr>Focus<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Focus will remain inside menuPopup when pressing Tab key</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> focus<wbr>Element<wbr>On<wbr>Open<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">"menuPopup"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol">)</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>which element, via selector*, to recieve focus after popup opens.</p>
+</div><div><p>*css string queried from root component, or if string value is <code>"menuPopup"</code> uses menuPopup element.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p>focus remains on <code>"menuButton"</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> focus<wbr>Element<wbr>On<wbr>Close<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">"menuButton"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>tabBackwards<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">"menuButton"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol">; </span>tabForwards<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">"menuButton"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol">; </span>click<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">"menuButton"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol">; </span>escapeKey<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">"menuButton"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol">; </span>scrolling<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">"menuButton"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JSX.Element</span><span class="tsd-signature-symbol"> }</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Which element, via selector*, to recieve focus after popup closes.</p>
+</div><div><ul>
+<li>selector: css string queried from document, or if string value is <code>"menuButton"</code> uses menuButton element</li>
+</ul>
+</div><dl class="tsd-comment-tags"><dt>remarks</dt><dd><p>If menuPopup is mounted elsewhere in the DOM or doesn't share the same parent as menuButton, when tabbing outside menuPopup, this library programmatically grabs the correct next tabbable element after menuButton. However if that next tabbable element is inside an iframe that has different origin, then this library won't be able to grab tabbable elements inside it, instead the iframe will be focused.</p>
+</dd><dt>defaultvalue</dt><dd><p>When Tabbing forwards, focuses on tabbable element after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click", user-agent determines which element recieves focus, however if overlay is <code>true</code>, then menuButton will be focused instead.</p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> close<wbr>When<wbr>Menu<wbr>Button<wbr>Is<wbr>Tabbed<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>When <code>true</code>, after focusing within menuPopup, if focused back to menu button via keyboard (Tab key), the menuPopup will close.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> close<wbr>When<wbr>Menu<wbr>Button<wbr>Is<wbr>Clicked<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>If <code>overlay</code> is <code>true</code>, menuPopup will always close when menu button is clicked</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> close<wbr>When<wbr>Scrolling<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Closes menuPopup when any scrollable container (except inside menuPopup) is scrolled</p>
+</div><dl class="tsd-comment-tags"><dt>remark</dt><dd><p>Even when <code>true</code>, scrolling in "outside" scrollable iframe won't be able to close menuPopup.</p>
+</dd><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> close<wbr>When<wbr>Overlay<wbr>Clicked<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>If <code>false</code>, menuPopup won't close when overlay backdrop is clicked. When overlay clicked, menuPopup will recieve focus.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>true</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> close<wbr>When<wbr>Escape<wbr>Key<wbr>Is<wbr>Pressed<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Closes menuPopup when escape key is pressed</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>true</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> close<wbr>When<wbr>Document<wbr>Blurs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Closes when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.</p>
+</div></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> remove<wbr>Scrollbar<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>If <code>true</code>, sets "overflow: hidden" declaration to Document.scrollingElement.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> overlay<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Prevent page interaction when clicking outside to close menuPopup</p>
+</div><div><p>Author must create overlay element within menuPopup, this way page elements underneath the menuPopup can't be interacted with.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> overlay<wbr>Element<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>ref<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>class<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>classList<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">; </span>animation<span class="tsd-signature-symbol">?: </span><a href="#DismissAnimation" class="tsd-signature-type" data-tsd-kind="Type alias">DismissAnimation</a><span class="tsd-signature-symbol"> }</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Prevent page interaction when clicking outside to close menuPopup</p>
+</div><div><p>Adds root level div that acts as a layer. This removes interaction of the page elements that's underneath the overlay element, that way menuPopup is the only element that can be interacted with.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> use<wbr>Aria<wbr>Expanded<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>If <code>true</code> add aria attributes for generic expand/collapse dropdown.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code></p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> enable<wbr>Last<wbr>Focus<wbr>Sentinel<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p><code>false</code> unless <code>Dismiss.mount</code> is set, <code>Dismiss.focusElementOnClosed</code> is set, <code>Dismiss.overlay</code> prop is <code>true</code>, or this component's root container is not an adjacent sibling of menuButton.</p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> mount<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Node</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Inserts menuPopup in the mount node. Useful for inserting menuPopup outside of page layout. Events still propagate through the Component Hierarchy.</p>
+</div></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> animation<span class="tsd-signature-symbol">?: </span><a href="#DismissAnimation" class="tsd-signature-type" data-tsd-kind="Type alias">DismissAnimation</a></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Place CSS class names or JS Web Animation to fire animation as menuPopup enters/exits</p>
+</div><dl class="tsd-comment-tags"><dt>defaultvalue</dt><dd><p>none</p>
+</dd></dl></div></li><li class="tsd-parameter"><h5><span class="tsd-flag ts-flagOptional">Optional</span> stop<wbr>Component<wbr>Event<wbr>Propagation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5></li></ul></div></section>`;
   });
 
-  return (
-    <div
-      class="code-editor"
-      data-simplebar
-      data-simplebar-auto-hide="false"
-      style="max-height: unset;"
-      ref={codeEl}
-    ></div>
-  );
+  return <div id="docs-section" ref={codeEl}></div>;
 };
 
 export default Docs;

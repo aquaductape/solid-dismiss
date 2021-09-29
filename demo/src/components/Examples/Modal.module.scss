@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--overlay-bg);
   z-index: 100;
 
   .modal {
@@ -17,7 +17,7 @@
     padding: 25px;
     border-radius: 8px;
     background: var(--dropdown-bg);
-    box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 8px 10px 0px var(--dropdown-root-shadow);
   }
 }
 
