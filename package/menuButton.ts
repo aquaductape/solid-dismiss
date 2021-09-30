@@ -67,6 +67,15 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     return;
   }
 
+  if (
+    mousedownFired &&
+    !closeWhenMenuButtonIsClicked &&
+    (e.relatedTarget === state.menuBtnEl ||
+      document.activeElement === state.menuBtnEl)
+  ) {
+    return;
+  }
+
   if (!e.relatedTarget) {
     if (!overlay) {
       document.addEventListener("click", onClickDocumentRef, { once: true });
@@ -78,13 +87,6 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
 
   if (!containerEl) return;
   if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
-  if (
-    mousedownFired &&
-    !closeWhenMenuButtonIsClicked &&
-    e.relatedTarget === state.menuBtnEl
-  ) {
-    return;
-  }
 
   const run = () => {
     setOpen(false);

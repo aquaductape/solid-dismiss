@@ -626,7 +626,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     const activeElement = document.activeElement;
 
     if (!state.overlay && !state.overlayElement) {
-      if (state.menuBtnEl && dismissStack.length) {
+      if (state.menuBtnEl) {
         state.menuBtnEl?.focus();
       }
       return;
