@@ -1,5 +1,6 @@
 import { onMount } from "solid-js";
 import { setContext } from "../../global/global";
+import Anchor from "../Anchor/Anchor";
 import HeroDropdown from "../Examples/HeroDropdown";
 import { IconLogo } from "../icons";
 import PackageBtn from "./PackageBtn";
@@ -33,9 +34,13 @@ const Hero = () => {
       <p class="content">
         Handle <strong>"click outside"</strong> behavior to close
         dropdowns/popups for <br />
-        <a class="link" href="https://www.solidjs.com/" target="_blank">
+        <Anchor
+          class="page-anchor"
+          href="https://www.solidjs.com/"
+          target="_blank"
+        >
           Solid Framework
-        </a>
+        </Anchor>
       </p>
       <div class="demo">
         <HeroDropdown></HeroDropdown>

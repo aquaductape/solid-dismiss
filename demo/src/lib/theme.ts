@@ -47,6 +47,7 @@ type IDark = {
   "--inline-code-color": "#fff";
   "--scrollbar-bg": "#30323b";
   "--scrollbar-bg-active": "var(--secondary-blue)";
+  "--bs-nav-dark": "#2b3239";
   "--docs-panel-bg": "#252436";
   "--docs-code-bg": "rgb(47 43 68)";
   "--docs-comment-tag": "#9f9f9f";
@@ -103,6 +104,7 @@ type ILight = {
   "--inline-code-color": "#000";
   "--scrollbar-bg": "#dddcef";
   "--scrollbar-bg-active": "var(--main-blue)";
+  "--bs-nav-dark": "#212529";
   "--docs-panel-bg": "#faf9fe";
   "--docs-code-bg": "rgba(38, 0, 146, 0.06)";
   "--docs-comment-tag": "#707070";
@@ -164,6 +166,7 @@ export const themeConfig: IThemeConfig = {
     "--inline-code-color": "#fff",
     "--scrollbar-bg": "#30323b",
     "--scrollbar-bg-active": "var(--secondary-blue)",
+    "--bs-nav-dark": "#2b3239",
     "--docs-panel-bg": "#252436",
     "--docs-code-bg": "rgb(47 43 68)",
     "--docs-comment-tag": "#9f9f9f",
@@ -220,6 +223,7 @@ export const themeConfig: IThemeConfig = {
     "--inline-code-color": "#000",
     "--scrollbar-bg": "#dddcef",
     "--scrollbar-bg-active": "var(--main-blue)",
+    "--bs-nav-dark": "#212529",
     "--docs-panel-bg": "#faf9fe",
     "--docs-code-bg": "rgba(38, 0, 146, 0.06)",
     "--docs-comment-tag": "#707070",

@@ -307,7 +307,11 @@ export type TDismiss = {
    */
   animation?: DismissAnimation;
   /**
+   * Determine whether children are rendered always, or conditionally.
    *
+   * If `true`, children are rendered.
+   *
+   * @defaultValue `false`, children are conditionally rendered based on `Dismiss.open` value.
    */
   show?: boolean;
   stopComponentEventPropagation?: boolean;

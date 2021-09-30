@@ -124,6 +124,10 @@ p {
   color: #fff;
 }
 
+.page-anchor {
+  --anchor-text-shadow: var(--bg);
+}
+
 .link {
   display: inline-block;
   margin-left: -6px;
@@ -523,6 +527,42 @@ button {
       left: -8px;
       width: calc(100% + 8px + 2px);
       height: calc(100% + 8px + 2px);
+      border-radius: inherit;
+      pointer-events: none;
+      background: none;
+      border: 3px solid var(--focus);
+      box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
+    }
+  }
+}
+
+.anchor {
+  color: currentColor;
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) no-repeat;
+  background-size: 100% 2px;
+  background-position: 0 1.05em;
+  padding-bottom: 5px;
+  text-shadow: 3px 0px var(--anchor-text-shadow),
+    -3px 0px var(--anchor-text-shadow), 2px 1px var(--anchor-text-shadow),
+    -2px 1px var(--anchor-text-shadow), 1px 1px var(--anchor-text-shadow),
+    -1px 1px var(--anchor-text-shadow);
+  transition: background-size 250ms;
+
+  &:hover {
+    background-size: 100% 5px;
+  }
+
+  &:focus {
+    outline: none;
+
+    &:after {
+      position: absolute;
+      content: "";
+      top: -2px;
+      left: -8px;
+      width: calc(100% + 8px + 2px);
+      height: 100%;
       border-radius: inherit;
       pointer-events: none;
       background: none;

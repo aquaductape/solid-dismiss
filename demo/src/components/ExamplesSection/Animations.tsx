@@ -1,4 +1,5 @@
 import { onMount } from "solid-js";
+import Anchor from "../Anchor/Anchor";
 import {
   PopupWithCSSAnimation,
   PopupWithJSAnimation,
@@ -124,12 +125,13 @@ const Popup = () => {
       <p>
         Animations with JavaScript. The animation provides callbacks such as
         "onEnter", and author can easily hook{" "}
-        <a
+        <Anchor
+          class="page-anchor"
           href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API"
           target="_blank"
         >
           Web Animations
-        </a>{" "}
+        </Anchor>{" "}
         inside it.
       </p>
       <div class="split-view">
