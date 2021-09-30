@@ -31,9 +31,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
       once: true,
     });
     menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
-    menuBtnEl!.addEventListener("blur", state.onBlurMenuButtonRef, {
-      once: true,
-    });
+    menuBtnEl!.addEventListener("blur", state.onBlurMenuButtonRef);
   } else {
     if (closeWhenMenuButtonIsClicked) {
       state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
@@ -75,7 +73,10 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
 
   if (!e.relatedTarget) {
     if (!overlay) {
-      document.addEventListener("click", onClickDocumentRef, { once: true });
+      if (!globalState.addedDocumentClick) {
+        globalState.addedDocumentClick = true;
+        document.addEventListener("click", onDocumentClick, { once: true });
+      }
     }
     return;
   }
