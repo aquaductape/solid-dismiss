@@ -19,7 +19,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const relatedTarget = e.relatedTarget as HTMLElement | null;
   const activeElement = document.activeElement as HTMLElement;
 
-  // console.log("focusout", { relatedTarget, activeElement });
+  console.log("focusout", { relatedTarget, activeElement });
   if (overlay) return;
   if (overlayElement) return;
 
