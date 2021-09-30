@@ -33,18 +33,18 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
       once: true,
     });
   } else {
-    if (closeWhenMenuButtonIsClicked) {
-      state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
-      state.menuBtnEl!.removeEventListener(
-        "keydown",
-        state.onKeydownMenuButtonRef
-      );
-      state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
-    }
+    // if (closeWhenMenuButtonIsClicked) {
+    state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
+    state.menuBtnEl!.removeEventListener(
+      "keydown",
+      state.onKeydownMenuButtonRef
+    );
+    state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
+    // }
   }
 
   if (!closeWhenMenuButtonIsClicked) {
-    // setOpen(true);
+    setOpen(true);
     return;
   }
 
