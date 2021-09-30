@@ -43,10 +43,10 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     }
   }
 
-  // if (!closeWhenMenuButtonIsClicked) {
-  //   setOpen(true);
-  //   return;
-  // }
+  if (!closeWhenMenuButtonIsClicked) {
+    // setOpen(true);
+    return;
+  }
 
   setOpen(!open());
 };
