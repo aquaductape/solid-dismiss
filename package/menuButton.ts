@@ -134,10 +134,3 @@ export const onFocusMenuButton = (state: TLocalState) => {
     clearTimeout(timeouts.containerFocusTimeoutId!);
   }
 };
-
-export const runAriaExpanded = (state: TLocalState, open: boolean) => {
-  const { useAriaExpanded, menuBtnEl } = state;
-
-  if (!useAriaExpanded) return;
-  menuBtnEl!.setAttribute("aria-expanded", `${open}`);
-};

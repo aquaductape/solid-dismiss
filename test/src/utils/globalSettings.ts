@@ -2,6 +2,7 @@ import { createStore, produce } from "solid-js/store";
 
 type TSettings = {
   animation: TAnimation;
+  closeMenuBtnReclick: boolean;
 };
 
 type TAnimation = {
@@ -13,6 +14,7 @@ const [settings, _setSettings] = createStore<TSettings>({
     enable: false,
     duration: 300,
   },
+  closeMenuBtnReclick: true,
 });
 
 export default settings;

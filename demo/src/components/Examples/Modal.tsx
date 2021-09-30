@@ -42,7 +42,7 @@ const Modal: Component<{ animated?: boolean }> = ({ animated }) => {
   return (
     <>
       <button class="btn-primary" ref={btnEl}>
-        Modal
+        Button
       </button>
       <Dismiss
         menuButton={btnEl}
@@ -110,7 +110,7 @@ const Modal: Component<{ animated?: boolean }> = ({ animated }) => {
 //   return (
 //     <div style="position: relative">
 //       <button ref={btnEl}>
-//         Modal
+//         Button
 //       </button>
 //       <Dismiss
 //         menuButton={btnEl}

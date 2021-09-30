@@ -12,7 +12,9 @@
   width: 45px;
   height: 45px;
   margin-left: 5px;
-  transition: opacity 200ms;
+  pointer-events: none;
+  transform: scale(0.5);
+  transition: opacity 200ms, transform 200ms;
 
   svg {
     width: 100%;
@@ -21,6 +23,8 @@
 
   &.active {
     opacity: 1;
+    transform: scale(1);
+    pointer-events: all;
   }
 }
 

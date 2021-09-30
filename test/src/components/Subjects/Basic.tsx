@@ -48,6 +48,7 @@ const Popup: Component<{ id: string }> = ({ id }) => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
+        closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         {...toggleAnimation()}
       >
         <ul

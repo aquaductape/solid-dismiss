@@ -1,8 +1,8 @@
 import { onMount } from "solid-js";
-import _Popup from "../Examples/Popup";
+import _Navbar from "../Examples/Navbar/Navbar";
 import FocusGutter from "../FocusGutter";
 
-const Popup = () => {
+const Navbar = () => {
   let codeEl!: HTMLDivElement;
   onMount(() => {
     codeEl.innerHTML = `<pre class=" language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -32,18 +32,30 @@ const Popup = () => {
 
   return (
     <div class="section">
-      <h3>Popup</h3>
-      <p>Two main elements you need, a button and popup content</p>
+      <h3>3rd Party</h3>
       <p>
-        No need to add click event to update open value, the Dismiss component
-        takes care of that as well as many other things under the hood.
+        This example uses{" "}
+        <a
+          href="https://getbootstrap.com/docs/5.0/components/navbar/"
+          target="_blank"
+        >
+          Bootstrap 5 Navbar
+        </a>
       </p>
+      <p>
+        Toggling via Navbar Button click works, however toggling upon dismiss
+        requires some setup. Since Bootstrap uses JavaScript, instead of simple
+        on/off CSS classes, to toggle Navbar Menu, we need to use Bootstraps's{" "}
+        <a href="https://getbootstrap.com/docs/5.0/components/collapse/#methods">
+          Collapse Method
+        </a>
+        . We use this method inside Dismiss onOpen callback.
+      </p>
+
       <div class="split-view">
         <div>
           <div class="dropdown-area">
-            <FocusGutter />
-            <_Popup></_Popup>
-            <FocusGutter />
+            <_Navbar />
           </div>
         </div>
         <div
@@ -57,4 +69,4 @@ const Popup = () => {
   );
 };
 
-export default Popup;
+export default Navbar;

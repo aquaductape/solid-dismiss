@@ -4,13 +4,25 @@ const Header = () => {
   return (
     <header>
       <div>
-        <label>
+        <label id="enable-animations">
           enable animations{" "}
           <input
             type="checkbox"
             checked={settings.animation.enable}
             onChange={(e) =>
               setSettings((s) => (s.animation.enable = e.currentTarget.checked))
+            }
+          />
+        </label>
+        <label id="close-menuBtn-reclick">
+          close menuBtn reclick{" "}
+          <input
+            type="checkbox"
+            checked={settings.closeMenuBtnReclick}
+            onChange={(e) =>
+              setSettings(
+                (s) => (s.closeMenuBtnReclick = e.currentTarget.checked)
+              )
             }
           />
         </label>

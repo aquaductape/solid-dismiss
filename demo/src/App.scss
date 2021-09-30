@@ -166,28 +166,6 @@ p {
 //   }
 // }
 
-button,
-.github {
-  position: relative;
-  outline: none;
-
-  &[data-focus-visible-added] {
-    &:after {
-      position: absolute;
-      content: "";
-      top: -8px;
-      left: -8px;
-      width: calc(100% + 8px + 2px);
-      height: calc(100% + 8px + 2px);
-      border-radius: inherit;
-      pointer-events: none;
-      background: none;
-      border: 3px solid var(--focus);
-      box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
-    }
-  }
-}
-
 h1 {
   font-size: min(20vw, 90px);
   font-family: "Anton";
@@ -533,6 +511,28 @@ button {
 }
 
 .focusable {
+  position: relative;
+
+  &:focus {
+    outline: none;
+
+    &:after {
+      position: absolute;
+      content: "";
+      top: -8px;
+      left: -8px;
+      width: calc(100% + 8px + 2px);
+      height: calc(100% + 8px + 2px);
+      border-radius: inherit;
+      pointer-events: none;
+      background: none;
+      border: 3px solid var(--focus);
+      box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
+    }
+  }
+}
+
+button {
   position: relative;
 
   &:focus {

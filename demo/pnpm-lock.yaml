@@ -9,6 +9,7 @@ specifiers:
   sass: ^1.38.0
   simplebar: ^5.3.5
   solid-js: ^1.0.7
+  solid-meta: ^0.27.2
   solid-transition-group: ^0.0.8
   vite: ^2.4.2
   vite-plugin-solid: ^2.0.1
@@ -22,6 +23,7 @@ dependencies:
   sass: 1.39.2
   simplebar: 5.3.5
   solid-js: 1.1.3
+  solid-meta: 0.27.2_solid-js@1.1.3
   solid-transition-group: 0.0.8_solid-js@1.1.3
 
 devDependencies:
@@ -706,6 +708,14 @@ packages:
 
   /solid-js/1.1.3:
     resolution: {integrity: sha512-xJe/1btcyxL5YNxDhU80rrpaj0SvuW+qA1AYV4R3SzhYI18OfFDc1WYQ0ASJnqaY7kVGu4dfqjH15yVLVVzrKg==}
+
+  /solid-meta/0.27.2_solid-js@1.1.3:
+    resolution: {integrity: sha512-t4rotsA99LMhiSI6C0pfN1fR8+bApl2ouOqIpOgxHtapJ+fgBIv7cVnI3nLMMzjiiML+vb83l9xes6/OLSCNtw==}
+    peerDependencies:
+      solid-js: ^1.0.0
+    dependencies:
+      solid-js: 1.1.3
+    dev: false
 
   /solid-refresh/0.2.2_solid-js@1.1.3:
     resolution: {integrity: sha512-oQN3pUJ8fBd4ldMxZVqK7S4PGzAn1yx1B5bRRfANoxoqmHyY2QLfzrOzXsYnAkhh272K+W24oKgFWlmdUZ6HtQ==}

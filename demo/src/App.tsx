@@ -14,6 +14,7 @@ import DropdownMounted from "./components/ExamplesSection/DropdownMounted";
 import DropdownOverlay from "./components/ExamplesSection/DropdownOverlay";
 import Nested from "./components/ExamplesSection/Nested";
 import Animation from "./components/ExamplesSection/Animations";
+import NavbarEx from "./components/ExamplesSection/Navbar";
 
 const App: Component = () => {
   return (
@@ -31,6 +32,7 @@ const App: Component = () => {
           <DropdownOverlay></DropdownOverlay>
           <Modal></Modal>
           <Animation></Animation>
+          <NavbarEx></NavbarEx>
           <Nested></Nested>
         </section>
         <section>

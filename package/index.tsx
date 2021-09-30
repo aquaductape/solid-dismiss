@@ -43,7 +43,6 @@ import {
   onFocusMenuButton,
   onKeydownMenuButton,
   onMouseDownMenuButton,
-  runAriaExpanded,
 } from "./menuButton";
 import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
 import { onClickOverlay } from "./overlay";
@@ -290,13 +289,6 @@ export type TDismiss = {
       };
   /**
    *
-   * If `true` add aria attributes for generic expand/collapse dropdown.
-   *
-   * @defaultValue `false`
-   */
-  useAriaExpanded?: boolean;
-  /**
-   *
    * activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.
    *
    *
@@ -314,6 +306,10 @@ export type TDismiss = {
    * @defaultValue none
    */
   animation?: DismissAnimation;
+  /**
+   *
+   */
+  show?: boolean;
   stopComponentEventPropagation?: boolean;
 };
 //
@@ -342,10 +338,10 @@ const Dismiss: Component<TDismiss> = (props) => {
     overlayElement = false,
     trapFocus = false,
     removeScrollbar = false,
-    useAriaExpanded = false,
     enableLastFocusSentinel = false,
     mount,
     stopComponentEventPropagation = false,
+    show = false,
     onOpen,
   } = props;
 
@@ -379,7 +375,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     overlayElement,
     removeScrollbar,
     trapFocus,
-    useAriaExpanded,
     hasFocusSentinels:
       !!focusElementOnClose ||
       overlay ||
@@ -660,14 +655,6 @@ const Dismiss: Component<TDismiss> = (props) => {
         once: true,
       });
     }
-    state.menuBtnId = state.menuBtnEl.id;
-
-    runAriaExpanded(state, props.open());
-
-    if (!state.menuBtnId) {
-      state.menuBtnId = id || state.uniqueId;
-      state.menuBtnEl.id = state.menuBtnId;
-    }
   });
 
   createComputed(
@@ -725,8 +712,6 @@ const Dismiss: Component<TDismiss> = (props) => {
       () => !!props.open(),
       (open, prevOpen) => {
         if (open === prevOpen) return;
-
-        runAriaExpanded(state, open);
 
         if (open) {
           addMenuPopupEl(state);
@@ -842,6 +827,7 @@ const Dismiss: Component<TDismiss> = (props) => {
   }
 
   if (props.mount) return marker;
+  if (show) return render(props.children);
 
   let strictEqual = false;
   const condition = createMemo<boolean>(() => props.open(), undefined, {

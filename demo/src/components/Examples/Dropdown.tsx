@@ -16,7 +16,7 @@ const Dropdown = () => {
   return (
     <div style="position: relative;">
       <button class="btn-primary" ref={btnEl}>
-        Dropdown
+        Button
       </button>
       <Dismiss
         menuButton={btnEl}
@@ -56,7 +56,7 @@ const Dropdown = () => {
 //
 //   return (
 //     <div style="position: relative;">
-//       <button ref={btnEl}>Dropdown</button>
+//       <button ref={btnEl}>Button</button>
 //       <Dismiss
 //         menuButton={btnEl}
 //         open={open}

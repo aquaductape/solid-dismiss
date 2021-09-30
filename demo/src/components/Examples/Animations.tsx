@@ -12,7 +12,7 @@ export const PopupWithCSSAnimation = () => {
   return (
     <div style="position: relative; z-index: 5">
       <button class="btn-primary" ref={btnEl}>
-        Popup
+        Button
       </button>
       <Dismiss
         menuButton={btnEl}
@@ -20,7 +20,7 @@ export const PopupWithCSSAnimation = () => {
         setOpen={setOpen}
         animation={{ name: "fade" }}
       >
-        <div class={s("dropdown")}>
+        <div class={s("popup")}>
           <p>Popup text!</p>
           <p>
             Lorem,{" "}
@@ -42,7 +42,7 @@ export const PopupWithJSAnimation = () => {
   return (
     <div style="position: relative; z-index: 5">
       <button class="btn-primary" ref={btnEl}>
-        Popup
+        Button
       </button>
       <Dismiss
         menuButton={btnEl}
@@ -85,7 +85,7 @@ export const PopupWithJSAnimation = () => {
           },
         }}
       >
-        <div class={s("dropdown")}>
+        <div class={s("popup")}>
           <p>Popup text!</p>
           <p>
             Lorem,{" "}
@@ -109,7 +109,7 @@ export const PopupWithJSAnimation = () => {
 //
 //   return (
 //     <div style="position: relative;">
-//       <button ref={btnEl}>Popup</button>
+//       <button ref={btnEl}>Button</button>
 //       <Dismiss
 //         menuButton={btnEl}
 //         open={open}

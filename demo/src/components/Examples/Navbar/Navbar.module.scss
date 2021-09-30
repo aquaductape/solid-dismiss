@@ -1,0 +1,9 @@
+.page {
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .page {
+    min-width: 280px;
+  }
+}

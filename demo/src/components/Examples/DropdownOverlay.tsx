@@ -35,7 +35,7 @@ const DropdownOverlay = () => {
   return (
     <>
       <button class="btn-primary" ref={btnEl}>
-        Dropdown
+        Button
       </button>
       <Dismiss
         menuButton={btnEl}
@@ -81,7 +81,7 @@ const DropdownOverlay = () => {
 //
 //   return (
 //     <div style="position: relative;">
-//       <button ref={btnEl}>Dropdown</button>
+//       <button ref={btnEl}>Button</button>
 //       <Dismiss
 //         menuButton={btnEl}
 //         open={open}

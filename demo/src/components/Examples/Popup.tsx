@@ -12,10 +12,10 @@ const Popup = () => {
   return (
     <div style="position: relative">
       <button class="btn-primary" ref={btnEl}>
-        Popup
+        Button
       </button>
       <Dismiss menuButton={btnEl} open={open} setOpen={setOpen}>
-        <div class={s("dropdown")}>
+        <div class={s("popup")}>
           <p>Popup text!</p>
           <p>
             Lorem,{" "}
@@ -39,13 +39,13 @@ const Popup = () => {
 //
 //   return (
 //     <div style="position: relative;">
-//       <button ref={btnEl}>Popup</button>
+//       <button ref={btnEl}>Open</button>
 //       <Dismiss
 //         menuButton={btnEl}
 //         open={open}
 //         setOpen={setOpen}
 //       >
-//         <div class="dropdown">
+//         <div class="popup">
 //           <p>Popup text!</p>
 //           <p>Lorem, <a href="#">ipsum</a> dolor.</p>
 //         </div>

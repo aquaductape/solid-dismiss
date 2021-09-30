@@ -27,6 +27,12 @@ const Navbar = () => {
     console.log(context.nav.logoActive);
   });
 
+  const onClickHome = (e: Event) => {
+    e.preventDefault();
+
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  };
+
   return (
     <header class={s("navbar")}>
       <div id="navbar-content" class={s("content-container")}>
@@ -34,20 +40,26 @@ const Navbar = () => {
           class={s("shadow", (context.nav.logoActive || open()) && "active")}
         ></div>
         <div class={s("content")}>
-          <div class={s("logo", context.nav.logoActive && "active")}>
+          <a
+            href="/"
+            onClick={onClickHome}
+            class={s("logo", context.nav.logoActive && "active") + " focusable"}
+            tabindex={context.nav.logoActive ? "0" : "-1"}
+            aria-hidden={context.nav.logoActive ? "false" : "true"}
+          >
             {/* Solid Dismiss */}
             <IconLogo></IconLogo>
-          </div>
+          </a>
 
           <nav class={s("nav")}>
             <ul class={s("nav-list")}>
               <li>
-                <a class={s("nav-item")} href="#examples">
+                <a class={s("nav-item") + " focusable"} href="#examples">
                   Examples
                 </a>
               </li>
               <li>
-                <a class={s("nav-item")} href="#docs">
+                <a class={s("nav-item") + " focusable"} href="#docs">
                   Docs
                 </a>
               </li>
@@ -58,7 +70,7 @@ const Navbar = () => {
               <Icon path={theme() === "light" ? sun : moon} />
             </button>
             <a
-              class={s("github")}
+              class={s("github") + " focusable"}
               href="https://github.com/aquaductape/solid-dismiss"
               target="_blank"
             >
@@ -66,7 +78,10 @@ const Navbar = () => {
             </a>
           </div>
           <button
-            class={s("hamburger-container") + " hamburger hamburger--collapse"}
+            class={
+              s("hamburger-container") +
+              " hamburger hamburger--collapse focusable"
+            }
             classList={{ "is-active": open() }}
             ref={btnEl}
             type="button"
@@ -105,12 +120,12 @@ const Navbar = () => {
           <nav class={s("nav-mobile")}>
             <ul class={s("nav-list")}>
               <li>
-                <a class={s("nav-item")} href="#examples">
+                <a class={s("nav-item") + " focusable"} href="#examples">
                   Examples
                 </a>
               </li>
               <li>
-                <a class={s("nav-item")} href="#docs">
+                <a class={s("nav-item") + " focusable"} href="#docs">
                   Docs
                 </a>
               </li>

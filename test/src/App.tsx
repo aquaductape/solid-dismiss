@@ -1,3 +1,4 @@
+import { createEffect, on } from "solid-js";
 import { Component, Match, Switch } from "solid-js";
 
 import "./App.scss";
@@ -15,7 +16,7 @@ import settings from "./utils/globalSettings";
 
 const Content = () => {
   return (
-    <>
+    <div>
       <Basic></Basic>
       <NestedPopupMounted></NestedPopupMounted>
       <NestedPopup></NestedPopup>
@@ -25,27 +26,42 @@ const Content = () => {
       <IFrames></IFrames>
       <FocusElementOnClose></FocusElementOnClose>
       <Mixed></Mixed>
-    </>
+    </div>
   );
 };
 const App: Component = () => {
-  // document.documentElement.setAttribute("iframe-src", "true");
+  let contentEl!: HTMLDivElement;
+  createEffect(
+    on(
+      [() => settings.animation.enable, () => settings.closeMenuBtnReclick],
+      () => {
+        console.log("refresh");
+        if (contentEl.children.length) {
+          contentEl.removeChild(contentEl.children[0]);
+        }
+        const newChild = (<Content></Content>) as HTMLElement;
+        contentEl.appendChild(newChild);
+      }
+    )
+  );
+
   return (
     <>
       <Header></Header>
       <main class="main">
-        <p style=" font-size: 14px; margin-bottom: -15vh;">
+        <p style=" font-size: 14px; ">
           Note: Dismiss animation props are reactive, but "enable animation"
           checkbox refreshes page to update components for testing purpose
         </p>
-        <Switch>
+        <div ref={contentEl}></div>
+        {/* <Switch>
           <Match when={settings.animation.enable}>
             <Content></Content>
           </Match>
           <Match when={!settings.animation.enable}>
             <Content></Content>
           </Match>
-        </Switch>
+        </Switch> */}
       </main>
     </>
   );
