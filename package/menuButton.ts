@@ -43,10 +43,10 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     }
   }
 
-  if (!closeWhenMenuButtonIsClicked) {
-    setOpen(true);
-    return;
-  }
+  // if (!closeWhenMenuButtonIsClicked) {
+  //   setOpen(true);
+  //   return;
+  // }
 
   setOpen(!open());
 };
@@ -67,14 +67,14 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     return;
   }
 
-  if (
-    mousedownFired &&
-    !closeWhenMenuButtonIsClicked &&
-    (e.relatedTarget === state.menuBtnEl ||
-      document.activeElement === state.menuBtnEl)
-  ) {
-    return;
-  }
+  // if (
+  //   mousedownFired &&
+  //   !closeWhenMenuButtonIsClicked &&
+  //   (e.relatedTarget === state.menuBtnEl ||
+  //     document.activeElement === state.menuBtnEl)
+  // ) {
+  //   return;
+  // }
 
   if (!e.relatedTarget) {
     if (!overlay) {
