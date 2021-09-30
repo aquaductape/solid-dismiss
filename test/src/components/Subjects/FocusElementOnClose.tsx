@@ -2,6 +2,7 @@ import { Show, createSignal, onMount, For, createEffect } from "solid-js";
 import { Portal } from "solid-js/web";
 import Dismiss from "../../../../package/index";
 import { toggleAnimation } from "../../utils";
+import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 import IFrame from "../IFrame";
 
@@ -76,7 +77,7 @@ const Popup = () => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
-        overlay={{ class: "overlay" }}
+        overlayElement={{ class: "overlay" }}
         focusElementOnOpen={() => focusedBtnEl}
         focusElementOnClose={{
           tabBackwards: ".btn-0",
@@ -86,6 +87,7 @@ const Popup = () => {
           escapeKey: ".btn-6",
         }}
         closeWhenScrolling
+        closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         mount="body"
         ref={containerEl}
         {...toggleAnimation()}

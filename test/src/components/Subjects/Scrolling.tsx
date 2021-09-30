@@ -1,6 +1,7 @@
 import { createSignal, For, createEffect, Component } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, getWidth, toggleAnimation } from "../../utils";
+import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 
 const id = "scrolling";
@@ -93,6 +94,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         setOpen={setOpen}
         mount="body"
         closeWhenScrolling
+        closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         ref={containerEl}
         {...toggleAnimation()}
       >

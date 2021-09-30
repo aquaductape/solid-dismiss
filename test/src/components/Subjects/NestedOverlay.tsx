@@ -6,6 +6,7 @@ import {
 } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, getWidth, reflow, toggleAnimation } from "../../utils";
+import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 import MiniForm from "../MiniForm/MiniForm";
 
@@ -75,7 +76,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         setOpen={setOpen}
         mount="body"
         overlayElement={{ class: "overlay" }}
-        closeWhenMenuButtonIsTabbed
+        closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
       >

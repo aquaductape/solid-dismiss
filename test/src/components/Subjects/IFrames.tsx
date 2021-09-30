@@ -73,6 +73,7 @@ const Popup = () => {
         open={open}
         setOpen={setOpen}
         mount="body"
+        closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         ref={containerEl}
         {...toggleAnimation({
           onBeforeEnter: (_el) => {

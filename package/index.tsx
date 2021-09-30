@@ -398,7 +398,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     onFocusMenuButtonRef: () => onFocusMenuButton(state),
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
     refContainerCb: (el: HTMLElement) => {
-      if (overlay) {
+      if (overlayElement) {
         el.style.zIndex = "1000";
       }
       if (props.ref) {
@@ -625,7 +625,13 @@ const Dismiss: Component<TDismiss> = (props) => {
     const menuBtnExists = globalState.menuBtnEl;
     const activeElement = document.activeElement;
 
-    if (!state.overlay && !state.overlayElement) return;
+    if (!state.overlay && !state.overlayElement) {
+      if (!globalState.addedDocumentClick) {
+        globalState.addedDocumentClick = true;
+        document.addEventListener("click", onDocumentClick, { once: true });
+      }
+      return;
+    }
     if (!menuBtnExists) return;
 
     if (

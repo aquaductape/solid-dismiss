@@ -1,4 +1,5 @@
 import { dismissStack } from "./dismissStack";
+import { globalState, onDocumentClick } from "./globalEvents";
 import { TLocalState } from "./localState";
 import { removeOutsideFocusEvents } from "./outside";
 import { checkThenClose, getNextTabbableElement } from "./utils";
@@ -13,6 +14,9 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     mousedownFired = false;
     return;
   }
+
+  globalState.addedDocumentClick = false;
+  document.removeEventListener("click", onDocumentClick);
 
   menuBtnEl!.focus();
   clearTimeout(timeouts.containerFocusTimeoutId!);
@@ -48,8 +52,15 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 };
 
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
-  const { onClickDocumentRef, containerEl, overlay, setOpen, open, timeouts } =
-    state;
+  const {
+    onClickDocumentRef,
+    containerEl,
+    overlay,
+    setOpen,
+    open,
+    timeouts,
+    closeWhenMenuButtonIsClicked,
+  } = state;
 
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
@@ -67,6 +78,13 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
 
   if (!containerEl) return;
   if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
+  if (
+    mousedownFired &&
+    !closeWhenMenuButtonIsClicked &&
+    e.relatedTarget === state.menuBtnEl
+  ) {
+    return;
+  }
 
   const run = () => {
     setOpen(false);

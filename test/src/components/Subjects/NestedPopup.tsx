@@ -1,6 +1,7 @@
 import { Component, createEffect, createSignal } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { toggleAnimation } from "../../utils";
+import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 
 const id = "nested-regular";
@@ -53,6 +54,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
+        closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         ref={containerEl}
         {...toggleAnimation()}
       >

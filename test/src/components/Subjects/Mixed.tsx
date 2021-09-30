@@ -1,6 +1,7 @@
 import { createEffect, createSignal, Component } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, toggleAnimation } from "../../utils";
+import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 
 const id = "mixed";
@@ -69,6 +70,7 @@ const RegularPopup: Component<{ id: string; idx?: number }> = (props) => {
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}
+        closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         ref={containerEl}
         {...toggleAnimation()}
       >
@@ -130,6 +132,7 @@ const MountedPopup: Component<{ id: string; idx?: number }> = (props) => {
         open={open}
         setOpen={setOpen}
         mount="body"
+        closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         ref={containerEl}
         {...toggleAnimation()}
       >
