@@ -15,6 +15,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     return;
   }
 
+  mousedownFired = false;
   globalState.addedDocumentClick = false;
   document.removeEventListener("click", onDocumentClick);
 
@@ -33,14 +34,14 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
       once: true,
     });
   } else {
-    // if (closeWhenMenuButtonIsClicked) {
-    state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
-    state.menuBtnEl!.removeEventListener(
-      "keydown",
-      state.onKeydownMenuButtonRef
-    );
-    state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
-    // }
+    if (closeWhenMenuButtonIsClicked) {
+      state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
+      state.menuBtnEl!.removeEventListener(
+        "keydown",
+        state.onKeydownMenuButtonRef
+      );
+      state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
+    }
   }
 
   if (!closeWhenMenuButtonIsClicked) {
@@ -67,14 +68,9 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     return;
   }
 
-  // if (
-  //   mousedownFired &&
-  //   !closeWhenMenuButtonIsClicked &&
-  //   (e.relatedTarget === state.menuBtnEl ||
-  //     document.activeElement === state.menuBtnEl)
-  // ) {
-  //   return;
-  // }
+  if (mousedownFired && !closeWhenMenuButtonIsClicked) {
+    return;
+  }
 
   if (!e.relatedTarget) {
     if (!overlay) {
