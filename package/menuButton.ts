@@ -10,6 +10,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
   const { timeouts, menuBtnEl, closeWhenMenuButtonIsClicked, setOpen, open } =
     state;
 
+  state.menuBtnKeyupTabFired = false;
   if (mousedownFired && !open()) {
     mousedownFired = false;
     return;
@@ -26,20 +27,21 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 
   // iOS triggers refocus i think...
   if (!open()) {
+    console.log("add blur");
     menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
       once: true,
     });
     menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
     menuBtnEl!.addEventListener("blur", state.onBlurMenuButtonRef);
   } else {
-    if (closeWhenMenuButtonIsClicked) {
-      state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
-      state.menuBtnEl!.removeEventListener(
-        "keydown",
-        state.onKeydownMenuButtonRef
-      );
-      state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
-    }
+    // if (closeWhenMenuButtonIsClicked) {
+    //   state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
+    //   state.menuBtnEl!.removeEventListener(
+    //     "keydown",
+    //     state.onKeydownMenuButtonRef
+    //   );
+    //   state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
+    // }
   }
 
   if (!closeWhenMenuButtonIsClicked) {
@@ -63,6 +65,8 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     timeouts,
     closeWhenMenuButtonIsClicked,
   } = state;
+
+  console.log("onblur!!!!!");
 
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
