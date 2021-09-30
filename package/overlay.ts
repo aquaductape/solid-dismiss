@@ -1,4 +1,5 @@
 import { dismissStack } from "./dismissStack";
+import { globalState } from "./globalEvents";
 import { TLocalState } from "./localState";
 import { checkThenClose, queryElement } from "./utils";
 
@@ -29,14 +30,16 @@ export const onClickOverlay = (state: TLocalState) => {
   checkThenClose(
     dismissStack,
     (item) => {
-      if (item.overlay) return;
+      if (item.overlayElement) return;
       return item;
     },
     (item) => {
       const { setOpen } = item;
+      globalState.closedByEvents = true;
       setOpen(false);
     }
   );
 
+  globalState.closedByEvents = true;
   state.setOpen(false);
 };

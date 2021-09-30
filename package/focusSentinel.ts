@@ -83,6 +83,7 @@ export const onFocusSentinel = (
         return;
       },
       (item) => {
+        globalState.closedByEvents = true;
         item.setOpen(false);
       }
     );
@@ -113,10 +114,13 @@ export const onFocusSentinel = (
     }
 
     if (closeWhenMenuButtonIsTabbed) {
+      globalState.closedByEvents = true;
       setOpen(false);
       menuBtnEl!.focus();
       return;
     }
+
+    console.log("remove by first sentinel");
 
     const el =
       queryElement(state, {
@@ -125,19 +129,7 @@ export const onFocusSentinel = (
         subType: "tabBackwards",
       }) || menuBtnEl;
 
-    // if (mount) {
     runIfMounted(el, true);
-    return;
-    // }
-
-    if (el) {
-      el.focus();
-    }
-
-    if (el !== menuBtnEl) {
-      setOpen(false);
-    }
-
     return;
   }
 
@@ -170,6 +162,6 @@ export const onFocusSentinel = (
     el.focus();
   }
 
-  console.log(dismissStack);
+  globalState.closedByEvents = true;
   setOpen(false);
 };

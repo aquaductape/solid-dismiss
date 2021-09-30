@@ -373,6 +373,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     },
     upperStackRemovedByFocusOut: false,
     menuPopup,
+    closeByDismissEvent: false,
     menuPopupAdded: false,
     enableLastFocusSentinel,
     overlay,
@@ -625,9 +626,9 @@ const Dismiss: Component<TDismiss> = (props) => {
     const menuBtnExists = globalState.menuBtnEl;
     const activeElement = document.activeElement;
 
+    state.menuBtnEl?.focus();
     if (!state.overlay && !state.overlayElement) {
       if (state.menuBtnEl) {
-        state.menuBtnEl?.focus();
       }
       return;
     }
@@ -673,16 +674,20 @@ const Dismiss: Component<TDismiss> = (props) => {
         if (open === prevOpen) return;
 
         if (!open) {
-          console.log("run computed!!");
           // used to detect programmatic removal
-          if (!globalState.closedBySetOpen) {
-            globalState.closedBySetOpen = true;
-            globalState.menuBtnEl = state.menuBtnEl;
+          if (!globalState.closedByEvents) {
+            console.log("run computed!!");
+            if (!globalState.closedBySetOpen) {
+              globalState.addedDocumentClick = false;
+              document.removeEventListener("click", onDocumentClick);
+              globalState.closedBySetOpen = true;
+              globalState.menuBtnEl = state.menuBtnEl;
 
-            setTimeout(() => {
-              globalState.closedBySetOpen = false;
-              resetFocusOnClose();
-            });
+              setTimeout(() => {
+                globalState.closedBySetOpen = false;
+                resetFocusOnClose();
+              });
+            }
           }
         } //
 
@@ -723,6 +728,7 @@ const Dismiss: Component<TDismiss> = (props) => {
         if (open === prevOpen) return;
 
         if (open) {
+          globalState.closedByEvents = false;
           addMenuPopupEl(state);
           runFocusOnActive(state);
 
@@ -754,6 +760,8 @@ const Dismiss: Component<TDismiss> = (props) => {
           onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
           activateLastFocusSentinel(state);
         } else {
+          console.log("reset closebByEvents to false");
+          globalState.closedByEvents = false;
           removeLocalEvents(state);
 
           removeOutsideFocusEvents(state);

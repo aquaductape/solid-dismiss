@@ -19,7 +19,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const relatedTarget = e.relatedTarget as HTMLElement | null;
   const activeElement = document.activeElement as HTMLElement;
 
-  console.log("focusout", { relatedTarget, activeElement });
+  // console.log("focusout", { relatedTarget, activeElement });
   if (overlay) return;
   if (overlayElement) return;
 
@@ -51,6 +51,8 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
 
   timeouts.containerFocusTimeoutId = window.setTimeout(() => {
     // console.log("remove", relatedTarget);
+    console.log(" removed by containerFocusTimeout");
+    globalState.closedByEvents = true;
     setOpen(false);
   });
 };
@@ -80,21 +82,4 @@ export const runFocusOnActive = (state: TLocalState) => {
       el.focus();
     });
   }
-};
-
-export const onClickContainer = (state: TLocalState, e: Event) => {
-  // 1. Clicking close buttons
-  // use bubbling instead setting event listeners for close buttons, this will also enable dynamic buttons to be clicked since on bubble closeButtons will be fetched
-  // since close buttons triggers removal of container that contains focus item, relatedTarget will be null, since activeElement defaults to body.
-  // since the the removal of the container, forces activeElement to move to body, all focuseout events below the stack(s) fire. For the container focuseout event, if relatedTarget is null, it will add document click event and since the click is still bubbling and once it reaches to document the clicked element doesn't exist therefore wrongfully removing next stack(s)
-  // to prevent this bug, we set toggle global variable that container depeneds on to true, to exit focusout(s), then on next tick, set to false
-  // let clickToClose = false;
-  // clickToClose = true;
-  // setTimeout(() => {
-  //   clickToClose = false;
-  // });
-  // no need to add document click because the author must set set focus to outer context(such as menuButton)
-  // 2. alternative to not propagate component events
-  // clearTimeout(timeouts.containerFocusTimeoutId!);
-  // clearTimeout(timeouts.menuButtonBlurTimeoutId!);
 };

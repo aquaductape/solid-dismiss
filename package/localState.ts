@@ -39,4 +39,5 @@ export type TLocalState = Omit<
   setOpen: (v: boolean) => void;
   open: Accessor<boolean>;
   upperStackRemovedByFocusOut: boolean;
+  closeByDismissEvent: boolean;
 };

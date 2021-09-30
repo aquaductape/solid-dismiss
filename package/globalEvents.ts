@@ -20,11 +20,13 @@ export const globalState: {
   closedBySetOpen: boolean;
   documentClickTimeout: number | null;
   menuBtnEl?: HTMLElement | null;
+  closedByEvents: boolean;
 } = {
   closeByFocusSentinel: false,
   closedBySetOpen: false,
   addedDocumentClick: false,
   documentClickTimeout: null,
+  closedByEvents: false,
 };
 
 export const onDocumentClick = (e: Event) => {
@@ -46,6 +48,7 @@ export const onDocumentClick = (e: Event) => {
     },
     (item) => {
       const { setOpen } = item;
+      globalState.closedByEvents = true;
       setOpen(false);
     }
   );
@@ -66,6 +69,7 @@ export const onWindowBlur = (e: Event) => {
           (item) => item,
           (item) => {
             const { setOpen } = item;
+            globalState.closedByEvents = true;
             setOpen(false);
           }
         );
@@ -77,7 +81,7 @@ export const onWindowBlur = (e: Event) => {
   const onBlurWindow = (item: TDismissStack) => {
     if (!item.closeWhenDocumentBlurs) return;
     item.menuBtnEl.focus();
-
+    globalState.closedByEvents = true;
     item.setOpen(false);
   };
 
@@ -113,6 +117,7 @@ export const onWindowBlur = (e: Event) => {
       },
       (item) => {
         const { setOpen, menuBtnEl } = item;
+        globalState.closedByEvents = true;
         setOpen(false);
       }
     );
@@ -151,7 +156,7 @@ export const onKeyDown = (e: KeyboardEvent) => {
   if (el) {
     el.focus();
   }
-
+  globalState.closedByEvents = true;
   setOpen(false);
 };
 
@@ -174,7 +179,7 @@ export const onScrollClose = (e: Event) => {
     },
     (item) => {
       const { setOpen, focusElementOnClose, menuBtnEl } = item;
-
+      globalState.closedByEvents = true;
       setOpen(false);
 
       const el =
@@ -333,8 +338,8 @@ const pollingIframe = () => {
       },
       (item) => {
         const { setOpen, menuBtnEl } = item;
-
         console.log("close!!!");
+        globalState.closedByEvents = true;
         setOpen(false);
 
         cachedPolledElement = null;
