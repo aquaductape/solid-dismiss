@@ -95,7 +95,6 @@ const Navbar = () => {
           menuButton={btnEl}
           open={open}
           setOpen={setOpen}
-          focusElementOnClose="menuButton"
           animation={{
             onEnter: (el, done) => {
               const elHeight = el.clientHeight;

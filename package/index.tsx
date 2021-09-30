@@ -600,8 +600,6 @@ const Dismiss: Component<TDismiss> = (props) => {
       mountEl?.removeChild(containerEl!);
       globalState.closedBySetOpen = false;
 
-      resetFocusOnClose();
-
       onAfterExit && onAfterExit(containerEl?.firstElementChild!);
       containerEl = null;
       mountEl = null;
@@ -626,22 +624,9 @@ const Dismiss: Component<TDismiss> = (props) => {
     const menuBtnExists = globalState.menuBtnEl;
     const activeElement = document.activeElement;
 
-    state.menuBtnEl?.focus();
-    if (!state.overlay && !state.overlayElement) {
-      if (state.menuBtnEl) {
-      }
-      return;
+    if (state.menuBtnEl) {
+      state.menuBtnEl?.focus();
     }
-    if (!menuBtnExists) return;
-
-    if (
-      !state.containerEl?.contains(activeElement) &&
-      activeElement !== document.body
-    ) {
-      return;
-    }
-
-    state.menuBtnEl?.focus();
   };
 
   onMount(() => {
