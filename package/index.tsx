@@ -626,9 +626,8 @@ const Dismiss: Component<TDismiss> = (props) => {
     const activeElement = document.activeElement;
 
     if (!state.overlay && !state.overlayElement) {
-      if (!globalState.addedDocumentClick) {
-        globalState.addedDocumentClick = true;
-        document.addEventListener("click", onDocumentClick, { once: true });
+      if (state.menuBtnEl && dismissStack.length) {
+        state.menuBtnEl?.focus();
       }
       return;
     }
