@@ -37,9 +37,10 @@ const App: Component = () => {
       () => {
         console.log("refresh");
         // setTimeout(() => {
-        //   if (contentEl.children.length) {
-        //     contentEl.removeChild(contentEl.children[0]);
-        //   }
+        if (contentEl.children.length) {
+          // contentEl.removeChild(contentEl.children[0]);
+          console.log("foo");
+        }
         const newChild = (<Content></Content>) as HTMLElement;
         //   contentEl.appendChild(newChild);
         // }, 1000);
