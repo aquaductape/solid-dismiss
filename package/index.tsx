@@ -600,6 +600,12 @@ const Dismiss: Component<TDismiss> = (props) => {
       mountEl?.removeChild(containerEl!);
       globalState.closedBySetOpen = false;
 
+      if (state.menuBtnEl && (overlay || overlayElement)) {
+        if (document.activeElement === document.body) {
+          state.menuBtnEl.focus();
+        }
+      }
+
       onAfterExit && onAfterExit(containerEl?.firstElementChild!);
       containerEl = null;
       mountEl = null;
