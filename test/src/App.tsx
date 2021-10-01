@@ -44,7 +44,7 @@ const App: Component = () => {
         // contentEl.removeChild(contentEl.children[0]);
         // console.log("foo");
         // }
-        const newChild = <Content></Content>;
+        // const newChild = <Content></Content>;
         //   contentEl.appendChild(newChild);
         // }, 1000);
         // }
