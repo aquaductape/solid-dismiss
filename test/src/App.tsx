@@ -31,19 +31,19 @@ const Content = () => {
 };
 const App: Component = () => {
   let contentEl!: HTMLDivElement;
-  createEffect(
-    on(
-      [() => settings.animation.enable, () => settings.closeMenuBtnReclick],
-      () => {
-        console.log("refresh");
-        if (contentEl.children.length) {
-          contentEl.removeChild(contentEl.children[0]);
-        }
-        const newChild = (<Content></Content>) as HTMLElement;
-        contentEl.appendChild(newChild);
-      }
-    )
-  );
+  // createEffect(
+  //   on(
+  //     [() => settings.animation.enable, () => settings.closeMenuBtnReclick],
+  //     () => {
+  //       console.log("refresh");
+  //       if (contentEl.children.length) {
+  //         contentEl.removeChild(contentEl.children[0]);
+  //       }
+  //       const newChild = (<Content></Content>) as HTMLElement;
+  //       contentEl.appendChild(newChild);
+  //     }
+  //   )
+  // );
 
   return (
     <>
