@@ -36,10 +36,14 @@ const Navbar = () => {
 
     const hrefAttrValue = target.getAttribute("href")!.slice(1);
     const el = document.getElementById(hrefAttrValue)!;
+    setOpen(false);
 
     smoothScrollTo({
       destination: el,
       duration: 500,
+      onEnd: () => {
+        el.focus();
+      },
     });
   };
 
