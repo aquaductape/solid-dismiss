@@ -15,5 +15,5 @@ if (iOS && !iOS13) {
   // html.style.cursor = "pointer";
   // // @ts-ignore
   // html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
-  document.body.addEventListener("click", () => {});
+  // document.body.addEventListener("click", () => {});
 }
