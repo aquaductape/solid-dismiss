@@ -39,17 +39,15 @@ const App: Component = () => {
           checkbox refreshes page to update components for testing purpose
         </p>
         <Show when={render()}>
-          <div>
-            <Basic></Basic>
-            {/* <NestedPopupMounted></NestedPopupMounted>
+          <Basic></Basic>
+          <NestedPopupMounted></NestedPopupMounted>
           <NestedPopup></NestedPopup>
           <NestedOverlay></NestedOverlay>
           <Scrolling></Scrolling>
           <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
           <IFrames></IFrames>
           <FocusElementOnClose></FocusElementOnClose>
-          <Mixed></Mixed> */}
-          </div>
+          <Mixed></Mixed>
         </Show>
       </main>
     </>
