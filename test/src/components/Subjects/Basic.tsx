@@ -20,9 +20,9 @@ const Basic = () => {
         <li>clicking outside of menuPopup</li>
       </ul>
       <div class="grid">
-        <Popup id={id + "-1"} />
+        {/* <Popup id={id + "-1"} />
         <Popup id={id + "-2"} />
-        <Popup id={id + "-3"} />
+        <Popup id={id + "-3"} /> */}
       </div>
     </section>
   );
