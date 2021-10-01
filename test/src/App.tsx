@@ -37,11 +37,23 @@ const App: Component = () => {
       [() => settings.animation.enable, () => settings.closeMenuBtnReclick],
       () => {
         console.log("refresh");
-        // if (contentEl.children.length) {
-        // contentEl.removeChild(contentEl.children[0]);
-        // }
-        const newChild = <div></div>;
-        //   contentEl.appendChild(newChild);
+        if (contentEl.children.length) {
+          contentEl.removeChild(contentEl.children[0]);
+        }
+        const newChild: any = (
+          <div>
+            <Basic></Basic>
+            <NestedPopupMounted></NestedPopupMounted>
+            <NestedPopup></NestedPopup>
+            <NestedOverlay></NestedOverlay>
+            <Scrolling></Scrolling>
+            <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
+            <IFrames></IFrames>
+            <FocusElementOnClose></FocusElementOnClose>
+            <Mixed></Mixed>
+          </div>
+        );
+        contentEl.appendChild(newChild);
       }
     )
   );
