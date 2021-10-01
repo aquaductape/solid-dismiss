@@ -120,8 +120,6 @@ export const onFocusSentinel = (
       return;
     }
 
-    console.log("remove by first sentinel");
-
     const el =
       queryElement(state, {
         inputElement: focusElementOnClose,

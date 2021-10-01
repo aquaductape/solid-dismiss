@@ -27,7 +27,6 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 
   // iOS triggers refocus i think...
   if (!open()) {
-    console.log("add blur");
     menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
       once: true,
     });
@@ -57,16 +56,12 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   const {
-    onClickDocumentRef,
     containerEl,
     overlay,
     setOpen,
-    open,
     timeouts,
     closeWhenMenuButtonIsClicked,
   } = state;
-
-  console.log("onblur!!!!!");
 
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
@@ -93,7 +88,6 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
 
   const run = () => {
-    console.log("removed by button");
     globalState.closedByEvents = true;
     setOpen(false);
   };
@@ -135,7 +129,6 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
 
   if (!open()) return;
   if (e.key === "Tab" && e.shiftKey) {
-    console.log("remove by shift tab btn");
     globalState.closedByEvents = true;
     setOpen(false);
     state.menuBtnKeyupTabFired = true;

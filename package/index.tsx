@@ -595,7 +595,6 @@ const Dismiss: Component<TDismiss> = (props) => {
     }
 
     function endTransition() {
-      console.log("ended TRANSITION", state.uniqueId);
       exitRunning = false;
       mountEl?.removeChild(containerEl!);
       globalState.closedBySetOpen = false;
@@ -681,7 +680,6 @@ const Dismiss: Component<TDismiss> = (props) => {
         if (!open) {
           // used to detect programmatic removal
           if (!globalState.closedByEvents) {
-            console.log("run computed!!");
             if (!globalState.closedBySetOpen) {
               globalState.addedDocumentClick = false;
               document.removeEventListener("click", onDocumentClick);
@@ -765,7 +763,6 @@ const Dismiss: Component<TDismiss> = (props) => {
           onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
           activateLastFocusSentinel(state);
         } else {
-          console.log("reset closebByEvents to false");
           globalState.closedByEvents = false;
           removeLocalEvents(state);
 

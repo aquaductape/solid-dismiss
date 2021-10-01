@@ -9,7 +9,6 @@ export const onFocusFromOutsideAppOrTab = (
 
   if (containerEl!.contains(e.target as HTMLElement)) return;
 
-  console.log("onfocusoutside onclick");
   globalState.closedByEvents = true;
   setOpen(false);
   state.prevFocusedEl = null;
@@ -42,7 +41,6 @@ export const onClickDocument = (state: TLocalState, e: MouseEvent) => {
   }
   state.prevFocusedEl = null;
 
-  console.log("doc onclick");
   globalState.closedByEvents = true;
   setOpen(false);
   state.addedFocusOutAppEvents = false;
@@ -52,7 +50,6 @@ export const removeOutsideFocusEvents = (state: TLocalState) => {
   const { onFocusFromOutsideAppOrTabRef, onClickDocumentRef } = state;
   if (!state.prevFocusedEl) return;
 
-  console.log("removeOutsideFocusEvents");
   state.prevFocusedEl.removeEventListener(
     "focus",
     onFocusFromOutsideAppOrTabRef

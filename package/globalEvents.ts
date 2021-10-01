@@ -32,7 +32,6 @@ export const globalState: {
 export const onDocumentClick = (e: Event) => {
   const target = e.target as HTMLElement;
 
-  console.log("click doc");
   checkThenClose(
     dismissStack,
     (item) => {
@@ -238,7 +237,6 @@ export const removeGlobalEvents = () => {
 const onTouchMove = () => {
   if (scrollEventAddedViaTouch) return;
   scrollEventAddedViaTouch = true;
-  console.log("ontouch added!!");
 
   document.body.addEventListener(
     "touchend",
@@ -311,7 +309,6 @@ const pollingIframe = () => {
 
   const poll = () => {
     const activeElement = document.activeElement as HTMLElement;
-    console.log("polling", "document.hasFocus()", document.hasFocus());
 
     if (!activeElement) {
       return;
@@ -338,7 +335,6 @@ const pollingIframe = () => {
       },
       (item) => {
         const { setOpen, menuBtnEl } = item;
-        console.log("close!!!");
         globalState.closedByEvents = true;
         setOpen(false);
 
