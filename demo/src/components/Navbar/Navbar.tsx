@@ -9,6 +9,7 @@ import { createSignal, Show, onMount, createEffect, on } from "solid-js";
 import { changeTheme, getCurrentTheme } from "../../lib/theme";
 import Dismiss from "../../../../package/index";
 import context from "../../global/global";
+import smoothScrollTo from "../../lib/smoothScrollTo";
 
 const Navbar = () => {
   const [theme, setTheme] = createSignal(getCurrentTheme());
@@ -26,7 +27,20 @@ const Navbar = () => {
   const onClickHome = (e: Event) => {
     e.preventDefault();
 
-    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    smoothScrollTo({ destination: 0, duration: 500 });
+  };
+
+  const onClickNavLink = (e: Event) => {
+    const target = e.currentTarget as HTMLAnchorElement;
+    e.preventDefault();
+
+    const hrefAttrValue = target.getAttribute("href")!.slice(1);
+    const el = document.getElementById(hrefAttrValue)!;
+
+    smoothScrollTo({
+      destination: el,
+      duration: 500,
+    });
   };
 
   return (
@@ -50,12 +64,20 @@ const Navbar = () => {
           <nav class={s("nav")}>
             <ul class={s("nav-list")}>
               <li>
-                <a class={s("nav-item") + " focusable"} href="#examples">
+                <a
+                  class={s("nav-item") + " focusable"}
+                  href="#examples"
+                  onClick={onClickNavLink}
+                >
                   <span>Examples</span>
                 </a>
               </li>
               <li>
-                <a class={s("nav-item") + " focusable"} href="#docs">
+                <a
+                  class={s("nav-item") + " focusable"}
+                  href="#docs"
+                  onClick={onClickNavLink}
+                >
                   <span>Docs</span>
                 </a>
               </li>
@@ -115,12 +137,20 @@ const Navbar = () => {
           <nav class={s("nav-mobile")}>
             <ul class={s("nav-list")}>
               <li>
-                <a class={s("nav-item") + " focusable"} href="#examples">
+                <a
+                  class={s("nav-item") + " focusable"}
+                  href="#examples"
+                  onClick={onClickNavLink}
+                >
                   Examples
                 </a>
               </li>
               <li>
-                <a class={s("nav-item") + " focusable"} href="#docs">
+                <a
+                  class={s("nav-item") + " focusable"}
+                  href="#docs"
+                  onClick={onClickNavLink}
+                >
                   Docs
                 </a>
               </li>
