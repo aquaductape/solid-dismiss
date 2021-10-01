@@ -36,13 +36,13 @@ const App: Component = () => {
       [() => settings.animation.enable, () => settings.closeMenuBtnReclick],
       () => {
         console.log("refresh");
-        setTimeout(() => {
-          if (contentEl.children.length) {
-            contentEl.removeChild(contentEl.children[0]);
-          }
-          const newChild = (<Content></Content>) as HTMLElement;
-          contentEl.appendChild(newChild);
-        }, 1000);
+        // setTimeout(() => {
+        //   if (contentEl.children.length) {
+        //     contentEl.removeChild(contentEl.children[0]);
+        //   }
+        //   const newChild = (<Content></Content>) as HTMLElement;
+        //   contentEl.appendChild(newChild);
+        // }, 1000);
       }
     )
   );
