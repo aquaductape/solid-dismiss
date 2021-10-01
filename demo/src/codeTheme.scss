@@ -1,6 +1,12 @@
 .token.keyword {
   color: var(--token-keyword);
 }
+.token.selector {
+  color: var(--token-selector);
+}
+.token.property {
+  color: var(--token-property);
+}
 .token.punctuation {
   color: var(--token-punctuation);
 }

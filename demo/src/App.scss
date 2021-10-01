@@ -101,7 +101,6 @@ $hamburger-layer-height: 3px !default;
 html {
   color-scheme: var(--color-scheme);
   touch-action: manipulation;
-  scroll-behavior: smooth;
 }
 
 body {
@@ -541,7 +540,7 @@ button {
   text-decoration: none;
   background: linear-gradient(currentColor, currentColor) no-repeat;
   background-size: 100% 2px;
-  background-position: 0 1.05em;
+  background-position: 0 1.1em;
   padding-bottom: 5px;
   text-shadow: 3px 0px var(--anchor-text-shadow),
     -3px 0px var(--anchor-text-shadow), 2px 1px var(--anchor-text-shadow),

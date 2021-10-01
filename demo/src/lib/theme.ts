@@ -30,6 +30,8 @@ type IDark = {
   "--code-actual-text": "#d5dbff";
   "--code-text": "var(--code-actual-text)";
   "--token-keyword": "#7777ca";
+  "--token-selector": "var(--token-attr-value)";
+  "--token-property": "var(--token-keyword)";
   "--token-punctuation": "#58a6da";
   "--token-operator": "#b117ce";
   "--token-boolean": "#c428e7";
@@ -88,6 +90,8 @@ type ILight = {
   "--code-bg": "#e7e6f7";
   "--code-text": "var(--code-actual-text)";
   "--token-keyword": "#4141ab";
+  "--token-selector": "var(--token-attr-value)";
+  "--token-property": "var(--token-keyword)";
   "--token-punctuation": "#196191";
   "--token-operator": "#8f389f";
   "--token-boolean": "#c428e7";
@@ -151,6 +155,8 @@ export const themeConfig: IThemeConfig = {
     "--code-actual-text": "#d5dbff",
     "--code-text": "var(--code-actual-text)",
     "--token-keyword": "#7777ca",
+    "--token-property": "var(--token-keyword)",
+    "--token-selector": "var(--token-attr-value)",
     "--token-punctuation": "#58a6da",
     "--token-operator": "#b117ce",
     "--token-boolean": "#c428e7",
@@ -209,6 +215,8 @@ export const themeConfig: IThemeConfig = {
     "--code-bg": "#e7e6f7",
     "--code-text": "var(--code-actual-text)",
     "--token-keyword": "#4141ab",
+    "--token-property": "var(--token-keyword)",
+    "--token-selector": "var(--token-attr-value)",
     "--token-punctuation": "#196191",
     "--token-operator": "#8f389f",
     "--token-boolean": "#c428e7",
