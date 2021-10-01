@@ -40,7 +40,7 @@ const App: Component = () => {
         // if (contentEl.children.length) {
         // contentEl.removeChild(contentEl.children[0]);
         // }
-        const newChild = <Content></Content>;
+        const newChild = <div></div>;
         //   contentEl.appendChild(newChild);
       }
     )
