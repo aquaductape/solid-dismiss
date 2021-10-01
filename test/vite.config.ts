@@ -9,7 +9,7 @@ export default defineConfig({
   ],
   build: {
     target: "esnext",
-    polyfillDynamicImport: false,
+    // polyfillDynamicImport: false,
     // assetsInlineLimit: 100000000,
     // chunkSizeWarningLimit: 100000000,
     // cssCodeSplit: false,
