@@ -40,7 +40,8 @@ const App: Component = () => {
         </p>
         <Show when={render()}>
           <div>
-            <Basic></Basic>
+            <p>hi</p>
+            {/* <Basic></Basic> */}
             {/* <NestedPopupMounted></NestedPopupMounted>
           <NestedPopup></NestedPopup>
           <NestedOverlay></NestedOverlay>
