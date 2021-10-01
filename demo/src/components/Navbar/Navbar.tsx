@@ -127,22 +127,31 @@ const Navbar = () => {
           setOpen={setOpen}
           animation={{
             onEnter: (el, done) => {
-              const elHeight = el.clientHeight;
-              const a = el.animate(
-                [{ height: "0px" }, { height: `${elHeight}px` }],
-                { duration: 100 }
-              );
+              if ("animate" in el) {
+                const elHeight = el.clientHeight;
+                const a = el.animate(
+                  [{ height: "0px" }, { height: `${elHeight}px` }],
+                  { duration: 100 }
+                );
 
-              a.onfinish = () => done();
+                a.onfinish = () => done();
+                return;
+              }
+              done();
             },
             onExit: (el, done) => {
-              const elHeight = el.clientHeight;
-              const a = el.animate(
-                [{ height: `${elHeight}px` }, { height: "0px" }],
-                { duration: 100 }
-              );
+              if ("animate" in el) {
+                const elHeight = el.clientHeight;
+                const a = el.animate(
+                  [{ height: `${elHeight}px` }, { height: "0px" }],
+                  { duration: 100 }
+                );
 
-              a.onfinish = () => done();
+                a.onfinish = () => done();
+                return;
+              }
+
+              done();
             },
           }}
         >
