@@ -11,8 +11,9 @@ const iOS13 =
     : null;
 
 if (iOS && !iOS13) {
-  const html = document.querySelector("html")!;
-  html.style.cursor = "pointer";
-  // @ts-ignore
-  html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
+  // const html = document.querySelector("html")!;
+  // html.style.cursor = "pointer";
+  // // @ts-ignore
+  // html.style.webkitTapHighlightColor = "rgba(0, 0, 0, 0)";
+  document.body.addEventListener("click", () => {});
 }

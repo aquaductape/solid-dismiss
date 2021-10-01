@@ -26,6 +26,11 @@ const Navbar = () => {
 
   const onClickHome = (e: Event) => {
     e.preventDefault();
+    window.history.replaceState(
+      null,
+      "",
+      `${location.origin}${location.pathname}`
+    );
 
     smoothScrollTo({ destination: 0, duration: 500 });
   };
@@ -36,6 +41,9 @@ const Navbar = () => {
 
     const hrefAttrValue = target.getAttribute("href")!.slice(1);
     const el = document.getElementById(hrefAttrValue)!;
+    const url = `${location.origin}${location.pathname}#${hrefAttrValue}`;
+
+    window.history.replaceState(null, "", url);
     setOpen(false);
 
     smoothScrollTo({
