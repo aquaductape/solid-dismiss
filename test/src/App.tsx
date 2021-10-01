@@ -31,19 +31,41 @@ const Content = () => {
 };
 const App: Component = () => {
   let contentEl!: HTMLDivElement;
+
   createEffect(
     on(
       [() => settings.animation.enable, () => settings.closeMenuBtnReclick],
       () => {
         console.log("refresh");
         // setTimeout(() => {
+        // const run = () => {
+
         // if (contentEl.children.length) {
         // contentEl.removeChild(contentEl.children[0]);
         // console.log("foo");
         // }
-        const newChild = (<Content></Content>) as HTMLElement;
+        const newChild = <Content></Content>;
         //   contentEl.appendChild(newChild);
         // }, 1000);
+        // }
+
+        // run()
+
+        //         const exists = () => {
+        //
+        //         if(contentEl!) {
+        //           setTimeout(() => {
+        //
+        //           })
+        //         }
+        //         }
+        //
+        //
+        //         if(contentEl!) {
+        //           setTimeout(() => {
+        //
+        //           })
+        //         }
       }
     )
   );
