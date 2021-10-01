@@ -1,4 +1,4 @@
-import { createEffect, on } from "solid-js";
+import { createEffect, createSignal, on, Show } from "solid-js";
 import { Component, Match, Switch } from "solid-js";
 
 import "./App.scss";
@@ -14,47 +14,19 @@ import NestedPopupMounted from "./components/Subjects/NestedPopupMounted";
 import Scrolling from "./components/Subjects/Scrolling";
 import settings from "./utils/globalSettings";
 
-const Content = () => {
-  return (
-    <div>
-      <Basic></Basic>
-      <NestedPopupMounted></NestedPopupMounted>
-      <NestedPopup></NestedPopup>
-      <NestedOverlay></NestedOverlay>
-      <Scrolling></Scrolling>
-      <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
-      <IFrames></IFrames>
-      <FocusElementOnClose></FocusElementOnClose>
-      <Mixed></Mixed>
-    </div>
-  );
-};
 const App: Component = () => {
-  let contentEl!: HTMLDivElement;
+  const [render, setRender] = createSignal(true);
 
   createEffect(
     on(
       [() => settings.animation.enable, () => settings.closeMenuBtnReclick],
       () => {
-        console.log("refresh");
-        if (contentEl.children.length) {
-          contentEl.removeChild(contentEl.children[0]);
-        }
-        const newChild: any = (
-          <div>
-            <Basic></Basic>
-            <NestedPopupMounted></NestedPopupMounted>
-            <NestedPopup></NestedPopup>
-            <NestedOverlay></NestedOverlay>
-            <Scrolling></Scrolling>
-            <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
-            <IFrames></IFrames>
-            <FocusElementOnClose></FocusElementOnClose>
-            <Mixed></Mixed>
-          </div>
-        );
-        contentEl.appendChild(newChild);
-      }
+        setRender(false);
+        setTimeout(() => {
+          setRender(true);
+        });
+      },
+      { defer: true }
     )
   );
 
@@ -66,15 +38,17 @@ const App: Component = () => {
           Note: Dismiss animation props are reactive, but "enable animation"
           checkbox refreshes page to update components for testing purpose
         </p>
-        <div ref={contentEl}></div>
-        {/* <Switch>
-          <Match when={settings.animation.enable}>
-            <Content></Content>
-          </Match>
-          <Match when={!settings.animation.enable}>
-            <Content></Content>
-          </Match>
-        </Switch> */}
+        <Show when={render()}>
+          <Basic></Basic>
+          <NestedPopupMounted></NestedPopupMounted>
+          <NestedPopup></NestedPopup>
+          <NestedOverlay></NestedOverlay>
+          <Scrolling></Scrolling>
+          <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
+          <IFrames></IFrames>
+          <FocusElementOnClose></FocusElementOnClose>
+          <Mixed></Mixed>
+        </Show>
       </main>
     </>
   );
