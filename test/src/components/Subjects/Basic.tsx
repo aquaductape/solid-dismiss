@@ -1,5 +1,4 @@
 import { Component, createSignal, onMount } from "solid-js";
-import { Portal } from "solid-js/web";
 import Dismiss from "../../../../package/index";
 import { toggleAnimation } from "../../utils";
 import settings from "../../utils/globalSettings";
