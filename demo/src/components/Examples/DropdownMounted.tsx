@@ -38,7 +38,6 @@ const DropdownMounted = () => {
         setOpen={setOpen}
         mount="body"
         cursorKeys
-        useAriaExpanded
       >
         <ul class={s("dropdown")} ref={dropdownEl}>
           <li>
@@ -65,32 +64,41 @@ const DropdownMounted = () => {
 // import Dismiss from "solid-dismiss";
 // import { createSignal } from "solid-js";
 //
-// const Dropdown = () => {
+// const DropdownMounted = () => {
 //   const [open, setOpen] = createSignal(false);
 //   let btnEl;
+//   let dropdownEl;
+//
+//   createEffect(() => {
+//     if (open()) {
+//       const { bottom, left, width } = btnEl.getBoundingClientRect();
+//       const { scrollX, scrollY } = window;
+//
+//       dropdownEl.style.position = "absolute";
+//       dropdownEl.style.top = bottom + scrollY + "px";
+//       dropdownEl.style.left = left + scrollX + "px";
+//       dropdownEl.style.width = width + "px";
+//       dropdownEl.style.zIndex = "100";
+//     }
+//   });
 //
 //   return (
-//     <div style="position: relative;">
+//     <>
 //       <button ref={btnEl}>Button</button>
 //       <Dismiss
 //         menuButton={btnEl}
 //         open={open}
 //         setOpen={setOpen}
-//         useAriaExpanded
+//         mount="body"
+//         cursorKeys
 //       >
-//         <ul class="dropdown">
-//           <li>
-//             <a class="item" href="#">cat</a>
-//           </li>
-//           <li>
-//             <a class="item" href="#">dog</a>
-//           </li>
-//           <li>
-//             <a class="item" href="#">fish</a>
-//           </li>
+//         <ul class="dropdown" ref={dropdownEl}>
+//           <li><a href="#">cat</a></li>
+//           <li><a href="#">dog</a></li>
+//           <li><a href="#">fish</a></li>
 //         </ul>
 //       </Dismiss>
-//     </div>
+//     </>
 //   );
 // };
 

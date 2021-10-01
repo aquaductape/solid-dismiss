@@ -18,13 +18,7 @@ const Dropdown = () => {
       <button class="btn-primary" ref={btnEl}>
         Button
       </button>
-      <Dismiss
-        menuButton={btnEl}
-        open={open}
-        setOpen={setOpen}
-        cursorKeys
-        useAriaExpanded
-      >
+      <Dismiss menuButton={btnEl} open={open} setOpen={setOpen} cursorKeys>
         <ul class={s("dropdown")}>
           <li>
             <a class={s("item")} href="#" onClick={onClickItem}>
@@ -62,18 +56,11 @@ const Dropdown = () => {
 //         open={open}
 //         setOpen={setOpen}
 //         cursorKeys
-//         useAriaExpanded
 //       >
 //         <ul class="dropdown">
-//           <li>
-//             <a class="item" href="#">cat</a>
-//           </li>
-//           <li>
-//             <a class="item" href="#">dog</a>
-//           </li>
-//           <li>
-//             <a class="item" href="#">fish</a>
-//           </li>
+//           <li><a href="#">cat</a></li>
+//           <li><a href="#">dog</a></li>
+//           <li><a href="#">fish</a></li>
 //         </ul>
 //       </Dismiss>
 //     </div>

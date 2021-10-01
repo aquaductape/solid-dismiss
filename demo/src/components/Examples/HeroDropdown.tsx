@@ -42,8 +42,9 @@ const HeroDropdown = () => {
       >
         <div class="hero-dropdown-content">
           <p style="margin-top: 0;">
-            To close: <strong>click</strong> outside, or press <code>Esc</code>{" "}
-            key, or press <code>Tab</code> key until focus is outside of popup
+            To close: <strong>click</strong> outside, or press{" "}
+            <code class="code">Esc</code> key, or press{" "}
+            <code class="code">Tab</code> key until focus is outside of popup
           </p>
           <div class="gutters">
             <FocusGutter></FocusGutter>

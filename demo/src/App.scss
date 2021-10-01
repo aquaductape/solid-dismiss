@@ -643,18 +643,17 @@ button {
     right: 0px;
     height: calc(100% - 10px);
     border-radius: 8px;
-    background: #00000085;
-    box-shadow: 0 0 17px 0 #00000085;
+    background: var(--dropdown-root-shadow);
+    box-shadow: 0 0 17px 0 var(--dropdown-root-shadow);
   }
 
   .hero-dropdown-content {
     position: relative;
-    border: 2px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     height: 100%;
     z-index: 3;
     padding: 15px;
-    background: #fff;
+    background: var(--dropdown-bg);
   }
 }
 
@@ -727,15 +726,6 @@ button {
   grid-template-columns: 1fr;
 }
 
-.code-editor {
-  font-size: 14px;
-  max-height: 75vh;
-  padding: 0px 30px;
-  border-radius: 10px;
-  background: var(--code-bg);
-  color: var(--code-text);
-  overflow: auto;
-}
 .section {
   margin-bottom: 30vh;
   .btn-primary {
@@ -760,9 +750,6 @@ button {
   .btn-fusion {
     width: auto;
   }
-  .code-editor {
-    font-size: 16px;
-  }
 
   .hero {
     .demo {
@@ -784,12 +771,6 @@ button {
   .split-view {
     grid-template-columns: 1fr minmax(420px, 750px);
     column-gap: 100px;
-  }
-}
-
-@media (min-width: 1300px) {
-  .code-editor {
-    font-size: 18px;
   }
 }
 

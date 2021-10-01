@@ -121,6 +121,31 @@
   font-size: 22px;
   text-decoration: none;
   color: inherit;
+
+  > span {
+    position: relative;
+
+    &::before {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      content: "";
+      width: 100%;
+      height: 4px;
+      background: currentColor;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 300ms;
+    }
+  }
+
+  &:hover {
+    > span {
+      &::before {
+        transform: scaleY(1);
+      }
+    }
+  }
 }
 
 .hamburger-container {

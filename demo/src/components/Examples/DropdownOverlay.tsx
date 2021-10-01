@@ -45,7 +45,6 @@ const DropdownOverlay = () => {
         mount="body"
         overlay
         cursorKeys
-        useAriaExpanded
       >
         <div class={s("dropdown")} ref={dropdownContainerEl}>
           <div class={s("overlay")} onClick={onClickClose}></div>
@@ -75,32 +74,51 @@ const DropdownOverlay = () => {
 // import Dismiss from "solid-dismiss";
 // import { createSignal } from "solid-js";
 //
-// const Dropdown = () => {
+// const DropdownOverlay = () => {
 //   const [open, setOpen] = createSignal(false);
 //   let btnEl;
+//   let dropdownContainerEl;
+//   let dropdownEl;
+//
+//   const onClickClose = () => {
+//     setOpen(false);
+//   };
+//
+//   createEffect(() => {
+//     if (open()) {
+//       const { bottom, left, width } = btnEl.getBoundingClientRect();
+//       const { scrollX, scrollY } = window;
+//
+//       dropdownContainerEl.style.position = "absolute";
+//       dropdownContainerEl.style.top = bottom + scrollY + "px";
+//       dropdownContainerEl.style.left = left + scrollX + "px";
+//       dropdownContainerEl.style.width = width + "px";
+//       dropdownContainerEl.style.zIndex = "100";
+//     }
+//   });
 //
 //   return (
-//     <div style="position: relative;">
+//     <>
 //       <button ref={btnEl}>Button</button>
 //       <Dismiss
 //         menuButton={btnEl}
+//         menuPopup={dropdownEl}
 //         open={open}
 //         setOpen={setOpen}
-//         useAriaExpanded
+//         mount="body"
+//         overlay
+//         cursorKeys
 //       >
-//         <ul class="dropdown">
-//           <li>
-//             <a class="item" href="#">cat</a>
-//           </li>
-//           <li>
-//             <a class="item" href="#">dog</a>
-//           </li>
-//           <li>
-//             <a class="item" href="#">fish</a>
-//           </li>
-//         </ul>
+//         <div class="dropdown" ref={dropdownContainerEl}>
+//           <div class="overlay" onClick={onClickClose}></div>
+//           <ul class="dropdown-inner" ref={dropdownEl}>
+//             <li><a href="#">cat</a></li>
+//             <li><a href="#">dog</a></li>
+//             <li><a href="#">fish</a></li>
+//           </ul>
+//         </div>
 //       </Dismiss>
-//     </div>
+//     </>
 //   );
 // };
 

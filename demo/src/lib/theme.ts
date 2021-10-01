@@ -43,7 +43,7 @@ type IDark = {
   "--token-script": "var(--code-actual-text)";
   "--token-language-javascript": "#000";
   "--token-comment": "#4a6078";
-  "--inline-code-bg": "var(--code-bg)";
+  "--inline-code-bg": "#2a2948";
   "--inline-code-color": "#fff";
   "--scrollbar-bg": "#30323b";
   "--scrollbar-bg-active": "var(--secondary-blue)";
@@ -54,6 +54,7 @@ type IDark = {
   "--docs-divider-bg": "rgba(255, 255, 2555, 0.1)";
   "--docs-func-border-bg": "rgba(255, 255, 2555, 0.15)";
   "--docs-signature-type-link": "var(--secondary-blue)";
+  "--tab-inactive-bg": "#20202d";
 };
 type ILight = {
   "--main-blue": "#142cb0";
@@ -70,7 +71,7 @@ type ILight = {
   "--logo-shadow": "none";
   "--bg": "#f3effd";
   "--text": "#000";
-  "--dropdown-bg": "#f3effd";
+  "--dropdown-bg": "#fff";
   "--dropdown-btn": "rgba(10, 10, 60, 57%)";
   "--dropdown-root-bg": "#fff";
   "--dropdown-root-border": "#bcb7d4";
@@ -111,6 +112,7 @@ type ILight = {
   "--docs-divider-bg": "rgba(0, 0, 0, 0.07)";
   "--docs-func-border-bg": "rgba(0, 0, 0, 0.12)";
   "--docs-signature-type-link": "var(--main-blue)";
+  "--tab-inactive-bg": "#eeebfa";
 };
 type IThemeConfig = {
   dark: IDark;
@@ -162,7 +164,7 @@ export const themeConfig: IThemeConfig = {
     "--token-script": "var(--code-actual-text)",
     "--token-language-javascript": "#000",
     "--token-comment": "#4a6078",
-    "--inline-code-bg": "var(--code-bg)",
+    "--inline-code-bg": "#2a2948",
     "--inline-code-color": "#fff",
     "--scrollbar-bg": "#30323b",
     "--scrollbar-bg-active": "var(--secondary-blue)",
@@ -173,6 +175,7 @@ export const themeConfig: IThemeConfig = {
     "--docs-divider-bg": "rgba(255, 255, 2555, 0.1)",
     "--docs-func-border-bg": "rgba(255, 255, 2555, 0.15)",
     "--docs-signature-type-link": "var(--secondary-blue)",
+    "--tab-inactive-bg": "#20202d",
   },
   light: {
     "--main-blue": "#142cb0",
@@ -189,7 +192,7 @@ export const themeConfig: IThemeConfig = {
     "--logo-shadow": "none",
     "--bg": "#f3effd",
     "--text": "#000",
-    "--dropdown-bg": "#f3effd",
+    "--dropdown-bg": "#fff",
     "--dropdown-btn": "rgba(10, 10, 60, 57%)",
     "--dropdown-root-bg": "#fff",
     "--dropdown-root-border": "#bcb7d4",
@@ -230,6 +233,7 @@ export const themeConfig: IThemeConfig = {
     "--docs-divider-bg": "rgba(0, 0, 0, 0.07)",
     "--docs-func-border-bg": "rgba(0, 0, 0, 0.12)",
     "--docs-signature-type-link": "var(--main-blue)",
+    "--tab-inactive-bg": "#eeebfa",
   },
 };
 export const changeTheme = (inputTheme: string) => {

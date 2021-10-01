@@ -1,0 +1,45 @@
+.tabs {
+  margin-bottom: -10px;
+}
+.tab-button {
+  padding: 10px 25px 15px 25px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background: var(--tab-inactive-bg);
+  opacity: 0.6;
+  font-size: 20px;
+  transition: opacity 250ms, background-color 250ms;
+
+  &.active {
+    background: var(--code-bg);
+    opacity: 1;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.code-editor {
+  font-size: 14px;
+  max-height: 75vh;
+  padding: 0px 30px;
+
+  border-radius: 10px;
+  background: var(--code-bg);
+  color: var(--code-text);
+  transition: background-color 250ms;
+  overflow: auto;
+}
+
+@media (min-width: 500px) {
+  .code-editor {
+    font-size: 16px;
+  }
+}
+
+// @media (min-width: 1300px) {
+//   .code-editor {
+//     font-size: 18px;
+//   }
+// }

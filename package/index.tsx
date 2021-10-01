@@ -159,7 +159,7 @@ export type TDismiss = {
    *
    * @defaultValue
    *
-   * When Tabbing forwards, focuses on tabbable element after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When "click", user-agent determines which element recieves focus, however if overlay is `true`, then menuButton will be focused instead.
+   * When Tabbing forwards, focuses on tabbable element after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When programmatically closed, such as clicking close button, then menuButton will be focused. When "click", user-agent determines which element recieves focus, however if overlay is `true`, then menuButton will be focused instead.
    */
   focusElementOnClose?:
     | "menuButton"
@@ -623,6 +623,20 @@ const Dismiss: Component<TDismiss> = (props) => {
   const resetFocusOnClose = () => {
     const menuBtnExists = globalState.menuBtnEl;
     const activeElement = document.activeElement;
+
+    if (state.overlay) {
+      const el =
+        queryElement(state, {
+          inputElement: focusElementOnClose,
+          type: "focusElementOnClose",
+        }) || state.menuBtnEl;
+
+      if (el) {
+        el.focus();
+      }
+
+      return;
+    }
 
     if (state.menuBtnEl) {
       state.menuBtnEl?.focus();

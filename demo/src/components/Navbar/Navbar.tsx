@@ -23,10 +23,6 @@ const Navbar = () => {
     changeTheme(theme());
   });
 
-  createEffect(() => {
-    console.log(context.nav.logoActive);
-  });
-
   const onClickHome = (e: Event) => {
     e.preventDefault();
 
@@ -55,12 +51,12 @@ const Navbar = () => {
             <ul class={s("nav-list")}>
               <li>
                 <a class={s("nav-item") + " focusable"} href="#examples">
-                  Examples
+                  <span>Examples</span>
                 </a>
               </li>
               <li>
                 <a class={s("nav-item") + " focusable"} href="#docs">
-                  Docs
+                  <span>Docs</span>
                 </a>
               </li>
             </ul>

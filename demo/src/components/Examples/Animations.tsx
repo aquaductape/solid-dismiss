@@ -99,10 +99,10 @@ export const PopupWithJSAnimation = () => {
     </div>
   );
 };
-
+//
 // import Dismiss from "solid-dismiss";
 // import { createSignal } from "solid-js";
-
+//
 // const Popup = () => {
 //   const [open, setOpen] = createSignal(false);
 //   let btnEl;

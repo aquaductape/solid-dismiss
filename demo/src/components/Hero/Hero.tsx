@@ -12,7 +12,6 @@ const Hero = () => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         setContext((s) => {
-          console.log("set!");
           s.nav.logoActive = !entry.isIntersecting;
         });
       });

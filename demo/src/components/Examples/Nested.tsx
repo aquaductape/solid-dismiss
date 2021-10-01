@@ -4,7 +4,7 @@ import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 const s = scopeModuleClasses(c);
 
 import Dismiss, { OnOpenHandler } from "../../../../package/index";
-import { Component, createSignal, createEffect } from "solid-js";
+import { createSignal } from "solid-js";
 
 let modalStep = -1;
 let popupCount = 0;
@@ -207,5 +207,160 @@ const Popup = () => {
     </>
   );
 };
+
+// import Dismiss from "solid-dismiss";
+// import { createSignal } from "solid-js";
+//
+// const Nested = () => {
+//   return (
+//     <div>
+//       <Modal></Modal>
+//       <Popup></Popup>
+//     </div>
+//   );
+// };
+//
+// const Modal = () => {
+//   const [open, setOpen] = createSignal(false);
+//   let btnEl;
+//   let modalEl;
+//
+//   const onClickClose = () => {
+//     setOpen(false);
+//   };
+//
+//   const onClickOverlay = (e) => {
+//     if (e.target !== e.currentTarget) return;
+//     setOpen(false);
+//   };
+//
+//   const onOpen = (open, { dismissStack }) => {
+//     if (open) {
+//       if (dismissStack.length <= 1) {
+//         const scrollbarWidth =
+//           window.innerWidth - document.documentElement.clientWidth;
+//         const scrollingElement = document.scrollingElement;
+//         const navbar = document.getElementById("navbar-content");
+//
+//         scrollingElement.style.overflow = "hidden";
+//         scrollingElement.style.marginRight = scrollbarWidth + "px";
+//         navbar.style.marginRight = scrollbarWidth + "px";
+//       }
+//
+//     } else {
+//       // if there happened to be a stack of modals,
+//       // we don't want the scrollbar to return when
+//       // the topmost modal is removed while
+//       // there's more modals below.
+//       if (dismissStack.length) return;
+//
+//       setTimeout(() => {
+//         const scrollingElement = document.scrollingElement;
+//         const navbar = document.getElementById("navbar-content");
+//
+//         scrollingElement.style.overflow = "";
+//         scrollingElement.style.marginRight = "";
+//         navbar.style.marginRight = "";
+//         // remove scrollbar after animation is done
+//       }, 300);
+//     }
+//   };
+//
+//   return (
+//     <>
+//       <button ref={btnEl}>Modal</button>
+//       <Dismiss
+//         menuButton={btnEl}
+//         open={open}
+//         setOpen={setOpen}
+//         onOpen={onOpen}
+//         mount="body"
+//         trapFocus
+//         overlay
+//         focusElementOnClose="menuButton"
+//         focusElementOnOpen={() => modalEl}
+//         animation={{
+//           name: "fade-modal",
+//         }}
+//       >
+//         <div
+//           class="modal-container"
+//           onClick={onClickOverlay}
+//           role="presentation"
+//         >
+//           <div
+//             class="modal"
+//             role="dialog"
+//             aria-modal="true"
+//             tabindex="-1"
+//             ref={modalEl}
+//           >
+//             <h4>Modal Text</h4>
+//             <p>Lorem <a href="#">ipsum</a>.</p>
+//             <Nested></Nested>
+//             <button
+//               class={s("x-btn")}
+//               aria-label="close modal"
+//               onClick={onClickClose}
+//             >
+//               ✕
+//             </button>
+//           </div>
+//         </div>
+//       </Dismiss>
+//     </>
+//   );
+// };
+//
+// const Popup = () => {
+//   const [open, setOpen] = createSignal(false);
+//   let btnEl;
+//   let dropdownEl;
+//
+//   const onClickClose = () => {
+//     setOpen(false);
+//   };
+//
+//   const onOpen = (open) => {
+//     if (open) {
+//       const { bottom, left } = btnEl.getBoundingClientRect();
+//       const { scrollX, scrollY } = window;
+//
+//       dropdownEl.style.position = "absolute";
+//       dropdownEl.style.top = bottom + scrollY + "px";
+//       dropdownEl.style.left = left + scrollX + "px";
+//       dropdownEl.style.zIndex = "100";
+//     }
+//   };
+//
+//   return (
+//     <>
+//       <button ref={btnEl}>Popup</button>
+//       <Dismiss
+//         menuButton={btnEl}
+//         open={open}
+//         setOpen={setOpen}
+//         onOpen={onOpen}
+//         animation={{
+//           name: "fade",
+//         }}
+//         mount="body"
+//       >
+//         <div class="popup" ref={dropdownEl}>
+//           <h4>Popup Text</h4>
+//           <p>Lorem <a href="#">ipsum</a>.</p>
+//           <Nested></Nested>
+//           <button
+//             class={s("x-btn")}
+//             aria-label="close modal"
+//             onClick={onClickClose}
+//           >
+//             ✕
+//           </button>
+//         </div>
+//       </Dismiss>
+//     </>
+//   );
+// };
 
 export default Nested;

@@ -1,12 +1,11 @@
 import { onMount } from "solid-js";
 import Anchor from "../Anchor/Anchor";
+import CodeEditor from "../CodeEditor/CodeEditor";
 import _Navbar from "../Examples/Navbar/Navbar";
 import FocusGutter from "../FocusGutter";
 
 const Navbar = () => {
-  let codeEl!: HTMLDivElement;
-  onMount(() => {
-    codeEl.innerHTML = `<pre class=" language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
+  const codeContent = `<pre class=" language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token punctuation">{</span> createSignal<span class="token punctuation">,</span> onMount <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"solid-js"</span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token punctuation">{</span> Collapse <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"bootstrap"</span><span class="token punctuation">;</span>
 
@@ -78,7 +77,6 @@ const Navbar = () => {
     </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>nav</span><span class="token punctuation">&gt;</span></span>
   <span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre>`;
-  });
 
   return (
     <div class="section">
@@ -121,12 +119,7 @@ const Navbar = () => {
             <_Navbar />
           </div>
         </div>
-        <div
-          class="code-editor"
-          data-simplebar
-          data-simplebar-auto-hide="false"
-          ref={codeEl}
-        ></div>
+        <CodeEditor contentJSX={codeContent}></CodeEditor>
       </div>
     </div>
   );
