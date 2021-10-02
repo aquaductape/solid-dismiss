@@ -225,7 +225,7 @@ export type TDismiss = {
   // stopComponentEventPropagation?: boolean;
 };
 
-export type FocusElementOnCloseOptions = {
+type FocusElementOnCloseOptions = {
   /**
    *
    * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
