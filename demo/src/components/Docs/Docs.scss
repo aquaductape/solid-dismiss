@@ -50,18 +50,8 @@
 // }
 
 #docs-section {
-  h1 {
-    font-size: 2em;
-    margin: 0.67em 0;
-  }
-
-  h2 {
-    font-size: 1.5em;
-    margin: 0.83em 0;
-  }
-
   h3 {
-    font-size: 1.17em;
+    font-size: 28px;
     margin: 1em 0;
   }
 
@@ -573,7 +563,7 @@
   .tsd-index-panel h3 {
     margin: 0 -20px 10px -20px;
     padding: 0 20px 10px 20px;
-    border-bottom: 1px solid var(--color-panel-divider);
+    border-bottom: 1px solid var(--docs-panel-divider);
   }
   .tsd-index-panel ul.tsd-index-list {
     -webkit-column-count: 3;
@@ -648,8 +638,8 @@
     display: inline-block;
     padding: 1px 5px;
     border-radius: 4px;
-    color: var(--color-comment-tag-text);
-    background-color: var(--color-comment-tag);
+    color: var(--docs-color-comment-tag-text);
+    background-color: var(--docs-color-comment-tag);
     text-indent: 0;
     font-size: 14px;
     font-weight: normal;
@@ -833,7 +823,7 @@
   .tsd-panel > h3 {
     margin: 1.5em -20px 10px -20px;
     padding: 0 20px 10px 20px;
-    border-bottom: 1px solid var(--color-panel-divider);
+    border-bottom: 1px solid var(--docs-panel-divider);
   }
   .tsd-panel > h1.tsd-before-signature,
   .tsd-panel > h2.tsd-before-signature,
@@ -994,7 +984,7 @@
   }
 
   .tsd-signature-symbol {
-    color: var(--color-text-aside);
+    color: var(--docs-color-text-aside);
     font-weight: normal;
   }
 

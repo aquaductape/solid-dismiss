@@ -48,6 +48,7 @@ const Navbar = () => {
 
     smoothScrollTo({
       destination: el,
+      padding: -60,
       duration: 500,
       onEnd: () => {
         el.focus();

@@ -23,7 +23,7 @@ const App: Component = () => {
       <main class="main">
         <Hero />
         <section>
-          <h2 id="examples" tabindex="0">
+          <h2 id="examples" tabindex="-1">
             Examples
           </h2>
           <Popup></Popup>
@@ -36,7 +36,7 @@ const App: Component = () => {
           <Nested></Nested>
         </section>
         <section>
-          <h2 id="docs" tabindex="0">
+          <h2 id="docs" tabindex="-1">
             Docs
           </h2>
           <Docs></Docs>

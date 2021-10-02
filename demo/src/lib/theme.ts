@@ -56,6 +56,10 @@ type IDark = {
   "--docs-divider-bg": "rgba(255, 255, 2555, 0.1)";
   "--docs-func-border-bg": "rgba(255, 255, 2555, 0.15)";
   "--docs-signature-type-link": "var(--secondary-blue)";
+  "--docs-panel-divider": "#323142";
+  "--docs-color-text-aside": "#8e8e8e";
+  "--docs-color-comment-tag-text": "#000";
+  "--docs-color-comment-tag": "#848484";
   "--tab-inactive-bg": "#20202d";
 };
 type ILight = {
@@ -116,6 +120,10 @@ type ILight = {
   "--docs-divider-bg": "rgba(0, 0, 0, 0.07)";
   "--docs-func-border-bg": "rgba(0, 0, 0, 0.12)";
   "--docs-signature-type-link": "var(--main-blue)";
+  "--docs-panel-divider": "#eee";
+  "--docs-color-text-aside": "#707070";
+  "--docs-color-comment-tag-text": "#fff";
+  "--docs-color-comment-tag": "#707070";
   "--tab-inactive-bg": "#eeebfa";
 };
 type IThemeConfig = {
@@ -181,6 +189,10 @@ export const themeConfig: IThemeConfig = {
     "--docs-divider-bg": "rgba(255, 255, 2555, 0.1)",
     "--docs-func-border-bg": "rgba(255, 255, 2555, 0.15)",
     "--docs-signature-type-link": "var(--secondary-blue)",
+    "--docs-panel-divider": "#323142",
+    "--docs-color-comment-tag": "#848484",
+    "--docs-color-comment-tag-text": "#000",
+    "--docs-color-text-aside": "#8e8e8e",
     "--tab-inactive-bg": "#20202d",
   },
   light: {
@@ -241,6 +253,10 @@ export const themeConfig: IThemeConfig = {
     "--docs-divider-bg": "rgba(0, 0, 0, 0.07)",
     "--docs-func-border-bg": "rgba(0, 0, 0, 0.12)",
     "--docs-signature-type-link": "var(--main-blue)",
+    "--docs-panel-divider": "#eee",
+    "--docs-color-text-aside": "#707070",
+    "--docs-color-comment-tag": "#707070",
+    "--docs-color-comment-tag-text": "#fff",
     "--tab-inactive-bg": "#eeebfa",
   },
 };
