@@ -3,8 +3,8 @@ import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 
 const s = scopeModuleClasses(c);
 
-import Dismiss from "../../../../package/index";
 import { Component, createSignal, createEffect } from "solid-js";
+import Dismiss from "solid-dismiss";
 
 const Modal = () => {
   const [open, setOpen] = createSignal(false);

@@ -2,8 +2,8 @@ import c from "./Popup.module.scss";
 import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 
 const s = scopeModuleClasses(c);
-import Dismiss from "../../../../package/index";
 import { createSignal } from "solid-js";
+import Dismiss from "solid-dismiss";
 
 export const PopupWithCSSAnimation = () => {
   const [open, setOpen] = createSignal(false);

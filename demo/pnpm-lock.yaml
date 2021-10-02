@@ -10,6 +10,7 @@ specifiers:
   prismjs: ^1.24.1
   sass: ^1.38.0
   simplebar: ^5.3.5
+  solid-dismiss: ^1.0.6
   solid-js: ^1.0.7
   solid-transition-group: ^0.0.8
   vite: ^2.4.2
@@ -25,6 +26,7 @@ dependencies:
   prismjs: 1.24.1
   sass: 1.39.2
   simplebar: 5.3.5
+  solid-dismiss: 1.0.6_solid-js@1.1.3
   solid-js: 1.1.3
   solid-transition-group: 0.0.8_solid-js@1.1.3
 
@@ -729,6 +731,14 @@ packages:
       lodash.debounce: 4.0.8
       lodash.memoize: 4.1.2
       lodash.throttle: 4.1.1
+    dev: false
+
+  /solid-dismiss/1.0.6_solid-js@1.1.3:
+    resolution: {integrity: sha512-W6RV8t3cWopD7hnyuGG7gdCJXyX0YbRhyRegAlboe5B2avDG8f1jewlGxO0llqm+1jcEXjcWvfBfV6npln9QQA==}
+    peerDependencies:
+      solid-js: '1'
+    dependencies:
+      solid-js: 1.1.3
     dev: false
 
   /solid-js/0.26.5:

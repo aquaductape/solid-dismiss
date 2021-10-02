@@ -12,7 +12,7 @@ import {
 import { createStore } from "solid-js/store";
 import c from "./Select.module.scss";
 import { scopeModuleClasses } from "../../utils/scopModuleClasses";
-import Dismiss from "../../../../package/index";
+import Dismiss from "solid-dismiss";
 
 const classM = scopeModuleClasses(c);
 // https://codepen.io/chriscoyier/pen/zYYZaGP

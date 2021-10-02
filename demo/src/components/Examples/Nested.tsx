@@ -3,8 +3,8 @@ import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 
 const s = scopeModuleClasses(c);
 
-import Dismiss, { OnOpenHandler } from "../../../../package/index";
 import { createSignal } from "solid-js";
+import Dismiss, { OnOpenHandler } from "solid-dismiss";
 
 let modalStep = -1;
 

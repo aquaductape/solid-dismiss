@@ -1,4 +1,4 @@
-import Dismiss from "../../../../package/index";
+import Dismiss from "solid-dismiss";
 import { createSignal } from "solid-js";
 import FocusGutter from "../FocusGutter";
 

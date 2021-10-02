@@ -3,7 +3,7 @@ import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 
 const s = scopeModuleClasses(c);
 import { createSignal } from "solid-js";
-import Dismiss from "../../../../package/index";
+import Dismiss from "solid-dismiss";
 
 const Dropdown = () => {
   const [open, setOpen] = createSignal(false);

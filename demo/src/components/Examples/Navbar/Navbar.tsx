@@ -2,9 +2,9 @@ import c from "./Navbar.module.scss";
 
 import { scopeModuleClasses } from "../../../utils/scopModuleClasses";
 import "./bootstrap.scss";
-import Dismiss from "../../../../../package/index";
 import { createSignal, onMount } from "solid-js";
 import { Collapse } from "bootstrap";
+import Dismiss from "solid-dismiss";
 
 const s = scopeModuleClasses(c);
 

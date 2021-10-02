@@ -2,8 +2,8 @@ import c from "./Dropdown.module.scss";
 import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 
 const s = scopeModuleClasses(c);
-import Dismiss from "../../../../package/index";
 import { createEffect, createSignal } from "solid-js";
+import Dismiss from "solid-dismiss";
 
 const DropdownMounted = () => {
   const [open, setOpen] = createSignal(false);

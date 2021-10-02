@@ -7,9 +7,9 @@ import { sun, moon } from "@amoutonbrady/solid-heroicons/solid";
 import { IconGithub, IconLogo } from "../icons";
 import { createSignal, Show, onMount, createEffect, on } from "solid-js";
 import { changeTheme, getCurrentTheme } from "../../lib/theme";
-import Dismiss from "../../../../package/index";
 import context from "../../global/global";
 import smoothScrollTo from "../../lib/smoothScrollTo";
+import Dismiss from "solid-dismiss";
 
 const Navbar = () => {
   const [theme, setTheme] = createSignal(getCurrentTheme());

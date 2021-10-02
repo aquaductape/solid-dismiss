@@ -9,10 +9,4 @@ export default defineConfig({
     polyfillDynamicImport: false,
     outDir: "../demo-dist",
   },
-  server: {
-    fs: {
-      // Allow serving files from one level up to the project root
-      allow: [".."],
-    },
-  },
 });
