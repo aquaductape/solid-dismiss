@@ -50,6 +50,12 @@ const Popup = () => {
 
 ## [Demo Site](https://aquaductape.github.io/solid-dismiss/)
 
+## Caveat
+
+For iOS devices: when clicking outside, without overlay, and the element that happened to be clicked upon was an iframe,there's a chance that the popup won't close. iframe detection interaction is feasible by checking if window blurs, but in iOS, unless the user taps on a clickable element inside iframe, window won't blur because the main page focus hasn't been blurred.
+
+If the iframe body element has click listener, then tapping anywhere on iframe will blur window, thus closing the popup as intended. Thus if author is dealing with same domain iframes, the author can easily add empty click event listener to the body `document.body.addEventListener('click', () => {})`.
+
 ## Docs
 
 Dismiss
