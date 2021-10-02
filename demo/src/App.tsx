@@ -15,6 +15,7 @@ import DropdownOverlay from "./components/ExamplesSection/DropdownOverlay";
 import Nested from "./components/ExamplesSection/Nested";
 import Animation from "./components/ExamplesSection/Animations";
 import NavbarEx from "./components/ExamplesSection/Navbar";
+import Caveat from "./components/Docs/Caveat";
 
 const App: Component = () => {
   return (
@@ -39,6 +40,8 @@ const App: Component = () => {
           <h2 id="docs" tabindex="-1">
             Docs
           </h2>
+          <Caveat></Caveat>
+          <h3>Types</h3>
           <Docs></Docs>
         </section>
       </main>
