@@ -6,8 +6,42 @@ import {
   createSignal,
   children,
 } from "solid-js";
-import { DismissAnimation, TDismiss } from ".";
 import { camelize } from "./utils";
+
+export type DismissAnimation = {
+  /**
+   * Used to automatically generate transition CSS class names. e.g. name: 'fade' will auto expand to .fade-enter, .fade-enter-active, etc.
+   */
+  name?: string;
+  enterActiveClass?: string;
+  enterClass?: string;
+  enterToClass?: string;
+  exitActiveClass?: string;
+  exitClass?: string;
+  exitToClass?: string;
+  onBeforeEnter?: (el: Element) => void;
+  onEnter?: (el: Element, done: () => void) => void;
+  onAfterEnter?: (el: Element) => void;
+  onBeforeExit?: (el: Element) => void;
+  onExit?: (el: Element, done: () => void) => void;
+  onAfterExit?: (el: Element) => void;
+  /**
+   * Change element where CSS classes are appended and passed to callbacks.
+   *
+   * css selector, queried from root component, to get menu popup element. Or pass JSX element
+   *
+   * Using `"container"` value will use root element of the component
+   *
+   * @defaultValue The element is the root element of the component, where CSS classes are appended to, and it is also passed to callbacks
+   */
+  appendToElement?: string | Node;
+  /**
+   * Whether to apply transition on initial render.
+   *
+   * @defaultValue `false`
+   */
+  appear?: boolean;
+};
 
 export const Transition: Component<
   DismissAnimation & { children: JSX.Element }

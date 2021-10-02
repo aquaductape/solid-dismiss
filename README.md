@@ -3,9 +3,7 @@
 </h1>
 
 <sup>
-       <img src="
-https://img.shields.io/badge/size%20(gzip)-~6.6kb-brightgreen
-" alt="size of package gzip" />
+<img src="https://img.shields.io/badge/size%20(gzip)-~6.6kb-brightgreen" alt="size of package gzip" />
   </sup>
 
 Handles "click outside" behavior for popup menu. Closing is triggered by click/focus outside of popup element or pressing "Escape" key. It can also deal with stacks/layers of popups.
@@ -54,7 +52,14 @@ const Popup = () => {
 
 For iOS devices: when clicking outside, without overlay, and the element that happened to be clicked upon was an iframe,there's a chance that the popup won't close. iframe detection interaction is feasible by checking if window blurs, but in iOS, unless the user taps on a clickable element inside iframe, window won't blur because the main page focus hasn't been blurred.
 
-If the iframe body element has click listener, then tapping anywhere on iframe will blur window, thus closing the popup as intended. Thus if author is dealing with same domain iframes, the author can easily add empty click event listener to the body `document.body.addEventListener('click', () => {})`.
+If the iframe body element has click listener, then tapping anywhere on iframe will blur window, thus closing the popup as intended. Thus if author is dealing with same domain iframes, the author can easily add empty click event listener to the body.
+
+```js
+const iframeEl = document.querySelector("iframe");
+const doc = iframeEl.contentWindow.document;
+
+doc.body.addEventListener("click", () => {});
+```
 
 ## Docs
 

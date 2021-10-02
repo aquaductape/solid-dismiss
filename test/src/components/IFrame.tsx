@@ -11,6 +11,7 @@ const IFrame: Component<{
   onMount(() => {
     setTimeout(() => {
       const doc = el.contentWindow?.document!;
+
       const message = bodyHasClickListener
         ? "body has click listener"
         : "body doesn't have click listener!!";
