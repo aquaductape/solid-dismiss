@@ -2,9 +2,7 @@
 <img src="assets/logo.svg" width="40px" height="35px" style="position: relative; top: 5px;">
 </h1>
 
-<sup>
 <img src="https://img.shields.io/badge/size%20(gzip)-~6.6kb-brightgreen" alt="size of package gzip" />
-  </sup>
 
 Handles "click outside" behavior for popup menu. Closing is triggered by click/focus outside of popup element or pressing "Escape" key. It can also deal with stacks/layers of popups.
 
