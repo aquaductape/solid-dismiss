@@ -117,17 +117,19 @@ const Popup = () => {
     <div class="section">
       <h3>Animations</h3>
 
-      <p>
-        Animations with CSS classes. The CSS class name will be generated into
-        transition class names, in this example "fade" will expand into
-        "fade-enter", "fade-enter-to", ect.
-      </p>
-      <p>
-        By default the element that recieves the CSS classes and passed to
-        callbacks, is the root container of Dismiss. You can change the element
-        by using <code class="code">appendToElement</code> where you can set a
-        Node or a selector.
-      </p>
+      <div class="explaination">
+        <p>
+          Animations with CSS classes. The CSS class name will be generated into
+          transition class names, in this example "fade" will expand into
+          "fade-enter", "fade-enter-to", ect.
+        </p>
+        <p>
+          By default the element that recieves the CSS classes and passed to
+          callbacks, is the root container of Dismiss. You can change the
+          element by using <code class="code">appendToElement</code> where you
+          can set a Node or a selector.
+        </p>
+      </div>
       <div class="split-view">
         <div>
           <div class="dropdown-area">
@@ -141,18 +143,21 @@ const Popup = () => {
           contentCSS={codeCSSAnimationContentCSS}
         ></CodeEditor>
       </div>
-      <p>
-        Animations with JavaScript. The animation provides callbacks such as
-        "onEnter", and author can easily hook{" "}
-        <Anchor
-          class="page-anchor"
-          href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API"
-          target="_blank"
-        >
-          Web Animations
-        </Anchor>{" "}
-        inside it.
-      </p>
+      <div class="explaination">
+        <p>
+          Animations with JavaScript. The animation provides callbacks such as
+          "onEnter", and author can easily hook{" "}
+          <Anchor
+            class="page-anchor"
+            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API"
+            target="_blank"
+          >
+            Web Animations
+          </Anchor>{" "}
+          inside it.
+        </p>
+      </div>
+
       <div class="split-view">
         <div>
           <div class="dropdown-area">

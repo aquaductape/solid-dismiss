@@ -107,12 +107,20 @@ const Modal = () => {
   return (
     <div class="section">
       <h3>Modal</h3>
-      <p>
-        Modal is a popup that requires an overlay, to prevent interaction with
-        page. For this case we're using <code class="code">overlay</code> prop.
-        To make sure that focus remains inside Modal content, the{" "}
-        <code class="code">trapFocus</code> prop is set.
-      </p>
+      <div class="explaination">
+        <p>
+          Modal is a popup that requires an overlay, to prevent interaction with
+          page. For this case we're using <code class="code">overlay</code>{" "}
+          prop.
+        </p>
+        <p>
+          When a Modal is opened, focus must be moved within it, in this example
+          the focus jumps to a "Save" button and it's done by using{" "}
+          <code class="code">focusElementOnOpen</code> prop. To make sure that
+          focus remains inside Modal content, the{" "}
+          <code class="code">trapFocus</code> prop is set.
+        </p>
+      </div>
       <div class="split-view">
         <div>
           <div class="dropdown-area">

@@ -60,7 +60,13 @@ const Modal = () => {
         >
           <div class={s("modal")} role="dialog" aria-modal="true" tabindex="-1">
             <h4>Modal Text</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+            <p>
+              Lorem{" "}
+              <a class="focusable" href="javascript:void()">
+                ipsum
+              </a>{" "}
+              dolor sit amet consectetur adipisicing elit.
+            </p>
             <div class={s("close-btns")}>
               <button class="btn-secondary" onClick={onClickClose}>
                 Cancel

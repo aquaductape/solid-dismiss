@@ -81,41 +81,43 @@ const Navbar = () => {
   return (
     <div class="section">
       <h3>Navbar</h3>
-      <p>
-        This example uses{" "}
-        <Anchor
-          class="page-anchor"
-          href="https://getbootstrap.com/docs/5.0/components/navbar/"
-          target="_blank"
-        >
-          Bootstrap 5 Navbar
-        </Anchor>
-      </p>
-      <p>
-        By default the children inside Dismiss Component, are conditionally
-        rendered based on the <code class="code">open</code> Signal value. In
-        this case we don't want this, since Bootstrap needs the Navbar Menu to
-        remain in the DOM at all times in order for toggling and animations to
-        work. So we set its <code class="code">show</code> prop to{" "}
-        <code class="code">true</code>.
-      </p>
-      <p>
-        Toggling Navbar Menu via Navbar Button works, however closing the Menu
-        upon other "dismissable" ways requires some setup. Luckily Bootstrap
-        provides{" "}
-        <Anchor
-          class="page-anchor"
-          href="https://getbootstrap.com/docs/5.0/components/collapse/#methods"
-          target="_blank"
-        >
-          Collapse Method
-        </Anchor>{" "}
-        and we use it inside Dismiss onOpen callback to close the Navbar Menu.
-      </p>
+      <div class="explaination">
+        <p>
+          This example uses{" "}
+          <Anchor
+            class="page-anchor"
+            href="https://getbootstrap.com/docs/5.0/components/navbar/"
+            target="_blank"
+          >
+            Bootstrap 5 Navbar
+          </Anchor>
+        </p>
+        <p>
+          By default the children inside Dismiss Component, are conditionally
+          rendered based on the <code class="code">open</code> Signal value. In
+          this case we don't want this, since Bootstrap needs the Navbar Menu to
+          remain in the DOM at all times in order for toggling and animations to
+          work. So we set its <code class="code">show</code> prop to{" "}
+          <code class="code">true</code>.
+        </p>
+        <p>
+          Toggling Navbar Menu via Navbar Button works, however closing the Menu
+          upon other "dismissable" ways requires some setup. Luckily Bootstrap
+          provides{" "}
+          <Anchor
+            class="page-anchor"
+            href="https://getbootstrap.com/docs/5.0/components/collapse/#methods"
+            target="_blank"
+          >
+            Collapse Method
+          </Anchor>{" "}
+          and we use it inside Dismiss onOpen callback to close the Navbar Menu.
+        </p>
+      </div>
 
       <div class="split-view">
         <div>
-          <div class="dropdown-area">
+          <div class="dropdown-area" style="margin-bottom: 20px;">
             <_Navbar />
           </div>
         </div>

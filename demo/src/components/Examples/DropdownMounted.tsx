@@ -92,8 +92,9 @@ const DropdownMounted = () => {
 //         setOpen={setOpen}
 //         mount="body"
 //         cursorKeys
+//         ref={dropdownEl}
 //       >
-//         <ul class="dropdown" ref={dropdownEl}>
+//         <ul class="dropdown">
 //           <li><a href="#">cat</a></li>
 //           <li><a href="#">dog</a></li>
 //           <li><a href="#">fish</a></li>

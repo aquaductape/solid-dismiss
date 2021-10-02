@@ -31,11 +31,13 @@ const Popup = () => {
   return (
     <div class="section">
       <h3>Popup</h3>
-      <p>Two main elements you need, a button and popup content</p>
-      <p>
-        No need to add click event to update open value, the Dismiss component
-        takes care of that as well as many other things under the hood.
-      </p>
+      <div class="explaination">
+        <p>Two main elements you need, a button and popup content</p>
+        <p>
+          No need to add click event to update open value, the Dismiss component
+          takes care of that as well as many other things under the hood.
+        </p>
+      </div>
       <div class="split-view">
         <div>
           <div class="dropdown-area">
@@ -44,12 +46,6 @@ const Popup = () => {
             <FocusGutter />
           </div>
         </div>
-        {/* <div
-          class="code-editor"
-          data-simplebar
-          data-simplebar-auto-hide="false"
-          ref={codeEl}
-        ></div> */}
         <CodeEditor contentJSX={codeJSX}></CodeEditor>
       </div>
     </div>

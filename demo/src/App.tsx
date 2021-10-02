@@ -39,7 +39,7 @@ const App: Component = () => {
           <h2 id="docs" tabindex="-1">
             Docs
           </h2>
-          <Docs></Docs>
+          {/* <Docs></Docs> */}
         </section>
       </main>
       <svg>

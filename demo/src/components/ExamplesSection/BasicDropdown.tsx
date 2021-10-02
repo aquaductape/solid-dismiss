@@ -33,6 +33,13 @@ const BasicDropdown = () => {
   return (
     <div class="section">
       <h3>Dropdown</h3>
+      <div class="explaination">
+        <p>
+          For a dropdown that has a simple list of clickable items,{" "}
+          <code class="code">cursorKeys</code> props enables to navigate the
+          items by Keyboard Arrow keys.
+        </p>
+      </div>
 
       <div class="split-view">
         <div>
