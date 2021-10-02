@@ -37,7 +37,7 @@ const HeroDropdown = () => {
         menuButton={btnEl}
         open={toggle}
         setOpen={setToggle}
-        animation={{ name: "hero-animate", appendToElement: "container" }}
+        animation={{ name: "hero-animate" }}
         ref={dropdownEl}
       >
         <div class="hero-dropdown-content">

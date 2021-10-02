@@ -45,14 +45,11 @@ export const Transition: Component<
 
   const getElement = (el: Element) => {
     if (appendToElement) {
-      if (appendToElement === "container") {
-        return el;
-      }
       return typeof appendToElement === "string"
         ? el.querySelector(appendToElement)!
         : (appendToElement as Element);
     }
-    return el.children[1]!;
+    return el;
   };
 
   function enterTransition(_el: Element, prev: Element | undefined) {
@@ -111,7 +108,7 @@ export const Transition: Component<
       el.classList.remove(exitActiveClasses);
       el.classList.remove(exitToClasses);
       s1() === _el && set1(undefined);
-      onAfterExit && onAfterExit(_el);
+      onAfterExit && onAfterExit(el);
     }
   }
 

@@ -122,6 +122,12 @@ const Popup = () => {
         transition class names, in this example "fade" will expand into
         "fade-enter", "fade-enter-to", ect.
       </p>
+      <p>
+        By default the element that recieves the CSS classes and passed to
+        callbacks, is the root container of Dismiss. You can change the element
+        by using <code class="code">appendToElement</code> where you can set a
+        Node or a selector.
+      </p>
       <div class="split-view">
         <div>
           <div class="dropdown-area">

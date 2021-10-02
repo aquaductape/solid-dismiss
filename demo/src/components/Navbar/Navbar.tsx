@@ -153,6 +153,7 @@ const Navbar = () => {
 
               done();
             },
+            appendToElement: `.${s("nav-mobile")}`,
           }}
         >
           <nav class={s("nav-mobile")}>

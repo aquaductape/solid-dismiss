@@ -38,6 +38,7 @@ const DropdownOverlay = () => {
         Button
       </button>
       <Dismiss
+        class={s("dropdown")}
         menuButton={btnEl}
         menuPopup={dropdownEl}
         open={open}
@@ -45,27 +46,26 @@ const DropdownOverlay = () => {
         mount="body"
         overlay
         cursorKeys
+        ref={dropdownContainerEl}
       >
-        <div class={s("dropdown")} ref={dropdownContainerEl}>
-          <div class={s("overlay")} onClick={onClickClose}></div>
-          <ul class={s("dropdown-inner")} ref={dropdownEl}>
-            <li>
-              <a class={s("item")} href="#" onClick={onClickItem}>
-                cat
-              </a>
-            </li>
-            <li>
-              <a class={s("item")} href="#" onClick={onClickItem}>
-                dog
-              </a>
-            </li>
-            <li>
-              <a class={s("item")} href="#" onClick={onClickItem}>
-                fish
-              </a>
-            </li>
-          </ul>
-        </div>
+        <div class={s("overlay")} onClick={onClickClose}></div>
+        <ul class={s("dropdown-inner")} ref={dropdownEl}>
+          <li>
+            <a class={s("item")} href="#" onClick={onClickItem}>
+              cat
+            </a>
+          </li>
+          <li>
+            <a class={s("item")} href="#" onClick={onClickItem}>
+              dog
+            </a>
+          </li>
+          <li>
+            <a class={s("item")} href="#" onClick={onClickItem}>
+              fish
+            </a>
+          </li>
+        </ul>
       </Dismiss>
     </>
   );
@@ -101,6 +101,7 @@ const DropdownOverlay = () => {
 //     <>
 //       <button ref={btnEl}>Button</button>
 //       <Dismiss
+//         class="dropdown"
 //         menuButton={btnEl}
 //         menuPopup={dropdownEl}
 //         open={open}
@@ -108,15 +109,14 @@ const DropdownOverlay = () => {
 //         mount="body"
 //         overlay
 //         cursorKeys
+//         ref={dropdownContainerEl}
 //       >
-//         <div class="dropdown" ref={dropdownContainerEl}>
-//           <div class="overlay" onClick={onClickClose}></div>
-//           <ul class="dropdown-inner" ref={dropdownEl}>
-//             <li><a href="#">cat</a></li>
-//             <li><a href="#">dog</a></li>
-//             <li><a href="#">fish</a></li>
-//           </ul>
-//         </div>
+//         <div class="overlay" onClick={onClickClose}></div>
+//         <ul class="dropdown-inner" ref={dropdownEl}>
+//           <li><a href="#">cat</a></li>
+//           <li><a href="#">dog</a></li>
+//           <li><a href="#">fish</a></li>
+//         </ul>
 //       </Dismiss>
 //     </>
 //   );
