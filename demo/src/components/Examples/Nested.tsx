@@ -158,8 +158,14 @@ const Popup = () => {
         popupEl.children[1]!.style.transform = "none";
       }
 
-      const { bottom, left } = btnEl.getBoundingClientRect();
+      let { bottom, left, width } = btnEl.getBoundingClientRect();
       const { scrollX, scrollY } = window;
+
+      if (document.body.clientWidth <= 375) {
+        left = 50;
+        //@ts-ignore
+        popupEl.children[1].style.transform = "none";
+      }
 
       popupEl.style.position = "absolute";
       popupEl.style.top = bottom + scrollY + "px";
