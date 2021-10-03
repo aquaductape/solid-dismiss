@@ -1,5 +1,5 @@
 <h1 align="center">Solid Dismiss
-<img src="assets/logo.svg" width="40px" height="35px" style="position: relative; top: 5px;">
+<img src="assets/logo.svg" width="40px" height="35px" style="position: relative; top: 5px; pointer-events: none;">
 </h1>
 
 <img src="https://img.shields.io/badge/size%20(gzip)-~7kb-brightgreen" alt="size of package gzip" />
