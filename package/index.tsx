@@ -764,7 +764,7 @@ const Dismiss: Component<TDismiss> = (props) => {
         ref={state.refContainerCb}
       >
         <div
-          tabindex="0"
+          tabindex={props.open() ? "0" : "-1"}
           onFocus={(e) => {
             onFocusSentinel(state, "first", e.relatedTarget as HTMLElement);
           }}
@@ -774,7 +774,7 @@ const Dismiss: Component<TDismiss> = (props) => {
         ></div>
         {children}
         <div
-          tabindex={state.hasFocusSentinels ? "0" : "-1"}
+          tabindex={state.hasFocusSentinels && props.open() ? "0" : "-1"}
           onFocus={() => {
             onFocusSentinel(state, "last");
           }}
