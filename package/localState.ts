@@ -10,8 +10,8 @@ export type TLocalState = Omit<
   hasFocusSentinels: boolean;
   menuPopupEl?: HTMLElement | null;
   menuBtnEl?: HTMLElement;
-  focusSentinelFirstEl?: HTMLDivElement;
-  focusSentinelLastEl?: HTMLDivElement;
+  focusSentinelBeforeEl?: HTMLDivElement;
+  focusSentinelAfterEl?: HTMLDivElement;
   containerEl?: HTMLDivElement;
   overlayEl?: HTMLDivElement;
   menuPopupAdded: boolean;

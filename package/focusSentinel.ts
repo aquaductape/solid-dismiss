@@ -13,7 +13,7 @@ export const activateLastFocusSentinel = (state: TLocalState) => {
     enableLastFocusSentinel,
     menuBtnEl,
     containerEl,
-    focusSentinelLastEl,
+    focusSentinelAfterEl,
   } = state;
 
   if (enableLastFocusSentinel) return;
@@ -28,24 +28,25 @@ export const activateLastFocusSentinel = (state: TLocalState) => {
   )
     return;
 
-  focusSentinelLastEl!.setAttribute("tabindex", "0");
+  focusSentinelAfterEl!.setAttribute("tabindex", "0");
 };
 
 export const onFocusSentinel = (
   state: TLocalState,
-  type: "first" | "last",
+  type: "before" | "after" | "last",
   relatedTarget?: HTMLElement
 ) => {
   const {
     uniqueId,
     containerEl,
     menuBtnEl,
-    focusSentinelFirstEl,
+    focusSentinelBeforeEl,
     trapFocus,
-    focusSentinelLastEl,
+    focusSentinelAfterEl,
     closeWhenMenuButtonIsTabbed,
     focusElementOnClose,
     mount,
+    open,
     setOpen,
   } = state;
 
@@ -93,19 +94,21 @@ export const onFocusSentinel = (
     }
   };
 
+  if (!open()) return;
+
   if (relatedTarget === containerEl || relatedTarget === menuBtnEl) {
     const el = getNextTabbableElement({
-      from: focusSentinelFirstEl!,
+      from: focusSentinelBeforeEl!,
     })!;
 
     el.focus();
     return;
   }
 
-  if (type === "first") {
+  if (type === "before") {
     if (trapFocus) {
       const el = getNextTabbableElement({
-        from: focusSentinelLastEl!,
+        from: focusSentinelAfterEl!,
         direction: "backwards",
       })!;
 
@@ -133,7 +136,7 @@ export const onFocusSentinel = (
 
   if (trapFocus) {
     const el = getNextTabbableElement({
-      from: focusSentinelFirstEl!,
+      from: focusSentinelBeforeEl!,
     })!;
 
     el.focus();

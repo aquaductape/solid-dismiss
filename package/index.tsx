@@ -619,6 +619,9 @@ const Dismiss: Component<TDismiss> = (props) => {
         if (open === prevOpen) return;
 
         if (!open) {
+          if (state.focusSentinelAfterEl) {
+            state.focusSentinelAfterEl.tabIndex = -1;
+          }
           // used to detect programmatic removal
           if (!globalState.closedByEvents) {
             if (!globalState.closedBySetOpen) {
@@ -766,21 +769,21 @@ const Dismiss: Component<TDismiss> = (props) => {
         <div
           tabindex={props.open() ? "0" : "-1"}
           onFocus={(e) => {
-            onFocusSentinel(state, "first", e.relatedTarget as HTMLElement);
+            onFocusSentinel(state, "before", e.relatedTarget as HTMLElement);
           }}
           style="position: fixed; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
-          ref={state.focusSentinelFirstEl}
+          ref={state.focusSentinelBeforeEl}
         ></div>
         {children}
         <div
           tabindex={props.open() && state.hasFocusSentinels ? "0" : "-1"}
           onFocus={() => {
-            onFocusSentinel(state, "last");
+            onFocusSentinel(state, "after");
           }}
           style="position: fixed; top: 0; left: 0; outline: none; pointer-events: none; width: 0; height: 0;"
           aria-hidden="true"
-          ref={state.focusSentinelLastEl}
+          ref={state.focusSentinelAfterEl}
         ></div>
       </div>
     );

@@ -118,28 +118,45 @@ export const onMouseDownMenuButton = (state: TLocalState) => {
 
 export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
   const {
-    focusSentinelFirstEl,
     containerEl,
     menuBtnEl,
     setOpen,
     open,
     onKeydownMenuButtonRef,
     onBlurMenuButtonRef,
+    mount,
+    focusSentinelBeforeEl,
   } = state;
 
   if (!open()) return;
   if (e.key === "Tab" && e.shiftKey) {
     globalState.closedByEvents = true;
+    // menuPopup is previous general sibling of menuButton
+    if (!mount || menuBtnEl!.nextElementSibling !== containerEl) {
+      e.preventDefault();
+
+      let el = getNextTabbableElement({
+        from: menuBtnEl!,
+        direction: "backwards",
+        ignoreElement: [containerEl!],
+      });
+
+      if (el) {
+        el.focus();
+      }
+    }
+
     setOpen(false);
     state.menuBtnKeyupTabFired = true;
     menuBtnEl!.removeEventListener("keydown", onKeydownMenuButtonRef);
     menuBtnEl!.removeEventListener("blur", onBlurMenuButtonRef);
     return;
   }
+
   if (e.key !== "Tab") return;
   state.menuBtnKeyupTabFired = true;
   e.preventDefault();
-  const el = getNextTabbableElement({ from: focusSentinelFirstEl! });
+  const el = getNextTabbableElement({ from: focusSentinelBeforeEl! });
   if (el) {
     el.focus();
   } else {
