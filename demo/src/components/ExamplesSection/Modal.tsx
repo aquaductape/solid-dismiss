@@ -43,7 +43,7 @@ const Modal = () => {
   <span class="token punctuation">}</span><span class="token punctuation">;</span>
 
   <span class="token function">createEffect</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
-    <span class="token comment">// Dismiss has does have \`removeScrollbar\` prop</span>
+    <span class="token comment">// Dismiss does have \`removeScrollbar\` prop</span>
     <span class="token comment">// where it just removes the scrollbar,</span>
     <span class="token comment">// but instead we're customizing the removal</span>
     <span class="token comment">// where we add margin to prevent visual page "jank".</span>
