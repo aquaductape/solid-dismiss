@@ -8,6 +8,7 @@ import FocusElementOnClose from "./components/Subjects/FocusElementOnClose";
 import IFrames from "./components/Subjects/IFrames";
 import IFramesWithBodyClickListener from "./components/Subjects/IFramesWithBodyClickListener";
 import Mixed from "./components/Subjects/Mixed";
+import Programmatic from "./components/Subjects/Programmatic";
 import NestedOverlay from "./components/Subjects/NestedOverlay";
 import NestedPopup from "./components/Subjects/NestedPopup";
 import NestedPopupMounted from "./components/Subjects/NestedPopupMounted";
@@ -43,6 +44,7 @@ const App: Component = () => {
           <NestedPopupMounted></NestedPopupMounted>
           <NestedPopup></NestedPopup>
           <NestedOverlay></NestedOverlay>
+          <Programmatic></Programmatic>
           <Scrolling></Scrolling>
           <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
           <IFrames></IFrames>

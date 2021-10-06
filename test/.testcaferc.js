@@ -6,13 +6,14 @@ module.exports = {
   hostname: os.hostname(),
   browsers: ["chrome"],
   src: [
-    `${path}/nested-mounted.ts`,
     `${path}/basic-dropdown.ts`,
+    `${path}/nested-mounted.ts`,
+    `${path}/nested-regular.ts`,
     `${path}/nested-overlay.ts`,
+    `${path}/programmatic.ts`,
     `${path}/iframes.ts`,
     `${path}/mixed.ts`,
-    `${path}/nested-regular.ts`,
   ],
   // speed: 0.8,
-  concurrent: 3,
+  current: 3,
 };
