@@ -53,11 +53,11 @@ test("close all stacks when clicked outside", async (t) => {
 
 test("close all stacks when clicked outside sibling menuButton", async (t) => {
   await initThreeStacks();
-  await t.click(`${idClass}-2-level-1-container button`); // close
+  await t.click(`${idClass}-3-level-1-container button`); // close
   await loopStacks(t, [1, 2, 3], async (t, num) => {
     await t.expect(exists(`${id}-1-level-${num}-popup`)).notOk;
   });
-  await t.expect(exists(`${id}-2-level-1-popup`)).ok(); // outside sibling
+  await t.expect(exists(`${id}-3-level-1-popup`)).ok(); // outside sibling
 });
 
 test("close all 3 stacks when tabbing from last nested tabbable items", async (t) => {
