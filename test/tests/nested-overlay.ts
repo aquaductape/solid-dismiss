@@ -1,4 +1,4 @@
-import { t, Selector } from "testcafe";
+import { t } from "testcafe";
 import { clickOverlay, exists, loopStacks } from "./utils";
 
 fixture`Nested Overlay`.page`../dist/index.html`;
