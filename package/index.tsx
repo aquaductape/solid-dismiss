@@ -577,6 +577,15 @@ const Dismiss: Component<TDismiss> = (props) => {
     const menuBtnExists = globalState.menuBtnEl;
     const activeElement = document.activeElement;
 
+    if (activeElement !== document.body) {
+      if (
+        activeElement !== state.menuBtnEl &&
+        !state.containerEl?.contains(activeElement)
+      ) {
+        return;
+      }
+    }
+
     const el =
       queryElement(state, {
         inputElement: focusElementOnClose,
@@ -586,6 +595,34 @@ const Dismiss: Component<TDismiss> = (props) => {
 
     if (el) {
       el.focus();
+    }
+  };
+
+  const programmaticRemoval = () => {
+    if (globalState.closedByEvents) return;
+
+    const activeElement = document.activeElement;
+
+    if (
+      activeElement !== state.menuBtnEl &&
+      !state.containerEl?.contains(activeElement)
+    ) {
+      setTimeout(() => {
+        globalState.closedBySetOpen = false;
+      });
+      return;
+    }
+
+    if (!globalState.closedBySetOpen) {
+      globalState.addedDocumentClick = false;
+      document.removeEventListener("click", onDocumentClick);
+      globalState.closedBySetOpen = true;
+      globalState.menuBtnEl = state.menuBtnEl;
+
+      setTimeout(() => {
+        globalState.closedBySetOpen = false;
+        resetFocusOnClose();
+      });
     }
   };
 
@@ -622,21 +659,8 @@ const Dismiss: Component<TDismiss> = (props) => {
           if (state.focusSentinelAfterEl) {
             state.focusSentinelAfterEl.tabIndex = -1;
           }
-          // used to detect programmatic removal
-          if (!globalState.closedByEvents) {
-            if (!globalState.closedBySetOpen) {
-              globalState.addedDocumentClick = false;
-              document.removeEventListener("click", onDocumentClick);
-              globalState.closedBySetOpen = true;
-              globalState.menuBtnEl = state.menuBtnEl;
-
-              setTimeout(() => {
-                globalState.closedBySetOpen = false;
-                resetFocusOnClose();
-              });
-            }
-          }
-        } //
+          programmaticRemoval();
+        }
 
         if (!mount) return;
 
