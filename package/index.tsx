@@ -774,7 +774,7 @@ const Dismiss: Component<TDismiss> = (props) => {
         ></div>
         {children}
         <div
-          tabindex={state.hasFocusSentinels && props.open() ? "0" : "-1"}
+          tabindex={props.open() && state.hasFocusSentinels ? "0" : "-1"}
           onFocus={() => {
             onFocusSentinel(state, "last");
           }}
