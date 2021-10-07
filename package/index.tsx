@@ -649,6 +649,20 @@ const Dismiss: Component<TDismiss> = (props) => {
     }
   });
 
+  if (show && mount) {
+    CreatePortal({
+      mount:
+        typeof mount === "string" ? document.querySelector(mount)! : mount!,
+      popupChildren: render(props.children),
+      overlayChildren: overlayElement ? renderOverlay() : null,
+      marker,
+      onCreate: (mount, container) => {
+        mountEl = mount;
+        containerEl = container;
+      },
+    });
+  }
+
   createComputed(
     on(
       () => !!props.open(),
@@ -662,7 +676,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           programmaticRemoval();
         }
 
-        if (!mount) return;
+        if (!mount || show) return;
 
         if (open) {
           if (!mountEl) {
@@ -754,7 +768,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     removeDismissStack(state.uniqueId);
     removeGlobalEvents();
 
-    if (mount && mountEl && !exitRunning) {
+    if (!show && mount && mountEl && !exitRunning) {
       exitTransition("popup", containerEl?.firstElementChild!);
       exitTransition("overlay", state.overlayEl!);
     }
