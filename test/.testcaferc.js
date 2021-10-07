@@ -4,9 +4,10 @@ const path = "tests";
 module.exports = {
   skipJsErrors: false,
   hostname: os.hostname(),
-  browsers: ["chrome"],
+  browsers: ["firefox"],
   src: [
     `${path}/basic-dropdown.ts`,
+    `${path}/popup-no-focusable-items.ts`,
     `${path}/nested-mounted.ts`,
     `${path}/nested-regular.ts`,
     `${path}/nested-overlay.ts`,
