@@ -35,8 +35,8 @@ const App: Component = () => {
           <Modal></Modal>
           <Animation></Animation>
           <NavbarEx></NavbarEx>
-          <Nested></Nested>
           <Popper></Popper>
+          <Nested></Nested>
         </section>
         <section>
           <h2 id="docs" tabindex="-1">
