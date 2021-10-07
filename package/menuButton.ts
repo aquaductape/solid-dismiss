@@ -155,13 +155,32 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
 
   if (e.key !== "Tab") return;
   state.menuBtnKeyupTabFired = true;
+
   e.preventDefault();
-  const el = getNextTabbableElement({ from: focusSentinelBeforeEl! });
+
+  let el = getNextTabbableElement({
+    from: focusSentinelBeforeEl!,
+    stopAtElement: containerEl,
+  });
+
   if (el) {
     el.focus();
   } else {
     containerEl!.focus();
   }
+
+  if (!el) {
+    setOpen(false);
+
+    el = getNextTabbableElement({
+      from: focusSentinelBeforeEl!,
+    });
+
+    if (el) {
+      el.focus();
+    }
+  }
+
   menuBtnEl!.removeEventListener("keydown", onKeydownMenuButtonRef);
   menuBtnEl!.removeEventListener("blur", onBlurMenuButtonRef);
 };
