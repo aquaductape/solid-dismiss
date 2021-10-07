@@ -16,6 +16,7 @@ import Nested from "./components/ExamplesSection/Nested";
 import Animation from "./components/ExamplesSection/Animations";
 import NavbarEx from "./components/ExamplesSection/Navbar";
 import Caveat from "./components/Docs/Caveat";
+import Popper from "./components/ExamplesSection/Popper";
 
 const App: Component = () => {
   return (
@@ -35,6 +36,7 @@ const App: Component = () => {
           <Animation></Animation>
           <NavbarEx></NavbarEx>
           <Nested></Nested>
+          <Popper></Popper>
         </section>
         <section>
           <h2 id="docs" tabindex="-1">

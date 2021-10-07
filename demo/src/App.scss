@@ -620,6 +620,13 @@ button {
   }
 }
 
+.popper-scroll-container {
+  position: relative;
+  max-height: 300px;
+  width: 100%;
+  overflow-y: auto;
+}
+
 .hero-dropdown {
   position: absolute;
   max-width: 350px;
@@ -775,6 +782,10 @@ button {
     grid-template-columns: 1fr minmax(420px, 750px);
     column-gap: 100px;
   }
+
+  .popper-scroll-container {
+    width: 250px;
+  }
 }
 
 #debugger {
@@ -874,6 +885,27 @@ p {
   &-exit,
   &-exit-to {
     transition: transform 200ms, opacity 200ms;
+  }
+}
+
+.fade-opacity {
+  &-enter {
+    opacity: 0.1;
+  }
+  &-enter-to {
+    opacity: 1;
+  }
+  &-exit {
+    opacity: 1;
+  }
+  &-exit-to {
+    opacity: 0;
+  }
+
+  &-enter-to,
+  &-exit,
+  &-exit-to {
+    transition: opacity 200ms;
   }
 }
 
