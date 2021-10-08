@@ -112,7 +112,8 @@ export const Popper = () => {
         Button
       </button>
       <Dismiss
-        class={s("container", open() && "active")}
+        class={s("container")}
+        classList={{ [s("active")]: open() }}
         menuButton={btnEl}
         open={open}
         setOpen={setOpen}

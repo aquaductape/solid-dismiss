@@ -60,17 +60,18 @@ const Navbar = () => {
     <header class={s("navbar")}>
       <div id="navbar-content" class={s("content-container")}>
         <div
-          class={s("shadow", (context.nav.logoActive || open()) && "active")}
+          class={s("shadow")}
+          classList={{ [s("active")]: context.nav.logoActive || open() }}
         ></div>
         <div class={s("content")}>
           <a
             href="/"
             onClick={onClickHome}
-            class={s("logo", context.nav.logoActive && "active") + " focusable"}
+            class={s("logo") + " focusable"}
+            classList={{ [s("active")]: context.nav.logoActive }}
             tabindex={context.nav.logoActive ? "0" : "-1"}
             aria-hidden={context.nav.logoActive ? "false" : "true"}
           >
-            {/* Solid Dismiss */}
             <IconLogo></IconLogo>
           </a>
 

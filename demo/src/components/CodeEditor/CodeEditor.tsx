@@ -40,7 +40,8 @@ const CodeEditor: Component<{ contentJSX: string; contentCSS?: string }> = ({
     <div>
       <div class={s("tabs")} onClick={onClick}>
         <button
-          class={s("tab-button", language() === "jsx" && "active")}
+          class={s("tab-button")}
+          classList={{ [s("active")]: language() === "jsx" }}
           tabindex={contentCSS ? "0" : "-1"}
           data-type="jsx"
           style={contentCSS ? "" : "pointer-events: none;"}
@@ -49,7 +50,8 @@ const CodeEditor: Component<{ contentJSX: string; contentCSS?: string }> = ({
         </button>
         <Show when={contentCSS}>
           <button
-            class={s("tab-button", language() === "css" && "active")}
+            class={s("tab-button")}
+            classList={{ [s("active")]: language() === "css" }}
             data-type="css"
           >
             CSS
