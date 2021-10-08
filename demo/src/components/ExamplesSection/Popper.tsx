@@ -201,9 +201,8 @@ const Popup = () => {
           which we will use for this example.
         </p>
         <p>
-          This example, Dismiss once again, has <code class="code">show</code>{" "}
-          prop, since the tooltip must exist in the DOM when Popper is
-          instantiated.
+          Dismiss has <code class="code">show</code> prop, since the tooltip
+          must exist in the DOM when Popper is instantiated.
         </p>
       </div>
       <div class="split-view">
