@@ -37,7 +37,9 @@ const buildConfig: UserConfigExport = {
 
 export default ({ command }: { command: "serve" | "build" }) => {
   if (command === "build") {
-    return shared({ add: buildConfig });
+    // two classNames are being added for some reason
+    // return shared({ add: buildConfig });
+    return shared();
   }
   return shared();
 };
