@@ -5,11 +5,45 @@ const s = scopeModuleClasses(c);
 import { Icon } from "@amoutonbrady/solid-heroicons";
 import { sun, moon } from "@amoutonbrady/solid-heroicons/solid";
 import { IconGithub, IconLogo } from "../icons";
-import { createSignal, Show, onMount, createEffect, on } from "solid-js";
+import {
+  createSignal,
+  Show,
+  onMount,
+  createEffect,
+  on,
+  Component,
+} from "solid-js";
 import { changeTheme, getCurrentTheme } from "../../lib/theme";
 import context from "../../global/global";
 import smoothScrollTo from "../../lib/smoothScrollTo";
 import Dismiss from "solid-dismiss";
+
+const NavItems: Component<{ onClickNavLink: (e: Event) => void }> = ({
+  onClickNavLink,
+}) => {
+  return (
+    <ul class={s("nav-list")}>
+      <li>
+        <a
+          class={s("nav-item") + " focusable"}
+          href="#examples"
+          onClick={onClickNavLink}
+        >
+          <span>Examples</span>
+        </a>
+      </li>
+      <li>
+        <a
+          class={s("nav-item") + " focusable"}
+          href="#docs"
+          onClick={onClickNavLink}
+        >
+          <span>Docs</span>
+        </a>
+      </li>
+    </ul>
+  );
+};
 
 const Navbar = () => {
   const [theme, setTheme] = createSignal(getCurrentTheme());
@@ -66,6 +100,7 @@ const Navbar = () => {
         <div class={s("content")}>
           <a
             href="/"
+            aria-label="Logo"
             onClick={onClickHome}
             class={s("logo") + " focusable"}
             classList={{ [s("active")]: context.nav.logoActive }}
@@ -76,34 +111,20 @@ const Navbar = () => {
           </a>
 
           <nav class={s("nav")}>
-            <ul class={s("nav-list")}>
-              <li>
-                <a
-                  class={s("nav-item") + " focusable"}
-                  href="#examples"
-                  onClick={onClickNavLink}
-                >
-                  <span>Examples</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  class={s("nav-item") + " focusable"}
-                  href="#docs"
-                  onClick={onClickNavLink}
-                >
-                  <span>Docs</span>
-                </a>
-              </li>
-            </ul>
+            <NavItems onClickNavLink={onClickNavLink} />
           </nav>
           <div class={s("utils")}>
-            <button class={s("dark-toggle")} onClick={onClickTheme}>
+            <button
+              class={s("dark-toggle")}
+              aria-label="Toggle between dark and light mode"
+              onClick={onClickTheme}
+            >
               <Icon path={theme() === "light" ? sun : moon} />
             </button>
             <a
               class={s("github") + " focusable"}
               href="https://github.com/aquaductape/solid-dismiss"
+              aria-label="Github"
               target="_blank"
             >
               <IconGithub />
@@ -115,6 +136,7 @@ const Navbar = () => {
               " hamburger hamburger--collapse focusable"
             }
             classList={{ "is-active": open() }}
+            aria-label="Navigation bar toggle"
             ref={btnEl}
             type="button"
           >
@@ -159,26 +181,7 @@ const Navbar = () => {
           }}
         >
           <nav class={s("nav-mobile")}>
-            <ul class={s("nav-list")}>
-              <li>
-                <a
-                  class={s("nav-item") + " focusable"}
-                  href="#examples"
-                  onClick={onClickNavLink}
-                >
-                  Examples
-                </a>
-              </li>
-              <li>
-                <a
-                  class={s("nav-item") + " focusable"}
-                  href="#docs"
-                  onClick={onClickNavLink}
-                >
-                  Docs
-                </a>
-              </li>
-            </ul>
+            <NavItems onClickNavLink={onClickNavLink} />
           </nav>
         </Dismiss>
       </div>
