@@ -307,9 +307,11 @@ const Select: Component<{
       <div class={c["select-btn"]}>
         <button
           id={btnId}
-          class={classM("btn", toggle() && "active")}
+          class={classM("btn")}
+          classList={{ [classM("active")]: toggle() }}
           aria-labelledby={`${titleId} ${btnId}`}
           aria-haspopup="listbox"
+          aria-label="select package manager"
           ref={btnEl}
         >
           {renderSelectedTemplate()}
@@ -341,7 +343,8 @@ const Select: Component<{
       >
         <div class={classM("list-outer")}>
           <ul
-            class={classM("list", toggle() && "active")}
+            class={classM("list")}
+            classList={{ [classM("active")]: toggle() }}
             id={listId}
             aria-labelledby={btnId}
             tabindex="-1"
@@ -353,10 +356,11 @@ const Select: Component<{
                 return (
                   <li
                     id={id}
-                    class={classM(
-                      "list-item",
-                      item.content === selected().item.content && "active"
-                    )}
+                    class={classM("list-item")}
+                    classList={{
+                      [classM("active")]:
+                        item.content === selected().item.content,
+                    }}
                     role="option"
                     data-value={item.value || item.content}
                     aria-selected={item.selected}
