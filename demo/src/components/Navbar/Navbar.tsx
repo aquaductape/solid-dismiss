@@ -126,6 +126,7 @@ const Navbar = () => {
               href="https://github.com/aquaductape/solid-dismiss"
               aria-label="Github"
               target="_blank"
+              rel="noopener"
             >
               <IconGithub />
             </a>

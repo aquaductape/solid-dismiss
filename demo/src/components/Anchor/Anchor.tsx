@@ -8,6 +8,7 @@ const Anchor: Component<{ class?: string; href: string; target?: "_blank" }> = (
       class={(props.class || "") + " focusable anchor"}
       href={href}
       target={target}
+      rel="noopener"
       onClick={(e) => {
         if (href === "#") e.preventDefault();
       }}
