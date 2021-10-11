@@ -548,14 +548,34 @@ const Docs = () => {
                 Blurs<span className="tsd-signature-symbol">?: </span>
                 <span className="tsd-signature-type">boolean</span>
               </h5>
+
               <div className="tsd-comment tsd-typography">
                 <div className="lead">
                   <p>
-                    Closes when the document "blurs". This would happen when
-                    interacting outside of the page such as Devtools, changing
-                    browser tabs, or switch different applications.
+                    If <code>true</code>, closes menuPopup when the document
+                    "blurs". This would happen when interacting outside of the
+                    page such as Devtools, changing browser tabs, or switch
+                    different applications. Also if the page with the menuPopup,
+                    is inside an iframe, interacting outside the iframe, will
+                    close it.
                   </p>
                 </div>
+                <dl className="tsd-comment-tags">
+                  <dt>remark</dt>
+                  <dd>
+                    <p>
+                      This doesn't effect overlays, if{" "}
+                      <code>Dimsiss.overlay</code> or{" "}
+                      <code>Dismiss.overlayElement</code> are set.
+                    </p>
+                  </dd>
+                  <dt>defaultvalue</dt>
+                  <dd>
+                    <p>
+                      <code>false</code>
+                    </p>
+                  </dd>
+                </dl>
               </div>
             </li>
             <li className="tsd-parameter">

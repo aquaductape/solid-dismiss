@@ -161,7 +161,7 @@ export type TDismiss = {
   closeWhenEscapeKeyIsPressed?: boolean;
   /**
    *
-   * If `true`, closes menuPopup when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications. Also if application with the menuPopup, is inside an iframe, interacting outside the iframe, will close it.
+   * If `true`, closes menuPopup when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications. Also if the page with the menuPopup, is inside an iframe, interacting outside the iframe, will close it.
    *
    * @remarks This doesn't effect overlays, if `Dimsiss.overlay` or `Dismiss.overlayElement` are set.
    *
