@@ -78,6 +78,7 @@ export const onWindowBlur = (e: Event) => {
   });
 
   const onBlurWindow = (item: TDismissStack) => {
+    if (item.overlay || item.overlayEl) return;
     if (!item.closeWhenDocumentBlurs) return;
     item.menuBtnEl.focus();
     globalState.closedByEvents = true;

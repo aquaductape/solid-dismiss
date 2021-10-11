@@ -65,6 +65,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         setOpen={setOpen}
         mount="body"
         closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
+        closeWhenDocumentBlurs
         ref={containerEl}
         {...toggleAnimation()}
       >

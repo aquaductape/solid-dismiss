@@ -77,6 +77,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         mount="body"
         overlayElement={{ class: "overlay" }}
         closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
+        closeWhenDocumentBlurs
         ref={containerEl}
         {...toggleAnimation({ includeOverlay: true })}
       >
