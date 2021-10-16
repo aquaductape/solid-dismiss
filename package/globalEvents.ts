@@ -1,4 +1,5 @@
 import { dismissStack, TDismissStack } from "./dismissStack";
+import { getMenuButton, markFocusedMenuButton } from "./menuButton";
 import {
   checkThenClose,
   getNextTabbableElement,
@@ -20,6 +21,7 @@ export const globalState: {
   closedBySetOpen: boolean;
   documentClickTimeout: number | null;
   menuBtnEl?: HTMLElement | null;
+  menuBtnEls: Set<{ el: HTMLElement | null }>;
   closedByEvents: boolean;
 } = {
   closeByFocusSentinel: false,
@@ -27,6 +29,7 @@ export const globalState: {
   addedDocumentClick: false,
   documentClickTimeout: null,
   closedByEvents: false,
+  menuBtnEls: new Set(),
 };
 
 export const onDocumentClick = (e: Event) => {
@@ -38,7 +41,7 @@ export const onDocumentClick = (e: Event) => {
       if (
         item.overlay ||
         item.overlayElement ||
-        item.menuBtnEl.contains(target) ||
+        getMenuButton(item.menuBtnEls).contains(target) ||
         item.containerEl.contains(target)
       )
         return;
@@ -80,7 +83,8 @@ export const onWindowBlur = (e: Event) => {
   const onBlurWindow = (item: TDismissStack) => {
     if (item.overlay || item.overlayEl) return;
     if (!item.closeWhenDocumentBlurs) return;
-    item.menuBtnEl.focus();
+    const menuBtnEl = getMenuButton(item.menuBtnEls);
+    menuBtnEl.focus();
     globalState.closedByEvents = true;
     item.setOpen(false);
   };
@@ -116,7 +120,7 @@ export const onWindowBlur = (e: Event) => {
         return item;
       },
       (item) => {
-        const { setOpen, menuBtnEl } = item;
+        const { setOpen } = item;
         globalState.closedByEvents = true;
         setOpen(false);
       }
@@ -126,11 +130,13 @@ export const onWindowBlur = (e: Event) => {
 
 export const onKeyDown = (e: KeyboardEvent) => {
   const {
+    focusedMenuBtn,
     setOpen,
-    menuBtnEl,
+    menuBtnEls,
     cursorKeys,
     closeWhenEscapeKeyIsPressed,
     focusElementOnClose,
+    timeouts,
   } = dismissStack[dismissStack.length - 1];
 
   if (e.key === "Tab") {
@@ -142,6 +148,8 @@ export const onKeyDown = (e: KeyboardEvent) => {
   }
 
   if (e.key !== "Escape" || !closeWhenEscapeKeyIsPressed) return;
+
+  const menuBtnEl = getMenuButton(menuBtnEls);
 
   const el =
     queryElement(
@@ -155,6 +163,9 @@ export const onKeyDown = (e: KeyboardEvent) => {
 
   if (el) {
     el.focus();
+    if (el === menuBtnEl) {
+      markFocusedMenuButton({ focusedMenuBtn, timeouts, el });
+    }
   }
   globalState.closedByEvents = true;
   setOpen(false);
@@ -178,7 +189,9 @@ export const onScrollClose = (e: Event) => {
       return item;
     },
     (item) => {
-      const { setOpen, focusElementOnClose, menuBtnEl } = item;
+      const { setOpen, focusElementOnClose, menuBtnEls } = item;
+      const menuBtnEl = getMenuButton(menuBtnEls);
+
       globalState.closedByEvents = true;
       setOpen(false);
 
@@ -264,7 +277,8 @@ const onCursorKeys = (e: KeyboardEvent) => {
 
   if (horizontalKeys.includes(e.key)) return;
 
-  const { menuBtnEl, menuPopupEl } = dismissStack[dismissStack.length - 1];
+  const { menuBtnEls, menuPopupEl } = dismissStack[dismissStack.length - 1];
+  const menuBtnEl = getMenuButton(menuBtnEls);
 
   const activeElement = document.activeElement!;
 
@@ -335,7 +349,7 @@ const pollingIframe = () => {
         return;
       },
       (item) => {
-        const { setOpen, menuBtnEl } = item;
+        const { setOpen } = item;
         globalState.closedByEvents = true;
         setOpen(false);
 

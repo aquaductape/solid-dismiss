@@ -1,6 +1,7 @@
 import { dismissStack } from "./dismissStack";
 import { globalState } from "./globalEvents";
 import { TLocalState } from "./localState";
+import { getMenuButton } from "./menuButton";
 import {
   checkThenClose,
   getNextTabbableElement,
@@ -11,12 +12,14 @@ import {
 export const activateLastFocusSentinel = (state: TLocalState) => {
   const {
     enableLastFocusSentinel,
-    menuBtnEl,
+    menuBtnEls,
     containerEl,
     focusSentinelAfterEl,
   } = state;
 
   if (enableLastFocusSentinel) return;
+
+  const menuBtnEl = getMenuButton(menuBtnEls!);
 
   const menuBtnSibling = menuBtnEl!.nextElementSibling!;
 
@@ -39,7 +42,7 @@ export const onFocusSentinel = (
   const {
     uniqueId,
     containerEl,
-    menuBtnEl,
+    menuBtnEls,
     focusSentinelBeforeEl,
     trapFocus,
     focusSentinelAfterEl,
@@ -49,6 +52,7 @@ export const onFocusSentinel = (
     open,
     setOpen,
   } = state;
+  const menuBtnEl = getMenuButton(menuBtnEls!);
 
   // clearTimeout(containerFocusTimeoutId!);
   // if (mount) {
@@ -63,7 +67,10 @@ export const onFocusSentinel = (
       dismissStack,
       (item) => {
         if (isFirst) {
-          if (item.menuBtnEl === el && !item.closeWhenMenuButtonIsTabbed) {
+          if (
+            getMenuButton(item.menuBtnEls) === el &&
+            !item.closeWhenMenuButtonIsTabbed
+          ) {
             menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
               once: true,
             });

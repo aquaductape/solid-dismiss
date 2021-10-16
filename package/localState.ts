@@ -1,4 +1,3 @@
-import { Accessor } from "solid-js";
 import { TDismiss } from ".";
 
 export type TLocalState = Omit<
@@ -9,7 +8,8 @@ export type TLocalState = Omit<
   id: string;
   hasFocusSentinels: boolean;
   menuPopupEl?: HTMLElement | null;
-  menuBtnEl?: HTMLElement;
+  menuBtnEls?: HTMLElement[];
+  focusedMenuBtn: { el: HTMLElement | null };
   focusSentinelBeforeEl?: HTMLDivElement;
   focusSentinelAfterEl?: HTMLDivElement;
   containerEl?: HTMLDivElement;
@@ -35,9 +35,7 @@ export type TLocalState = Omit<
   onClickMenuButtonRef: (e: Event) => void;
   onBlurMenuButtonRef: (e: FocusEvent) => void;
   onFocusMenuButtonRef: (e: Event) => void;
-  onMouseDownMenuButtonRef: () => void;
-  setOpen: (v: boolean) => void;
-  open: Accessor<boolean>;
+  onMouseDownMenuButtonRef: (e: MouseEvent) => void;
   upperStackRemovedByFocusOut: boolean;
   closeByDismissEvent: boolean;
 };

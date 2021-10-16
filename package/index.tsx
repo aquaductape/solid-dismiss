@@ -2,7 +2,6 @@ import "./browserInfo";
 import {
   untrack,
   Accessor,
-  onMount,
   createEffect,
   onCleanup,
   Component,
@@ -12,7 +11,7 @@ import {
   createMemo,
   createComputed,
 } from "solid-js";
-import { queryElement } from "./utils";
+import { hasDisplayNone, queryElement } from "./utils";
 import {
   dismissStack,
   addDismissStack,
@@ -38,11 +37,14 @@ import {
 } from "./outside";
 import { addMenuPopupEl, removeMenuPopupEl } from "./menuPopup";
 import {
+  getMenuButton,
+  markFocusedMenuButton,
   onBlurMenuButton,
   onClickMenuButton,
   onFocusMenuButton,
   onKeydownMenuButton,
   onMouseDownMenuButton,
+  removeMenuButtonEvents,
 } from "./menuButton";
 import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
 import { onClickOverlay } from "./overlay";
@@ -66,8 +68,14 @@ export type TDismiss = {
   onOpen?: OnOpenHandler;
   /**
    * css selector, queried from document, to get menu button element. Or pass JSX element
+   *
+   * @remark There are situations where there are multiple JSX menu buttons that open the same menu popup, but only one of them is rendered based on device width. Use signal if JSX menu buttons are conditionally rendered. Use array if all menu buttons are rendered, when all but one, are hidden via CSS `display: none;` declaration.
    */
-  menuButton: string | JSX.Element | (() => JSX.Element);
+  menuButton:
+    | string
+    | JSX.Element
+    | Accessor<JSX.Element>
+    | (string | JSX.Element)[];
   /**
    *
    * css selector, queried from document, to get menu popup element. Or pass JSX element
@@ -330,6 +338,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     id,
     uniqueId: createUniqueId(),
     menuBtnId: "",
+    focusedMenuBtn: { el: null },
     menuBtnKeyupTabFired: false,
     menuButton,
     timeouts: {
@@ -359,7 +368,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     onFocusOutContainerRef: (e) => onFocusOutContainer(state, e),
     onBlurMenuButtonRef: (e) => onBlurMenuButton(state, e),
     onClickMenuButtonRef: (e) => onClickMenuButton(state, e),
-    onMouseDownMenuButtonRef: () => onMouseDownMenuButton(state),
+    onMouseDownMenuButtonRef: (e) => onMouseDownMenuButton(state, e),
     onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
     onFocusMenuButtonRef: () => onFocusMenuButton(state),
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
@@ -552,9 +561,11 @@ const Dismiss: Component<TDismiss> = (props) => {
       mountEl?.removeChild(containerEl!);
       globalState.closedBySetOpen = false;
 
-      if (state.menuBtnEl && (overlay || overlayElement)) {
+      if (state.menuBtnEls && (overlay || overlayElement)) {
         if (document.activeElement === document.body) {
-          state.menuBtnEl.focus();
+          const menuBtnEl = getMenuButton(state.menuBtnEls);
+
+          menuBtnEl.focus();
         }
       }
 
@@ -579,27 +590,33 @@ const Dismiss: Component<TDismiss> = (props) => {
   };
 
   const resetFocusOnClose = () => {
-    const menuBtnExists = globalState.menuBtnEl;
     const activeElement = document.activeElement;
 
     if (activeElement !== document.body) {
       if (
-        activeElement !== state.menuBtnEl &&
+        state.menuBtnEls!.every((menuBtnEl) => activeElement !== menuBtnEl) &&
         !state.containerEl?.contains(activeElement)
       ) {
         return;
       }
     }
 
+    const { menuBtnEls, focusedMenuBtn, timeouts } = state;
+
+    const menuBtnEl = getMenuButton(menuBtnEls!);
+
     const el =
       queryElement(state, {
         inputElement: focusElementOnClose,
         type: "focusElementOnClose",
         subType: "click",
-      }) || state.menuBtnEl;
+      }) || menuBtnEl;
 
     if (el) {
       el.focus();
+      if (el === menuBtnEl) {
+        markFocusedMenuButton({ focusedMenuBtn, timeouts, el });
+      }
     }
   };
 
@@ -609,7 +626,8 @@ const Dismiss: Component<TDismiss> = (props) => {
     const activeElement = document.activeElement;
 
     if (
-      activeElement !== state.menuBtnEl &&
+      // activeElement !== state.menuBtnEls
+      state.menuBtnEls!.every((menuBtnEl) => activeElement !== menuBtnEl) &&
       !state.containerEl?.contains(activeElement)
     ) {
       setTimeout(() => {
@@ -622,7 +640,6 @@ const Dismiss: Component<TDismiss> = (props) => {
       globalState.addedDocumentClick = false;
       document.removeEventListener("click", onDocumentClick);
       globalState.closedBySetOpen = true;
-      globalState.menuBtnEl = state.menuBtnEl;
 
       setTimeout(() => {
         globalState.closedBySetOpen = false;
@@ -631,28 +648,74 @@ const Dismiss: Component<TDismiss> = (props) => {
     }
   };
 
-  onMount(() => {
-    state.menuBtnEl = queryElement(state, {
-      inputElement: menuButton,
-      type: "menuButton",
-    });
-    state.menuBtnEl.setAttribute("type", "button");
-    state.menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
-    state.menuBtnEl.addEventListener(
-      "mousedown",
-      state.onMouseDownMenuButtonRef
-    );
-    if (
-      props.open() &&
-      (!state.focusElementOnOpen ||
-        state.focusElementOnOpen === "menuButton" ||
-        state.focusElementOnOpen === state.menuBtnEl)
-    ) {
-      state.menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
-        once: true,
-      });
-    }
-  });
+  createEffect(
+    on(
+      () =>
+        typeof props.menuButton === "function"
+          ? props.menuButton()
+          : props.menuButton,
+      (menuButton) => {
+        if (Array.isArray(menuButton) && !menuButton.length) return;
+
+        const { focusedMenuBtn } = state;
+        const menuBtnEls = queryElement(state, {
+          inputElement: menuButton,
+          type: "menuButton",
+        }) as unknown as HTMLElement[];
+        if (!menuBtnEls) return;
+
+        state.menuBtnEls = Array.isArray(menuBtnEls)
+          ? menuBtnEls
+          : [menuBtnEls];
+
+        state.menuBtnEls.forEach((menuBtnEl, _, self) => {
+          if (
+            focusedMenuBtn.el &&
+            focusedMenuBtn.el !== menuBtnEl &&
+            (self.length > 1 ? !hasDisplayNone(menuBtnEl) : true)
+          ) {
+            focusedMenuBtn.el = menuBtnEl;
+            menuBtnEl.focus();
+            menuBtnEl!.addEventListener(
+              "keydown",
+              state.onKeydownMenuButtonRef
+            );
+          }
+          menuBtnEl.setAttribute("type", "button");
+          menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+          menuBtnEl.addEventListener(
+            "mousedown",
+            state.onMouseDownMenuButtonRef
+          );
+
+          if (
+            props.open() &&
+            (!state.focusElementOnOpen ||
+              state.focusElementOnOpen === "menuButton" ||
+              state.focusElementOnOpen === state.menuBtnEls) &&
+            !hasDisplayNone(menuBtnEl)
+          ) {
+            menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
+              once: true,
+            });
+          }
+        });
+
+        const item = dismissStack.find(
+          (item) => item.uniqueId === state.uniqueId
+        );
+        if (item) {
+          item.menuBtnEls = state.menuBtnEls;
+        }
+
+        onCleanup(() => {
+          if (!state) return;
+
+          removeMenuButtonEvents(state, true);
+        });
+      }
+    )
+  );
 
   if (show && mount) {
     CreatePortal({
@@ -730,7 +793,8 @@ const Dismiss: Component<TDismiss> = (props) => {
             open: props.open,
             setOpen: props.setOpen,
             containerEl: state.containerEl!,
-            menuBtnEl: state.menuBtnEl!,
+            menuBtnEls: state.menuBtnEls!,
+            focusedMenuBtn: state.focusedMenuBtn,
             overlayEl: state.overlayEl!,
             menuPopupEl: state.menuPopupEl!,
             overlay,

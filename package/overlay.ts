@@ -1,6 +1,7 @@
 import { dismissStack } from "./dismissStack";
 import { globalState } from "./globalEvents";
 import { TLocalState } from "./localState";
+import { getMenuButton } from "./menuButton";
 import { checkThenClose, queryElement } from "./utils";
 
 export const onClickOverlay = (state: TLocalState) => {
@@ -8,13 +9,15 @@ export const onClickOverlay = (state: TLocalState) => {
     closeWhenOverlayClicked,
     menuPopupEl,
     focusElementOnClose,
-    menuBtnEl,
+    menuBtnEls,
   } = state;
 
   if (!closeWhenOverlayClicked) {
     menuPopupEl!.focus();
     return;
   }
+
+  const menuBtnEl = getMenuButton(menuBtnEls!);
 
   const el =
     queryElement(state, {

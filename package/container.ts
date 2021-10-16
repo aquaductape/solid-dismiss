@@ -14,6 +14,7 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     setOpen,
     timeouts,
     stopComponentEventPropagation,
+    focusedMenuBtn,
   } = state;
   const relatedTarget = e.relatedTarget as HTMLElement | null;
 
@@ -59,7 +60,7 @@ export const onFocusInContainer = (state: TLocalState, e: FocusEvent) => {
 };
 
 export const runFocusOnActive = (state: TLocalState) => {
-  const { focusElementOnOpen } = state;
+  const { focusElementOnOpen, focusedMenuBtn } = state;
   if (focusElementOnOpen == null) return;
 
   const el = queryElement(state, {
@@ -69,6 +70,7 @@ export const runFocusOnActive = (state: TLocalState) => {
   if (el) {
     setTimeout(() => {
       el.focus();
+      focusedMenuBtn.el = null;
     });
   }
 };

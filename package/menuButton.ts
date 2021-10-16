@@ -2,13 +2,27 @@ import { dismissStack } from "./dismissStack";
 import { globalState, onDocumentClick } from "./globalEvents";
 import { TLocalState } from "./localState";
 import { removeOutsideFocusEvents } from "./outside";
-import { checkThenClose, getNextTabbableElement } from "./utils";
+import {
+  checkThenClose,
+  getNextTabbableElement,
+  hasDisplayNone,
+} from "./utils";
 
 let mousedownFired = false;
 
 export const onClickMenuButton = (state: TLocalState, e: Event) => {
-  const { timeouts, menuBtnEl, closeWhenMenuButtonIsClicked, setOpen, open } =
-    state;
+  const {
+    timeouts,
+    closeWhenMenuButtonIsClicked,
+    focusedMenuBtn,
+    setOpen,
+    open,
+  } = state;
+
+  const menuBtnEl = e.currentTarget as HTMLElement;
+
+  globalState.menuBtnEls.forEach((item) => (item.el = null));
+  globalState.menuBtnEls.clear();
 
   state.menuBtnKeyupTabFired = false;
   if (mousedownFired && !open()) {
@@ -21,6 +35,8 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
   document.removeEventListener("click", onDocumentClick);
 
   menuBtnEl!.focus();
+  focusedMenuBtn.el = menuBtnEl;
+  globalState.menuBtnEls.add(focusedMenuBtn);
   clearTimeout(timeouts.containerFocusTimeoutId!);
   clearTimeout(timeouts.menuButtonBlurTimeoutId!);
   timeouts.containerFocusTimeoutId = null;
@@ -49,6 +65,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
   }
 
   if (open()) {
+    focusedMenuBtn.el = null;
     globalState.closedByEvents = true;
   }
   setOpen(!open());
@@ -57,6 +74,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   const {
     containerEl,
+    focusedMenuBtn,
     overlay,
     setOpen,
     timeouts,
@@ -89,6 +107,7 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
 
   const run = () => {
     globalState.closedByEvents = true;
+    focusedMenuBtn.el = null;
     setOpen(false);
   };
 
@@ -96,16 +115,20 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
 };
 
 // When reclicking menuButton for closing intention, Safari will trigger blur upon mousedown, which the click event fires after. This results menuPopup close then reopen. This mousedown event prevents that bug.
-export const onMouseDownMenuButton = (state: TLocalState) => {
+export const onMouseDownMenuButton = (state: TLocalState, e: MouseEvent) => {
+  const menuBtnEl = e.currentTarget as HTMLElement;
+
   if (!state.open()) {
     checkThenClose(
       dismissStack,
       (item) => {
-        if (item.containerEl!.contains(state.menuBtnEl!)) return;
+        if (item.containerEl!.contains(menuBtnEl)) return;
         return item;
       },
       (item) => {
+        globalState.menuBtnEls.forEach((item) => (item.el = null));
         globalState.closedByEvents = true;
+        state.focusedMenuBtn.el = null;
         item.setOpen(false);
       }
     );
@@ -119,7 +142,7 @@ export const onMouseDownMenuButton = (state: TLocalState) => {
 export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
   const {
     containerEl,
-    menuBtnEl,
+    focusedMenuBtn,
     setOpen,
     open,
     onKeydownMenuButtonRef,
@@ -128,7 +151,14 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
     focusSentinelBeforeEl,
   } = state;
 
+  const menuBtnEl = e.currentTarget as HTMLElement;
+
   if (!open()) return;
+  if (e.key !== "Tab") return;
+
+  focusedMenuBtn.el = null;
+  state.menuBtnKeyupTabFired = true;
+
   if (e.key === "Tab" && e.shiftKey) {
     globalState.closedByEvents = true;
     // menuPopup is previous general sibling of menuButton
@@ -147,14 +177,10 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
     }
 
     setOpen(false);
-    state.menuBtnKeyupTabFired = true;
     menuBtnEl!.removeEventListener("keydown", onKeydownMenuButtonRef);
     menuBtnEl!.removeEventListener("blur", onBlurMenuButtonRef);
     return;
   }
-
-  if (e.key !== "Tab") return;
-  state.menuBtnKeyupTabFired = true;
 
   e.preventDefault();
 
@@ -191,4 +217,63 @@ export const onFocusMenuButton = (state: TLocalState) => {
   if (!closeWhenMenuButtonIsTabbed) {
     clearTimeout(timeouts.containerFocusTimeoutId!);
   }
+};
+
+export const getMenuButton = (menuBtnEls: HTMLElement[]): HTMLElement => {
+  if (menuBtnEls.length <= 1) return menuBtnEls[0];
+
+  return menuBtnEls.find((menuBtnEl) => {
+    if (!menuBtnEl || hasDisplayNone(menuBtnEl)) return;
+
+    return menuBtnEl;
+  })!;
+};
+
+export const markFocusedMenuButton = ({
+  focusedMenuBtn,
+  timeouts,
+  el,
+}: {
+  el: HTMLElement;
+} & Pick<TLocalState, "focusedMenuBtn" | "timeouts">) => {
+  focusedMenuBtn.el = el;
+
+  el.addEventListener(
+    "blur",
+    (e) => {
+      const el = e.currentTarget as HTMLElement;
+
+      globalState.menuBtnEls.add(focusedMenuBtn);
+
+      setTimeout(() => {
+        if (!el.isConnected) return;
+
+        focusedMenuBtn.el = null;
+      });
+    },
+    {
+      once: true,
+    }
+  );
+};
+
+export const removeMenuButtonEvents = (
+  state: TLocalState,
+  onCleanup?: boolean
+) => {
+  if (!state || !state.menuBtnEls) return;
+
+  state.menuBtnEls.forEach((menuBtnEl) => {
+    menuBtnEl.removeEventListener("focus", state.onFocusMenuButtonRef);
+    menuBtnEl.removeEventListener("keydown", state.onKeydownMenuButtonRef);
+    menuBtnEl.removeEventListener("blur", state.onBlurMenuButtonRef);
+
+    if (onCleanup) {
+      menuBtnEl.removeEventListener("click", state.onClickMenuButtonRef);
+      menuBtnEl.removeEventListener(
+        "mousedown",
+        state.onMouseDownMenuButtonRef
+      );
+    }
+  });
 };
