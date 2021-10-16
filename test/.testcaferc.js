@@ -4,7 +4,7 @@ const path = "tests";
 module.exports = {
   skipJsErrors: false,
   hostname: os.hostname(),
-  browsers: ["firefox"],
+  browsers: ["chrome"],
   src: [
     `${path}/basic-dropdown.ts`,
     `${path}/popup-no-focusable-items.ts`,
@@ -12,6 +12,8 @@ module.exports = {
     `${path}/nested-regular.ts`,
     `${path}/nested-overlay.ts`,
     `${path}/programmatic.ts`,
+    `${path}/multiple-menu-buttons.ts`,
+    `${path}/multiple-menu-buttons-css.ts`,
     `${path}/iframes.ts`,
     `${path}/mixed.ts`,
   ],

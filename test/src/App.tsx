@@ -15,6 +15,8 @@ import NestedPopupMounted from "./components/Subjects/NestedPopupMounted";
 import Scrolling from "./components/Subjects/Scrolling";
 import settings from "./utils/globalSettings";
 import PopupNoFocusableItems from "./components/Subjects/PopupNoFocusableItems";
+import MultipleMenuButtons from "./components/Subjects/MultipleMenuButtons";
+import MultipleMenuButtonsCSS from "./components/Subjects/MultipleMenuButtonsCSS";
 
 const App: Component = () => {
   const [render, setRender] = createSignal(true);
@@ -47,6 +49,8 @@ const App: Component = () => {
           <NestedPopup></NestedPopup>
           <NestedOverlay></NestedOverlay>
           <Programmatic></Programmatic>
+          <MultipleMenuButtons></MultipleMenuButtons>
+          <MultipleMenuButtonsCSS></MultipleMenuButtonsCSS>
           <Scrolling></Scrolling>
           <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
           <IFrames></IFrames>

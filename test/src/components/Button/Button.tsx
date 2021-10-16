@@ -6,7 +6,7 @@ const Button: Component<{
   active?: boolean;
   class?: string;
   onClick?: (e: MouseEvent) => void;
-  ref?: HTMLButtonElement;
+  ref?: HTMLButtonElement | ((el: HTMLElement) => void);
 }> = (props) => {
   return (
     <button
