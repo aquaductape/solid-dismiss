@@ -3,6 +3,7 @@ import Dismiss from "../../../../package/index";
 import { getLeft, toggleAnimation } from "../../utils";
 import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
+import HiddenTabbableItems from "../HiddenTabbableItems";
 
 const id = "nested-mounted";
 const NestedPopupMounted = () => {
@@ -26,9 +27,13 @@ const NestedPopupMounted = () => {
       </p>
 
       <div class="grid">
+        <HiddenTabbableItems></HiddenTabbableItems>
         <Popup id={id + "-1"} />
+        <HiddenTabbableItems type="emptyNested"></HiddenTabbableItems>
         <Popup id={id + "-2"} />
+        <HiddenTabbableItems></HiddenTabbableItems>
         <Popup id={id + "-3"} />
+        <HiddenTabbableItems></HiddenTabbableItems>
       </div>
     </section>
   );
@@ -65,19 +70,23 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         setOpen={setOpen}
         mount="body"
         closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
-        closeWhenDocumentBlurs
+        // closeWhenDocumentBlurs
         ref={containerEl}
         {...toggleAnimation()}
       >
         <div id={id + "-popup"} class="dropdown middle" ref={dropdownEl}>
+          <HiddenTabbableItems></HiddenTabbableItems>
           <p>
             Some <a href="javascript:void(0)">random</a> text
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
             <Popup id={props.id} idx={idx + 1}></Popup>
+            <HiddenTabbableItems></HiddenTabbableItems>
             <Popup id={props.id} idx={idx + 1}></Popup>
+            <HiddenTabbableItems></HiddenTabbableItems>
             <Popup id={props.id} idx={idx + 1}></Popup>
+            <HiddenTabbableItems type="emptyNested"></HiddenTabbableItems>
           </div>
         </div>
       </Dismiss>

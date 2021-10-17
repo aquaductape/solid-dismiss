@@ -3,6 +3,7 @@ import Dismiss from "../../../../package/index";
 import { toggleAnimation } from "../../utils";
 import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
+import HiddenTabbableItems from "../HiddenTabbableItems";
 
 const id = "nested-regular";
 const NestedPopup = () => {
@@ -23,9 +24,13 @@ const NestedPopup = () => {
       </p>
 
       <div class="grid">
+        <HiddenTabbableItems></HiddenTabbableItems>
         <Popup id={id + "-1"} />
+        <HiddenTabbableItems></HiddenTabbableItems>
         <Popup id={id + "-2"} />
+        <HiddenTabbableItems></HiddenTabbableItems>
         <Popup id={id + "-3"} />
+        <HiddenTabbableItems></HiddenTabbableItems>
       </div>
     </section>
   );
@@ -63,16 +68,16 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
           class="dropdown"
           style="padding: 10px 25px 25px 25px;"
         >
+          <HiddenTabbableItems type="emptyNested"></HiddenTabbableItems>
           <p>
             Some <a href="javascript:void(0)">random</a> text
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
           <div>
-            {/* <br /> */}
             <Popup id={props.id} idx={idx + 1}></Popup>
-            {/* <br /> */}
+            <HiddenTabbableItems></HiddenTabbableItems>
             <Popup id={props.id} idx={idx + 1}></Popup>
-            {/* <br /> */}
+            <HiddenTabbableItems></HiddenTabbableItems>
             <Popup id={props.id} idx={idx + 1}></Popup>
           </div>
         </div>
