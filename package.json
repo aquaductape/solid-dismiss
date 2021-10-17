@@ -16,7 +16,8 @@
     "focusout",
     "click outside",
     "click elsewhere",
-    "solid"
+    "solidjs",
+    "solidjs dismiss"
   ],
   "type": "module",
   "files": [
