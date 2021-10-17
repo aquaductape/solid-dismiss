@@ -11,6 +11,17 @@ const initThreeStacks = () =>
     await t.click(`${idClass}-1-level-${num}-container button`);
   });
 
+test("open 1 level with click, close button again to close, then open with enter key", async (t) => {
+  await t.click(`${idClass}-1-level-1-container button`);
+  await t.expect(exists(`${id}-1-level-1-popup`)).ok();
+  await t.wait(100);
+  await t.click(`${idClass}-1-level-1-container button`);
+  await t.expect(exists(`${id}-1-level-1-popup`)).notOk();
+  await t.wait(100);
+  await t.pressKey("enter");
+  await t.expect(exists(`${id}-1-level-1-popup`)).ok();
+});
+
 test("open 3 levels with keyboard", async (t) => {
   await t.click(`${id} h2`);
   await t.pressKey("tab").pressKey("enter");
