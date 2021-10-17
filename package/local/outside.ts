@@ -1,4 +1,4 @@
-import { globalState } from "./globalEvents";
+import { globalState } from "../global/globalEvents";
 import { TLocalState } from "./localState";
 
 export const onFocusFromOutsideAppOrTab = (

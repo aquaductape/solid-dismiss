@@ -1,4 +1,4 @@
-import { TDismiss } from ".";
+import { TDismiss } from "..";
 
 export type TLocalState = Omit<
   TDismiss,

@@ -1,6 +1,5 @@
-import { Accessor, JSX } from "solid-js";
-import { TDismiss } from ".";
-import { TLocalState } from "../dist/types/localState";
+import { TDismiss } from "..";
+import { TLocalState } from "../local/localState";
 
 export type TDismissStack = Pick<
   TDismiss,

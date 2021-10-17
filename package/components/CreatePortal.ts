@@ -1,7 +1,7 @@
-import { onCleanup, JSX, createSignal, sharedConfig } from "solid-js";
+import { JSX, createSignal, sharedConfig, Component } from "solid-js";
 import { insert } from "solid-js/web";
 
-function CreatePortal(props: {
+const CreatePortal: Component<{
   mount?: Node;
   useShadow?: boolean;
   isSVG?: boolean;
@@ -10,7 +10,7 @@ function CreatePortal(props: {
   stopComponentEventPropagation?: boolean;
   marker?: Text | null;
   onCreate?: (mount: HTMLElement, container: HTMLElement, marker: Text) => void;
-}) {
+}> = (props) => {
   const { useShadow } = props,
     marker = props.marker || document.createTextNode(""),
     mount = props.mount || document.body;
@@ -56,6 +56,6 @@ function CreatePortal(props: {
   }
 
   return !props.stopComponentEventPropagation ? marker : null;
-}
+};
 
 export default CreatePortal;

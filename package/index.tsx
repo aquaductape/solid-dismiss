@@ -17,25 +17,20 @@ import {
   addDismissStack,
   removeDismissStack,
   TDismissStack,
-} from "./dismissStack";
+} from "./global/dismissStack";
 import {
   addGlobalEvents,
   globalState,
   onDocumentClick,
   removeGlobalEvents,
-} from "./globalEvents";
-import { TLocalState } from "./localState";
-import {
-  onFocusInContainer,
-  onFocusOutContainer,
-  runFocusOnActive,
-} from "./container";
+} from "./global/globalEvents";
+import { TLocalState } from "./local/localState";
 import {
   onClickDocument,
   onFocusFromOutsideAppOrTab,
   removeOutsideFocusEvents,
-} from "./outside";
-import { addMenuPopupEl, removeMenuPopupEl } from "./menuPopup";
+} from "./local/outside";
+import { addMenuPopupEl, removeMenuPopupEl } from "./local/menuPopup";
 import {
   getMenuButton,
   markFocusedMenuButton,
@@ -45,12 +40,20 @@ import {
   onKeydownMenuButton,
   onMouseDownMenuButton,
   removeMenuButtonEvents,
-} from "./menuButton";
-import { activateLastFocusSentinel, onFocusSentinel } from "./focusSentinel";
-import { onClickOverlay } from "./overlay";
-import CreatePortal from "./CreatePortal";
-import { DismissAnimation, Transition } from "./Transition";
-import { removeLocalEvents } from "./manageLocalEvents";
+} from "./local/menuButton";
+import CreatePortal from "./components/CreatePortal";
+import { DismissAnimation, Transition } from "./components/Transition";
+import { removeLocalEvents } from "./local/manageLocalEvents";
+import {
+  onFocusInContainer,
+  onFocusOutContainer,
+  runFocusOnActive,
+} from "./local/container";
+import { onClickOverlay } from "./local/overlay";
+import {
+  activateLastFocusSentinel,
+  onFocusSentinel,
+} from "./local/focusSentinel";
 
 export type TDismiss = {
   /**
