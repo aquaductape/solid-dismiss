@@ -16,7 +16,7 @@ export const globalState: {
   closedBySetOpen: boolean;
   documentClickTimeout: number | null;
   menuBtnEl?: HTMLElement | null;
-  menuBtnEls: Set<{ el: HTMLElement | null }>;
+  focusedMenuBtns: Set<{ el: HTMLElement | null }>;
   closedByEvents: boolean;
 } = {
   closeByFocusSentinel: false,
@@ -24,7 +24,7 @@ export const globalState: {
   addedDocumentClick: false,
   documentClickTimeout: null,
   closedByEvents: false,
-  menuBtnEls: new Set(),
+  focusedMenuBtns: new Set(),
 };
 
 export const onDocumentClick = (e: Event) => {

@@ -18,8 +18,8 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 
   const menuBtnEl = e.currentTarget as HTMLElement;
 
-  globalState.menuBtnEls.forEach((item) => (item.el = null));
-  globalState.menuBtnEls.clear();
+  globalState.focusedMenuBtns.forEach((item) => (item.el = null));
+  // globalState.menuBtnEls.clear();
 
   state.menuBtnKeyupTabFired = false;
   if (mousedownFired && !open()) {
@@ -33,7 +33,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
 
   menuBtnEl!.focus();
   focusedMenuBtn.el = menuBtnEl;
-  globalState.menuBtnEls.add(focusedMenuBtn);
+  globalState.focusedMenuBtns.add(focusedMenuBtn);
   clearTimeout(timeouts.containerFocusTimeoutId!);
   clearTimeout(timeouts.menuButtonBlurTimeoutId!);
   timeouts.containerFocusTimeoutId = null;
@@ -62,7 +62,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
   }
 
   if (open()) {
-    focusedMenuBtn.el = null;
+    // focusedMenuBtn.el = null;
     globalState.closedByEvents = true;
   }
   setOpen(!open());
@@ -123,9 +123,8 @@ export const onMouseDownMenuButton = (state: TLocalState, e: MouseEvent) => {
         return item;
       },
       (item) => {
-        globalState.menuBtnEls.forEach((item) => (item.el = null));
+        globalState.focusedMenuBtns.forEach((item) => (item.el = null));
         globalState.closedByEvents = true;
-        state.focusedMenuBtn.el = null;
         item.setOpen(false);
       }
     );
@@ -150,10 +149,12 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
 
   const menuBtnEl = e.currentTarget as HTMLElement;
 
-  if (!open()) return;
   if (e.key !== "Tab") return;
 
-  focusedMenuBtn.el = null;
+  globalState.focusedMenuBtns.forEach((item) => (item.el = null));
+
+  if (!open()) return;
+
   state.menuBtnKeyupTabFired = true;
 
   if (e.key === "Tab" && e.shiftKey) {
@@ -240,7 +241,7 @@ export const markFocusedMenuButton = ({
     (e) => {
       const el = e.currentTarget as HTMLElement;
 
-      globalState.menuBtnEls.add(focusedMenuBtn);
+      globalState.focusedMenuBtns.add(focusedMenuBtn);
 
       setTimeout(() => {
         if (!el.isConnected) return;
@@ -262,7 +263,7 @@ export const removeMenuButtonEvents = (
 
   state.menuBtnEls.forEach((menuBtnEl) => {
     menuBtnEl.removeEventListener("focus", state.onFocusMenuButtonRef);
-    menuBtnEl.removeEventListener("keydown", state.onKeydownMenuButtonRef);
+    // menuBtnEl.removeEventListener("keydown", state.onKeydownMenuButtonRef);
     menuBtnEl.removeEventListener("blur", state.onBlurMenuButtonRef);
 
     if (onCleanup) {
