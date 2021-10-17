@@ -40,18 +40,6 @@ test("open 3 levels with keyboard, with menu buttons that switch after 2 seconds
   await t.expect(exists(`${id}-2-level-3-popup`)).ok();
 });
 
-test("open 3 levels. reclick level 3 menuButton to close 3rd level", async (t) => {
-  await initThreeStacks();
-  await t.expect(exists(`${id}-1-level-3-popup`)).ok();
-  await t.wait(1500);
-
-  await t.click(`${idClass}-1-level-3-container button`);
-  await t.expect(exists(`${id}-1-level-3-popup`)).notOk();
-  await loopStacks(t, [1, 2], async (t, num) => {
-    await t.expect(exists(`${id}-1-level-${num}-popup`)).ok();
-  });
-});
-
 test("open 3 levels. On second stack, click neighbor menuButton which will close 3rd stack, then open 3rd stack based from menuButton", async (t) => {
   await initThreeStacks();
   await t.expect(exists(`${id}-1-level-3-popup`)).ok();
