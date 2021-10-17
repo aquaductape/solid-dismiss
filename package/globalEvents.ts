@@ -1,12 +1,6 @@
 import { dismissStack, TDismissStack } from "./dismissStack";
 import { getMenuButton, markFocusedMenuButton } from "./menuButton";
-import {
-  checkThenClose,
-  getNextTabbableElement,
-  inverseQuerySelector,
-  queryElement,
-  _tabbableSelectors as tabbableSelectors,
-} from "./utils";
+import { checkThenClose, getNextTabbableElement, queryElement } from "./utils";
 
 let scrollEventAddedViaTouch = false;
 let scrollEventAdded = false;
@@ -282,20 +276,17 @@ const onCursorKeys = (e: KeyboardEvent) => {
 
   const activeElement = document.activeElement!;
 
-  if (activeElement === menuBtnEl || activeElement === menuPopupEl) {
-    const el =
-      e.key === "ArrowDown"
-        ? (menuPopupEl?.querySelector(tabbableSelectors) as HTMLElement)
-        : inverseQuerySelector(menuPopupEl!, tabbableSelectors);
+  let direction: "forwards" | "backwards";
 
-    if (el) {
-      el.focus();
-    }
-    return;
+  if (e.key === "ArrowDown") {
+    direction = "forwards";
+  } else {
+    direction = "backwards";
   }
 
-  const direction: "forwards" | "backwards" =
-    e.key === "ArrowDown" ? "forwards" : "backwards";
+  if (activeElement === menuBtnEl || activeElement === menuPopupEl) {
+    direction = "forwards";
+  }
 
   const el = getNextTabbableElement({
     from: activeElement,

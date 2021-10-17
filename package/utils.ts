@@ -78,9 +78,92 @@ export const getNextTabbableElement = ({
 
   if (!visitedElement) return null;
 
-  const getIframeDocument = (iframe: HTMLIFrameElement) => {
+  const isHidden = (el: HTMLElement, contentWindow: Window = window) => {
+    const checkByStyle = (style: CSSStyleDeclaration) =>
+      style.display === "none" || style.visibility === "hidden";
+
+    if ((el.style && checkByStyle(el.style)) || el.hidden) return true;
+
+    const style = contentWindow.getComputedStyle(el);
+    if (!style || checkByStyle(style)) return true;
+
+    return false;
+  };
+
+  const checkHiddenAncestors = (
+    target: HTMLElement,
+    parent: Element,
+    contentWindow?: Window
+  ) => {
+    const ancestors = [];
+
+    let node = target;
+    if (isHidden(node)) return true;
+
+    while (true) {
+      node = node.parentElement as HTMLElement;
+      if (!node || node === parent) {
+        break;
+      }
+      ancestors.push(node);
+    }
+
+    for (const node of ancestors) {
+      if (isHidden(node, contentWindow)) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  const checkChildren = (
+    children: NodeListOf<Element>,
+    parent: Element,
+    reverse?: boolean,
+    contentWindow?: Window
+  ) => {
+    const length = children.length;
+
+    if (length && isHidden(parent as HTMLElement)) return null;
+
+    if (reverse) {
+      for (let i = length - 1; i > -1; i--) {
+        const child = children[i];
+
+        if (
+          !checkHiddenAncestors(child as HTMLElement, parent, contentWindow)
+        ) {
+          if (child.tagName === "IFRAME") {
+            const iframeChild = queryIframe(child, reverse);
+            if (iframeChild) return iframeChild;
+          }
+
+          return child;
+        }
+      }
+      return null;
+    }
+
+    for (let i = 0; i < length; i++) {
+      const child = children[i];
+
+      if (!checkHiddenAncestors(child as HTMLElement, parent, contentWindow)) {
+        if (child.tagName === "IFRAME") {
+          const iframeChild = queryIframe(child);
+          if (iframeChild) return iframeChild;
+        }
+
+        return child;
+      }
+    }
+
+    return null;
+  };
+
+  const getIframeWindow = (iframe: HTMLIFrameElement) => {
     try {
-      return iframe.contentDocument;
+      return iframe.contentWindow;
     } catch (e) {
       return null;
     }
@@ -92,16 +175,21 @@ export const getNextTabbableElement = ({
   ): HTMLElement | null => {
     if (!el) return null;
     if (el.tagName !== "IFRAME") return el as HTMLElement;
-    const iframeDocument = getIframeDocument(
+    const iframeWindow = getIframeWindow(
       el as HTMLIFrameElement
-    ) as unknown as HTMLElement;
-    if (!iframeDocument) return el as HTMLElement;
+    ) as unknown as Window;
+    const iframeDocument = iframeWindow.document;
+    if (!iframeWindow) return el as HTMLElement;
     const tabindex = el.getAttribute("tabindex");
     if (tabindex) return el as HTMLElement;
 
-    const result = inverseQuery
-      ? inverseQuerySelector(iframeDocument, tabbableSelectors)!
-      : iframeDocument.querySelector(tabbableSelectors)!;
+    const els = iframeDocument.querySelectorAll(tabbableSelectors);
+    const result = checkChildren(
+      els,
+      iframeDocument.documentElement,
+      inverseQuery,
+      iframeWindow
+    )!;
     return queryIframe(result) as HTMLElement;
   };
 
@@ -121,13 +209,16 @@ export const getNextTabbableElement = ({
         if (hasPassedVisitedElement) {
           if (ignoreElement.some((el) => el === child)) continue;
           if (child.matches(tabbableSelectors)) {
+            if (isHidden(child as HTMLElement)) continue;
+
             const el = queryIframe(child);
             if (el) return el as HTMLElement;
             return child as HTMLElement;
           }
 
-          let el = child.querySelector(tabbableSelectors);
-          el = queryIframe(el!);
+          const els = child.querySelectorAll(tabbableSelectors);
+          const el = checkChildren(els, child);
+
           if (el) {
             return el as HTMLElement;
           }
@@ -148,12 +239,14 @@ export const getNextTabbableElement = ({
         if (hasPassedVisitedElement) {
           if (ignoreElement.some((el) => el === child)) continue;
           if (child.matches(tabbableSelectors)) {
+            if (isHidden(child as HTMLElement)) continue;
             const el = queryIframe(child);
             if (el) return el as HTMLElement;
             return child as HTMLElement;
           }
-          let el = inverseQuerySelector(child, tabbableSelectors);
-          el = queryIframe(el!, true);
+          const els = child.querySelectorAll(tabbableSelectors);
+          const el = checkChildren(els, child, true);
+
           if (el) return el as HTMLElement;
           continue;
         }
@@ -175,40 +268,9 @@ export const getNextTabbableElement = ({
     return traverseNextSiblingsThenUp(parent, visitedElement);
   };
 
-  return traverseNextSiblingsThenUp(parent, visitedElement);
-};
+  const result = traverseNextSiblingsThenUp(parent, visitedElement);
 
-/**
- *
- * like querySelector but iterates through children backwards, which results that the selector matches last child first.
- */
-export const inverseQuerySelector = (
-  el: Element,
-  selector: string
-): HTMLElement | null => {
-  let foundElement: HTMLElement | null = null;
-
-  const query = (el: Element) => {
-    const children = el.children;
-    const childrenCount = children.length;
-
-    for (let i = childrenCount - 1; i >= 0; i--) {
-      const child = children[i];
-
-      if (foundElement) return foundElement;
-
-      if (child.matches(selector)) {
-        foundElement = child as HTMLElement;
-        return foundElement;
-      }
-
-      query(child);
-    }
-
-    return foundElement;
-  };
-
-  return query(el);
+  return result;
 };
 
 export const matchByFirstChild = ({
