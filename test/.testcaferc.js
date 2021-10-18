@@ -14,6 +14,7 @@ module.exports = {
     `${path}/programmatic.ts`,
     `${path}/multiple-menu-buttons.ts`,
     `${path}/multiple-menu-buttons-css.ts`,
+    `${path}/modal.ts`,
     `${path}/iframes.ts`,
     `${path}/mixed.ts`,
   ],
