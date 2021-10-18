@@ -66,6 +66,7 @@ export const runFocusOnActive = (state: TLocalState) => {
     inputElement: focusElementOnOpen,
     type: "focusElementOnOpen",
   });
+
   if (el) {
     setTimeout(() => {
       el.focus();

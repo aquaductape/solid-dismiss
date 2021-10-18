@@ -1,4 +1,5 @@
 import { TLocalState } from "../local/localState";
+import { getNextTabbableElement } from "./tabbing";
 
 /**
  *  Iterate stack backwards, checks item, pass it close callback. First falsy value breaks iteration.
@@ -95,6 +96,12 @@ export const queryElement = (
     return state.menuPopupEl!;
   }
   if (type === "focusElementOnOpen") {
+    if (inputElement === "firstChild") {
+      return getNextTabbableElement({
+        from: state.focusSentinelBeforeEl!,
+        stopAtElement: state.containerEl!,
+      })!;
+    }
     if (typeof inputElement === "string") {
       return state.containerEl?.querySelector(inputElement) as HTMLElement;
     }

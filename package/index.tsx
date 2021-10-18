@@ -104,11 +104,16 @@ export type TDismiss = {
    *
    * which element, via selector*, to recieve focus after popup opens.
    *
-   * *css string queried from root component, or if string value is `"menuPopup"` uses menuPopup element.
+   * *css string queried from root component, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
    *
    * @defaultValue focus remains on `"menuButton"`
    */
-  focusElementOnOpen?: "menuPopup" | string | JSX.Element | (() => JSX.Element);
+  focusElementOnOpen?:
+    | "menuPopup"
+    | "firstChild"
+    | string
+    | JSX.Element
+    | (() => JSX.Element);
   /**
    *
    * Which element, via selector*, to recieve focus after popup closes.

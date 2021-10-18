@@ -102,6 +102,7 @@ export const onFocusSentinel = (
   if (relatedTarget === containerEl || relatedTarget === menuBtnEl) {
     const el = getNextTabbableElement({
       from: focusSentinelBeforeEl!,
+      stopAtElement: containerEl,
     })!;
 
     el.focus();
@@ -113,6 +114,7 @@ export const onFocusSentinel = (
       const el = getNextTabbableElement({
         from: focusSentinelAfterEl!,
         direction: "backwards",
+        stopAtElement: containerEl,
       })!;
 
       el.focus();
@@ -140,6 +142,7 @@ export const onFocusSentinel = (
   if (trapFocus) {
     const el = getNextTabbableElement({
       from: focusSentinelBeforeEl!,
+      stopAtElement: containerEl,
     })!;
 
     el.focus();
