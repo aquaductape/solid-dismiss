@@ -17,6 +17,7 @@ import settings from "./utils/globalSettings";
 import PopupNoFocusableItems from "./components/Subjects/PopupNoFocusableItems";
 import MultipleMenuButtons from "./components/Subjects/MultipleMenuButtons";
 import MultipleMenuButtonsCSS from "./components/Subjects/MultipleMenuButtonsCSS";
+import Modal from "./components/Subjects/Modal";
 
 const App: Component = () => {
   const [render, setRender] = createSignal(true);
@@ -52,6 +53,7 @@ const App: Component = () => {
           <MultipleMenuButtons></MultipleMenuButtons>
           <MultipleMenuButtonsCSS></MultipleMenuButtonsCSS>
           <Scrolling></Scrolling>
+          <Modal></Modal>
           <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
           <IFrames></IFrames>
           <FocusElementOnClose></FocusElementOnClose>

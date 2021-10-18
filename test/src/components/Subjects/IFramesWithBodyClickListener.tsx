@@ -3,6 +3,7 @@ import Dismiss from "../../../../package/index";
 import { getLeft, reflow, toggleAnimation } from "../../utils";
 import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
+import HiddenTabbableItems from "../HiddenTabbableItems";
 import IFrame from "../IFrame";
 
 const id = "iframes-bcl";
@@ -84,7 +85,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
       >
         <div id={id + "-popup"} class="dropdown" style="height: 100%;">
           <div style="display: flex;">
-            {/* <input type="text" placeholder="text input..." class="input-test" /> */}
+            <HiddenTabbableItems type="emptyNested"></HiddenTabbableItems>
             <IFrame class="f-1" bodyHasClickListener></IFrame>
             <IFrame class="f-2" bodyHasClickListener></IFrame>
           </div>

@@ -74,7 +74,12 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         ref={containerEl}
         {...toggleAnimation()}
       >
-        <div id={id + "-popup"} class="dropdown middle" ref={dropdownEl}>
+        <div
+          id={id + "-popup"}
+          class="dropdown middle"
+          ref={dropdownEl}
+          tabindex="-1"
+        >
           <HiddenTabbableItems></HiddenTabbableItems>
           <p>
             Some <a href="javascript:void(0)">random</a> text

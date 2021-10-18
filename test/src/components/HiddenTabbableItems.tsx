@@ -23,7 +23,7 @@ const HiddenRoot = () => {
 
 const EmptyNested = () => {
   return (
-    <div style="position: absolute;">
+    <div style="position: absolute; pointer-events: none;">
       <div>
         <div>
           <button style="display: none;">Hidden Button</button>
@@ -38,6 +38,11 @@ const EmptyNested = () => {
         <div style="display: none;">
           <button>Hidden Button</button>
         </div>
+      </div>
+      <div style="width: 0; height: 0;">
+        <button style="visibility: hidden">Hidden Button</button>
+        <button hidden>Hidden Button</button>
+        <button class="hidden-class">Hidden Button</button>
       </div>
     </div>
   );
