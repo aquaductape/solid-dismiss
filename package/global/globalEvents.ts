@@ -272,7 +272,8 @@ const onCursorKeys = (e: KeyboardEvent) => {
 
   if (horizontalKeys.includes(e.key)) return;
 
-  const { menuBtnEls, menuPopupEl } = dismissStack[dismissStack.length - 1];
+  const { menuBtnEls, menuPopupEl, containerEl } =
+    dismissStack[dismissStack.length - 1];
   const menuBtnEl = getMenuButton(menuBtnEls);
 
   const activeElement = document.activeElement!;
@@ -292,7 +293,7 @@ const onCursorKeys = (e: KeyboardEvent) => {
   const el = getNextTabbableElement({
     from: activeElement,
     direction,
-    stopAtElement: menuPopupEl!,
+    stopAtElement: containerEl!,
   });
 
   if (el) {

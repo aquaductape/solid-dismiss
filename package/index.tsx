@@ -243,8 +243,8 @@ export type TDismiss = {
    * @defaultValue `false`, children are conditionally rendered based on `Dismiss.open` value.
    */
   show?: boolean;
-  // stopComponentEventPropagation?: boolean;
 };
+// stopComponentEventPropagation?: boolean;
 
 type FocusElementOnCloseOptions = {
   /**
