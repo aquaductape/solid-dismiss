@@ -36,6 +36,7 @@ import {
   markFocusedMenuButton,
   onBlurMenuButton,
   onClickMenuButton,
+  onClickOutsideMenuButton,
   onFocusMenuButton,
   onKeydownMenuButton,
   onMouseDownMenuButton,
@@ -370,6 +371,7 @@ const Dismiss: Component<TDismiss> = (props) => {
       enableLastFocusSentinel,
     open: props.open,
     setOpen: props.setOpen,
+    onClickOutsideMenuButtonRef: () => onClickOutsideMenuButton(state),
     onClickDocumentRef: (e) => onClickDocument(state, e),
     onClickOverlayRef: () => onClickOverlay(state),
     onFocusInContainerRef: (e) => onFocusInContainer(state, e),
@@ -683,7 +685,7 @@ const Dismiss: Component<TDismiss> = (props) => {
             (self.length > 1 ? !hasDisplayNone(menuBtnEl) : true)
           ) {
             focusedMenuBtn.el = menuBtnEl;
-            menuBtnEl.focus();
+            menuBtnEl.focus({ preventScroll: true });
             menuBtnEl!.addEventListener(
               "keydown",
               state.onKeydownMenuButtonRef

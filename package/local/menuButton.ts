@@ -12,6 +12,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     timeouts,
     closeWhenMenuButtonIsClicked,
     focusedMenuBtn,
+    onClickOutsideMenuButtonRef: onClickOutsideRef,
     setOpen,
     open,
   } = state;
@@ -19,6 +20,11 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
   const menuBtnEl = e.currentTarget as HTMLElement;
 
   globalState.focusedMenuBtns.forEach((item) => (item.el = null));
+
+  document.removeEventListener("click", onClickOutsideRef);
+  setTimeout(() => {
+    document.addEventListener("click", onClickOutsideRef, { once: true });
+  });
   // globalState.menuBtnEls.clear();
 
   state.menuBtnKeyupTabFired = false;
@@ -135,16 +141,20 @@ export const onMouseDownMenuButton = (state: TLocalState, e: MouseEvent) => {
   mousedownFired = true;
 };
 
+export const onClickOutsideMenuButton = (state: TLocalState) => {
+  state.focusedMenuBtn.el = null;
+};
+
 export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
   const {
     containerEl,
-    focusedMenuBtn,
     setOpen,
     open,
     onKeydownMenuButtonRef,
     onBlurMenuButtonRef,
     mount,
     focusSentinelBeforeEl,
+    focusSentinelAfterEl,
   } = state;
 
   const menuBtnEl = e.currentTarget as HTMLElement;
@@ -166,7 +176,11 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
       let el = getNextTabbableElement({
         from: menuBtnEl!,
         direction: "backwards",
-        ignoreElement: [containerEl!],
+        ignoreElement: [
+          containerEl!,
+          focusSentinelBeforeEl!,
+          focusSentinelAfterEl!,
+        ],
       });
 
       if (el) {

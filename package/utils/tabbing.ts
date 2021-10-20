@@ -83,6 +83,8 @@ export const getNextTabbableElement = ({
       for (let i = length - 1; i > -1; i--) {
         const child = children[i];
 
+        if (ignoreElement.some((el) => el.contains(child))) continue;
+
         if (
           !checkHiddenAncestors(child as HTMLElement, parent, contentWindow)
         ) {
@@ -99,6 +101,8 @@ export const getNextTabbableElement = ({
 
     for (let i = 0; i < length; i++) {
       const child = children[i];
+
+      if (ignoreElement.some((el) => el.contains(child))) continue;
 
       if (!checkHiddenAncestors(child as HTMLElement, parent, contentWindow)) {
         if (child.tagName === "IFRAME") {
@@ -197,6 +201,7 @@ export const getNextTabbableElement = ({
             return child as HTMLElement;
           }
           const els = child.querySelectorAll(tabbableSelectors);
+
           const el = checkChildren(els, child, true);
 
           if (el) return el as HTMLElement;

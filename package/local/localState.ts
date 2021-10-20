@@ -27,6 +27,7 @@ export type TLocalState = Omit<
   refContainerCb: (el: HTMLElement) => void;
   refOverlayCb: (el: HTMLElement) => void;
   onClickOverlayRef: (e: Event) => void;
+  onClickOutsideMenuButtonRef: () => void;
   onFocusInContainerRef: (e: FocusEvent) => void;
   onFocusOutContainerRef: (e: FocusEvent) => void;
   onFocusFromOutsideAppOrTabRef: (e: FocusEvent) => void;
