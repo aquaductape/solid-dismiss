@@ -79,8 +79,14 @@ setOpen: (v: boolean) => void;
 onOpen?: OnOpenHandler;
 /**
  * css selector, queried from document, to get menu button element. Or pass JSX element
+ *
+ * @remark There are situations where there are multiple JSX menu buttons that open the same menu popup, but only one of them is rendered based on device width. Use signal if JSX menu buttons are conditionally rendered. Use array if all menu buttons are rendered, when all but one, are hidden via CSS `display: none;` declaration.
  */
-menuButton: string | JSX.Element | (() => JSX.Element);
+menuButton:
+  | string
+  | JSX.Element
+  | Accessor<JSX.Element>
+  | (string | JSX.Element)[];
 /**
  *
  * css selector, queried from document, to get menu popup element. Or pass JSX element
@@ -106,11 +112,16 @@ trapFocus?: boolean;
  *
  * which element, via selector*, to recieve focus after popup opens.
  *
- * *css string queried from root component, or if string value is `"menuPopup"` uses menuPopup element.
+ * *css string queried from root component, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
  *
  * @defaultValue focus remains on `"menuButton"`
  */
-focusElementOnOpen?: "menuPopup" | string | JSX.Element | (() => JSX.Element);
+focusElementOnOpen?:
+  | "menuPopup"
+  | "firstChild"
+  | string
+  | JSX.Element
+  | (() => JSX.Element);
 /**
  *
  * Which element, via selector*, to recieve focus after popup closes.
@@ -235,7 +246,6 @@ animation?: DismissAnimation;
  * @defaultValue `false`, children are conditionally rendered based on `Dismiss.open` value.
  */
 show?: boolean;
-// stopComponentEventPropagation?: boolean;
 ```
 
 FocusElementOnCloseOptions
