@@ -169,18 +169,24 @@ const Docs = () => {
               <h5>
                 menu
                 <wbr />
-                Button<span className="tsd-signature-symbol">: </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-symbol">(</span>
-                <span className="tsd-signature-symbol">(</span>
-                <span className="tsd-signature-symbol">)</span>
-                <span className="tsd-signature-symbol"> =&gt; </span>
-                <span className="tsd-signature-type">JSX.Element</span>
-                <span className="tsd-signature-symbol">)</span>
+                Button<span class="tsd-signature-symbol">: </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">Accessor</span>
+                <span class="tsd-signature-symbol">&lt;</span>
+                <span class="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol">&gt;</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-symbol">(</span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol">)</span>
+                <span class="tsd-signature-symbol">[]</span>
               </h5>
+
               <div className="tsd-comment tsd-typography">
                 <div className="lead">
                   <p>
@@ -188,6 +194,19 @@ const Docs = () => {
                     element. Or pass JSX element
                   </p>
                 </div>
+                <dl class="tsd-comment-tags">
+                  <dt>remark</dt>
+                  <dd>
+                    <p>
+                      There are situations where there are multiple JSX menu
+                      buttons that open the same menu popup, but only one of
+                      them is rendered based on device width. Use signal if JSX
+                      menu buttons are conditionally rendered. Use array if all
+                      menu buttons are rendered, when all but one, are hidden
+                      via CSS <code>display: none;</code> declaration.
+                    </p>
+                  </dd>
+                </dl>
               </div>
             </li>
             <li className="tsd-parameter">
@@ -271,25 +290,27 @@ const Docs = () => {
             </li>
             <li className="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> focus
+                <span class="tsd-flag ts-flagOptional">Optional</span> focus
                 <wbr />
                 Element
                 <wbr />
                 On
                 <wbr />
-                Open<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">"menuPopup"</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-symbol">(</span>
-                <span className="tsd-signature-symbol">(</span>
-                <span className="tsd-signature-symbol">)</span>
-                <span className="tsd-signature-symbol"> =&gt; </span>
-                <span className="tsd-signature-type">JSX.Element</span>
-                <span className="tsd-signature-symbol">)</span>
+                Open<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">"menuPopup"</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">"firstChild"</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-symbol">(</span>
+                <span class="tsd-signature-symbol">(</span>
+                <span class="tsd-signature-symbol">)</span>
+                <span class="tsd-signature-symbol"> =&gt; </span>
+                <span class="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol">)</span>
               </h5>
               <div className="tsd-comment tsd-typography">
                 <div className="lead">
@@ -301,7 +322,9 @@ const Docs = () => {
                 <div>
                   <p>
                     *css string queried from root component, or if string value
-                    is <code>"menuPopup"</code> uses menuPopup element.
+                    is <code>"menuPopup"</code> uses menuPopup element, or if
+                    string value is <code>"firstChild"</code> uses first
+                    tabbable element inside menuPopup.
                   </p>
                 </div>
                 <dl className="tsd-comment-tags">

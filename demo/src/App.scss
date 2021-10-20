@@ -54,6 +54,24 @@ $hamburger-layer-height: 3px !default;
   box-sizing: border-box;
 }
 
+[data-simplebar][data-simplebar-match-webkit] {
+  padding-right: 15px;
+
+  .simplebar-track.simplebar-vertical {
+    width: 15px;
+    background-color: var(--scrollbar-bg);
+    padding-top: 2px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+  .simplebar-scrollbar {
+    width: 7px;
+    border-radius: 10px;
+    margin: 0 auto;
+    background-color: #777e95;
+  }
+}
+
 @media (orientation: landscape) {
   ::-webkit-scrollbar {
     width: 20px;
@@ -624,7 +642,6 @@ button {
   position: relative;
   max-height: 300px;
   width: 100%;
-  overflow-y: auto;
 }
 
 .hero-dropdown {

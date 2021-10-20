@@ -38,9 +38,7 @@ export const DropdownOverlay = () => {
         Button
       </button>
       <Dismiss
-        class={s("dropdown")}
         menuButton={btnEl}
-        menuPopup={dropdownEl}
         open={open}
         setOpen={setOpen}
         mount="body"
@@ -48,24 +46,26 @@ export const DropdownOverlay = () => {
         cursorKeys
         ref={dropdownContainerEl}
       >
-        <div class={s("overlay")} onClick={onClickClose}></div>
-        <ul class={s("dropdown-inner")} ref={dropdownEl}>
-          <li>
-            <a class={s("item")} href="#" onClick={onClickItem}>
-              cat
-            </a>
-          </li>
-          <li>
-            <a class={s("item")} href="#" onClick={onClickItem}>
-              dog
-            </a>
-          </li>
-          <li>
-            <a class={s("item")} href="#" onClick={onClickItem}>
-              fish
-            </a>
-          </li>
-        </ul>
+        <div class={s("dropdown", "top")}>
+          <div class={s("overlay")} onClick={onClickClose}></div>
+          <ul class={s("dropdown-inner")}>
+            <li>
+              <a class={s("item")} href="#" onClick={onClickItem}>
+                cat
+              </a>
+            </li>
+            <li>
+              <a class={s("item")} href="#" onClick={onClickItem}>
+                dog
+              </a>
+            </li>
+            <li>
+              <a class={s("item")} href="#" onClick={onClickItem}>
+                fish
+              </a>
+            </li>
+          </ul>
+        </div>
       </Dismiss>
     </>
   );
@@ -161,7 +161,6 @@ export const DropdownOverlayElement = () => {
 //     <>
 //       <button ref={btnEl}>Button</button>
 //       <Dismiss
-//         class="dropdown"
 //         menuButton={btnEl}
 //         menuPopup={dropdownEl}
 //         open={open}
@@ -171,12 +170,14 @@ export const DropdownOverlayElement = () => {
 //         cursorKeys
 //         ref={dropdownContainerEl}
 //       >
-//         <div class="overlay" onClick={onClickClose}></div>
-//         <ul class="dropdown-inner" ref={dropdownEl}>
-//           <li><a href="#">cat</a></li>
-//           <li><a href="#">dog</a></li>
-//           <li><a href="#">fish</a></li>
-//         </ul>
+//         <div class="dropdown">
+//           <div class="overlay" onClick={onClickClose}></div>
+//           <ul class="dropdown-inner" ref={dropdownEl}>
+//             <li><a href="#">cat</a></li>
+//             <li><a href="#">dog</a></li>
+//             <li><a href="#">fish</a></li>
+//           </ul>
+//         </div>
 //       </Dismiss>
 //     </>
 //   );

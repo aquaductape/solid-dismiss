@@ -6,6 +6,7 @@ import {
   PopperConditionalRender,
 } from "../Examples/Popper/Popper";
 import FocusGutter from "../FocusGutter";
+import SimpleBar from "simplebar";
 
 const Popup = () => {
   const popperJSX = `<pre class="  language-css" tabindex="0"><code class=" language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -168,10 +169,29 @@ const Popup = () => {
   let scrollContainerEl2!: HTMLDivElement;
 
   onMount(() => {
-    const scrollTop =
-      (scrollContainerEl1.scrollHeight - scrollContainerEl1.clientHeight) / 2;
-    scrollContainerEl1.scrollTop = scrollTop;
-    scrollContainerEl2.scrollTop = scrollTop;
+    const el1 = new SimpleBar(scrollContainerEl1, {
+      autoHide: false,
+      clickOnTrack: true,
+    });
+    const el2 = new SimpleBar(scrollContainerEl2, {
+      autoHide: false,
+      clickOnTrack: true,
+    });
+
+    const scrollToMiddle = (scrollContainerEl: HTMLElement) => {
+      const scrollTop =
+        (scrollContainerEl.scrollHeight - scrollContainerEl.clientHeight) / 2;
+      scrollContainerEl.scrollTop = scrollTop;
+    };
+
+    [el1, el2].forEach((el) => {
+      scrollToMiddle(el.getScrollElement());
+    });
+
+    setTimeout(() => {
+      scrollContainerEl1.classList.add("border-radius");
+      scrollContainerEl2.classList.add("border-radius");
+    });
   });
 
   return (
@@ -206,7 +226,11 @@ const Popup = () => {
         </p>
       </div>
       <div class="split-view">
-        <div class="popper-scroll-container" ref={scrollContainerEl1}>
+        <div
+          class="popper-scroll-container"
+          data-simplebar-match-webkit
+          ref={scrollContainerEl1}
+        >
           <div class="dropdown-area" style="margin: 500px 0;">
             <FocusGutter />
             <_Popper></_Popper>
@@ -236,7 +260,11 @@ const Popup = () => {
         </p>
       </div>
       <div class="split-view">
-        <div class="popper-scroll-container" ref={scrollContainerEl2}>
+        <div
+          class="popper-scroll-container"
+          data-simplebar-match-webkit
+          ref={scrollContainerEl2}
+        >
           <div class="dropdown-area" style="margin: 500px 0;">
             <FocusGutter />
             <PopperConditionalRender></PopperConditionalRender>

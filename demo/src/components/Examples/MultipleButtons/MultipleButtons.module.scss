@@ -1,0 +1,39 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+.scrollable-page {
+  height: 200px;
+  width: 100%;
+  position: relative;
+}
+
+.page {
+  height: 800px;
+}
+
+.main {
+  margin: 0 15px;
+}
+
+.dropdown {
+  position: sticky;
+  top: 0px;
+  padding-left: 10px;
+}
+
+.floating-btn {
+  position: absolute;
+  right: 25px;
+  bottom: 15px;
+
+  button {
+    box-shadow: none !important;
+  }
+}
+
+@media (min-width: 600px) {
+  .scrollable-page {
+    min-width: 280px;
+  }
+}

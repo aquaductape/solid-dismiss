@@ -2,6 +2,7 @@ import { Component, lazy } from "solid-js";
 
 import "./App.scss";
 import "./codeTheme.scss";
+import "./bootstrap.scss";
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
 import BasicDropdown from "./components/ExamplesSection/BasicDropdown";
@@ -15,6 +16,7 @@ import DropdownOverlay from "./components/ExamplesSection/DropdownOverlay";
 import Nested from "./components/ExamplesSection/Nested";
 import Animation from "./components/ExamplesSection/Animations";
 import NavbarEx from "./components/ExamplesSection/Navbar";
+import MultipleButtons from "./components/ExamplesSection/MultipleButtons";
 import Caveat from "./components/Docs/Caveat";
 import Popper from "./components/ExamplesSection/Popper";
 
@@ -36,6 +38,7 @@ const App: Component = () => {
           <Animation></Animation>
           <NavbarEx></NavbarEx>
           <Popper></Popper>
+          <MultipleButtons></MultipleButtons>
           <Nested></Nested>
         </section>
         <section>

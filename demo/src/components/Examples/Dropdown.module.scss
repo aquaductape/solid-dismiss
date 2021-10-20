@@ -18,6 +18,10 @@
   background: var(--dropdown-bg);
   box-shadow: 0px 8px 10px 0px var(--dropdown-root-shadow);
   z-index: 1;
+
+  &.top {
+    top: 100%;
+  }
 }
 
 .item {
