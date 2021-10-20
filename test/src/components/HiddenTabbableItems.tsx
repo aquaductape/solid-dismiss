@@ -4,7 +4,7 @@ import IFrame from "./IFrame";
 
 const HiddenRoot = () => {
   return (
-    <div style="display: none">
+    <span style="display: none">
       <div>
         {" "}
         <button>Hidden Button</button>
@@ -17,13 +17,13 @@ const HiddenRoot = () => {
         {" "}
         <button>Hidden Button</button>
       </div>
-    </div>
+    </span>
   );
 };
 
 const EmptyNested = () => {
   return (
-    <div style="position: absolute; pointer-events: none;">
+    <span style="position: absolute; pointer-events: none;">
       <div>
         <div>
           <button style="display: none;">Hidden Button</button>
@@ -31,7 +31,7 @@ const EmptyNested = () => {
       </div>
       <div style="display: none;">
         <div>
-          <IFrame></IFrame>
+          <IFrame notTest></IFrame>
         </div>
       </div>
       <div>
@@ -44,7 +44,7 @@ const EmptyNested = () => {
         <button hidden>Hidden Button</button>
         <button class="hidden-class">Hidden Button</button>
       </div>
-    </div>
+    </span>
   );
 };
 

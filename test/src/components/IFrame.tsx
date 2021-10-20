@@ -5,7 +5,13 @@ const IFrame: Component<{
   id?: string;
   class?: string;
   bodyHasClickListener?: boolean;
-}> = ({ bodyHasClickListener = false, id, class: className }) => {
+  notTest?: boolean;
+}> = ({
+  bodyHasClickListener = false,
+  id,
+  class: className,
+  notTest = false,
+}) => {
   let el!: HTMLIFrameElement;
 
   onMount(() => {
@@ -37,6 +43,7 @@ const IFrame: Component<{
         ref={el}
         width="100%"
         height="100%"
+        {...(notTest ? {} : { "data-test-iframe": "" })}
       ></iframe>
     </div>
   );

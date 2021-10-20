@@ -17,6 +17,7 @@ const Button: Component<{
         e.currentTarget.focus();
         props.onClick && props.onClick(e);
       }}
+      data-test-menu-button
       ref={props.ref}
     >
       {props.children ? (

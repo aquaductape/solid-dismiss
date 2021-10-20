@@ -57,7 +57,9 @@ test("close stacks as tabbing forwards outside all 3 stacks", async (t) => {
 test("close all 3 stacks when tabbing from last nested tabbable items", async (t) => {
   await t.click(`${idClass}-1-level-1-container button`);
   await loopStacks(t, [2, 3], async (t, num) => {
-    await t.click(`${idClass}-1-level-${num}-container:nth-child(3) button`);
+    await t.click(
+      `div${idClass}-1-level-${num}-container:nth-of-type(3) button`
+    );
   });
   await loopStacks(t, [1, 2, 3], async (t, num) => {
     await t.expect(exists(`${id}-1-level-${num}-popup`)).ok();

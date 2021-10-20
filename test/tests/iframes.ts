@@ -7,7 +7,6 @@ const idClass = ".iframes-bcl";
 
 test("open 3 levels with keyboard", async (t) => {
   await t.click(`${id} h2`);
-  await t.hover("#foobar");
   await t.pressKey("tab").pressKey("enter");
   await t.expect(exists(`${id}-1-level-1-popup`)).ok();
   await t.wait(100); // to solve Firefox iframe rendering issue
@@ -36,7 +35,7 @@ test("close when clicking menuPopup iframe, then clicking outside iframe", async
 
   await t.click(`${idClass}-1-level-1-container button`);
   await t.wait(100); // to solve Firefox iframe rendering issue
-  await t.click(`${id}-1-level-1-popup iframe`);
+  await t.click(`${id}-1-level-1-popup [data-test-iframe]`);
   await t.expect(exists(`${id}-1-level-1-popup`)).ok();
   await t.click(`${id} .lone-iframe`);
   await t.expect(exists(`${id}-1-level-1-popup`)).notOk();
@@ -49,7 +48,7 @@ test("open 2 stacks, click topmost iframe, then click outside, all stacks should
   await t.click(`${idClass}-1-level-1-container button`);
   await t.click(`${idClass}-1-level-2-container button`);
   await t.wait(100); // to solve Firefox iframe rendering issue
-  await t.click(`${id}-1-level-2-popup iframe`);
+  await t.click(`${id}-1-level-2-popup [data-test-iframe]`);
   await t.expect(exists(`${id}-1-level-1-popup`)).ok();
   await t.expect(exists(`${id}-1-level-2-popup`)).ok();
   await t.click(`${id}`);
@@ -65,13 +64,13 @@ test("open 3 stacks, click topmost iframe, close all stacks by clicking one at a
     await t.click(`${idClass}-1-level-${num}-container button`);
   });
   await t.wait(100); // to solve Firefox iframe rendering issue
-  await t.click(`${id}-1-level-3-popup iframe`);
+  await t.click(`${id}-1-level-3-popup [data-test-iframe]`);
   // uses polling to detect iframe context, which is why we're waiting
   await t.wait(400);
-  await t.click(`${id}-1-level-2-popup iframe`);
+  await t.click(`${id}-1-level-2-popup [data-test-iframe]`);
   await t.wait(400);
   await t.expect(exists(`${id}-1-level-3-popup`)).notOk();
-  await t.click(`${id}-1-level-1-popup iframe`);
+  await t.click(`${id}-1-level-1-popup [data-test-iframe]`);
   await t.wait(400);
   await t.expect(exists(`${id}-1-level-2-popup`)).notOk();
   await t.click(`${id}`);
@@ -88,9 +87,9 @@ test("open 2 stacks, click topmost iframe, then click neighbor iframe, then clic
   });
   await t.wait(100); // to solve Firefox iframe rendering issue
   // uses polling to detect iframe context, which is why we're waiting
-  await t.click(`${id}-1-level-2-popup iframe.f-1`);
+  await t.click(`${id}-1-level-2-popup [data-test-iframe].f-1`);
   await t.wait(400);
-  await t.click(`${id}-1-level-2-popup iframe.f-2`);
+  await t.click(`${id}-1-level-2-popup [data-test-iframe].f-2`);
   await t.wait(400);
   await t.expect(exists(`${id}-1-level-2-popup`)).ok();
   await t.click(`${idClass}-1-level-3-container button`);
@@ -109,7 +108,7 @@ test("open 3 stacks, click topmost iframe, then click  stack2 menuButton close 3
   });
   await t.wait(100); // to solve Firefox iframe rendering issue
   // uses polling to detect iframe context, which is why we're waiting
-  await t.click(`${id}-1-level-3-popup iframe.f-1`);
+  await t.click(`${id}-1-level-3-popup [data-test-iframe].f-1`);
   await t.wait(400);
   await t.click(`${idClass}-1-level-3-container button`);
   await t.wait(400);
