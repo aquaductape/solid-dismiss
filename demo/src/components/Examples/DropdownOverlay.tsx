@@ -9,7 +9,6 @@ export const DropdownOverlay = () => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let dropdownContainerEl!: HTMLDivElement;
-  let dropdownEl!: HTMLUListElement;
 
   const onClickItem = (e: Event) => {
     e.preventDefault();
@@ -138,7 +137,6 @@ export const DropdownOverlayElement = () => {
 //   const [open, setOpen] = createSignal(false);
 //   let btnEl;
 //   let dropdownContainerEl;
-//   let dropdownEl;
 //
 //   const onClickClose = () => {
 //     setOpen(false);
@@ -162,7 +160,6 @@ export const DropdownOverlayElement = () => {
 //       <button ref={btnEl}>Button</button>
 //       <Dismiss
 //         menuButton={btnEl}
-//         menuPopup={dropdownEl}
 //         open={open}
 //         setOpen={setOpen}
 //         mount="body"
@@ -172,7 +169,7 @@ export const DropdownOverlayElement = () => {
 //       >
 //         <div class="dropdown">
 //           <div class="overlay" onClick={onClickClose}></div>
-//           <ul class="dropdown-inner" ref={dropdownEl}>
+//           <ul class="dropdown-inner">
 //             <li><a href="#">cat</a></li>
 //             <li><a href="#">dog</a></li>
 //             <li><a href="#">fish</a></li>
