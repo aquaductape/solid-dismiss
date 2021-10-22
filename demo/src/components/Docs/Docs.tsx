@@ -463,7 +463,7 @@ const Docs = () => {
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
-                      <code>false</code>
+                      <code>true</code>
                     </p>
                   </dd>
                 </dl>

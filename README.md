@@ -154,7 +154,7 @@ closeWhenMenuButtonIsTabbed?: boolean;
  *
  * If `overlay` is `true`, menuPopup will always close when menu button is clicked
  *
- * @defaultValue `false`
+ * @defaultValue `true`
  */
 closeWhenMenuButtonIsClicked?: boolean;
 /**
