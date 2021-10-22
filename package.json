@@ -17,7 +17,9 @@
     "click outside",
     "click elsewhere",
     "solidjs",
-    "solidjs dismiss"
+    "solidjs dismiss",
+    "solid-js",
+    "solid-js dismiss"
   ],
   "type": "module",
   "files": [
