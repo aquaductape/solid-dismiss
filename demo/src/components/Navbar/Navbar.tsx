@@ -119,7 +119,7 @@ const Navbar = () => {
               aria-label="Toggle between dark and light mode"
               onClick={onClickTheme}
             >
-              <Icon path={theme() === "light" ? sun : moon} />
+              <Icon path={theme() === "light" ? moon : sun} />
             </button>
             <a
               class={s("github") + " focusable"}
