@@ -814,6 +814,7 @@ const Dismiss: Component<TDismiss> = (props) => {
             overlayElement,
             cursorKeys,
             focusElementOnClose,
+            focusSentinelBeforeEl: state.focusSentinelBeforeEl,
             upperStackRemovedByFocusOut: false,
             detectIfMenuButtonObscured: false,
             queueRemoval: false,

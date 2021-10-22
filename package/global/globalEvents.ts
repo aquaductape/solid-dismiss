@@ -272,11 +272,11 @@ const onCursorKeys = (e: KeyboardEvent) => {
 
   if (horizontalKeys.includes(e.key)) return;
 
-  const { menuBtnEls, menuPopupEl, containerEl } =
+  const { menuBtnEls, menuPopupEl, containerEl, focusSentinelBeforeEl } =
     dismissStack[dismissStack.length - 1];
   const menuBtnEl = getMenuButton(menuBtnEls);
 
-  const activeElement = document.activeElement!;
+  let activeElement = document.activeElement!;
 
   let direction: "forwards" | "backwards";
 
@@ -286,14 +286,19 @@ const onCursorKeys = (e: KeyboardEvent) => {
     direction = "backwards";
   }
 
-  if (activeElement === menuBtnEl || activeElement === menuPopupEl) {
+  if (
+    activeElement === menuBtnEl ||
+    activeElement === menuPopupEl ||
+    activeElement === containerEl
+  ) {
     direction = "forwards";
+    activeElement = focusSentinelBeforeEl!;
   }
 
   const el = getNextTabbableElement({
     from: activeElement,
     direction,
-    stopAtElement: containerEl!,
+    stopAtElement: menuPopupEl!,
   });
 
   if (el) {

@@ -17,6 +17,7 @@ export type TDismissStack = Pick<
     | "menuPopupEl"
     | "overlayEl"
     | "overlay"
+    | "focusSentinelBeforeEl"
   > & {
     id: string;
     menuBtnEls: HTMLElement[];
