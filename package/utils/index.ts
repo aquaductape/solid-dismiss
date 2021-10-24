@@ -1,4 +1,5 @@
 import { TLocalState } from "../local/localState";
+import { getMenuButton } from "../local/menuButton";
 import { getNextTabbableElement } from "./tabbing";
 
 /**
@@ -95,6 +96,9 @@ export const queryElement = (
   if (inputElement === "menuPopup") {
     return state.menuPopupEl!;
   }
+  if (inputElement === "menuButton") {
+    return getMenuButton(state.menuBtnEls!);
+  }
   if (type === "focusElementOnOpen") {
     if (inputElement === "firstChild") {
       return getNextTabbableElement({
@@ -117,10 +121,6 @@ export const queryElement = (
   }
   if (typeof inputElement === "string" && type === "menuButton") {
     return document.querySelector(inputElement) as HTMLElement;
-  }
-  if (typeof inputElement === "string" && type === "closeButton") {
-    if (!state.containerEl) return null as any;
-    return state.containerEl.querySelector(inputElement) as HTMLElement;
   }
   if (typeof inputElement === "string") {
     return document.querySelector(inputElement) as HTMLElement;
