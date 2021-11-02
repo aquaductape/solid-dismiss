@@ -112,7 +112,6 @@ export type TDismiss = {
   focusElementOnOpen?:
     | "menuPopup"
     | "firstChild"
-    | string
     | JSX.Element
     | (() => JSX.Element);
   /**
@@ -130,11 +129,7 @@ export type TDismiss = {
    *
    * When Tabbing forwards, focuses on tabbable element after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When programmatically closed, such as clicking close button, then menuButton will be focused. When "click" outside, user-agent determines which element recieves focus, however if `Dismiss.overlay` or `Dismiss.overlayElement` are set, then menuButton will be focused instead.
    */
-  focusElementOnClose?:
-    | "menuButton"
-    | string
-    | JSX.Element
-    | FocusElementOnCloseOptions;
+  focusElementOnClose?: "menuButton" | JSX.Element | FocusElementOnCloseOptions;
 
   /**
    *
@@ -255,7 +250,7 @@ type FocusElementOnCloseOptions = {
    * @defaultValue `"menuButton"`
    *
    */
-  tabBackwards?: "menuButton" | string | JSX.Element;
+  tabBackwards?: "menuButton" | JSX.Element;
   /**
    *
    * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
@@ -266,7 +261,7 @@ type FocusElementOnCloseOptions = {
    *
    * @defaultValue next tabbable element after menuButton;
    */
-  tabForwards?: "menuButton" | string | JSX.Element;
+  tabForwards?: "menuButton" | JSX.Element;
   /**
    * focus on element when exiting menuPopup via click outside popup.
    *
@@ -276,21 +271,21 @@ type FocusElementOnCloseOptions = {
    *
    * When clicking, user-agent determines which element recieves focus.
    */
-  click?: "menuButton" | string | JSX.Element;
+  click?: "menuButton" | JSX.Element;
   /**
    *
    * focus on element when exiting menuPopup via "Escape" key
    *
    * @defaultValue `"menuButton"`
    */
-  escapeKey?: "menuButton" | string | JSX.Element;
+  escapeKey?: "menuButton" | JSX.Element;
   /**
    *
    * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
    *
    * @dafaultValue `"menuButton"`
    */
-  scrolling?: "menuButton" | string | JSX.Element;
+  scrolling?: "menuButton" | JSX.Element;
 };
 
 export type OnOpenHandler = (

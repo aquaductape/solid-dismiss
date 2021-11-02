@@ -5,7 +5,7 @@ specifiers:
   release-it: ^14.10.0
   rollup: ^2.28.2
   rollup-preset-solid: ^0.3.0
-  solid-js: ^1.0.7
+  solid-js: ^1.2.1
   typedoc: ^0.22.4
 
 devDependencies:
@@ -13,7 +13,7 @@ devDependencies:
   release-it: 14.11.6
   rollup: 2.58.0
   rollup-preset-solid: 0.3.0
-  solid-js: 1.1.5
+  solid-js: 1.2.1
   typedoc: 0.22.4
 
 packages:
@@ -2226,8 +2226,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /solid-js/1.1.5:
-    resolution: {integrity: sha512-cwMNe1U/1bqCTMco2za6LDU66jDn/57m5kfrDUhW3ls9YIbaREdktqPFGULrill22qyoFDngEg5hgm6a6vf6wg==}
+  /solid-js/1.2.1:
+    resolution: {integrity: sha512-Ooi8lYHc08IDRDAPcT5faPSVjqLo6sfIY58TG/PQLwwEt59jakw67Q8qx/csSyCqLmPD8fAFyzdezXKJxOKmIQ==}
     dev: true
 
   /source-map-support/0.5.20:
