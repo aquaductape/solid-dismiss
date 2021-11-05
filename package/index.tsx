@@ -71,7 +71,7 @@ export type TDismiss = {
    */
   onOpen?: OnOpenHandler;
   /**
-   * css selector, queried from document, to get menu button element. Or pass JSX element
+   * CSS selector, queried from document, to get menu button element. Or pass JSX element
    *
    * @remark There are situations where there are multiple JSX menu buttons that open the same menu popup, but only one of them is rendered based on device width. Use signal if JSX menu buttons are conditionally rendered. Use array if all menu buttons are rendered, when all but one, are hidden via CSS `display: none;` declaration.
    */
@@ -82,7 +82,7 @@ export type TDismiss = {
     | (string | JSX.Element)[];
   /**
    *
-   * css selector, queried from document, to get menu popup element. Or pass JSX element
+   * CSS selector, queried from document, to get menu popup element. Or pass JSX element
    *
    * @defaultValue root component element queries first child element
    */
@@ -105,7 +105,7 @@ export type TDismiss = {
    *
    * which element, via selector*, to recieve focus after popup opens.
    *
-   * *css string queried from root component, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
+   * *CSS string queried from root component, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
    *
    * @defaultValue focus remains on `"menuButton"`
    */
@@ -118,7 +118,7 @@ export type TDismiss = {
    *
    * Which element, via selector*, to recieve focus after popup closes.
    *
-   * *selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
+   * *CSS string queried from document, or if string value is `"menuButton"` uses menuButton element
    *
    * @remarks
    *

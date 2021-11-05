@@ -190,7 +190,7 @@ const Docs = () => {
               <div className="tsd-comment tsd-typography">
                 <div className="lead">
                   <p>
-                    css selector, queried from document, to get menu button
+                    CSS selector, queried from document, to get menu button
                     element. Or pass JSX element
                   </p>
                 </div>
@@ -228,7 +228,7 @@ const Docs = () => {
               <div className="tsd-comment tsd-typography">
                 <div className="lead">
                   <p>
-                    css selector, queried from document, to get menu popup
+                    CSS selector, queried from document, to get menu popup
                     element. Or pass JSX element
                   </p>
                 </div>
@@ -321,7 +321,7 @@ const Docs = () => {
                 </div>
                 <div>
                   <p>
-                    *css string queried from root component, or if string value
+                    *CSS string queried from root component, or if string value
                     is <code>"menuPopup"</code> uses menuPopup element, or if
                     string value is <code>"firstChild"</code> uses first
                     tabbable element inside menuPopup.
@@ -369,8 +369,8 @@ const Docs = () => {
                 </div>
                 <div>
                   <p>
-                    *selector: css string queried from document, or if string
-                    value is <code>"menuButton"</code> uses menuButton element
+                    *CSS string queried from document, or if string value is{" "}
+                    <code>"menuButton"</code> uses menuButton element
                   </p>
                 </div>
                 <dl className="tsd-comment-tags">
@@ -1407,8 +1407,9 @@ const Docs = () => {
                 </div>
                 <div>
                   <p>
-                    css selector, queried from root component, to get menu popup
-                    element. Or pass JSX element
+                    Pass CSS selector, queried from root component,{" "}
+                    <code>"menuPopup"</code> uses menuPopup element, or pass JSX
+                    element.
                   </p>
                 </div>
                 <dl className="tsd-comment-tags">

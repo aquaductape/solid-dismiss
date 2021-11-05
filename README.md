@@ -318,7 +318,7 @@ onAfterExit?: (el: Element) => void;
 /**
  * Change element where CSS classes are appended and passed to callbacks.
  *
- * css selector, queried from root component, to get menu popup element. Or pass JSX element
+ * Pass CSS selector, queried from root component, `"menuPopup"` uses menuPopup element, or pass JSX element.
  *
  * @defaultValue The element is the root element of the component, where CSS classes are appended to, and it is also passed to callbacks
  */
