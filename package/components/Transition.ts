@@ -72,7 +72,7 @@ export const Transition: Component<
     const propStr = camelize(type) + "Class";
     // @ts-ignore
     const classState = props[propStr] as string;
-    return classState ? classState : `${name}-${type}`;
+    return classState ? classState.split(" ") : [`${name}-${type}`];
   }
 
   const getElement = (el: Element) => {
@@ -99,11 +99,11 @@ export const Transition: Component<
 
     onBeforeEnter && onBeforeEnter(el);
 
-    el.classList.add(enterClasses);
-    el.classList.add(enterActiveClasses);
+    el.classList.add(...enterClasses);
+    el.classList.add(...enterActiveClasses);
     requestAnimationFrame(() => {
-      el.classList.remove(enterClasses);
-      el.classList.add(enterToClasses);
+      el.classList.remove(...enterClasses);
+      el.classList.add(...enterToClasses);
       onEnter && onEnter(el, endTransition);
       if (!onEnter || onEnter.length < 2) {
         el.addEventListener("transitionend", endTransition, { once: true });
@@ -113,8 +113,8 @@ export const Transition: Component<
 
     function endTransition() {
       if (el) {
-        el.classList.remove(enterActiveClasses);
-        el.classList.remove(enterToClasses);
+        el.classList.remove(...enterActiveClasses);
+        el.classList.remove(...enterToClasses);
         s1() !== _el && set1(_el);
         onAfterEnter && onAfterEnter(el);
       }
@@ -131,11 +131,11 @@ export const Transition: Component<
     if (!_el.parentNode) return endTransition();
     onBeforeExit && onBeforeExit(_el);
 
-    el.classList.add(exitClasses);
-    el.classList.add(exitActiveClasses);
+    el.classList.add(...exitClasses);
+    el.classList.add(...exitActiveClasses);
     requestAnimationFrame(() => {
-      el.classList.remove(exitClasses);
-      el.classList.add(exitToClasses);
+      el.classList.remove(...exitClasses);
+      el.classList.add(...exitToClasses);
     });
     onExit && onExit(el, endTransition);
     if (!onExit || onExit.length < 2) {
@@ -144,8 +144,8 @@ export const Transition: Component<
     }
 
     function endTransition() {
-      el.classList.remove(exitActiveClasses);
-      el.classList.remove(exitToClasses);
+      el.classList.remove(...exitActiveClasses);
+      el.classList.remove(...exitToClasses);
       s1() === _el && set1(undefined);
       onAfterExit && onAfterExit(el);
     }
