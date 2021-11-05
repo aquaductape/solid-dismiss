@@ -6,7 +6,7 @@ import {
   createSignal,
   children,
 } from "solid-js";
-import { camelize } from "../utils";
+import { camelize, queryElement } from "../utils";
 
 export type DismissAnimation = {
   /**
@@ -30,11 +30,9 @@ export type DismissAnimation = {
    *
    * css selector, queried from root component, to get menu popup element. Or pass JSX element
    *
-   * Using `"container"` value will use root element of the component
-   *
    * @defaultValue The element is the root element of the component, where CSS classes are appended to, and it is also passed to callbacks
    */
-  appendToElement?: string | Node;
+  appendToElement?: "menuPopup" | JSX.Element;
   /**
    * Whether to apply transition on initial render.
    *
@@ -79,6 +77,13 @@ export const Transition: Component<
 
   const getElement = (el: Element) => {
     if (appendToElement) {
+      if (appendToElement === "menuPopup") {
+        return queryElement(
+          { containerEl: el as HTMLDivElement },
+          { inputElement: null, type: "menuPopup" }
+        );
+      }
+
       return typeof appendToElement === "string"
         ? el.querySelector(appendToElement)!
         : (appendToElement as Element);

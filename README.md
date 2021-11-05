@@ -320,11 +320,9 @@ onAfterExit?: (el: Element) => void;
  *
  * css selector, queried from root component, to get menu popup element. Or pass JSX element
  *
- * Using `"container"` value will use root element of the component
- *
  * @defaultValue The element is the root element of the component, where CSS classes are appended to, and it is also passed to callbacks
  */
-appendToElement?: string | Node;
+appendToElement?: "menuPopup" | string | JSX.Element;
 /**
  * Whether to apply transition on initial render.
  *

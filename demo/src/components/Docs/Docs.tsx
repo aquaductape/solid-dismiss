@@ -1394,9 +1394,9 @@ const Docs = () => {
                 To
                 <wbr />
                 Element<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                <span class="tsd-signature-type">"menuPopup"</span>
                 <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">Node</span>
+                <span className="tsd-signature-type">JSX.Element</span>
               </h5>
               <div className="tsd-comment tsd-typography">
                 <div className="lead">
@@ -1409,10 +1409,6 @@ const Docs = () => {
                   <p>
                     css selector, queried from root component, to get menu popup
                     element. Or pass JSX element
-                  </p>
-                  <p>
-                    Using <code>"container"</code> value will use root element
-                    of the component
                   </p>
                 </div>
                 <dl className="tsd-comment-tags">

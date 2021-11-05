@@ -414,8 +414,18 @@ const Dismiss: Component<TDismiss> = (props) => {
   let endEnterTransitionOverlayRef: () => void;
   let exitRunning = false;
 
-  function getElement(el: Element, appendToElement?: string | Node) {
+  function getElement(
+    el: Element,
+    appendToElement?: "menuPopup" | JSX.Element
+  ) {
     if (appendToElement) {
+      if (appendToElement === "menuPopup") {
+        return queryElement(
+          { containerEl: el as HTMLDivElement },
+          { inputElement: null, type: "menuPopup" }
+        );
+      }
+
       return typeof appendToElement === "string"
         ? el.querySelector(appendToElement)!
         : (appendToElement as Element);
