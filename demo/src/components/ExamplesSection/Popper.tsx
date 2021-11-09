@@ -210,7 +210,7 @@ const Popup = () => {
           , a tooltip position engine, with Dismiss.
         </p>
         <p>
-          Luckly, there's a Solid binding for popper.js,{" "}
+          Luckily, there's a Solid binding for popper.js,{" "}
           <Anchor
             class="page-anchor"
             href="https://github.com/LXSMNSYC/solid-popper"
@@ -253,7 +253,7 @@ const Popup = () => {
           longer rendered, and it could be done in{" "}
           <code class="code">onOpen</code> callback or createEffect. But since
           we're using Dismiss animation, destroying during animation will remove
-          tooltip's styling, which will cause intended visual result. To run
+          tooltip's styling, which will cause unintended visual result. To run
           destroy after animation is done, we use{" "}
           <code class="code">onAfterExit</code> callback in{" "}
           <code class="code">animation</code> prop.

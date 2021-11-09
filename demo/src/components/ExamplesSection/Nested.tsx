@@ -242,7 +242,7 @@ const DropdownOverlay = () => {
         <p>
           This library can manage layers of popups. Pressing Escape will close
           most recent popup. When clicking/focusing around, popups that don't
-          contain target/activeElement will close.
+          contain clicked target or activeElement will close.
         </p>
       </div>
       <div class="split-view">
