@@ -1,3 +1,4 @@
+import { createIntersectionObserver } from "@solid-primitives/intersection-observer";
 import { createEffect, createSignal } from "solid-js";
 import { Component, onMount, Show } from "solid-js";
 import { scopeModuleClasses } from "../../utils/scopModuleClasses";
@@ -9,23 +10,27 @@ const CodeEditor: Component<{ contentJSX: string; contentCSS?: string }> = ({
   contentJSX,
   contentCSS,
 }) => {
+  let codeContainerEl!: HTMLDivElement;
   let codeEl!: HTMLDivElement;
   const [language, setLanguage] = createSignal("jsx");
+  const [showEditor, setShowEditor] = createSignal(false);
 
-  // onMount(() => {
-  //   codeEl.innerHTML = contentJSX;
-  // });
-
-  const onClick = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    const button = target.closest("button") as HTMLElement;
-    if (!button) return;
-    const datatype = button.dataset.type;
-    setLanguage(datatype!);
-  };
+  onMount(() => {
+    createIntersectionObserver([codeContainerEl], (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setShowEditor(true);
+          observer.unobserve(codeContainerEl);
+        }
+      });
+    });
+  });
 
   createEffect(() => {
     const value = language();
+
+    if (!showEditor()) return;
+
     if (value === "jsx") {
       const el = codeEl.querySelector(".simplebar-content") || codeEl;
       el.innerHTML = contentJSX;
@@ -36,8 +41,16 @@ const CodeEditor: Component<{ contentJSX: string; contentCSS?: string }> = ({
     }
   });
 
+  const onClick = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    const button = target.closest("button") as HTMLElement;
+    if (!button) return;
+    const datatype = button.dataset.type;
+    setLanguage(datatype!);
+  };
+
   return (
-    <div>
+    <div class={s("code-editor-container")} ref={codeContainerEl}>
       <div class={s("tabs")} onClick={onClick}>
         <button
           class={s("tab-button")}
