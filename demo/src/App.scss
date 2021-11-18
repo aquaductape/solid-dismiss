@@ -436,6 +436,7 @@ button {
   }
 
   .text-content {
+    font-size: 3.7vw;
     white-space: nowrap;
   }
 
@@ -776,6 +777,9 @@ button {
 @media (min-width: 500px) {
   .btn-fusion {
     width: auto;
+    .text-content {
+      font-size: 16px;
+    }
   }
 
   .hero {
@@ -795,6 +799,12 @@ button {
 }
 
 @media (min-width: 900px) {
+  .btn-fusion {
+    .text-content {
+      font-size: 18px;
+    }
+  }
+
   .split-view {
     grid-template-columns: 1fr minmax(420px, 750px);
     column-gap: 100px;
