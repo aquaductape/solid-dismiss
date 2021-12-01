@@ -1,5 +1,5 @@
 import { JSX, createSignal, sharedConfig, Component } from "solid-js";
-import { insert } from "solid-js/web";
+import { insert, isServer } from "solid-js/web";
 
 const CreatePortal: Component<{
   mount?: Node;
@@ -11,6 +11,8 @@ const CreatePortal: Component<{
   marker?: Text | null;
   onCreate?: (mount: HTMLElement, container: HTMLElement, marker: Text) => void;
 }> = (props) => {
+  if (isServer) return "";
+
   const { useShadow } = props,
     marker = props.marker || document.createTextNode(""),
     mount = props.mount || document.body;
