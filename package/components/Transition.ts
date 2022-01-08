@@ -102,13 +102,15 @@ export const Transition: Component<
     el.classList.add(...enterClasses);
     el.classList.add(...enterActiveClasses);
     requestAnimationFrame(() => {
-      el.classList.remove(...enterClasses);
-      el.classList.add(...enterToClasses);
-      onEnter && onEnter(el, endTransition);
-      if (!onEnter || onEnter.length < 2) {
-        el.addEventListener("transitionend", endTransition, { once: true });
-        el.addEventListener("animationend", endTransition, { once: true });
-      }
+      requestAnimationFrame(() => {
+        el.classList.remove(...enterClasses);
+        el.classList.add(...enterToClasses);
+        onEnter && onEnter(el, endTransition);
+        if (!onEnter || onEnter.length < 2) {
+          el.addEventListener("transitionend", endTransition, { once: true });
+          el.addEventListener("animationend", endTransition, { once: true });
+        }
+      });
     });
 
     function endTransition() {

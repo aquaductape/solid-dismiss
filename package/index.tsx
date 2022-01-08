@@ -483,22 +483,24 @@ const Dismiss: Component<TDismiss> = (props) => {
     el.classList.add(...enterActiveClasses);
 
     requestAnimationFrame(() => {
-      el.classList.remove(...enterClasses);
-      el.classList.add(...enterToClasses);
-      onEnter && onEnter(el, endTransition);
-      if (!onEnter || onEnter!.length < 2) {
-        if (type === "popup") {
-          endEnterTransitionRef = endTransition;
-        } else {
-          endEnterTransitionOverlayRef = endTransition;
+      requestAnimationFrame(() => {
+        el.classList.remove(...enterClasses);
+        el.classList.add(...enterToClasses);
+        onEnter && onEnter(el, endTransition);
+        if (!onEnter || onEnter!.length < 2) {
+          if (type === "popup") {
+            endEnterTransitionRef = endTransition;
+          } else {
+            endEnterTransitionOverlayRef = endTransition;
+          }
+          el.addEventListener("transitionend", endTransition, {
+            once: true,
+          });
+          el.addEventListener("animationend", endTransition, {
+            once: true,
+          });
         }
-        el.addEventListener("transitionend", endTransition, {
-          once: true,
-        });
-        el.addEventListener("animationend", endTransition, {
-          once: true,
-        });
-      }
+      });
     });
 
     function endTransition() {
