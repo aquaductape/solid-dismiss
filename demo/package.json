@@ -12,6 +12,7 @@
   "dependencies": {
     "@amoutonbrady/solid-heroicons": "^0.8.0",
     "@popperjs/core": "^2.10.2",
+    "@solid-primitives/intersection-observer": "^1.2.1",
     "@types/bootstrap": "^5.1.6",
     "@types/prismjs": "^1.16.6",
     "bootstrap": "^5.1.1",
