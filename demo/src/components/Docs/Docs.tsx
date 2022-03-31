@@ -714,6 +714,42 @@ const Docs = () => {
             </li>
             <li className="tsd-parameter">
               <h5>
+                <span className="tsd-flag ts-flagOptional">Optional</span> modal
+                <span className="tsd-signature-symbol">?: </span>
+                <span className="tsd-signature-type">boolean</span>
+              </h5>
+              <div className="tsd-comment tsd-typography">
+                <div className="lead">
+                  <p>
+                    Shorthand for <code>Dismiss.overlay</code> to{" "}
+                    <code>true</code>, <code>Dismiss.overlayElement</code> to{" "}
+                    <code>true</code>, <code>Dismiss.trapFocus</code> to{" "}
+                    <code>true</code>, <code>Dismiss.removeScrollbar</code> to{" "}
+                    <code>true</code>, and <code>Dismiss.mount</code> to{" "}
+                    <code>"body"</code>. Does not override the values of already
+                    setted properties.
+                  </p>
+                </div>
+                <div>
+                  <p>
+                    Also adds <code>pointer-events: none;</code> css declaration
+                    to menuPopup element and then{" "}
+                    <code>pointer-events: all;</code> to either element that has
+                    role="dialog" attribute or first child of menuPopup element.
+                  </p>
+                </div>
+                <dl className="tsd-comment-tags">
+                  <dt>defaultvalue</dt>
+                  <dd>
+                    <p>
+                      <code>false</code>
+                    </p>
+                  </dd>
+                </dl>
+              </div>
+            </li>
+            <li className="tsd-parameter">
+              <h5>
                 <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
                 enable
                 <wbr />
