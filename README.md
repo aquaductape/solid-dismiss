@@ -1,3 +1,6 @@
+<p>
+  <img width="100%" src="https://assets.solidjs.com/banner?type=Solid%20Dismiss&background=tiles&project=%20" alt="Solid Primitives">
+</p>
 <h1 align="center">Solid Dismiss
 <img src="assets/logo.svg" width="40px" height="35px" style="position: relative; top: 5px; pointer-events: none;">
 </h1>
@@ -219,6 +222,14 @@ overlayElement?:
       classList?: { [key: string]: boolean };
       animation?: DismissAnimation;
     };
+/**
+ * Shorthand for `Dismiss.overlay` to `true`, `Dismiss.overlayElement` to `true`, `Dismiss.trapFocus` to `true`, `Dismiss.removeScrollbar` to `true`, and `Dismiss.mount` to `"body"`. Does not override the values of already setted properties.
+ *
+ * Also adds `pointer-events: none;` css declaration to menuPopup element and then `pointer-events: all;` to either element that has role="dialog" attribute or first child of menuPopup element.
+ *
+ * @defaultValue `false`
+ */
+modal?: boolean;
 /**
  *
  * activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.

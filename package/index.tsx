@@ -213,6 +213,14 @@ export type TDismiss = {
         animation?: DismissAnimation;
       };
   /**
+   * Shorthand for `Dismiss.overlay` to `true`, `Dismiss.overlayElement` to `true`, `Dismiss.trapFocus` to `true`, `Dismiss.removeScrollbar` to `true`, and `Dismiss.mount` to `"body"`. Does not override the values of already setted properties.
+   *
+   * Also adds `pointer-events: none;` css declaration to menuPopup element and then `pointer-events: all;` to either element that has role="dialog" attribute or first child of menuPopup element.
+   *
+   * @defaultValue `false`
+   */
+  modal?: boolean;
+  /**
    *
    * activates sentinel element as last tabbable item in menuPopup, that way when Tabbing "forwards" out of menuPopup, the next logical tabblable element after menuButton will be focused.
    *
@@ -303,8 +311,11 @@ export type DismissStack = TDismissStack;
  * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key.
  */
 const Dismiss: Component<TDismiss> = (props) => {
+  const modal = props.modal || false;
+  // @ts-check
+
   const {
-    id = "",
+    id,
     menuButton,
     menuPopup,
     focusElementOnClose,
@@ -316,12 +327,12 @@ const Dismiss: Component<TDismiss> = (props) => {
     closeWhenDocumentBlurs = false,
     closeWhenOverlayClicked = true,
     closeWhenEscapeKeyIsPressed = true,
-    overlay = false,
-    overlayElement = false,
-    trapFocus = false,
-    removeScrollbar = false,
+    overlay = modal,
+    overlayElement = modal,
+    trapFocus = modal,
+    removeScrollbar = modal,
     enableLastFocusSentinel = false,
-    mount,
+    mount = modal ? "body" : undefined,
     // stopComponentEventPropagation = false,
     show = false,
     onOpen,
@@ -339,6 +350,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     cursorKeys,
     focusElementOnClose,
     focusElementOnOpen,
+    // @ts-ignore
     id,
     uniqueId: createUniqueId(),
     menuBtnId: "",
@@ -380,6 +392,26 @@ const Dismiss: Component<TDismiss> = (props) => {
     refContainerCb: (el: HTMLElement) => {
       if (overlayElement) {
         el.style.zIndex = "1000";
+        if (modal) {
+          el.style.pointerEvents = "none";
+          el.style.position = "relative";
+
+          const setDialogElStyle = (el: HTMLElement) => {
+            el.style.pointerEvents = "all";
+          };
+          requestAnimationFrame(() => {
+            const dialog = el.querySelector('[role="dialog"]') as HTMLElement;
+            if (!dialog) {
+              const children = el.children;
+              if (!children) return;
+              const child = children[1];
+              const dialog = child.firstElementChild as HTMLElement;
+              setDialogElStyle(dialog);
+              return;
+            }
+            setDialogElStyle(dialog);
+          });
+        }
       }
       if (props.ref) {
         // @ts-ignore
@@ -418,6 +450,9 @@ const Dismiss: Component<TDismiss> = (props) => {
     el: Element,
     appendToElement?: "menuPopup" | JSX.Element
   ) {
+    if (overlayElement) {
+      el = el.nextElementSibling!;
+    }
     if (appendToElement) {
       if (appendToElement === "menuPopup") {
         return queryElement(
@@ -805,6 +840,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           addGlobalEvents(closeWhenScrolling);
 
           addDismissStack({
+            // @ts-ignore
             id,
             uniqueId: state.uniqueId,
             open: props.open,
@@ -914,7 +950,7 @@ const Dismiss: Component<TDismiss> = (props) => {
     );
   }
 
-  if (props.mount) return marker;
+  if (mount) return marker;
   if (show) return render(props.children);
 
   let strictEqual = false;
