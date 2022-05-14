@@ -1,7 +1,10 @@
-import { Component } from "solid-js";
-const Anchor: Component<{ class?: string; href: string; target?: "_blank" }> = (
-  props
-) => {
+import { ParentComponent } from "solid-js";
+
+const Anchor: ParentComponent<{
+  class?: string;
+  href: string;
+  target?: "_blank";
+}> = (props) => {
   const { href, target } = props;
   return (
     <a

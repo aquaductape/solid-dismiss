@@ -1,6 +1,6 @@
-import { Component } from "solid-js";
+import { ParentComponent } from "solid-js";
 
-const Button: Component<{
+const Button: ParentComponent<{
   id?: string;
   open?: boolean;
   active?: boolean;
