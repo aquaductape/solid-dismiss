@@ -2,6 +2,7 @@ import { onMount } from "solid-js";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import _Nested from "../Examples/Nested";
 import FocusGutter from "../FocusGutter";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const DropdownOverlay = () => {
   const codeContentCSS = `<pre class=" language-jsx" tabindex="0"><code class=" language-css"><span class="token selector">// relevant CSS ...
@@ -237,7 +238,7 @@ const DropdownOverlay = () => {
 
   return (
     <div class="section">
-      <h3>Nested</h3>
+      <H3Anchor>Nested</H3Anchor>
       <div class="explaination">
         <p>
           This library can manage layers of popups. Pressing Escape will close

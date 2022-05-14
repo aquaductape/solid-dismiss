@@ -1,6 +1,7 @@
 import CodeEditor from "../CodeEditor/CodeEditor";
 import _DropdownMounted from "../Examples/DropdownMounted";
 import FocusGutter from "../FocusGutter";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const DropdownMounted = () => {
   const codeContent = `<pre class=" language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -47,7 +48,7 @@ const DropdownMounted = () => {
 
   return (
     <div class="section">
-      <h3>Dropdown Mounted</h3>
+      <H3Anchor>Dropdown Mounted</H3Anchor>
       <div class="explaination">
         <p>
           The dropdown doesn't live in the same markup area as the button, but

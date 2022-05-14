@@ -2,6 +2,7 @@ import { onMount } from "solid-js";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import Dropdown from "../Examples/Dropdown";
 import FocusGutter from "../FocusGutter";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const BasicDropdown = () => {
   const codeContent = `<pre class="language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -32,7 +33,7 @@ const BasicDropdown = () => {
 
   return (
     <div class="section">
-      <h3>Dropdown</h3>
+      <H3Anchor>Dropdown</H3Anchor>
       <div class="explaination">
         <p>
           For a dropdown that has a simple list of clickable items,{" "}

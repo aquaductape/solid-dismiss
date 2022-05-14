@@ -1,4 +1,4 @@
-import { Component, lazy } from "solid-js";
+import { Component, lazy, onMount } from "solid-js";
 
 import "./App.scss";
 import "./codeTheme.scss";
@@ -19,17 +19,23 @@ import NavbarEx from "./components/ExamplesSection/Navbar";
 import MultipleButtons from "./components/ExamplesSection/MultipleButtons";
 import Caveat from "./components/Docs/Caveat";
 import Popper from "./components/ExamplesSection/Popper";
+import { H2Anchor, H3Anchor } from "./components/HeaderAnchor/HeaderAnchor";
 
 const App: Component = () => {
+  onMount(() => {
+    if (location.href) {
+      setTimeout(() => {
+        window.scrollBy(0, -80);
+      });
+    }
+  });
   return (
     <>
       <Navbar></Navbar>
       <main class="main">
         <Hero />
         <section>
-          <h2 id="examples" tabindex="-1">
-            Examples
-          </h2>
+          <H2Anchor>Examples</H2Anchor>
           <Popup></Popup>
           <BasicDropdown></BasicDropdown>
           <DropdownMounted></DropdownMounted>
@@ -42,11 +48,9 @@ const App: Component = () => {
           <Nested></Nested>
         </section>
         <section>
-          <h2 id="docs" tabindex="-1">
-            Docs
-          </h2>
+          <H2Anchor>Docs</H2Anchor>
           <Caveat></Caveat>
-          <h3>Types</h3>
+          <H3Anchor>Types</H3Anchor>
           <Docs></Docs>
         </section>
       </main>

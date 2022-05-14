@@ -7,6 +7,7 @@ import {
 } from "../Examples/Popper/Popper";
 import FocusGutter from "../FocusGutter";
 import SimpleBar from "simplebar";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const Popup = () => {
   const popperJSX = `<pre class="  language-css" tabindex="0"><code class=" language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -196,7 +197,7 @@ const Popup = () => {
 
   return (
     <div class="section">
-      <h3 id="tooltip/popover">Tooltip/Popover</h3>
+      <H3Anchor>Tooltip/Popover</H3Anchor>
       <div class="explaination">
         <p>
           Here's how to use{" "}

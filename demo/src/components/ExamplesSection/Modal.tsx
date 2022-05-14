@@ -2,6 +2,7 @@ import { createSignal, Show, createEffect, onMount } from "solid-js";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import _Modal from "../Examples/Modal";
 import FocusGutter from "../FocusGutter";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const Modal = () => {
   const codeContentCSS = `<pre class="language-jsx" tabindex="0"><code class="  language-css"><span class="token selector">// relevant CSS ...
@@ -106,7 +107,7 @@ const Modal = () => {
 
   return (
     <div class="section">
-      <h3>Modal</h3>
+      <H3Anchor>Modal</H3Anchor>
       <div class="explaination">
         <p>
           Modal is a popup that requires an overlay, to prevent interaction with

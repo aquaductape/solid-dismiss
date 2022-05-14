@@ -1,5 +1,6 @@
 import CodeEditor from "../CodeEditor/CodeEditor";
 import _MultipleButtons from "../Examples/MultipleButtons/MultipleButtons";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const Navbar = () => {
   const codeContent = `<pre class="  language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -104,7 +105,7 @@ const Navbar = () => {
 
   return (
     <div class="section">
-      <h3>Multiple Menu Buttons</h3>
+      <H3Anchor>Multiple Menu Buttons</H3Anchor>
       <div class="explaination">
         <p>
           There are cases where multiple menu buttons toggle the same dropdown.

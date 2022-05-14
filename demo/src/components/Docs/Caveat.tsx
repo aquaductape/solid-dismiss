@@ -1,5 +1,6 @@
 import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 import c from "../CodeEditor/CodeEditor.module.scss";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const s = scopeModuleClasses(c);
 
@@ -10,7 +11,7 @@ const Caveat = () => {
 doc<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"click"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>`;
   return (
     <div>
-      <h3>Caveat</h3>
+      <H3Anchor>Caveat</H3Anchor>
 
       <p>
         For iOS Safari: when clicking outside, without overlay, and the element

@@ -6,6 +6,7 @@ import {
   PopupWithJSAnimation,
 } from "../Examples/Animations";
 import FocusGutter from "../FocusGutter";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const Popup = () => {
   const codeCSSAnimationContentCSS = `<pre class=" language-jsx" tabindex="0"><code class=" language-css"><span class="token selector">.fade-enter</span> <span class="token punctuation">{</span>
@@ -115,7 +116,7 @@ const Popup = () => {
 
   return (
     <div class="section">
-      <h3>Animations</h3>
+      <H3Anchor>Animations</H3Anchor>
 
       <div class="explaination">
         <p>

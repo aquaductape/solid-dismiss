@@ -5,6 +5,7 @@ import {
   DropdownOverlayElement,
 } from "../Examples/DropdownOverlay";
 import FocusGutter from "../FocusGutter";
+import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
 const DropdownOverlay = () => {
   const codeContentOverlayCSS = `<pre class="language-jsx" tabindex="0"><code class=" language-css"><span class="token selector">// relevant CSS ...
@@ -140,7 +141,7 @@ const DropdownOverlay = () => {
 
   return (
     <div class="section">
-      <h3>Overlay</h3>
+      <H3Anchor>Overlay</H3Anchor>
       <div class="explaination">
         <p>
           Same as previous example, these dropdowns are mounted at body element.
