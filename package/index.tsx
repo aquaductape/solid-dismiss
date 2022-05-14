@@ -10,6 +10,7 @@ import {
   createUniqueId,
   createMemo,
   createComputed,
+  ParentComponent,
 } from "solid-js";
 import { hasDisplayNone, queryElement } from "./utils";
 import {
@@ -310,7 +311,7 @@ export type DismissStack = TDismissStack;
  *
  * Handles "click outside" behavior for button popup pairings. Closing is triggered by click/focus outside of popup element or pressing "Escape" key.
  */
-const Dismiss: Component<TDismiss> = (props) => {
+const Dismiss: ParentComponent<TDismiss> = (props) => {
   const modal = props.modal || false;
   // @ts-check
 
@@ -822,7 +823,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           exitTransition("overlay", state.overlayEl!);
         }
       },
-      { defer: initDefer }
+      { defer: initDefer as any }
     )
   );
 
@@ -879,7 +880,7 @@ const Dismiss: Component<TDismiss> = (props) => {
           onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
         }
       },
-      { defer: initDefer }
+      { defer: initDefer as any }
     )
   );
 
@@ -954,7 +955,7 @@ const Dismiss: Component<TDismiss> = (props) => {
   if (show) return render(props.children);
 
   let strictEqual = false;
-  const condition = createMemo<boolean>(() => props.open(), undefined, {
+  const condition = createMemo<boolean>(() => props.open(), false, {
     equals: (a, b) => (strictEqual ? a === b : !a === !b),
   });
 

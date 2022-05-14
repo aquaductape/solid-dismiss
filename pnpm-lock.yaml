@@ -1,20 +1,22 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   '@release-it/keep-a-changelog': ^2.3.0
   release-it: ^14.10.0
   rollup: ^2.28.2
   rollup-preset-solid: ^0.3.0
-  solid-js: ^1.2.1
+  solid-js: ^1.4.1
   typedoc: ^0.22.4
+  typescript: ^4.6.4
 
 devDependencies:
   '@release-it/keep-a-changelog': 2.3.0_release-it@14.11.6
   release-it: 14.11.6
   rollup: 2.58.0
   rollup-preset-solid: 0.3.0
-  solid-js: 1.2.1
-  typedoc: 0.22.4
+  solid-js: 1.4.1
+  typedoc: 0.22.4_typescript@4.6.4
+  typescript: 4.6.4
 
 packages:
 
@@ -224,6 +226,8 @@ packages:
     resolution: {integrity: sha512-rycZXvQ+xS9QyIcJ9HXeDWf1uxqlbVFAUq0Rq0dbc50Zb/+wUe/ehyfzGfm9KZZF0kBejYgxltBXocP+gKdL2g==}
     engines: {node: '>=6.0.0'}
     hasBin: true
+    dependencies:
+      '@babel/types': 7.15.6
     dev: true
 
   /@babel/plugin-syntax-jsx/7.14.5_@babel+core@7.15.5:
@@ -442,7 +446,7 @@ packages:
       release-it: 14.11.6
     dev: true
 
-  /@rollup/plugin-babel/5.3.0_@babel+core@7.15.5+rollup@2.58.0:
+  /@rollup/plugin-babel/5.3.0_2sk4myzfw5tkw34764z5xhaluu:
     resolution: {integrity: sha512-9uIC8HZOnVLrLHxayq/PTzw+uS25E14KPUBh5ktF+18Mjo5yK0ToMMx6epY0uEgkjwJw0aBW4x2horYXh8juWw==}
     engines: {node: '>= 10.0.0'}
     peerDependencies:
@@ -551,6 +555,12 @@ packages:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
       '@types/node': 16.10.2
+    dev: true
+
+  /acorn/8.7.1:
+    resolution: {integrity: sha512-Xx54uLJQZ19lKygFXOWsscKUbsBZW0CPykPhVQdhIeIwrbPmJzqeASDInc8nKBnp/JT6igTs82qPXz069H8I/A==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
     dev: true
 
   /ansi-align/3.0.1:
@@ -1247,6 +1257,8 @@ packages:
     dependencies:
       '@sindresorhus/is': 0.14.0
       '@szmarczak/http-timer': 1.1.2
+      '@types/keyv': 3.1.3
+      '@types/responselike': 1.0.0
       cacheable-request: 6.1.0
       decompress-response: 3.3.0
       duplexer3: 0.1.4
@@ -2102,7 +2114,7 @@ packages:
     dependencies:
       '@babel/core': 7.15.5
       '@babel/preset-typescript': 7.15.0_@babel+core@7.15.5
-      '@rollup/plugin-babel': 5.3.0_@babel+core@7.15.5+rollup@2.58.0
+      '@rollup/plugin-babel': 5.3.0_2sk4myzfw5tkw34764z5xhaluu
       '@rollup/plugin-node-resolve': 11.2.1_rollup@2.58.0
       babel-preset-solid: 0.24.16_@babel+core@7.15.5
       colorette: 1.4.0
@@ -2110,7 +2122,7 @@ packages:
       merge-anything: 4.0.1
       rollup: 2.58.0
       rollup-plugin-terser: 7.0.2_rollup@2.58.0
-      typescript: 4.4.3
+      typescript: 4.6.4
     transitivePeerDependencies:
       - '@types/babel__core'
       - supports-color
@@ -2226,8 +2238,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /solid-js/1.2.1:
-    resolution: {integrity: sha512-Ooi8lYHc08IDRDAPcT5faPSVjqLo6sfIY58TG/PQLwwEt59jakw67Q8qx/csSyCqLmPD8fAFyzdezXKJxOKmIQ==}
+  /solid-js/1.4.1:
+    resolution: {integrity: sha512-ts480PccmUW9WAludSXET2dbBevjv+l6XMmN/OyG/a/xA8ZQoX4hNBN3gGhW785ZZv90fowbUSuSQUwOISm3YA==}
     dev: true
 
   /source-map-support/0.5.20:
@@ -2313,6 +2325,7 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
+      acorn: 8.7.1
       commander: 2.20.3
       source-map: 0.7.3
       source-map-support: 0.5.20
@@ -2379,7 +2392,7 @@ packages:
       is-typedarray: 1.0.0
     dev: true
 
-  /typedoc/0.22.4:
+  /typedoc/0.22.4_typescript@4.6.4:
     resolution: {integrity: sha512-M/a8NnPxq3/iZNNVjzFCK5gu4m//HTJIPbSS0JQVbkHJPP9wyepR12agylWTSqeVZe0xsbidVtO26+PP7iD/jw==}
     engines: {node: '>= 12.10.0'}
     hasBin: true
@@ -2391,10 +2404,11 @@ packages:
       marked: 3.0.4
       minimatch: 3.0.4
       shiki: 0.9.11
+      typescript: 4.6.4
     dev: true
 
-  /typescript/4.4.3:
-    resolution: {integrity: sha512-4xfscpisVgqqDfPaJo5vkd+Qd/ItkoagnHpufr+i2QCHBsNYp+G7UAoyFl8aPtx879u38wPV65rZ8qbGZijalA==}
+  /typescript/4.6.4:
+    resolution: {integrity: sha512-9ia/jWHIEbo49HfjrLGfKbZSuWo9iTMwXO+Ca3pRsSpbsMbc7/IU8NKdCZVRRBafVPGnoJeFL76ZOAA84I9fEg==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
