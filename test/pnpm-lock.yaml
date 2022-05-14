@@ -1,8 +1,8 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   sass: ^1.38.0
-  solid-js: ^1.0.7
+  solid-js: ^1.4.1
   solid-transition-group: ^0.0.8
   testcafe: ^1.16.0
   vite: ^2.4.2
@@ -11,8 +11,8 @@ specifiers:
 
 dependencies:
   sass: 1.42.1
-  solid-js: 1.1.5
-  solid-transition-group: 0.0.8_solid-js@1.1.5
+  solid-js: 1.4.1
+  solid-transition-group: 0.0.8_solid-js@1.4.1
 
 devDependencies:
   testcafe: 1.16.0
@@ -302,6 +302,8 @@ packages:
     resolution: {integrity: sha512-rycZXvQ+xS9QyIcJ9HXeDWf1uxqlbVFAUq0Rq0dbc50Zb/+wUe/ehyfzGfm9KZZF0kBejYgxltBXocP+gKdL2g==}
     engines: {node: '>=6.0.0'}
     hasBin: true
+    dependencies:
+      '@babel/types': 7.15.6
     dev: true
 
   /@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining/7.15.4_@babel+core@7.15.5:
@@ -1390,6 +1392,14 @@ packages:
       '@types/node': 12.20.27
     dev: true
 
+  /@types/glob/7.2.0:
+    resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
+    dependencies:
+      '@types/minimatch': 3.0.5
+      '@types/node': 12.20.27
+    dev: true
+    optional: true
+
   /@types/lodash/4.14.175:
     resolution: {integrity: sha512-XmdEOrKQ8a1Y/yxQFOMbC47G/V2VDO1GvMRnl4O75M4GW/abC5tnfzadQYkqEveqRM1dEJGFFegfPNA2vvx2iw==}
     dev: true
@@ -1490,7 +1500,7 @@ packages:
       mkdirp: 0.5.5
       tmp-promise: 1.1.0
     optionalDependencies:
-      '@types/glob': 7.1.4
+      '@types/glob': 7.2.0
     dev: true
 
   /assertion-error/1.1.0:
@@ -3114,7 +3124,7 @@ packages:
       glob: 7.2.0
     dev: true
 
-  /rollup-plugin-esbuild/3.0.4_esbuild@0.9.7+rollup@2.58.0:
+  /rollup-plugin-esbuild/3.0.4_dzzmv6veogpt26nyp6uvjzojci:
     resolution: {integrity: sha512-Txe/qWTx4NykWLwHjQ8vxXB1Mh6nTWnk7nl9lTYBN0DKnbvnSz4u2qiLqceLMZXTk//iYP5jnxlBNciNBp57LQ==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -3209,23 +3219,23 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /solid-js/1.1.5:
-    resolution: {integrity: sha512-cwMNe1U/1bqCTMco2za6LDU66jDn/57m5kfrDUhW3ls9YIbaREdktqPFGULrill22qyoFDngEg5hgm6a6vf6wg==}
+  /solid-js/1.4.1:
+    resolution: {integrity: sha512-ts480PccmUW9WAludSXET2dbBevjv+l6XMmN/OyG/a/xA8ZQoX4hNBN3gGhW785ZZv90fowbUSuSQUwOISm3YA==}
 
-  /solid-refresh/0.2.2_solid-js@1.1.5:
+  /solid-refresh/0.2.2_solid-js@1.4.1:
     resolution: {integrity: sha512-oQN3pUJ8fBd4ldMxZVqK7S4PGzAn1yx1B5bRRfANoxoqmHyY2QLfzrOzXsYnAkhh272K+W24oKgFWlmdUZ6HtQ==}
     peerDependencies:
       solid-js: ^1.0.0
     dependencies:
-      solid-js: 1.1.5
+      solid-js: 1.4.1
     dev: true
 
-  /solid-transition-group/0.0.8_solid-js@1.1.5:
+  /solid-transition-group/0.0.8_solid-js@1.4.1:
     resolution: {integrity: sha512-5cS/Ircfs/Y0J00oEToL+MWd9V07KgQlw+qRD8kpd6azb2Ri5SjXg/ocqT8U8Wgdx1VQPx45HyopQN+UumkVGQ==}
     peerDependencies:
       solid-js: ^1.0.0
     dependencies:
-      solid-js: 1.1.5
+      solid-js: 1.4.1
     dev: false
 
   /source-map-js/0.6.2:
@@ -3637,7 +3647,7 @@ packages:
       '@rollup/plugin-node-resolve': 11.2.1_rollup@2.58.0
       esbuild: 0.9.7
       rollup: 2.58.0
-      rollup-plugin-esbuild: 3.0.4_esbuild@0.9.7+rollup@2.58.0
+      rollup-plugin-esbuild: 3.0.4_dzzmv6veogpt26nyp6uvjzojci
       vite: 2.6.2_sass@1.42.1
     dev: true
 
@@ -3648,8 +3658,8 @@ packages:
       '@babel/preset-typescript': 7.15.0_@babel+core@7.15.5
       babel-preset-solid: 1.1.5_@babel+core@7.15.5
       merge-anything: 4.0.1
-      solid-js: 1.1.5
-      solid-refresh: 0.2.2_solid-js@1.1.5
+      solid-js: 1.4.1
+      solid-refresh: 0.2.2_solid-js@1.4.1
       vite: 2.6.2_sass@1.42.1
     transitivePeerDependencies:
       - less
