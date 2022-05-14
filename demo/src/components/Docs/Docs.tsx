@@ -46,126 +46,126 @@ const Docs = () => {
 
   return (
     <div id="docs-section" onClick={onClick}>
-      <section className="tsd-panel tsd-member tsd-kind-type-alias">
+      <section class="tsd-panel tsd-member tsd-kind-type-alias">
         <h3 id="Dismiss" tabindex="-1">
           Dismiss
         </h3>
-        <div className="tsd-type-declaration">
+        <div class="tsd-type-declaration">
           <h4>Type declaration</h4>
-          <ul className="tsd-parameters">
-            <li className="tsd-parameter">
+          <ul class="tsd-parameters">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> id
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> id
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>sets id attribute for root component</p>
                 </div>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> ref
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> ref
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">JSX.Element</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> class
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> class
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> class
+                <span class="tsd-flag ts-flagOptional">Optional</span> class
                 <wbr />
-                List<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-symbol">
+                List<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-symbol">
                   {"{"}
                   {"}"}
                 </span>
               </h5>
-              <ul className="tsd-parameters">
-                <li className="tsd-parameter-index-signature">
+              <ul class="tsd-parameters">
+                <li class="tsd-parameter-index-signature">
                   <h5>
-                    <span className="tsd-signature-symbol">[</span>key:{" "}
-                    <span className="tsd-signature-type">string</span>
-                    <span className="tsd-signature-symbol">]: </span>
-                    <span className="tsd-signature-type">boolean</span>
+                    <span class="tsd-signature-symbol">[</span>key:{" "}
+                    <span class="tsd-signature-type">string</span>
+                    <span class="tsd-signature-symbol">]: </span>
+                    <span class="tsd-signature-type">boolean</span>
                   </h5>
                 </li>
               </ul>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                open<span className="tsd-signature-symbol">: </span>
-                <span className="tsd-signature-type">Accessor</span>
-                <span className="tsd-signature-symbol">&lt;</span>
-                <span className="tsd-signature-type">boolean</span>
-                <span className="tsd-signature-symbol">&gt;</span>
+                open<span class="tsd-signature-symbol">: </span>
+                <span class="tsd-signature-type">Accessor</span>
+                <span class="tsd-signature-symbol">&lt;</span>
+                <span class="tsd-signature-type">boolean</span>
+                <span class="tsd-signature-symbol">&gt;</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 set
                 <wbr />
-                Open<span className="tsd-signature-symbol">:</span>function
+                Open<span class="tsd-signature-symbol">:</span>function
               </h5>
               <ul
-                className="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
+                class="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
                 data-has-instance="true"
               >
-                <li className="tsd-signature tsd-kind-icon">
+                <li class="tsd-signature tsd-kind-icon">
                   set
                   <wbr />
-                  Open<span className="tsd-signature-symbol">(</span>v
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">boolean</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">void</span>
+                  Open<span class="tsd-signature-symbol">(</span>v
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">boolean</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">void</span>
                 </li>
               </ul>
-              <ul className="tsd-descriptions">
-                <li className="tsd-description">
-                  <h4 className="tsd-parameters-title">Parameters</h4>
-                  <ul className="tsd-parameters">
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
                     <li>
                       <h5>
-                        v: <span className="tsd-signature-type">boolean</span>
+                        v: <span class="tsd-signature-type">boolean</span>
                       </h5>
                     </li>
                   </ul>
-                  <h4 className="tsd-returns-title">
-                    Returns <span className="tsd-signature-type">void</span>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span>
                   </h4>
                 </li>
               </ul>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> on
+                <span class="tsd-flag ts-flagOptional">Optional</span> on
                 <wbr />
-                Open<span className="tsd-signature-symbol">?: </span>
+                Open<span class="tsd-signature-symbol">?: </span>
                 <a
                   href="#OnOpenHandler"
-                  className="tsd-signature-type"
+                  class="tsd-signature-type"
                   data-tsd-kind="Type alias"
                 >
                   OnOpenHandler
                 </a>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>callback when setOpen signal changes</p>
                 </div>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 menu
                 <wbr />
@@ -187,8 +187,8 @@ const Docs = () => {
                 <span class="tsd-signature-symbol">[]</span>
               </h5>
 
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     CSS selector, queried from document, to get menu button
                     element. Or pass JSX element
@@ -209,30 +209,30 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> menu
+                <span class="tsd-flag ts-flagOptional">Optional</span> menu
                 <wbr />
-                Popup<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-symbol">(</span>
-                <span className="tsd-signature-symbol">(</span>
-                <span className="tsd-signature-symbol">)</span>
-                <span className="tsd-signature-symbol"> =&gt; </span>
-                <span className="tsd-signature-type">JSX.Element</span>
-                <span className="tsd-signature-symbol">)</span>
+                Popup<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-symbol">(</span>
+                <span class="tsd-signature-symbol">(</span>
+                <span class="tsd-signature-symbol">)</span>
+                <span class="tsd-signature-symbol"> =&gt; </span>
+                <span class="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol">)</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     CSS selector, queried from document, to get menu popup
                     element. Or pass JSX element
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>root component element queries first child element</p>
@@ -240,22 +240,21 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                cursor
+                <span class="tsd-flag ts-flagOptional">Optional</span> cursor
                 <wbr />
-                Keys<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Keys<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Have the behavior to move through a list of "dropdown items"
                     using cursor keys.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -265,20 +264,20 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> trap
+                <span class="tsd-flag ts-flagOptional">Optional</span> trap
                 <wbr />
-                Focus<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Focus<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Focus will remain inside menuPopup when pressing Tab key
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -288,7 +287,7 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 <span class="tsd-flag ts-flagOptional">Optional</span> focus
                 <wbr />
@@ -312,8 +311,8 @@ const Docs = () => {
                 <span class="tsd-signature-type">JSX.Element</span>
                 <span class="tsd-signature-symbol">)</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     which element, via selector*, to recieve focus after popup
                     opens.
@@ -327,7 +326,7 @@ const Docs = () => {
                     tabbable element inside menuPopup.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -337,31 +336,31 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> focus
+                <span class="tsd-flag ts-flagOptional">Optional</span> focus
                 <wbr />
                 Element
                 <wbr />
                 On
                 <wbr />
-                Close<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">"menuButton"</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
-                <span className="tsd-signature-symbol"> | </span>
+                Close<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">"menuButton"</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol"> | </span>
                 <a
                   href="#FocusElementOnCloseOptions"
-                  className="tsd-signature-type"
+                  class="tsd-signature-type"
                   data-tsd-kind="Type alias"
                 >
                   FocusElementOnCloseOptions
                 </a>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Which element, via selector*, to recieve focus after popup
                     closes.
@@ -373,7 +372,7 @@ const Docs = () => {
                     <code>"menuButton"</code> uses menuButton element
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>remarks</dt>
                   <dd>
                     <p>
@@ -404,9 +403,9 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> close
+                <span class="tsd-flag ts-flagOptional">Optional</span> close
                 <wbr />
                 When
                 <wbr />
@@ -416,18 +415,18 @@ const Docs = () => {
                 <wbr />
                 Is
                 <wbr />
-                Tabbed<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Tabbed<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     When <code>true</code>, after focusing within menuPopup, if
                     focused back to menu button via keyboard (Tab key), the
                     menuPopup will close.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -437,9 +436,9 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> close
+                <span class="tsd-flag ts-flagOptional">Optional</span> close
                 <wbr />
                 When
                 <wbr />
@@ -449,17 +448,17 @@ const Docs = () => {
                 <wbr />
                 Is
                 <wbr />
-                Clicked<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Clicked<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     If <code>overlay</code> is <code>true</code>, menuPopup will
                     always close when menu button is clicked
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -469,23 +468,23 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> close
+                <span class="tsd-flag ts-flagOptional">Optional</span> close
                 <wbr />
                 When
                 <wbr />
-                Scrolling<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Scrolling<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Closes menuPopup when any scrollable container (except
                     inside menuPopup) is scrolled
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>remark</dt>
                   <dd>
                     <p>
@@ -502,26 +501,26 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> close
+                <span class="tsd-flag ts-flagOptional">Optional</span> close
                 <wbr />
                 When
                 <wbr />
                 Overlay
                 <wbr />
-                Clicked<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Clicked<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     If <code>false</code>, menuPopup won't close when overlay
                     backdrop is clicked. When overlay clicked, menuPopup will
                     recieve focus.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -531,9 +530,9 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> close
+                <span class="tsd-flag ts-flagOptional">Optional</span> close
                 <wbr />
                 When
                 <wbr />
@@ -543,14 +542,14 @@ const Docs = () => {
                 <wbr />
                 Is
                 <wbr />
-                Pressed<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Pressed<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>Closes menuPopup when escape key is pressed</p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -560,20 +559,20 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> close
+                <span class="tsd-flag ts-flagOptional">Optional</span> close
                 <wbr />
                 When
                 <wbr />
                 Document
                 <wbr />
-                Blurs<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Blurs<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
 
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     If <code>true</code>, closes menuPopup when the document
                     "blurs". This would happen when interacting outside of the
@@ -583,7 +582,7 @@ const Docs = () => {
                     close it.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>remark</dt>
                   <dd>
                     <p>
@@ -601,22 +600,21 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                remove
+                <span class="tsd-flag ts-flagOptional">Optional</span> remove
                 <wbr />
-                Scrollbar<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Scrollbar<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     If <code>true</code>, sets "overflow: hidden" declaration to
                     Document.scrollingElement.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -626,14 +624,14 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                overlay<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> overlay
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Prevent page interaction when clicking outside to close
                     menuPopup
@@ -646,7 +644,7 @@ const Docs = () => {
                     interacted with.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -656,39 +654,38 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                overlay
+                <span class="tsd-flag ts-flagOptional">Optional</span> overlay
                 <wbr />
-                Element<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-symbol">{"{"} </span>ref
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">any</span>
-                <span className="tsd-signature-symbol">; </span>class
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol">; </span>classList
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-symbol">
+                Element<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-symbol">{"{"} </span>ref
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">any</span>
+                <span class="tsd-signature-symbol">; </span>class
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol">; </span>classList
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-symbol">
                   {"{"}
                   {"}"}
                 </span>
-                <span className="tsd-signature-symbol">; </span>animation
-                <span className="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-symbol">; </span>animation
+                <span class="tsd-signature-symbol">?: </span>
                 <a
                   href="#DismissAnimation"
-                  className="tsd-signature-type"
+                  class="tsd-signature-type"
                   data-tsd-kind="Type alias"
                 >
                   DismissAnimation
                 </a>
-                <span className="tsd-signature-symbol"> {"}"}</span>
+                <span class="tsd-signature-symbol"> {"}"}</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Prevent page interaction when clicking outside to close
                     menuPopup
@@ -702,7 +699,7 @@ const Docs = () => {
                     can be interacted with.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -712,14 +709,14 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> modal
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> modal
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Shorthand for <code>Dismiss.overlay</code> to{" "}
                     <code>true</code>, <code>Dismiss.overlayElement</code> to{" "}
@@ -738,7 +735,7 @@ const Docs = () => {
                     role="dialog" attribute or first child of menuPopup element.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -748,20 +745,19 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                enable
+                <span class="tsd-flag ts-flagOptional">Optional</span> enable
                 <wbr />
                 Last
                 <wbr />
                 Focus
                 <wbr />
-                Sentinel<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                Sentinel<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     activates sentinel element as last tabbable item in
                     menuPopup, that way when Tabbing "forwards" out of
@@ -769,7 +765,7 @@ const Docs = () => {
                     menuButton will be focused.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -783,16 +779,16 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> mount
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">Node</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> mount
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">Node</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Inserts menuPopup in the mount node. Useful for inserting
                     menuPopup outside of page layout. Events still propagate
@@ -801,26 +797,26 @@ const Docs = () => {
                 </div>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                animation<span className="tsd-signature-symbol">?: </span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> animation
+                <span class="tsd-signature-symbol">?: </span>
                 <a
                   href="#DismissAnimation"
-                  className="tsd-signature-type"
+                  class="tsd-signature-type"
                   data-tsd-kind="Type alias"
                 >
                   DismissAnimation
                 </a>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Place CSS class names or JS Web Animation to fire animation
                     as menuPopup enters/exits
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>none</p>
@@ -828,14 +824,14 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> show
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> show
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Determine whether children are rendered always, or
                     conditionally.
@@ -846,7 +842,7 @@ const Docs = () => {
                     If <code>true</code>, children are rendered.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -860,7 +856,7 @@ const Docs = () => {
           </ul>
         </div>
       </section>
-      <section className="tsd-panel tsd-member tsd-kind-type-alias">
+      <section class="tsd-panel tsd-member tsd-kind-type-alias">
         <h3 id="FocusElementOnCloseOptions" tabindex="-1">
           Focus
           <wbr />
@@ -872,28 +868,28 @@ const Docs = () => {
           <wbr />
           Options
         </h3>
-        <div className="tsd-type-declaration">
+        <div class="tsd-type-declaration">
           <h4>Type declaration</h4>
-          <ul className="tsd-parameters">
-            <li className="tsd-parameter">
+          <ul class="tsd-parameters">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> tab
+                <span class="tsd-flag ts-flagOptional">Optional</span> tab
                 <wbr />
-                Backwards<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">"menuButton"</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
+                Backwards<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">"menuButton"</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     focus on element when exiting menuPopup via tabbing
                     backwards ie "Shift + Tab".
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -903,25 +899,25 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> tab
+                <span class="tsd-flag ts-flagOptional">Optional</span> tab
                 <wbr />
-                Forwards<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">"menuButton"</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
+                Forwards<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">"menuButton"</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     focus on element when exiting menuPopup via tabbing forwards
                     ie "Tab".
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>remarks</dt>
                   <dd>
                     <p>
@@ -939,18 +935,18 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> click
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">"menuButton"</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> click
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">"menuButton"</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     focus on element when exiting menuPopup via click outside
                     popup.
@@ -962,7 +958,7 @@ const Docs = () => {
                     menuButton will be focused.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>remarks</dt>
                   <dd>
                     <p>
@@ -973,25 +969,24 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                escape
+                <span class="tsd-flag ts-flagOptional">Optional</span> escape
                 <wbr />
-                Key<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">"menuButton"</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
+                Key<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">"menuButton"</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     focus on element when exiting menuPopup via "Escape" key
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -1001,24 +996,24 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                scrolling<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">"menuButton"</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">string</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> scrolling
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">"menuButton"</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">string</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     focus on element when exiting menuPopup via scrolling, from
                     scrollable container that contains menuButton
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>dafaultvalue</dt>
                   <dd>
                     <p>
@@ -1031,23 +1026,23 @@ const Docs = () => {
           </ul>
         </div>
       </section>
-      <section className="tsd-panel tsd-member tsd-kind-type-alias">
+      <section class="tsd-panel tsd-member tsd-kind-type-alias">
         <h3 id="DismissAnimation" tabindex="-1">
           Dismiss
           <wbr />
           Animation
         </h3>
-        <div className="tsd-type-declaration">
+        <div class="tsd-type-declaration">
           <h4>Type declaration</h4>
-          <ul className="tsd-parameters">
-            <li className="tsd-parameter">
+          <ul class="tsd-parameters">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> name
-                <span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> name
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Used to automatically generate transition CSS class names.
                     e.g. name: 'fade' will auto expand to .fade-enter,
@@ -1056,163 +1051,163 @@ const Docs = () => {
                 </div>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> enter
+                <span class="tsd-flag ts-flagOptional">Optional</span> enter
                 <wbr />
                 Active
                 <wbr />
-                Class<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                Class<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> enter
+                <span class="tsd-flag ts-flagOptional">Optional</span> enter
                 <wbr />
-                Class<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                Class<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> enter
+                <span class="tsd-flag ts-flagOptional">Optional</span> enter
                 <wbr />
                 To
                 <wbr />
-                Class<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                Class<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> exit
+                <span class="tsd-flag ts-flagOptional">Optional</span> exit
                 <wbr />
                 Active
                 <wbr />
-                Class<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                Class<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> exit
+                <span class="tsd-flag ts-flagOptional">Optional</span> exit
                 <wbr />
-                Class<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                Class<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span> exit
+                <span class="tsd-flag ts-flagOptional">Optional</span> exit
                 <wbr />
                 To
                 <wbr />
-                Class<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">string</span>
+                Class<span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">string</span>
               </h5>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 on
                 <wbr />
                 Before
                 <wbr />
-                Enter<span className="tsd-signature-symbol">?:</span>function
+                Enter<span class="tsd-signature-symbol">?:</span>function
               </h5>
               <ul
-                className="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
+                class="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
                 data-has-instance="true"
               >
-                <li className="tsd-signature tsd-kind-icon">
+                <li class="tsd-signature tsd-kind-icon">
                   on
                   <wbr />
                   Before
                   <wbr />
-                  Enter<span className="tsd-signature-symbol">(</span>el
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">Element</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">void</span>
+                  Enter<span class="tsd-signature-symbol">(</span>el
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">Element</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">void</span>
                 </li>
               </ul>
-              <ul className="tsd-descriptions">
-                <li className="tsd-description">
-                  <h4 className="tsd-parameters-title">Parameters</h4>
-                  <ul className="tsd-parameters">
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
                     <li>
                       <h5>
-                        el: <span className="tsd-signature-type">Element</span>
+                        el: <span class="tsd-signature-type">Element</span>
                       </h5>
                     </li>
                   </ul>
-                  <h4 className="tsd-returns-title">
-                    Returns <span className="tsd-signature-type">void</span>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span>
                   </h4>
                 </li>
               </ul>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 on
                 <wbr />
-                Enter<span className="tsd-signature-symbol">?:</span>function
+                Enter<span class="tsd-signature-symbol">?:</span>function
               </h5>
               <ul
-                className="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
+                class="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
                 data-has-instance="true"
               >
-                <li className="tsd-signature tsd-kind-icon">
+                <li class="tsd-signature tsd-kind-icon">
                   on
                   <wbr />
-                  Enter<span className="tsd-signature-symbol">(</span>el
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">Element</span>, done
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-symbol">(</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol"> =&gt; </span>
-                  <span className="tsd-signature-type">void</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">void</span>
+                  Enter<span class="tsd-signature-symbol">(</span>el
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">Element</span>, done
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-symbol">(</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol"> =&gt; </span>
+                  <span class="tsd-signature-type">void</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">void</span>
                 </li>
               </ul>
-              <ul className="tsd-descriptions">
-                <li className="tsd-description">
-                  <h4 className="tsd-parameters-title">Parameters</h4>
-                  <ul className="tsd-parameters">
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
                     <li>
                       <h5>
-                        el: <span className="tsd-signature-type">Element</span>
+                        el: <span class="tsd-signature-type">Element</span>
                       </h5>
                     </li>
                     <li>
                       <h5>
-                        done: <span className="tsd-signature-symbol">(</span>
-                        <span className="tsd-signature-symbol">)</span>
-                        <span className="tsd-signature-symbol"> =&gt; </span>
-                        <span className="tsd-signature-type">void</span>
+                        done: <span class="tsd-signature-symbol">(</span>
+                        <span class="tsd-signature-symbol">)</span>
+                        <span class="tsd-signature-symbol"> =&gt; </span>
+                        <span class="tsd-signature-type">void</span>
                       </h5>
-                      <ul className="tsd-parameters">
-                        <li className="tsd-parameter-signature">
+                      <ul class="tsd-parameters">
+                        <li class="tsd-parameter-signature">
                           <ul
-                            className="tsd-signatures tsd-kind-type-literal"
+                            class="tsd-signatures tsd-kind-type-literal"
                             data-has-instance="true"
                           >
-                            <li className="tsd-signature tsd-kind-icon">
-                              <span className="tsd-signature-symbol">(</span>
-                              <span className="tsd-signature-symbol">)</span>
-                              <span className="tsd-signature-symbol">: </span>
-                              <span className="tsd-signature-type">void</span>
+                            <li class="tsd-signature tsd-kind-icon">
+                              <span class="tsd-signature-symbol">(</span>
+                              <span class="tsd-signature-symbol">)</span>
+                              <span class="tsd-signature-symbol">: </span>
+                              <span class="tsd-signature-type">void</span>
                             </li>
                           </ul>
-                          <ul className="tsd-descriptions">
-                            <li className="tsd-description">
-                              <h4 className="tsd-returns-title">
+                          <ul class="tsd-descriptions">
+                            <li class="tsd-description">
+                              <h4 class="tsd-returns-title">
                                 Returns{" "}
-                                <span className="tsd-signature-type">void</span>
+                                <span class="tsd-signature-type">void</span>
                               </h4>
                             </li>
                           </ul>
@@ -1220,154 +1215,154 @@ const Docs = () => {
                       </ul>
                     </li>
                   </ul>
-                  <h4 className="tsd-returns-title">
-                    Returns <span className="tsd-signature-type">void</span>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span>
                   </h4>
                 </li>
               </ul>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 on
                 <wbr />
                 After
                 <wbr />
-                Enter<span className="tsd-signature-symbol">?:</span>function
+                Enter<span class="tsd-signature-symbol">?:</span>function
               </h5>
               <ul
-                className="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
+                class="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
                 data-has-instance="true"
               >
-                <li className="tsd-signature tsd-kind-icon">
+                <li class="tsd-signature tsd-kind-icon">
                   on
                   <wbr />
                   After
                   <wbr />
-                  Enter<span className="tsd-signature-symbol">(</span>el
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">Element</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">void</span>
+                  Enter<span class="tsd-signature-symbol">(</span>el
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">Element</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">void</span>
                 </li>
               </ul>
-              <ul className="tsd-descriptions">
-                <li className="tsd-description">
-                  <h4 className="tsd-parameters-title">Parameters</h4>
-                  <ul className="tsd-parameters">
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
                     <li>
                       <h5>
-                        el: <span className="tsd-signature-type">Element</span>
+                        el: <span class="tsd-signature-type">Element</span>
                       </h5>
                     </li>
                   </ul>
-                  <h4 className="tsd-returns-title">
-                    Returns <span className="tsd-signature-type">void</span>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span>
                   </h4>
                 </li>
               </ul>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 on
                 <wbr />
                 Before
                 <wbr />
-                Exit<span className="tsd-signature-symbol">?:</span>function
+                Exit<span class="tsd-signature-symbol">?:</span>function
               </h5>
               <ul
-                className="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
+                class="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
                 data-has-instance="true"
               >
-                <li className="tsd-signature tsd-kind-icon">
+                <li class="tsd-signature tsd-kind-icon">
                   on
                   <wbr />
                   Before
                   <wbr />
-                  Exit<span className="tsd-signature-symbol">(</span>el
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">Element</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">void</span>
+                  Exit<span class="tsd-signature-symbol">(</span>el
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">Element</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">void</span>
                 </li>
               </ul>
-              <ul className="tsd-descriptions">
-                <li className="tsd-description">
-                  <h4 className="tsd-parameters-title">Parameters</h4>
-                  <ul className="tsd-parameters">
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
                     <li>
                       <h5>
-                        el: <span className="tsd-signature-type">Element</span>
+                        el: <span class="tsd-signature-type">Element</span>
                       </h5>
                     </li>
                   </ul>
-                  <h4 className="tsd-returns-title">
-                    Returns <span className="tsd-signature-type">void</span>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span>
                   </h4>
                 </li>
               </ul>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 on
                 <wbr />
-                Exit<span className="tsd-signature-symbol">?:</span>function
+                Exit<span class="tsd-signature-symbol">?:</span>function
               </h5>
               <ul
-                className="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
+                class="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
                 data-has-instance="true"
               >
-                <li className="tsd-signature tsd-kind-icon">
+                <li class="tsd-signature tsd-kind-icon">
                   on
                   <wbr />
-                  Exit<span className="tsd-signature-symbol">(</span>el
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">Element</span>, done
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-symbol">(</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol"> =&gt; </span>
-                  <span className="tsd-signature-type">void</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">void</span>
+                  Exit<span class="tsd-signature-symbol">(</span>el
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">Element</span>, done
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-symbol">(</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol"> =&gt; </span>
+                  <span class="tsd-signature-type">void</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">void</span>
                 </li>
               </ul>
-              <ul className="tsd-descriptions">
-                <li className="tsd-description">
-                  <h4 className="tsd-parameters-title">Parameters</h4>
-                  <ul className="tsd-parameters">
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
                     <li>
                       <h5>
-                        el: <span className="tsd-signature-type">Element</span>
+                        el: <span class="tsd-signature-type">Element</span>
                       </h5>
                     </li>
                     <li>
                       <h5>
-                        done: <span className="tsd-signature-symbol">(</span>
-                        <span className="tsd-signature-symbol">)</span>
-                        <span className="tsd-signature-symbol"> =&gt; </span>
-                        <span className="tsd-signature-type">void</span>
+                        done: <span class="tsd-signature-symbol">(</span>
+                        <span class="tsd-signature-symbol">)</span>
+                        <span class="tsd-signature-symbol"> =&gt; </span>
+                        <span class="tsd-signature-type">void</span>
                       </h5>
-                      <ul className="tsd-parameters">
-                        <li className="tsd-parameter-signature">
+                      <ul class="tsd-parameters">
+                        <li class="tsd-parameter-signature">
                           <ul
-                            className="tsd-signatures tsd-kind-type-literal"
+                            class="tsd-signatures tsd-kind-type-literal"
                             data-has-instance="true"
                           >
-                            <li className="tsd-signature tsd-kind-icon">
-                              <span className="tsd-signature-symbol">(</span>
-                              <span className="tsd-signature-symbol">)</span>
-                              <span className="tsd-signature-symbol">: </span>
-                              <span className="tsd-signature-type">void</span>
+                            <li class="tsd-signature tsd-kind-icon">
+                              <span class="tsd-signature-symbol">(</span>
+                              <span class="tsd-signature-symbol">)</span>
+                              <span class="tsd-signature-symbol">: </span>
+                              <span class="tsd-signature-type">void</span>
                             </li>
                           </ul>
-                          <ul className="tsd-descriptions">
-                            <li className="tsd-description">
-                              <h4 className="tsd-returns-title">
+                          <ul class="tsd-descriptions">
+                            <li class="tsd-description">
+                              <h4 class="tsd-returns-title">
                                 Returns{" "}
-                                <span className="tsd-signature-type">void</span>
+                                <span class="tsd-signature-type">void</span>
                               </h4>
                             </li>
                           </ul>
@@ -1375,67 +1370,66 @@ const Docs = () => {
                       </ul>
                     </li>
                   </ul>
-                  <h4 className="tsd-returns-title">
-                    Returns <span className="tsd-signature-type">void</span>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span>
                   </h4>
                 </li>
               </ul>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
                 on
                 <wbr />
                 After
                 <wbr />
-                Exit<span className="tsd-signature-symbol">?:</span>function
+                Exit<span class="tsd-signature-symbol">?:</span>function
               </h5>
               <ul
-                className="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
+                class="tsd-signatures tsd-kind-method tsd-parent-kind-type-literal"
                 data-has-instance="true"
               >
-                <li className="tsd-signature tsd-kind-icon">
+                <li class="tsd-signature tsd-kind-icon">
                   on
                   <wbr />
                   After
                   <wbr />
-                  Exit<span className="tsd-signature-symbol">(</span>el
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">Element</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">void</span>
+                  Exit<span class="tsd-signature-symbol">(</span>el
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">Element</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">void</span>
                 </li>
               </ul>
-              <ul className="tsd-descriptions">
-                <li className="tsd-description">
-                  <h4 className="tsd-parameters-title">Parameters</h4>
-                  <ul className="tsd-parameters">
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
                     <li>
                       <h5>
-                        el: <span className="tsd-signature-type">Element</span>
+                        el: <span class="tsd-signature-type">Element</span>
                       </h5>
                     </li>
                   </ul>
-                  <h4 className="tsd-returns-title">
-                    Returns <span className="tsd-signature-type">void</span>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span>
                   </h4>
                 </li>
               </ul>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                append
+                <span class="tsd-flag ts-flagOptional">Optional</span> append
                 <wbr />
                 To
                 <wbr />
-                Element<span className="tsd-signature-symbol">?: </span>
+                Element<span class="tsd-signature-symbol">?: </span>
                 <span class="tsd-signature-type">"menuPopup"</span>
-                <span className="tsd-signature-symbol"> | </span>
-                <span className="tsd-signature-type">JSX.Element</span>
+                <span class="tsd-signature-symbol"> | </span>
+                <span class="tsd-signature-type">JSX.Element</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>
                     Change element where CSS classes are appended and passed to
                     callbacks.
@@ -1448,7 +1442,7 @@ const Docs = () => {
                     element.
                   </p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -1460,17 +1454,17 @@ const Docs = () => {
                 </dl>
               </div>
             </li>
-            <li className="tsd-parameter">
+            <li class="tsd-parameter">
               <h5>
-                <span className="tsd-flag ts-flagOptional">Optional</span>{" "}
-                appear<span className="tsd-signature-symbol">?: </span>
-                <span className="tsd-signature-type">boolean</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> appear
+                <span class="tsd-signature-symbol">?: </span>
+                <span class="tsd-signature-type">boolean</span>
               </h5>
-              <div className="tsd-comment tsd-typography">
-                <div className="lead">
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
                   <p>Whether to apply transition on initial render.</p>
                 </div>
-                <dl className="tsd-comment-tags">
+                <dl class="tsd-comment-tags">
                   <dt>defaultvalue</dt>
                   <dd>
                     <p>
@@ -1483,7 +1477,7 @@ const Docs = () => {
           </ul>
         </div>
       </section>
-      <section className="tsd-panel tsd-member tsd-kind-type-alias">
+      <section class="tsd-panel tsd-member tsd-kind-type-alias">
         <h3 id="OnOpenHandler" tabindex="0">
           On
           <wbr />
@@ -1491,98 +1485,96 @@ const Docs = () => {
           <wbr />
           Handler
         </h3>
-        <div className="tsd-type-declaration">
+        <div class="tsd-type-declaration">
           <h4>Type declaration</h4>
-          <ul className="tsd-parameters">
-            <li className="tsd-parameter-signature">
+          <ul class="tsd-parameters">
+            <li class="tsd-parameter-signature">
               <ul
-                className="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias"
+                class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias"
                 data-has-instance="true"
               >
-                <li className="tsd-signature tsd-kind-icon">
-                  <span className="tsd-signature-symbol">(</span>open
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">boolean</span>, props
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-symbol">{"{"} </span>uniqueId
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">string</span>
-                  <span className="tsd-signature-symbol">; </span>dismissStack
-                  <span className="tsd-signature-symbol">: </span>
+                <li class="tsd-signature tsd-kind-icon">
+                  <span class="tsd-signature-symbol">(</span>open
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">boolean</span>, props
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-symbol">{"{"} </span>uniqueId
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">string</span>
+                  <span class="tsd-signature-symbol">; </span>dismissStack
+                  <span class="tsd-signature-symbol">: </span>
                   <a
                     href="#DismissStack"
-                    className="tsd-signature-type"
+                    class="tsd-signature-type"
                     data-tsd-kind="Type alias"
                   >
                     DismissStack
                   </a>
-                  <span className="tsd-signature-symbol">[]</span>
-                  <span className="tsd-signature-symbol"> {"}"}</span>
-                  <span className="tsd-signature-symbol">)</span>
-                  <span className="tsd-signature-symbol">: </span>
-                  <span className="tsd-signature-type">void</span>
+                  <span class="tsd-signature-symbol">[]</span>
+                  <span class="tsd-signature-symbol"> {"}"}</span>
+                  <span class="tsd-signature-symbol">)</span>
+                  <span class="tsd-signature-symbol">: </span>
+                  <span class="tsd-signature-type">void</span>
                 </li>
               </ul>
-              <ul className="tsd-descriptions">
-                <li className="tsd-description">
-                  <h4 className="tsd-parameters-title">Parameters</h4>
-                  <ul className="tsd-parameters">
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
                     <li>
                       <h5>
-                        open:{" "}
-                        <span className="tsd-signature-type">boolean</span>
+                        open: <span class="tsd-signature-type">boolean</span>
                       </h5>
                     </li>
                     <li>
                       <h5>
-                        props:{" "}
-                        <span className="tsd-signature-symbol">{"{"} </span>
+                        props: <span class="tsd-signature-symbol">{"{"} </span>
                         uniqueId
-                        <span className="tsd-signature-symbol">: </span>
-                        <span className="tsd-signature-type">string</span>
-                        <span className="tsd-signature-symbol">; </span>
+                        <span class="tsd-signature-symbol">: </span>
+                        <span class="tsd-signature-type">string</span>
+                        <span class="tsd-signature-symbol">; </span>
                         dismissStack
-                        <span className="tsd-signature-symbol">: </span>
+                        <span class="tsd-signature-symbol">: </span>
                         <a
                           href="#DismissStack"
-                          className="tsd-signature-type"
+                          class="tsd-signature-type"
                           data-tsd-kind="Type alias"
                         >
                           DismissStack
                         </a>
-                        <span className="tsd-signature-symbol">[]</span>
-                        <span className="tsd-signature-symbol"> {"}"}</span>
+                        <span class="tsd-signature-symbol">[]</span>
+                        <span class="tsd-signature-symbol"> {"}"}</span>
                       </h5>
-                      <ul className="tsd-parameters">
-                        <li className="tsd-parameter">
+                      <ul class="tsd-parameters">
+                        <li class="tsd-parameter">
                           <h5>
                             unique
                             <wbr />
-                            Id<span className="tsd-signature-symbol">: </span>
-                            <span className="tsd-signature-type">string</span>
+                            Id<span class="tsd-signature-symbol">: </span>
+                            <span class="tsd-signature-type">string</span>
                           </h5>
                         </li>
-                        <li className="tsd-parameter">
+                        <li class="tsd-parameter">
                           <h5>
                             dismiss
                             <wbr />
                             Stack
-                            <span className="tsd-signature-symbol">: </span>
+                            <span class="tsd-signature-symbol">: </span>
                             <a
                               href="#DismissStack"
-                              className="tsd-signature-type"
+                              class="tsd-signature-type"
                               data-tsd-kind="Type alias"
                             >
                               DismissStack
                             </a>
-                            <span className="tsd-signature-symbol">[]</span>
+                            <span class="tsd-signature-symbol">[]</span>
                           </h5>
                         </li>
                       </ul>
                     </li>
                   </ul>
-                  <h4 className="tsd-returns-title">
-                    Returns <span className="tsd-signature-type">void</span>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span>
                   </h4>
                 </li>
               </ul>
@@ -1590,7 +1582,7 @@ const Docs = () => {
           </ul>
         </div>
       </section>
-      <section className="tsd-panel tsd-member tsd-kind-type-alias">
+      <section class="tsd-panel tsd-member tsd-kind-type-alias">
         <h3 id="DismissStack" tabindex="0">
           Dismiss
           <wbr />

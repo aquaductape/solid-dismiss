@@ -130,7 +130,7 @@ const Modal = () => {
               aria-label="close modal"
               onClick={onClickClose}
             >
-              <div className={s("inner")}>
+              <div class={s("inner")}>
                 <div></div>
                 <div></div>
               </div>
@@ -206,7 +206,7 @@ const Popup = () => {
             aria-label="close modal"
             onClick={onClickClose}
           >
-            <div className={s("inner")}>
+            <div class={s("inner")}>
               <div></div>
               <div></div>
             </div>

@@ -52,7 +52,7 @@ const HeroDropdown = () => {
             <FocusGutter></FocusGutter>
           </div>
         </div>
-        <div className="shadow"></div>
+        <div class="shadow"></div>
       </Dismiss>
     </div>
   );

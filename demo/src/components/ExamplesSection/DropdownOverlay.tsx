@@ -141,7 +141,7 @@ const DropdownOverlay = () => {
   return (
     <div class="section">
       <h3>Overlay</h3>
-      <div className="explaination">
+      <div class="explaination">
         <p>
           Same as previous example, these dropdowns are mounted at body element.
         </p>

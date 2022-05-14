@@ -52,7 +52,7 @@ const PackageBtn = () => {
   return (
     <div class="package">
       <span class="btn-fusion">
-        <div className="select">
+        <div class="select">
           <Select
             selectedTemplate={({ content }) => (
               <div class="btn-inner">
@@ -117,7 +117,7 @@ const PackageBtn = () => {
           </span>
         </button>
         <span class="text-wrapper">
-          <div className="text-scroll-container">
+          <div class="text-scroll-container">
             <code class="text-content">{packageText()}</code>
           </div>
         </span>
