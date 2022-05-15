@@ -23,7 +23,7 @@ import { H2Anchor, H3Anchor } from "./components/HeaderAnchor/HeaderAnchor";
 
 const App: Component = () => {
   onMount(() => {
-    if (location.href) {
+    if (location.hash) {
       setTimeout(() => {
         window.scrollBy(0, -80);
       });
