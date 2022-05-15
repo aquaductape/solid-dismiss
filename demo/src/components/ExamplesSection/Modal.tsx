@@ -1,6 +1,7 @@
 import { createSignal, Show, createEffect, onMount } from "solid-js";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import _Modal from "../Examples/Modal";
+import ModalToggleScrollbar from "../Examples/ModalToggleScrollbar";
 import FocusGutter from "../FocusGutter";
 import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
@@ -26,7 +27,7 @@ const Modal = () => {
   <span class="token property">padding</span><span class="token punctuation">:</span> 25px<span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>`;
 
-  const codeContentJSX = `<pre class=" language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
+  const codeContentModalJSX = `<pre class=" language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
 <span class="token keyword">import</span> <span class="token punctuation">{</span> createSignal<span class="token punctuation">,</span> createEffect <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"solid-js"</span><span class="token punctuation">;</span>
 
 <span class="token keyword">const</span> <span class="token function-variable function">Modal</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
@@ -43,30 +44,6 @@ const Modal = () => {
     <span class="token function">setOpen</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   <span class="token punctuation">}</span><span class="token punctuation">;</span>
 
-  <span class="token function">createEffect</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
-    <span class="token comment">// Dismiss does have \`removeScrollbar\` prop</span>
-    <span class="token comment">// where it just removes the scrollbar,</span>
-    <span class="token comment">// but instead we're customizing the removal</span>
-    <span class="token comment">// where we add margin to prevent visual page "jank".</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-      <span class="token keyword">const</span> scrollbarWidth <span class="token operator">=</span>
-        window<span class="token punctuation">.</span>innerWidth <span class="token operator">-</span> document<span class="token punctuation">.</span>documentElement<span class="token punctuation">.</span>clientWidth<span class="token punctuation">;</span>
-      <span class="token keyword">const</span> scrollingElement <span class="token operator">=</span> document<span class="token punctuation">.</span>scrollingElement<span class="token punctuation">;</span>
-      <span class="token keyword">const</span> navbar <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"navbar-content"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-      scrollingElement<span class="token punctuation">.</span>style<span class="token punctuation">.</span>overflow <span class="token operator">=</span> <span class="token string">"hidden"</span><span class="token punctuation">;</span>
-      scrollingElement<span class="token punctuation">.</span>style<span class="token punctuation">.</span>marginRight <span class="token operator">=</span> scrollbarWidth <span class="token operator">+</span> <span class="token string">"px"</span><span class="token punctuation">;</span>
-      navbar<span class="token punctuation">.</span>style<span class="token punctuation">.</span>marginRight <span class="token operator">=</span> scrollbarWidth <span class="token operator">+</span> <span class="token string">"px"</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
-      <span class="token keyword">const</span> scrollingElement <span class="token operator">=</span> document<span class="token punctuation">.</span>scrollingElement <span class="token punctuation">;</span>
-      <span class="token keyword">const</span> navbar <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"navbar-content"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-      scrollingElement<span class="token punctuation">.</span>style<span class="token punctuation">.</span>overflow <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
-      scrollingElement<span class="token punctuation">.</span>style<span class="token punctuation">.</span>marginRight <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
-      navbar<span class="token punctuation">.</span>style<span class="token punctuation">.</span>marginRight <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
   <span class="token keyword">return</span> <span class="token punctuation">(</span>
     <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span></span><span class="token punctuation">&gt;</span></span><span class="token plain-text">
       </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name">ref</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>btnEl<span class="token punctuation">}</span></span><span class="token punctuation">&gt;</span></span><span class="token plain-text">Button</span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">&gt;</span></span><span class="token plain-text">
@@ -74,9 +51,7 @@ const Modal = () => {
         <span class="token attr-name">menuButton</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>btnEl<span class="token punctuation">}</span></span>
         <span class="token attr-name">open</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>open<span class="token punctuation">}</span></span>
         <span class="token attr-name">setOpen</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span>setOpen<span class="token punctuation">}</span></span>
-        <span class="token attr-name">mount</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>body<span class="token punctuation">"</span></span>
-        <span class="token attr-name">overlay</span>
-        <span class="token attr-name">trapFocus</span>
+        <span class="token attr-name">modal</span>
         <span class="token attr-name">focusElementOnOpen</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> btnSaveEl<span class="token punctuation">}</span></span>
       <span class="token punctuation">&gt;</span></span><span class="token plain-text">
         </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span>
@@ -105,21 +80,61 @@ const Modal = () => {
   <span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre>`;
 
+  const codeContentModalToggleScrollbarJSX = `<pre class="language-tsx" tabindex="0"><code class="language-jsx"><span class="token comment">// ...</span>
+
+<span class="token keyword">const</span> <span class="token function-variable function">onRemoveScrollbar</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> scrollbarWidth <span class="token operator">=</span>
+    window<span class="token punctuation">.</span>innerWidth <span class="token operator">-</span> document<span class="token punctuation">.</span>documentElement<span class="token punctuation">.</span>clientWidth<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> scrollingElement <span class="token operator">=</span> document<span class="token punctuation">.</span>scrollingElement<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> navbar <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"navbar-content"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  scrollingElement<span class="token punctuation">.</span>style<span class="token punctuation">.</span>overflow <span class="token operator">=</span> <span class="token string">"hidden"</span><span class="token punctuation">;</span>
+  scrollingElement<span class="token punctuation">.</span>style<span class="token punctuation">.</span>marginRight <span class="token operator">=</span> scrollbarWidth <span class="token operator">+</span> <span class="token string">"px"</span><span class="token punctuation">;</span>
+  navbar<span class="token punctuation">.</span>style<span class="token punctuation">.</span>marginRight <span class="token operator">=</span> scrollbarWidth <span class="token operator">+</span> <span class="token string">"px"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> <span class="token function-variable function">onRestoreScrollbar</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> scrollingElement <span class="token operator">=</span> document<span class="token punctuation">.</span>scrollingElement<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> navbar <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"navbar-content"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  scrollingElement<span class="token punctuation">.</span>style<span class="token punctuation">.</span>overflow <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+  scrollingElement<span class="token punctuation">.</span>style<span class="token punctuation">.</span>marginRight <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+  navbar<span class="token punctuation">.</span>style<span class="token punctuation">.</span>marginRight <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">return</span> <span class="token punctuation">(</span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token class-name">Dismiss</span></span>
+
+    <span class="token comment">// ...</span>
+
+    <span class="token attr-name">onToggleScrollbar</span><span class="token script language-javascript"><span class="token script-punctuation punctuation">=</span><span class="token punctuation">{</span><span class="token punctuation">{</span>
+      <span class="token literal-property property">onRemove</span><span class="token operator">:</span> onRemoveScrollbar<span class="token punctuation">,</span>
+      <span class="token literal-property property">onRestore</span><span class="token operator">:</span> onRestoreScrollbar<span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">}</span></span>
+  <span class="token punctuation">&gt;</span></span><span class="token plain-text">
+    </span><span class="token punctuation">{</span><span class="token comment">/* ... */</span><span class="token punctuation">}</span><span class="token plain-text">
+  </span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token class-name">Dismiss</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>`;
+
   return (
     <div class="section">
       <H3Anchor>Modal</H3Anchor>
       <div class="explaination">
         <p>
           Modal is a popup that requires an overlay, to prevent interaction with
-          page. For this case we're using <code class="code">overlay</code>{" "}
-          prop.
+          page, and makes sure focus remains inside Modal content.
+        </p>
+        <p>
+          We use <code class="code">modal</code> prop.{" "}
+          <code class="code">modal</code> is a shorthand for{" "}
+          <code class="code">overlay = true</code>,{" "}
+          <code class="code">overlayElement = true</code>,{" "}
+          <code class="code">trapFocus = true</code>,{" "}
+          <code class="code">removeScrollbar = true</code>, and{" "}
+          <code class="code">mount = "body"</code>.
         </p>
         <p>
           When a Modal is opened, focus must be moved within it, in this example
           the focus jumps to a "Save" button and it's done by using{" "}
-          <code class="code">focusElementOnOpen</code> prop. To make sure that
-          focus remains inside Modal content, the{" "}
-          <code class="code">trapFocus</code> prop is set.
+          <code class="code">focusElementOnOpen</code> prop.
         </p>
       </div>
       <div class="split-view">
@@ -132,8 +147,32 @@ const Modal = () => {
         </div>
 
         <CodeEditor
-          contentJSX={codeContentJSX}
+          contentJSX={codeContentModalJSX}
           contentCSS={codeContentCSS}
+        ></CodeEditor>
+      </div>
+      <div class="explaination">
+        <p>
+          By default the Modal removes the scrollbar in order to prevent
+          scrolling. However when toggling the page scrollbar, it causes a
+          noticeable shift.
+        </p>
+        <p>
+          Here we use <code class="code">onToggleScrollbar</code> prop to
+          customize the removal of the scrollbar to prevent visual page "jank".
+        </p>
+      </div>
+      <div class="split-view">
+        <div>
+          <div class="dropdown-area">
+            <FocusGutter />
+            <ModalToggleScrollbar></ModalToggleScrollbar>
+            <FocusGutter />
+          </div>
+        </div>
+
+        <CodeEditor
+          contentJSX={codeContentModalToggleScrollbarJSX}
         ></CodeEditor>
       </div>
     </div>

@@ -49,16 +49,6 @@ const Modal = () => {
 
   const onOpen: OnOpenHandler = (open, { dismissStack }) => {
     if (open) {
-      if (dismissStack.length <= 1) {
-        const scrollbarWidth =
-          window.innerWidth - document.documentElement.clientWidth;
-        const scrollingElement = document.scrollingElement as HTMLElement;
-        const navbar = document.getElementById("navbar-content")!;
-        scrollingElement.style.overflow = "hidden";
-        scrollingElement.style.marginRight = scrollbarWidth + "px";
-        navbar.style.marginRight = scrollbarWidth + "px";
-      }
-
       modalStep = (modalStep + 1) % 10;
 
       const { x, y } = getPointFromCircle(modalStep, {
@@ -72,17 +62,25 @@ const Modal = () => {
     } else {
       --modalStep;
       if (modalStep < 0) modalStep = -1;
-      // if there happened to be a stack of modals, we don't want the scrollbar to return when topmost modal is removed while there's more modals below.
-      if (dismissStack.length) return;
-
-      setTimeout(() => {
-        const scrollingElement = document.scrollingElement as HTMLElement;
-        const navbar = document.getElementById("navbar-content")!;
-        scrollingElement.style.overflow = "";
-        scrollingElement.style.marginRight = "";
-        navbar.style.marginRight = "";
-      }, 200);
     }
+  };
+
+  const onRemoveScrollbar = () => {
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+    const scrollingElement = document.scrollingElement as HTMLElement;
+    const navbar = document.getElementById("navbar-content")!;
+    scrollingElement.style.overflow = "hidden";
+    scrollingElement.style.marginRight = scrollbarWidth + "px";
+    navbar.style.marginRight = scrollbarWidth + "px";
+  };
+
+  const onRestoreScrollbar = () => {
+    const scrollingElement = document.scrollingElement as HTMLElement;
+    const navbar = document.getElementById("navbar-content")!;
+    scrollingElement.style.overflow = "";
+    scrollingElement.style.marginRight = "";
+    navbar.style.marginRight = "";
   };
 
   return (
@@ -95,9 +93,11 @@ const Modal = () => {
         open={open}
         setOpen={setOpen}
         onOpen={onOpen}
-        mount="body"
-        trapFocus
-        overlay
+        modal
+        onToggleScrollbar={{
+          onRemove: onRemoveScrollbar,
+          onRestore: onRestoreScrollbar,
+        }}
         focusElementOnOpen={() => modalEl}
         animation={{
           name: "fade-modal",
@@ -243,37 +243,24 @@ const Popup = () => {
 //     setOpen(false);
 //   };
 //
-//   const onOpen = (open, { dismissStack }) => {
-//     if (open) {
-//       if (dismissStack.length <= 1) {
-//         const scrollbarWidth =
-//           window.innerWidth - document.documentElement.clientWidth;
-//         const scrollingElement = document.scrollingElement;
-//         const navbar = document.getElementById("navbar-content");
-//
-//         scrollingElement.style.overflow = "hidden";
-//         scrollingElement.style.marginRight = scrollbarWidth + "px";
-//         navbar.style.marginRight = scrollbarWidth + "px";
-//       }
-//
-//     } else {
-//       // if there happened to be a stack of modals,
-//       // we don't want the scrollbar to return
-//       // when topmost modal is removed
-//       // while there's more modals below.
-//       if (dismissStack.length) return;
-//
-//       setTimeout(() => {
-//         const scrollingElement = document.scrollingElement;
-//         const navbar = document.getElementById("navbar-content");
-//
-//         scrollingElement.style.overflow = "";
-//         scrollingElement.style.marginRight = "";
-//         navbar.style.marginRight = "";
-//         // remove scrollbar after animation is done
-//       }, 200);
-//     }
+//   const onRemoveScrollbar = () => {
+//     const scrollbarWidth =
+//       window.innerWidth - document.documentElement.clientWidth;
+//     const scrollingElement = document.scrollingElement as HTMLElement;
+//     const navbar = document.getElementById("navbar-content")!;
+//     scrollingElement.style.overflow = "hidden";
+//     scrollingElement.style.marginRight = scrollbarWidth + "px";
+//     navbar.style.marginRight = scrollbarWidth + "px";
 //   };
+//
+//   const onRestoreScrollbar = () => {
+//     const scrollingElement = document.scrollingElement as HTMLElement;
+//     const navbar = document.getElementById("navbar-content")!;
+//     scrollingElement.style.overflow = "";
+//     scrollingElement.style.marginRight = "";
+//     navbar.style.marginRight = "";
+//   };
+//
 //
 //   return (
 //     <>
@@ -282,11 +269,12 @@ const Popup = () => {
 //         menuButton={btnEl}
 //         open={open}
 //         setOpen={setOpen}
-//         onOpen={onOpen}
-//         mount="body"
-//         trapFocus
-//         overlay
+//         modal
 //         focusElementOnOpen={() => modalEl}
+//         onToggleScrollbar={{
+//           onRemove: onRemoveScrollbar,
+//           onRestore: onRestoreScrollbar,
+//         }}
 //         animation={{
 //           name: "fade-modal",
 //           appendToElement: ".modal-container",

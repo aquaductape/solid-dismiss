@@ -3,10 +3,10 @@ import { scopeModuleClasses } from "../../utils/scopModuleClasses";
 
 const s = scopeModuleClasses(c);
 
-import { Component, createSignal, createEffect } from "solid-js";
+import { createSignal } from "solid-js";
 import Dismiss from "solid-dismiss";
 
-const Modal = () => {
+const ModalToggleScrollbar = () => {
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let btnSaveEl!: HTMLButtonElement;
@@ -20,6 +20,24 @@ const Modal = () => {
     setOpen(false);
   };
 
+  const onRemoveScrollbar = () => {
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+    const scrollingElement = document.scrollingElement as HTMLElement;
+    const navbar = document.getElementById("navbar-content")!;
+    scrollingElement.style.overflow = "hidden";
+    scrollingElement.style.marginRight = scrollbarWidth + "px";
+    navbar.style.marginRight = scrollbarWidth + "px";
+  };
+
+  const onRestoreScrollbar = () => {
+    const scrollingElement = document.scrollingElement as HTMLElement;
+    const navbar = document.getElementById("navbar-content")!;
+    scrollingElement.style.overflow = "";
+    scrollingElement.style.marginRight = "";
+    navbar.style.marginRight = "";
+  };
+
   return (
     <>
       <button class="btn-primary" ref={btnEl}>
@@ -30,6 +48,10 @@ const Modal = () => {
         open={open}
         setOpen={setOpen}
         modal
+        onToggleScrollbar={{
+          onRemove: onRemoveScrollbar,
+          onRestore: onRestoreScrollbar,
+        }}
         focusElementOnOpen={() => btnSaveEl}
       >
         <div
@@ -75,57 +97,38 @@ const Modal = () => {
   );
 };
 
-// import Dismiss from "solid-dismiss";
-// import { createSignal, createEffect } from "solid-js";
+// // ...
 //
-// const Modal = () => {
-//   const [open, setOpen] = createSignal(false);
-//   let btnEl;
-//   let btnSaveEl;
-//
-//   const onClickClose = () => {
-//     setOpen(false);
-//   };
-//
-//   const onClickOverlay = (e) => {
-//     if (e.target !== e.currentTarget) return;
-//     setOpen(false);
-//   };
-//
-//   return (
-//     <>
-//       <button ref={btnEl}>Button</button>
-//       <Dismiss
-//         menuButton={btnEl}
-//         open={open}
-//         setOpen={setOpen}
-//         modal
-//         focusElementOnOpen={() => btnSaveEl}
-//       >
-//         <div
-//           class="modal-container"
-//           onClick={onClickOverlay}
-//           role="presentation"
-//         >
-//           <div class="modal" role="dialog" aria-modal="true" tabindex="-1">
-//             <h4>Modal Text</h4>
-//             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-//             <div class="close-btns">
-//               <button onClick={onClickClose}>Cancel</button>
-//               <button onClick={onClickClose} ref={btnSaveEl}>Save</button>
-//             </div>
-//             <button
-//               class="x-btn"
-//               aria-label="close modal"
-//               onClick={onClickClose}
-//             >
-//               ✕
-//             </button>
-//           </div>
-//         </div>
-//       </Dismiss>
-//     </>
-//   );
+// const onRemoveScrollbar = () => {
+//   const scrollbarWidth =
+//     window.innerWidth - document.documentElement.clientWidth;
+//   const scrollingElement = document.scrollingElement;
+//   const navbar = document.getElementById("navbar-content");
+//   scrollingElement.style.overflow = "hidden";
+//   scrollingElement.style.marginRight = scrollbarWidth + "px";
+//   navbar.style.marginRight = scrollbarWidth + "px";
 // };
+//
+// const onRestoreScrollbar = () => {
+//   const scrollingElement = document.scrollingElement;
+//   const navbar = document.getElementById("navbar-content");
+//   scrollingElement.style.overflow = "";
+//   scrollingElement.style.marginRight = "";
+//   navbar.style.marginRight = "";
+// };
+//
+// return (
+//   <Dismiss
+//
+//     // ...
+//
+//     onToggleScrollbar={{
+//       onRemove: onRemoveScrollbar,
+//       onRestore: onRestoreScrollbar,
+//     }}
+//   >
+//     {/* ... */}
+//   </Dismiss>
+// );
 
-export default Modal;
+export default ModalToggleScrollbar;
