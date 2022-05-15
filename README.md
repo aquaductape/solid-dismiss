@@ -199,6 +199,16 @@ closeWhenDocumentBlurs?: boolean;
  */
 removeScrollbar?: boolean;
 /**
+ *
+ * Customize the removal of the scrollbar to prevent visual page "jank".
+ *
+ * @defaultValue `false`
+ */
+onToggleScrollbar?: {
+  onRemove: () => void;
+  onRestore: () => void;
+};
+/**
  * Prevent page interaction when clicking outside to close menuPopup
  *
  * Author must create overlay element within menuPopup, this way page elements underneath the menuPopup can't be interacted with.

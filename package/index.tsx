@@ -190,6 +190,16 @@ export type TDismiss = {
    */
   removeScrollbar?: boolean;
   /**
+   *
+   * Customize the removal of the scrollbar to prevent visual page "jank".
+   *
+   * @defaultValue `false`
+   */
+  onToggleScrollbar?: {
+    onRemove: () => void;
+    onRestore: () => void;
+  };
+  /**
    * Prevent page interaction when clicking outside to close menuPopup
    *
    * Author must create overlay element within menuPopup, this way page elements underneath the menuPopup can't be interacted with.
@@ -336,6 +346,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     mount = modal ? "body" : undefined,
     // stopComponentEventPropagation = false,
     show = false,
+    onToggleScrollbar,
     onOpen,
   } = props;
 
@@ -612,6 +623,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     function endTransition() {
       exitRunning = false;
       mountEl?.removeChild(containerEl!);
+      runToggleScrollbar(false);
       globalState.closedBySetOpen = false;
 
       if (state.menuBtnEls && (overlay || overlayElement)) {
@@ -628,16 +640,27 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     }
   }
 
-  const runRemoveScrollbar = (open: boolean) => {
+  const runToggleScrollbar = (open: boolean) => {
+    if (onToggleScrollbar) {
+      if (open) {
+        if (dismissStack.length > 1) return;
+        onToggleScrollbar.onRemove();
+      } else {
+        if (dismissStack.length) return;
+        onToggleScrollbar.onRestore();
+      }
+      return;
+    }
+
     if (!removeScrollbar) return;
 
     if (dismissStack.length > 1) return;
 
+    const el = document.scrollingElement as HTMLElement;
+
     if (open) {
-      const el = document.scrollingElement as HTMLElement;
       el.style.overflow = "hidden";
     } else {
-      const el = document.scrollingElement as HTMLElement;
       el.style.overflow = "";
     }
   };
@@ -865,8 +888,8 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
             timeouts: state.timeouts,
           });
 
-          runRemoveScrollbar(open);
           onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
+          runToggleScrollbar(open);
           activateLastFocusSentinel(state);
         } else {
           globalState.closedByEvents = false;
@@ -876,8 +899,10 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           removeMenuPopupEl(state);
           removeDismissStack(state.uniqueId);
           removeGlobalEvents();
-          runRemoveScrollbar(open);
           onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
+          if (!props.animation) {
+            runToggleScrollbar(open);
+          }
         }
       },
       { defer: initDefer as any }
