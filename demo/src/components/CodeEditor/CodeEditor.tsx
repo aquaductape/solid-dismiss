@@ -30,13 +30,12 @@ const CodeEditor: Component<{ contentJSX: string; contentCSS?: string }> = ({
     const value = language();
 
     if (!showEditor()) return;
+    const el = codeEl.querySelector(".simplebar-content") || codeEl;
 
     if (value === "jsx") {
-      const el = codeEl.querySelector(".simplebar-content") || codeEl;
       el.innerHTML = contentJSX;
     }
     if (value === "css") {
-      const el = codeEl.querySelector(".simplebar-content") || codeEl;
       el.innerHTML = contentCSS!;
     }
   });
