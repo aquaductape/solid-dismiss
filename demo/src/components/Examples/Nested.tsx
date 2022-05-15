@@ -170,7 +170,7 @@ const Popup = () => {
       popupEl.style.position = "absolute";
       popupEl.style.top = bottom + scrollY + "px";
       popupEl.style.left = left + scrollX + "px";
-      popupEl.style.zIndex = "100";
+      popupEl.style.zIndex = "1000";
     }
   };
 

@@ -188,7 +188,7 @@ const DropdownOverlay = () => {
         popupEl<span class="token punctuation">.</span>style<span class="token punctuation">.</span>position <span class="token operator">=</span> <span class="token string">"absolute"</span><span class="token punctuation">;</span>
         popupEl<span class="token punctuation">.</span>style<span class="token punctuation">.</span>top <span class="token operator">=</span> bottom <span class="token operator">+</span> scrollY <span class="token operator">+</span> <span class="token string">"px"</span><span class="token punctuation">;</span>
         popupEl<span class="token punctuation">.</span>style<span class="token punctuation">.</span>left <span class="token operator">=</span> left <span class="token operator">+</span> scrollX <span class="token operator">+</span> <span class="token string">"px"</span><span class="token punctuation">;</span>
-        popupEl<span class="token punctuation">.</span>style<span class="token punctuation">.</span>zIndex <span class="token operator">=</span> <span class="token string">"100"</span><span class="token punctuation">;</span>
+        popupEl<span class="token punctuation">.</span>style<span class="token punctuation">.</span>zIndex <span class="token operator">=</span> <span class="token string">"1000"</span><span class="token punctuation">;</span>
       <span class="token punctuation">}</span>
     <span class="token punctuation">}</span><span class="token punctuation">;</span>
   
