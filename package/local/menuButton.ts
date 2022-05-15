@@ -232,6 +232,8 @@ export const onFocusMenuButton = (state: TLocalState) => {
 };
 
 export const getMenuButton = (menuBtnEls: HTMLElement[]): HTMLElement => {
+  if (!menuBtnEls) return undefined as any;
+
   if (menuBtnEls.length <= 1) return menuBtnEls[0];
 
   return menuBtnEls.find((menuBtnEl) => {
