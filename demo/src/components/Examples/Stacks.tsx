@@ -24,7 +24,7 @@ const getPointFromCircle = (
   return { x, y };
 };
 
-const Nested = () => {
+const Stacks = () => {
   return (
     <div class="sibling-nested-buttons">
       <Modal />
@@ -124,7 +124,7 @@ const Modal = () => {
               </a>
               .
             </p>
-            <Nested />
+            <Stacks />
             <button
               class={s("x-btn")}
               aria-label="close modal"
@@ -200,7 +200,7 @@ const Popup = () => {
             </a>
             .
           </p>
-          <Nested />
+          <Stacks />
           <button
             class={s("x-btn")}
             aria-label="close modal"
@@ -362,4 +362,4 @@ const Popup = () => {
 //   );
 // };
 
-export default Nested;
+export default Stacks;

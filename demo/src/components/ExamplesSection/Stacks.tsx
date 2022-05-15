@@ -1,10 +1,10 @@
 import { onMount } from "solid-js";
 import CodeEditor from "../CodeEditor/CodeEditor";
-import _Nested from "../Examples/Nested";
+import _Stacks from "../Examples/Stacks";
 import FocusGutter from "../FocusGutter";
 import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";
 
-const DropdownOverlay = () => {
+const Stacks = () => {
   const codeContentCSS = `<pre class=" language-jsx" tabindex="0"><code class=" language-css"><span class="token selector">// relevant CSS ...
 
 .modal-container</span> <span class="token punctuation">{</span>
@@ -226,10 +226,10 @@ const DropdownOverlay = () => {
 
   return (
     <div class="section">
-      <H3Anchor>Nested</H3Anchor>
+      <H3Anchor>Stacks</H3Anchor>
       <div class="explaination">
         <p>
-          This library can manage layers of popups. Pressing Escape will close
+          This library can manage stacks of popups. Pressing Escape will close
           most recent popup. When clicking/focusing around, popups that don't
           contain clicked target or activeElement will close.
         </p>
@@ -238,7 +238,7 @@ const DropdownOverlay = () => {
         <div>
           <div class="dropdown-area">
             <FocusGutter />
-            <_Nested></_Nested>
+            <_Stacks></_Stacks>
             <FocusGutter />
           </div>
         </div>
@@ -251,4 +251,4 @@ const DropdownOverlay = () => {
   );
 };
 
-export default DropdownOverlay;
+export default Stacks;

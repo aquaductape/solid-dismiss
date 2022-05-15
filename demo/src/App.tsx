@@ -13,7 +13,7 @@ const Docs = lazy(() => import("./components/Docs/Docs"));
 import Popup from "./components/ExamplesSection/Popup";
 import DropdownMounted from "./components/ExamplesSection/DropdownMounted";
 import DropdownOverlay from "./components/ExamplesSection/DropdownOverlay";
-import Nested from "./components/ExamplesSection/Nested";
+import Stacks from "./components/ExamplesSection/Stacks";
 import Animation from "./components/ExamplesSection/Animations";
 import NavbarEx from "./components/ExamplesSection/Navbar";
 import MultipleButtons from "./components/ExamplesSection/MultipleButtons";
@@ -45,7 +45,7 @@ const App: Component = () => {
           <NavbarEx></NavbarEx>
           <Popper></Popper>
           <MultipleButtons></MultipleButtons>
-          <Nested></Nested>
+          <Stacks></Stacks>
         </section>
         <section>
           <H2Anchor>Docs</H2Anchor>
