@@ -33,7 +33,9 @@ const App: Component = () => {
     <>
       <Navbar></Navbar>
       <main class="main">
-        <Hero />
+        <section>
+          <Hero />
+        </section>
         <section>
           <H2Anchor>Examples</H2Anchor>
           <Popup></Popup>
