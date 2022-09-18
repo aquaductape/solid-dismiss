@@ -10,7 +10,7 @@ const iOS13 =
     ? iOS && "download" in document.createElement("a")
     : null;
 
-if (iOS && !iOS13) {
+if (iOS && !iOS13 && typeof window !== "undefined") {
   const html = document.querySelector("html")!;
   html.style.cursor = "pointer";
   // @ts-ignore

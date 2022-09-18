@@ -1,4 +1,5 @@
 import "./browserInfo";
+import { isServer } from "solid-js/web";
 import {
   untrack,
   Accessor,
@@ -447,7 +448,8 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     },
   };
 
-  let marker: Text | null = mount ? document.createTextNode("") : null;
+  let marker: Text | null =
+    mount && !isServer ? document.createTextNode("") : null;
   const initDefer = !props.open();
 
   let containerEl: HTMLElement | null;
@@ -910,6 +912,8 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
   );
 
   onCleanup(() => {
+    if (isServer) return;
+
     removeLocalEvents(state, { onCleanup: true });
 
     removeMenuPopupEl(state);
