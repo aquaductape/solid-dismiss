@@ -20,6 +20,7 @@ import MultipleButtons from "./components/ExamplesSection/MultipleButtons";
 import Caveat from "./components/Docs/Caveat";
 import Popper from "./components/ExamplesSection/Popper";
 import { H2Anchor, H3Anchor } from "./components/HeaderAnchor/HeaderAnchor";
+import UsingSSR from "./components/Docs/UsingSSR";
 
 const App: Component = () => {
   onMount(() => {
@@ -31,29 +32,30 @@ const App: Component = () => {
   });
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar />
       <main class="main">
         <section>
           <Hero />
         </section>
         <section>
           <H2Anchor>Examples</H2Anchor>
-          <Popup></Popup>
-          <BasicDropdown></BasicDropdown>
-          <DropdownMounted></DropdownMounted>
-          <DropdownOverlay></DropdownOverlay>
-          <Modal></Modal>
-          <Animation></Animation>
-          <NavbarEx></NavbarEx>
-          <Popper></Popper>
-          <MultipleButtons></MultipleButtons>
-          <Stacks></Stacks>
+          <Popup />
+          <BasicDropdown />
+          <DropdownMounted />
+          <DropdownOverlay />
+          <Modal />
+          <Animation />
+          <NavbarEx />
+          <Popper />
+          <MultipleButtons />
+          <Stacks />
         </section>
         <section>
           <H2Anchor>Docs</H2Anchor>
-          <Caveat></Caveat>
+          <UsingSSR />
+          <Caveat />
           <H3Anchor>Types</H3Anchor>
-          <Docs></Docs>
+          <Docs />
         </section>
       </main>
       <svg>
