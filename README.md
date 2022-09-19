@@ -49,6 +49,38 @@ const Popup = () => {
 
 ## [Demo Site](https://aquaductape.github.io/solid-dismiss/)
 
+## Using SSR
+
+On SSR frameworks such as [Astro](https://docs.astro.build/en/guides/integrations-guide/solid-js/) or [solid-start](https://github.com/solidjs/solid-start), you need to include `["solid-dismiss"]` value to the `noExternal` property in the vite config.
+
+```js
+// solid-start vite.config.js
+import solid from "solid-start/vite";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [solid()],
+  ssr: {
+    noExternal: ["solid-dismiss"],
+  },
+});
+```
+
+```js
+// astro astro.config.mjs
+import { defineConfig } from "astro/config";
+import solidJs from "@astrojs/solid-js";
+
+export default defineConfig({
+  integrations: [solidJs()],
+  vite: {
+    ssr: {
+      noExternal: ["solid-dismiss"],
+    },
+  },
+});
+```
+
 ## Caveat
 
 For iOS Safari: when clicking outside, without overlay, and the element that happened to be clicked upon was an iframe, there's a chance that the popup won't close. iframe detection interaction is feasible by checking if window blurs, but in iOS, unless the user taps on a clickable element inside iframe, window won't blur because the main page focus hasn't been blurred.
