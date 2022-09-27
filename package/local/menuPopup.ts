@@ -1,5 +1,5 @@
+import { queryElement } from "../utils/queryElement";
 import { TLocalState } from "./localState";
-import { queryElement } from "../utils";
 
 export const addMenuPopupEl = (state: TLocalState) => {
   const { menuPopup } = state;

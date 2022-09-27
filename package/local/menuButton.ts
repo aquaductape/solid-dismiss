@@ -2,8 +2,9 @@ import { dismissStack } from "../global/dismissStack";
 import { globalState, onDocumentClick } from "../global/globalEvents";
 import { TLocalState } from "./localState";
 import { removeOutsideFocusEvents } from "./outside";
-import { checkThenClose, hasDisplayNone } from "../utils";
 import { getNextTabbableElement } from "../utils/tabbing";
+import { checkThenClose } from "../utils/checkThenClose";
+import { hasDisplayNone } from "../utils/hasDisplayNone";
 
 let mousedownFired = false;
 

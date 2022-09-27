@@ -6,7 +6,8 @@ import {
   createSignal,
   children,
 } from "solid-js";
-import { camelize, queryElement } from "../utils";
+import { camelize } from "../utils/camelize";
+import { queryElement } from "../utils/queryElement";
 
 export type DismissAnimation = {
   /**

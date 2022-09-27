@@ -1,7 +1,8 @@
 import { dismissStack } from "../global/dismissStack";
 import { globalState } from "../global/globalEvents";
+import { checkThenClose } from "../utils/checkThenClose";
+import { queryElement } from "../utils/queryElement";
 import { TLocalState } from "./localState";
-import { checkThenClose, queryElement } from "../utils";
 import { getMenuButton } from "./menuButton";
 
 export const onClickOverlay = (state: TLocalState) => {

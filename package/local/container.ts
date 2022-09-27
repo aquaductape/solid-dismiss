@@ -1,7 +1,7 @@
 import { dismissStack } from "../global/dismissStack";
 import { globalState, onDocumentClick } from "../global/globalEvents";
+import { queryElement } from "../utils/queryElement";
 import { TLocalState } from "./localState";
-import { queryElement } from "../utils";
 
 // Safari, if relatedTarget is not contained within focusout, it will be null
 export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {

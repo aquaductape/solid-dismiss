@@ -13,7 +13,6 @@ import {
   createComputed,
   ParentComponent,
 } from "solid-js";
-import { hasDisplayNone, queryElement } from "./utils";
 import {
   dismissStack,
   addDismissStack,
@@ -57,6 +56,8 @@ import {
   activateLastFocusSentinel,
   onFocusSentinel,
 } from "./local/focusSentinel";
+import { queryElement } from "./utils/queryElement";
+import { hasDisplayNone } from "./utils/hasDisplayNone";
 
 export type TDismiss = {
   /**

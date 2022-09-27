@@ -1,7 +1,8 @@
 import { dismissStack, TDismissStack } from "./dismissStack";
 import { getMenuButton, markFocusedMenuButton } from "../local/menuButton";
-import { checkThenClose, queryElement } from "../utils";
 import { getNextTabbableElement } from "../utils/tabbing";
+import { checkThenClose } from "../utils/checkThenClose";
+import { queryElement } from "../utils/queryElement";
 
 let scrollEventAddedViaTouch = false;
 let scrollEventAdded = false;

@@ -1,6 +1,8 @@
 import { dismissStack } from "../global/dismissStack";
 import { globalState } from "../global/globalEvents";
-import { checkThenClose, matchByFirstChild, queryElement } from "../utils";
+import { checkThenClose } from "../utils/checkThenClose";
+import { matchByFirstChild } from "../utils/matchByFirstChild";
+import { queryElement } from "../utils/queryElement";
 import { getNextTabbableElement } from "../utils/tabbing";
 import { TLocalState } from "./localState";
 import { getMenuButton } from "./menuButton";
