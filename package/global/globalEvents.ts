@@ -145,11 +145,12 @@ export const onKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
       const shiftKey = e.shiftKey;
       // TODO: work with stacks?
-      // TODO: need to manage these menuBtnEls[0] better
+      const menuBtnEl = getMenuButton(menuBtnEls);
+
       const el = getNextTabbableElement({
         from: shiftKey ? focusSentinelBeforeEl! : focusSentinelAfterEl!,
         direction: shiftKey ? "backwards" : "forwards",
-        ignoreElement: menuBtnEls.length ? [menuBtnEls[0]] : [],
+        ignoreElement: menuBtnEl ? [menuBtnEl] : [],
       });
 
       if (el) {

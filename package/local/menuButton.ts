@@ -259,9 +259,9 @@ export const onFocusMenuButton = (state: TLocalState) => {
     state;
 
   if (deadMenuButton) {
-    const menuBtn = menuBtnEls![0];
+    const menuBtn = getMenuButton(menuBtnEls!);
     menuBtn.addEventListener("blur", state.onBlurMenuButtonRef);
-    menuBtn!.addEventListener("keydown", state.onKeydownMenuButtonRef);
+    menuBtn.addEventListener("keydown", state.onKeydownMenuButtonRef);
 
     globalState.addedDocumentClick = true;
     setTimeout(() => {
