@@ -1,6 +1,6 @@
 {
   "name": "solid-dismiss",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "homepage": "https://aquaductape.github.io/solid-dismiss/",
   "description": "Handles \"click outside\" behavior for popup menu. Closing is triggered by click/focus outside of popup element or pressing \"Escape\" key.",
   "license": "MIT",
