@@ -122,6 +122,10 @@ export type TDismiss = {
          * @defaultValue `false`
          */
         wrap: boolean;
+        onKeyDown?: (props: {
+          currentEl: HTMLElement | null;
+          prevEl: HTMLElement | null;
+        }) => void;
       };
   /**
    *

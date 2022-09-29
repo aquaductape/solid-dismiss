@@ -19,6 +19,7 @@ export const globalState: {
   menuBtnEl?: HTMLElement | null;
   focusedMenuBtns: Set<{ el: HTMLElement | null }>;
   closedByEvents: boolean;
+  cursorKeysPrevEl: HTMLElement | null;
 } = {
   closeByFocusSentinel: false,
   closedBySetOpen: false,
@@ -26,6 +27,7 @@ export const globalState: {
   documentClickTimeout: null,
   closedByEvents: false,
   focusedMenuBtns: new Set(),
+  cursorKeysPrevEl: null,
 };
 
 export const onDocumentClick = (e: Event) => {
@@ -254,6 +256,7 @@ export const removeGlobalEvents = () => {
 
   scrollEventAdded = false;
   globalState.addedDocumentClick = false;
+  globalState.cursorKeysPrevEl = null;
   // globalState.menuBtnEl = null;
   window.clearTimeout(globalState.documentClickTimeout!);
   globalState.documentClickTimeout = null;
@@ -305,7 +308,7 @@ const onCursorKeys = (e: KeyboardEvent) => {
   } = dismissStack[dismissStack.length - 1];
   const menuBtnEl = getMenuButton(menuBtnEls);
 
-  let activeElement = document.activeElement!;
+  let activeElement = globalState.cursorKeysPrevEl || document.activeElement!;
 
   let direction: "forwards" | "backwards";
 
@@ -329,7 +332,9 @@ const onCursorKeys = (e: KeyboardEvent) => {
     }
   }
 
-  const willWrap = typeof cursorKeys === "object" && cursorKeys.wrap;
+  const isCursorKeysArgObj = typeof cursorKeys === "object";
+
+  const willWrap = isCursorKeysArgObj && cursorKeys.wrap;
   let el = getNextTabbableElement({
     from: activeElement,
     direction,
@@ -346,6 +351,16 @@ const onCursorKeys = (e: KeyboardEvent) => {
       direction,
       stopAtRootElement: containerEl!,
     });
+  }
+
+  if (isCursorKeysArgObj && cursorKeys.onKeyDown) {
+    cursorKeys.onKeyDown({
+      currentEl: el,
+      prevEl: globalState.cursorKeysPrevEl,
+    });
+
+    globalState.cursorKeysPrevEl = el;
+    return;
   }
 
   if (el) {
