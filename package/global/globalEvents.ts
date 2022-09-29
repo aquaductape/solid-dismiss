@@ -34,10 +34,12 @@ export const onDocumentClick = (e: Event) => {
   checkThenClose(
     dismissStack,
     (item) => {
+      const menuButton = getMenuButton(item.menuBtnEls);
+
       if (
         item.overlay ||
         item.overlayElement ||
-        getMenuButton(item.menuBtnEls).contains(target) ||
+        (menuButton && menuButton.contains(target)) ||
         item.containerEl.contains(target)
       )
         return;
@@ -273,8 +275,14 @@ const onCursorKeys = (e: KeyboardEvent) => {
 
   if (horizontalKeys.includes(e.key)) return;
 
-  const { menuBtnEls, menuPopupEl, containerEl, focusSentinelBeforeEl } =
-    dismissStack[dismissStack.length - 1];
+  const {
+    menuBtnEls,
+    menuPopupEl,
+    containerEl,
+    focusSentinelBeforeEl,
+    focusSentinelAfterEl,
+    cursorKeys,
+  } = dismissStack[dismissStack.length - 1];
   const menuBtnEl = getMenuButton(menuBtnEls);
 
   let activeElement = document.activeElement!;
@@ -292,15 +300,33 @@ const onCursorKeys = (e: KeyboardEvent) => {
     activeElement === menuPopupEl ||
     activeElement === containerEl
   ) {
-    direction = "forwards";
-    activeElement = focusSentinelBeforeEl!;
+    if (e.key === "ArrowUp") {
+      direction = "backwards";
+      activeElement = focusSentinelAfterEl!;
+    } else {
+      direction = "forwards";
+      activeElement = focusSentinelBeforeEl!;
+    }
   }
 
-  const el = getNextTabbableElement({
+  const willWrap = typeof cursorKeys === "object" && cursorKeys.wrap;
+  let el = getNextTabbableElement({
     from: activeElement,
     direction,
-    stopAtElement: menuPopupEl!,
+    stopAtRootElement: menuPopupEl!,
   });
+
+  if (!el && willWrap) {
+    const from =
+      e.key === "ArrowDown" ? focusSentinelBeforeEl! : focusSentinelAfterEl!;
+    direction = e.key === "ArrowDown" ? "forwards" : "backwards";
+
+    el = getNextTabbableElement({
+      from,
+      direction,
+      stopAtRootElement: containerEl!,
+    });
+  }
 
   if (el) {
     el.focus();

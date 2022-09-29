@@ -5,7 +5,6 @@ import {
   Accessor,
   createEffect,
   onCleanup,
-  Component,
   JSX,
   on,
   createUniqueId,
@@ -33,6 +32,7 @@ import {
 } from "./local/outside";
 import { addMenuPopupEl, removeMenuPopupEl } from "./local/menuPopup";
 import {
+  addMenuButtonEventsAndAttr,
   getMenuButton,
   markFocusedMenuButton,
   onBlurMenuButton,
@@ -57,7 +57,24 @@ import {
   onFocusSentinel,
 } from "./local/focusSentinel";
 import { queryElement } from "./utils/queryElement";
-import { hasDisplayNone } from "./utils/hasDisplayNone";
+import { getNextTabbableElement } from "./utils/tabbing";
+
+/**
+ * ### stack popup bug
+ *
+ * 1. open 4 stacks
+ * 2. click 3rd stack, which removes 1 stack (topmost), leaving 3 stacks left
+ * 3. click outside of all stacks
+ *
+ * ## Expected
+ *
+ * To close all stacks (remaining 2 stacks), due to none of the stacks containing new focused element, cuz you clicked outside of all stacks
+ *
+ * ## Actual Result
+ *
+ * Only the 3rd stack (topmost) gets removed. All stacks should have been removed. Clicking ou and nothing happens.
+ *
+ */
 
 export type TDismiss = {
   /**
@@ -96,7 +113,16 @@ export type TDismiss = {
    *
    * @defaultValue `false`
    */
-  cursorKeys?: boolean;
+  cursorKeys?:
+    | boolean
+    | {
+        /**
+         * When focused on the last dropdown item, when continueing in the same direction, the first item will be focused.
+         *
+         * @defaultValue `false`
+         */
+        wrap: boolean;
+      };
   /**
    *
    * Focus will remain inside menuPopup when pressing Tab key
@@ -110,7 +136,7 @@ export type TDismiss = {
    *
    * *CSS string queried from root component, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
    *
-   * @defaultValue focus remains on `"menuButton"`
+   * @defaultValue focus remains on `"menuButton"`. But if there's no menu button, focus remains on document's activeElement.
    */
   focusElementOnOpen?:
     | "menuPopup"
@@ -132,8 +158,60 @@ export type TDismiss = {
    *
    * When Tabbing forwards, focuses on tabbable element after menuButton. When Tabbing backwards, focuses on menuButton. When pressing Escape key, menuButton will be focused. When programmatically closed, such as clicking close button, then menuButton will be focused. When "click" outside, user-agent determines which element recieves focus, however if `Dismiss.overlay` or `Dismiss.overlayElement` are set, then menuButton will be focused instead.
    */
-  focusElementOnClose?: "menuButton" | JSX.Element | FocusElementOnCloseOptions;
-
+  focusElementOnClose?:
+    | "menuButton"
+    | JSX.Element
+    | {
+        /**
+         *
+         * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
+         *
+         * @defaultValue `"menuButton"`
+         *
+         */
+        tabBackwards?: "menuButton" | JSX.Element;
+        /**
+         *
+         * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
+         *
+         * @remarks
+         *
+         *  If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
+         *
+         * @defaultValue next tabbable element after menuButton;
+         */
+        tabForwards?: "menuButton" | JSX.Element;
+        /**
+         * focus on element when exiting menuPopup via click outside popup.
+         *
+         * If mounted overlay present, and popup closes via click, then menuButton will be focused.
+         *
+         * @remarks
+         *
+         * When clicking, user-agent determines which element recieves focus.
+         */
+        click?: "menuButton" | JSX.Element;
+        /**
+         *
+         * focus on element when exiting menuPopup via "Escape" key
+         *
+         * @defaultValue `"menuButton"`
+         */
+        escapeKey?: "menuButton" | JSX.Element;
+        /**
+         *
+         * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
+         *
+         * @dafaultValue `"menuButton"`
+         */
+        scrolling?: "menuButton" | JSX.Element;
+      };
+  /**
+   * When `true`, clicking or focusing on menuButton doesn't toggle menuPopup. However the menuButton is still used as reference from `focusElementOnClose`
+   *
+   * @defaultValue `false`
+   */
+  deadMenuButton?: boolean;
   /**
    *
    * When `true`, after focusing within menuPopup, if focused back to menu button via keyboard (Tab key), the menuPopup will close.
@@ -260,6 +338,13 @@ export type TDismiss = {
    * @defaultValue `false`, children are conditionally rendered based on `Dismiss.open` value.
    */
   show?: boolean;
+  /**
+   * If `true`, when pressing Tab key, all tabbable elements in menuPopup are ignored, and the next focusable element is based on `focusElementOnClose`.
+   *
+   * @defaultValue `false`
+   */
+  // disableTabbingInMenuPopup?: boolean;
+  ignoreMenuPopupWhenTabbing?: boolean;
 };
 // stopComponentEventPropagation?: boolean;
 
@@ -325,8 +410,6 @@ export type DismissStack = TDismissStack;
  */
 const Dismiss: ParentComponent<TDismiss> = (props) => {
   const modal = props.modal || false;
-  // @ts-check
-
   const {
     id,
     menuButton,
@@ -350,6 +433,8 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     show = false,
     onToggleScrollbar,
     onOpen,
+    deadMenuButton,
+    ignoreMenuPopupWhenTabbing,
   } = props;
 
   const state: TLocalState = {
@@ -363,7 +448,9 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     closeWhenScrolling,
     cursorKeys,
     focusElementOnClose,
+    deadMenuButton,
     focusElementOnOpen,
+    ignoreMenuPopupWhenTabbing,
     // @ts-ignore
     id,
     uniqueId: createUniqueId(),
@@ -734,61 +821,14 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           ? props.menuButton()
           : props.menuButton,
       (menuButton) => {
-        if (Array.isArray(menuButton) && !menuButton.length) return;
-
-        const { focusedMenuBtn } = state;
-        const menuBtnEls = queryElement(state, {
-          inputElement: menuButton,
-          type: "menuButton",
-        }) as unknown as HTMLElement[];
-        if (!menuBtnEls) return;
-
-        state.menuBtnEls = Array.isArray(menuBtnEls)
-          ? menuBtnEls
-          : [menuBtnEls];
-
-        state.menuBtnEls.forEach((menuBtnEl, _, self) => {
-          if (
-            focusedMenuBtn.el &&
-            focusedMenuBtn.el !== menuBtnEl &&
-            (self.length > 1 ? !hasDisplayNone(menuBtnEl) : true)
-          ) {
-            focusedMenuBtn.el = menuBtnEl;
-            menuBtnEl.focus({ preventScroll: true });
-            menuBtnEl!.addEventListener(
-              "keydown",
-              state.onKeydownMenuButtonRef
-            );
-          }
-          menuBtnEl.setAttribute("type", "button");
-          menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
-          menuBtnEl.addEventListener(
-            "mousedown",
-            state.onMouseDownMenuButtonRef
-          );
-
-          if (
-            props.open() &&
-            (!state.focusElementOnOpen ||
-              state.focusElementOnOpen === "menuButton" ||
-              state.focusElementOnOpen === state.menuBtnEls) &&
-            !hasDisplayNone(menuBtnEl)
-          ) {
-            menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
-              once: true,
-            });
-          }
+        addMenuButtonEventsAndAttr({
+          state,
+          menuButton,
+          open: props.open,
         });
 
-        const item = dismissStack.find(
-          (item) => item.uniqueId === state.uniqueId
-        );
-        if (item) {
-          item.menuBtnEls = state.menuBtnEls;
-        }
-
         onCleanup(() => {
-          if (!state) return;
+          if (!state || isServer) return;
 
           removeMenuButtonEvents(state, true);
         });
@@ -864,6 +904,12 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           addMenuPopupEl(state);
           runFocusOnActive(state);
 
+          // if (!state.menuBtnEls) {
+          //   state.enableLastFocusSentinel = !!state.mount;
+          //   globalState.addedDocumentClick = true;
+          //   document.addEventListener("click", onDocumentClick, { once: true });
+          // }
+
           addGlobalEvents(closeWhenScrolling);
 
           addDismissStack({
@@ -885,6 +931,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
             cursorKeys,
             focusElementOnClose,
             focusSentinelBeforeEl: state.focusSentinelBeforeEl,
+            focusSentinelAfterEl: state.focusSentinelAfterEl,
             upperStackRemovedByFocusOut: false,
             detectIfMenuButtonObscured: false,
             queueRemoval: false,
@@ -915,7 +962,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
   onCleanup(() => {
     if (isServer) return;
 
-    removeLocalEvents(state, { onCleanup: true });
+    removeLocalEvents(state, { isCleanup: true });
 
     removeMenuPopupEl(state);
     removeOutsideFocusEvents(state);
@@ -1020,4 +1067,5 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
   return finalRender;
 };
 
+export { getNextTabbableElement };
 export default Dismiss;

@@ -5,6 +5,8 @@ import { removeOutsideFocusEvents } from "./outside";
 import { getNextTabbableElement } from "../utils/tabbing";
 import { checkThenClose } from "../utils/checkThenClose";
 import { hasDisplayNone } from "../utils/hasDisplayNone";
+import { queryElement } from "../utils/queryElement";
+import { TDismiss } from "..";
 
 let mousedownFired = false;
 
@@ -16,6 +18,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     onClickOutsideMenuButtonRef: onClickOutsideRef,
     setOpen,
     open,
+    deadMenuButton,
   } = state;
 
   const menuBtnEl = e.currentTarget as HTMLElement;
@@ -27,6 +30,13 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     document.addEventListener("click", onClickOutsideRef, { once: true });
   });
   // globalState.menuBtnEls.clear();
+  if (deadMenuButton) {
+    globalState.addedDocumentClick = true;
+    setTimeout(() => {
+      document.addEventListener("click", onDocumentClick, { once: true });
+    });
+    return;
+  }
 
   state.menuBtnKeyupTabFired = false;
   if (mousedownFired && !open()) {
@@ -156,6 +166,7 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
     mount,
     focusSentinelBeforeEl,
     focusSentinelAfterEl,
+    ignoreMenuPopupWhenTabbing,
   } = state;
 
   const menuBtnEl = e.currentTarget as HTMLElement;
@@ -197,9 +208,28 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
 
   e.preventDefault();
 
+  if (ignoreMenuPopupWhenTabbing) {
+    const el = getNextTabbableElement({
+      from: menuBtnEl!,
+      direction: "forwards",
+      ignoreElement: [
+        containerEl!,
+        focusSentinelBeforeEl!,
+        focusSentinelAfterEl!,
+      ],
+    });
+    if (el) {
+      el.focus();
+    }
+    setOpen(false);
+    menuBtnEl!.removeEventListener("keydown", onKeydownMenuButtonRef);
+    menuBtnEl!.removeEventListener("blur", onBlurMenuButtonRef);
+    return;
+  }
+
   let el = getNextTabbableElement({
     from: focusSentinelBeforeEl!,
-    stopAtElement: containerEl,
+    stopAtRootElement: containerEl,
   });
 
   if (el) {
@@ -225,7 +255,20 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
 };
 
 export const onFocusMenuButton = (state: TLocalState) => {
-  const { closeWhenMenuButtonIsTabbed, timeouts } = state;
+  const { closeWhenMenuButtonIsTabbed, timeouts, deadMenuButton, menuBtnEls } =
+    state;
+
+  if (deadMenuButton) {
+    const menuBtn = menuBtnEls![0];
+    menuBtn.addEventListener("blur", state.onBlurMenuButtonRef);
+    menuBtn!.addEventListener("keydown", state.onKeydownMenuButtonRef);
+
+    globalState.addedDocumentClick = true;
+    setTimeout(() => {
+      document.addEventListener("click", onDocumentClick, { once: true });
+    });
+    return;
+  }
 
   if (!closeWhenMenuButtonIsTabbed) {
     clearTimeout(timeouts.containerFocusTimeoutId!);
@@ -272,18 +315,84 @@ export const markFocusedMenuButton = ({
   );
 };
 
+export const addMenuButtonEventsAndAttr = ({
+  state,
+  menuButton,
+  open,
+}: {
+  state: TLocalState;
+  menuButton: TDismiss["menuButton"];
+  open: () => boolean;
+}) => {
+  if (Array.isArray(menuButton) && !menuButton.length) return;
+
+  const { focusedMenuBtn } = state;
+  const menuBtnEls = queryElement(state, {
+    inputElement: menuButton,
+    type: "menuButton",
+  }) as unknown as HTMLElement[];
+
+  if (!menuBtnEls) {
+    return;
+  }
+
+  state.menuBtnEls = Array.isArray(menuBtnEls) ? menuBtnEls : [menuBtnEls];
+
+  const item = dismissStack.find((item) => item.uniqueId === state.uniqueId);
+  if (item) {
+    item.menuBtnEls = state.menuBtnEls;
+  }
+
+  if (state.deadMenuButton) {
+    state.menuBtnEls.forEach((menuBtnEl) => {
+      menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+      menuBtnEl.addEventListener("mousedown", state.onMouseDownMenuButtonRef);
+      menuBtnEl.addEventListener("focus", state.onFocusMenuButtonRef);
+    });
+    return;
+  }
+
+  state.menuBtnEls.forEach((menuBtnEl, _, self) => {
+    if (
+      focusedMenuBtn.el &&
+      focusedMenuBtn.el !== menuBtnEl &&
+      (self.length > 1 ? !hasDisplayNone(menuBtnEl) : true)
+    ) {
+      focusedMenuBtn.el = menuBtnEl;
+      menuBtnEl.focus({ preventScroll: true });
+      menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
+    }
+    menuBtnEl.setAttribute("type", "button");
+    menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+    menuBtnEl.addEventListener("mousedown", state.onMouseDownMenuButtonRef);
+
+    if (
+      open() &&
+      (!state.focusElementOnOpen ||
+        state.focusElementOnOpen === "menuButton" ||
+        state.focusElementOnOpen === state.menuBtnEls) &&
+      !hasDisplayNone(menuBtnEl)
+    ) {
+      menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
+        once: true,
+      });
+    }
+  });
+};
+
 export const removeMenuButtonEvents = (
   state: TLocalState,
-  onCleanup?: boolean
+  isCleanup?: boolean
 ) => {
   if (!state || !state.menuBtnEls) return;
 
   state.menuBtnEls.forEach((menuBtnEl) => {
-    menuBtnEl.removeEventListener("focus", state.onFocusMenuButtonRef);
-    // menuBtnEl.removeEventListener("keydown", state.onKeydownMenuButtonRef);
+    if (!state.deadMenuButton) {
+      menuBtnEl.removeEventListener("focus", state.onFocusMenuButtonRef);
+    }
     menuBtnEl.removeEventListener("blur", state.onBlurMenuButtonRef);
 
-    if (onCleanup) {
+    if (isCleanup) {
       menuBtnEl.removeEventListener("click", state.onClickMenuButtonRef);
       menuBtnEl.removeEventListener(
         "mousedown",

@@ -14,8 +14,14 @@ export const activateLastFocusSentinel = (state: TLocalState) => {
     containerEl,
     focusSentinelAfterEl,
   } = state;
+  // Before
+  // if (enableLastFocusSentinel) return;
+  if (enableLastFocusSentinel) {
+    focusSentinelAfterEl!.setAttribute("tabindex", "0");
+    return;
+  }
 
-  if (enableLastFocusSentinel) return;
+  if (!menuBtnEls) return;
 
   const menuBtnEl = getMenuButton(menuBtnEls!);
 
@@ -101,10 +107,14 @@ export const onFocusSentinel = (
 
   if (!open()) return;
 
-  if (relatedTarget === containerEl || relatedTarget === menuBtnEl) {
+  if (
+    menuBtnEl &&
+    (relatedTarget === containerEl || relatedTarget === menuBtnEl)
+  ) {
     const el = getNextTabbableElement({
       from: focusSentinelBeforeEl!,
-      stopAtElement: containerEl,
+      direction: "forwards",
+      stopAtRootElement: containerEl,
     })!;
 
     el.focus();
@@ -116,7 +126,7 @@ export const onFocusSentinel = (
       const el = getNextTabbableElement({
         from: focusSentinelAfterEl!,
         direction: "backwards",
-        stopAtElement: containerEl,
+        stopAtRootElement: containerEl,
       })!;
 
       el.focus();
@@ -137,14 +147,24 @@ export const onFocusSentinel = (
         subType: "tabBackwards",
       }) || menuBtnEl;
 
+    // conditional and early return just for no button feature
+    if (!state.menuBtnEls) {
+      // this wasn't here before
+      el.focus();
+      return;
+    }
+    // this wasn't wrapped with mount condition when it should be
+    // if (mount) {
     runIfMounted(el, true);
+    // }
+    // so
     return;
   }
 
   if (trapFocus) {
     const el = getNextTabbableElement({
       from: focusSentinelBeforeEl!,
-      stopAtElement: containerEl,
+      stopAtRootElement: containerEl,
     })!;
 
     el.focus();

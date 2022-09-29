@@ -3,9 +3,9 @@ import { removeMenuButtonEvents } from "./menuButton";
 
 export const removeLocalEvents = (
   state: TLocalState,
-  { onCleanup = false }: { onCleanup?: boolean } = {}
+  { isCleanup = false }: { isCleanup?: boolean } = {}
 ) => {
   document.removeEventListener("click", state.onClickDocumentRef);
 
-  removeMenuButtonEvents(state, onCleanup);
+  removeMenuButtonEvents(state, isCleanup);
 };

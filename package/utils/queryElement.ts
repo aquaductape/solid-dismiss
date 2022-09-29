@@ -9,6 +9,9 @@ export const queryElement = (
     type,
     subType,
   }: {
+    /**
+     * `"menuPopup"` | `"menuButton"` | `any`
+     */
     inputElement: any;
     type?:
       | "menuButton"
@@ -34,7 +37,7 @@ export const queryElement = (
     if (inputElement === "firstChild") {
       return getNextTabbableElement({
         from: state.focusSentinelBeforeEl!,
-        stopAtElement: state.containerEl!,
+        stopAtRootElement: state.containerEl!,
       })!;
     }
     if (typeof inputElement === "string") {

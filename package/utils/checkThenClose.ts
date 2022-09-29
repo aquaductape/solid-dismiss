@@ -1,5 +1,5 @@
 /**
- *  Iterate stack backwards, checks item, pass it close callback. First falsy value breaks iteration.
+ *  Iterate stack backwards, checks item, pass it to close callback. First falsy value breaks iteration.
  */
 export const checkThenClose = <T extends unknown>(
   arr: T[],
