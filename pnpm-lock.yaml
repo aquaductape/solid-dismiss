@@ -7,7 +7,7 @@ specifiers:
   rollup-preset-solid: ^0.3.0
   solid-js: ^1.4.1
   typedoc: ^0.22.4
-  typescript: ^4.6.4
+  typescript: ^4.8.4
 
 devDependencies:
   '@release-it/keep-a-changelog': 2.3.0_release-it@14.11.6
@@ -15,8 +15,8 @@ devDependencies:
   rollup: 2.58.0
   rollup-preset-solid: 0.3.0
   solid-js: 1.4.1
-  typedoc: 0.22.4_typescript@4.6.4
-  typescript: 4.6.4
+  typedoc: 0.22.4_typescript@4.8.4
+  typescript: 4.8.4
 
 packages:
 
@@ -2122,7 +2122,7 @@ packages:
       merge-anything: 4.0.1
       rollup: 2.58.0
       rollup-plugin-terser: 7.0.2_rollup@2.58.0
-      typescript: 4.6.4
+      typescript: 4.8.4
     transitivePeerDependencies:
       - '@types/babel__core'
       - supports-color
@@ -2392,7 +2392,7 @@ packages:
       is-typedarray: 1.0.0
     dev: true
 
-  /typedoc/0.22.4_typescript@4.6.4:
+  /typedoc/0.22.4_typescript@4.8.4:
     resolution: {integrity: sha512-M/a8NnPxq3/iZNNVjzFCK5gu4m//HTJIPbSS0JQVbkHJPP9wyepR12agylWTSqeVZe0xsbidVtO26+PP7iD/jw==}
     engines: {node: '>= 12.10.0'}
     hasBin: true
@@ -2404,11 +2404,11 @@ packages:
       marked: 3.0.4
       minimatch: 3.0.4
       shiki: 0.9.11
-      typescript: 4.6.4
+      typescript: 4.8.4
     dev: true
 
-  /typescript/4.6.4:
-    resolution: {integrity: sha512-9ia/jWHIEbo49HfjrLGfKbZSuWo9iTMwXO+Ca3pRsSpbsMbc7/IU8NKdCZVRRBafVPGnoJeFL76ZOAA84I9fEg==}
+  /typescript/4.8.4:
+    resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
