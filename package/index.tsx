@@ -932,6 +932,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
             focusElementOnClose,
             focusSentinelBeforeEl: state.focusSentinelBeforeEl,
             focusSentinelAfterEl: state.focusSentinelAfterEl,
+            ignoreMenuPopupWhenTabbing,
             upperStackRemovedByFocusOut: false,
             detectIfMenuButtonObscured: false,
             queueRemoval: false,

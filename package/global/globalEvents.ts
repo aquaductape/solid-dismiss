@@ -135,9 +135,28 @@ export const onKeyDown = (e: KeyboardEvent) => {
     closeWhenEscapeKeyIsPressed,
     focusElementOnClose,
     timeouts,
+    ignoreMenuPopupWhenTabbing,
+    focusSentinelAfterEl,
+    focusSentinelBeforeEl,
   } = dismissStack[dismissStack.length - 1];
 
   if (e.key === "Tab") {
+    if (ignoreMenuPopupWhenTabbing) {
+      e.preventDefault();
+      const shiftKey = e.shiftKey;
+      // TODO: work with stacks?
+      // TODO: need to manage these menuBtnEls[0] better
+      const el = getNextTabbableElement({
+        from: shiftKey ? focusSentinelBeforeEl! : focusSentinelAfterEl!,
+        direction: shiftKey ? "backwards" : "forwards",
+        ignoreElement: menuBtnEls.length ? [menuBtnEls[0]] : [],
+      });
+
+      if (el) {
+        el.focus();
+      }
+      return;
+    }
     timestampOfTabkey = e.timeStamp;
   }
 
