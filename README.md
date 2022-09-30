@@ -51,6 +51,8 @@ const Popup = () => {
 
 ## Using SSR
 
+**Note:** on solid-start version `0.1.1` and above, no need update vite config with ssr.noExternal, it happens automatically.
+
 On SSR frameworks such as [Astro](https://docs.astro.build/en/guides/integrations-guide/solid-js/) or [solid-start](https://github.com/solidjs/solid-start), you need to include `["solid-dismiss"]` value to the `noExternal` property in the vite config file.
 
 ```js
