@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   sass: ^1.38.0
+  solid-element: ^1.5.7
   solid-js: ^1.4.1
   solid-transition-group: ^0.0.8
   testcafe: ^1.16.0
@@ -11,6 +12,7 @@ specifiers:
 
 dependencies:
   sass: 1.42.1
+  solid-element: 1.5.7_solid-js@1.4.1
   solid-js: 1.4.1
   solid-transition-group: 0.0.8_solid-js@1.4.1
 
@@ -1464,7 +1466,6 @@ packages:
     dependencies:
       normalize-path: 3.0.0
       picomatch: 2.3.0
-    dev: false
 
   /array-find/1.0.0:
     resolution: {integrity: sha1-bI4obRHtdoMn+OYuzuhzU8o+eLg=}
@@ -1612,7 +1613,6 @@ packages:
   /binary-extensions/2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
-    dev: false
 
   /bluebird/3.7.2:
     resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
@@ -1732,7 +1732,6 @@ packages:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.2
-    dev: false
 
   /chrome-remote-interface/0.30.1:
     resolution: {integrity: sha512-emKaqCjYAgrT35nm6PvTUKJ++2NX9qAmrcNRPRGyryG9Kc7wlkvO0bmvEdNMrr8Bih2e149WctJZFzUiM1UNwg==}
@@ -1791,6 +1790,10 @@ packages:
     resolution: {integrity: sha512-LLKxDvHeL91/8MIyTAD5BFMNtoIwztGPMiM/7Bl8rIPmHCZXRxmSWr91h57dpOpnQ6jIUqEWdXE/uBYMfiVZDA==}
     engines: {node: '>= 12'}
     dev: true
+
+  /component-register/0.8.3:
+    resolution: {integrity: sha512-/0u8ov0WPWi2FL78rgB9aFOcfY8pJT4jP/l9NTOukGNLVQ6hk35sEJE1RkEnNQU3yk48Qr7HlDQjRQKEVfgeWg==}
+    dev: false
 
   /concat-map/0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
@@ -2438,7 +2441,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       binary-extensions: 2.2.0
-    dev: false
 
   /is-ci/1.2.1:
     resolution: {integrity: sha512-s6tfsaQaQi3JNciBH6shVqEDvhGut0SUXr31ag8Pd8BBbVVlcGfWhpPmEOoM6RJ5TFhbypvf5yyRw/VXW1IiWg==}
@@ -2758,7 +2760,6 @@ packages:
   /normalize-path/3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /npm-run-path/4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}
@@ -3014,7 +3015,6 @@ packages:
     engines: {node: '>=8.10.0'}
     dependencies:
       picomatch: 2.3.0
-    dev: false
 
   /regenerate-unicode-properties/9.0.0:
     resolution: {integrity: sha512-3E12UeNSPfjrgwjkR81m5J7Aw/T55Tu7nUyZVQYCKEOs+2dkxEY+DpPtZzO4YruuiPb7NkYLVcyJC4+zCbk5pA==}
@@ -3176,7 +3176,6 @@ packages:
     hasBin: true
     dependencies:
       chokidar: 3.5.2
-    dev: false
 
   /semver/5.5.0:
     resolution: {integrity: sha512-4SJ3dm0WAwWy/NVeioZh5AntkdJoWKxHxcmyP622fOkgHa4z3R0TdBJICINyaSDE6uNwVc8gZr+ZinwZAH4xIA==}
@@ -3218,6 +3217,15 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
     dev: true
+
+  /solid-element/1.5.7_solid-js@1.4.1:
+    resolution: {integrity: sha512-y5b6xhuXHeoXqttfzj724fvV8lNLoAN1y6xt+kAGsP3MH3stsvEiWekXlwDMl6HA8zclTwb5IMZLM5DBH5pEoQ==}
+    peerDependencies:
+      solid-js: ^1.0.0
+    dependencies:
+      component-register: 0.8.3
+      solid-js: 1.4.1
+    dev: false
 
   /solid-js/1.4.1:
     resolution: {integrity: sha512-ts480PccmUW9WAludSXET2dbBevjv+l6XMmN/OyG/a/xA8ZQoX4hNBN3gGhW785ZZv90fowbUSuSQUwOISm3YA==}

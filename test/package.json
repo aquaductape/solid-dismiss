@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "sass": "^1.38.0",
+    "solid-element": "^1.5.7",
     "solid-js": "^1.4.1",
     "solid-transition-group": "^0.0.8"
   }
