@@ -17,6 +17,14 @@ const MultipleMenuButtonsCSS = () => {
   return (
     <section id={id}>
       <h2 tabindex="0">Multiple Menu Buttons CSS</h2>
+      <p>
+        There are cases where multiple menu buttons toggle the same dropdown.
+      </p>
+      <p>
+        But only one is active at a time, while the other is hidden by style
+        "display: none;"
+      </p>
+      <p>Here menu buttons will be toggled by style "display: none;"</p>
       <p>No overlay, page is interactable</p>
       <div class="grid">
         <Popup id={id + "-1"} />

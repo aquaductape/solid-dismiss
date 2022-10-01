@@ -18,6 +18,14 @@ const MultipleMenuButtons = () => {
   return (
     <section id={id}>
       <h2 tabindex="0">Multiple Menu Buttons</h2>
+      <p>
+        There are cases where multiple menu buttons toggle the same dropdown.
+      </p>
+      <p>
+        But only one is active at a time, while the other is not conditionally
+        rendered in the DOM.
+      </p>
+      <p>Here menu buttons will be removed and added to DOM.</p>
       <p>No overlay, page is interactable</p>
       <div class="grid">
         <Popup id={id + "-1"} switchMenuBtnImmediatly />
@@ -52,7 +60,7 @@ const Popup: Component<{
         );
 
         onCleanup(() => {
-          clearInterval(timerId);
+          clearTimeout(timerId);
         });
       },
       { defer: true }
