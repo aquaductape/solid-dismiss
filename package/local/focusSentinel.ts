@@ -181,7 +181,6 @@ export const onFocusSentinel = (
       from: menuBtnEl!,
       ignoreElement: [containerEl!],
     });
-
   if (mount) {
     runIfMounted(el);
     return;

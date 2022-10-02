@@ -235,6 +235,7 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
   if (el) {
     el.focus();
   } else {
+    // TODO: why is this needed when next conditional queries element and focuses it
     containerEl!.focus();
   }
 
