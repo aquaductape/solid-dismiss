@@ -18,6 +18,9 @@ import PopupNoFocusableItems from "./components/Subjects/PopupNoFocusableItems";
 import MultipleMenuButtons from "./components/Subjects/MultipleMenuButtons";
 import MultipleMenuButtonsCSS from "./components/Subjects/MultipleMenuButtonsCSS";
 import Modal from "./components/Subjects/Modal";
+import Tabbing from "./components/Subjects/Tabbing";
+import "./web-components/Button";
+import "./web-components/Nested";
 
 const App: Component = () => {
   const [render, setRender] = createSignal(true);
@@ -54,6 +57,7 @@ const App: Component = () => {
           <MultipleMenuButtonsCSS></MultipleMenuButtonsCSS>
           <Scrolling></Scrolling>
           <Modal></Modal>
+          <Tabbing></Tabbing>
           <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
           <IFrames></IFrames>
           <FocusElementOnClose></FocusElementOnClose>

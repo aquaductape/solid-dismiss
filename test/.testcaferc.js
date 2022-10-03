@@ -15,9 +15,11 @@ module.exports = {
     `${path}/multiple-menu-buttons.ts`,
     `${path}/multiple-menu-buttons-css.ts`,
     `${path}/modal.ts`,
+    `${path}/tabbing.ts`,
     `${path}/iframes.ts`,
     `${path}/mixed.ts`,
   ],
-  // speed: 0.8,
+  // speed: 0.5,
+  // current: 1,
   current: 3,
 };
