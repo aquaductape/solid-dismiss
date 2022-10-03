@@ -34,6 +34,7 @@ const MultipleMenuButtonsCSS = () => {
     </section>
   );
 };
+let count = -1;
 
 const Popup: Component<{ id: string; idx?: number }> = (props) => {
   const idx = props.idx || 1;
@@ -44,6 +45,8 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
   let btn1El!: HTMLButtonElement;
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
+  count++;
+
   createEffect(
     on(
       open,
@@ -75,12 +78,26 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
       style="display: inline-block; position: relative;"
     >
       <span style={`${switchBtn() ? "" : "display: none;"}`}>
-        <Button open={open()} ref={btn0El}>
+        <Button
+          open={open()}
+          ref={btn0El}
+          attr={{
+            [`data-btn-child-${id}`]: "",
+            [`data-btn-child-idx-${count % 3}`]: "",
+          }}
+        >
           menuButton1
         </Button>
       </span>
       <span style={`${switchBtn() ? "display: none;" : ""}`}>
-        <Button open={open()} ref={btn1El}>
+        <Button
+          open={open()}
+          ref={btn1El}
+          attr={{
+            [`data-btn-child-${id}`]: "",
+            [`data-btn-child-idx-${idx}`]: "",
+          }}
+        >
           menuButton2
         </Button>
       </span>

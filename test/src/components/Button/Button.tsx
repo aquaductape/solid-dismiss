@@ -6,6 +6,7 @@ const Button: ParentComponent<{
   active?: boolean;
   class?: string;
   onClick?: (e: MouseEvent) => void;
+  attr?: any;
   ref?: HTMLButtonElement | ((el: HTMLElement) => void);
 }> = (props) => {
   return (
@@ -19,6 +20,7 @@ const Button: ParentComponent<{
       }}
       data-test-menu-button
       ref={props.ref}
+      {...(props.attr || {})}
     >
       {props.children ? (
         props.children
