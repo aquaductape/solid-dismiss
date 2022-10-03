@@ -83,84 +83,6 @@ export const getNextTabbableElement = ({
 
   if (!visitedElement) return null;
 
-  const checkChildren = (
-    children: NodeListOf<Element>,
-    parent: Element,
-    reverse?: boolean,
-    contentWindow?: Window
-  ) => {
-    const length = children.length;
-
-    if (length && isHidden(parent as HTMLElement)) return null;
-
-    if (reverse) {
-      for (let i = length - 1; i > -1; i--) {
-        const child = children[i];
-
-        if (ignoreElement.some((el) => el.contains(child))) continue;
-        if (originalFrom === child) continue;
-
-        if (
-          !checkHiddenAncestors(child as HTMLElement, parent, contentWindow)
-        ) {
-          if (isIframe(child)) {
-            const iframeChild = queryIframe(child, reverse);
-            if (iframeChild) return iframeChild;
-          }
-
-          return child;
-        }
-      }
-      return null;
-    }
-
-    for (let i = 0; i < length; i++) {
-      const child = children[i];
-
-      if (ignoreElement.some((el) => el.contains(child))) continue;
-      if (originalFrom === child) continue;
-
-      if (!checkHiddenAncestors(child as HTMLElement, parent, contentWindow)) {
-        if (isIframe(child)) {
-          const iframeChild = queryIframe(child);
-          if (iframeChild) return iframeChild;
-        }
-
-        return child;
-      }
-    }
-
-    return null;
-  };
-
-  const queryIframe = (
-    el: Element,
-    inverseQuery?: boolean
-  ): HTMLElement | null => {
-    if (!el) return null;
-    if (!isIframe(el)) return el as HTMLElement;
-    const iframeWindow = getIframeWindow(
-      el as HTMLIFrameElement
-    ) as unknown as Window;
-
-    // here iframe will get focused whether it has tab index or not, so checking tabindex conditional a couple lines down is redundant
-    if (!iframeWindow) return el as HTMLElement;
-    const iframeDocument = iframeWindow.document;
-    // conditional used to be here
-    // if (!iframeWindow) return el as HTMLElement;
-    const tabindex = el.getAttribute("tabindex");
-    if (tabindex) return el as HTMLElement;
-
-    const els = iframeDocument.querySelectorAll(tabbableSelectors);
-    const result = checkChildren(
-      els,
-      iframeDocument.documentElement,
-      inverseQuery,
-      iframeWindow
-    )!;
-    return queryIframe(result) as HTMLElement;
-  };
-
   const traverseNextSiblingsThenUp = (
     parent: Element,
     visitedElement: Element
@@ -180,16 +102,7 @@ export const getNextTabbableElement = ({
 
         if (hasPassedVisitedElement) {
           if (ignoreElement.some((el) => el === child)) continue;
-          if (child.matches(tabbableSelectors)) {
-            if (isHidden(child as HTMLElement)) continue;
-
-            const el = queryIframe(child);
-            if (el) return el as HTMLElement;
-            return child as HTMLElement;
-          }
-
-          const els = child.querySelectorAll(tabbableSelectors);
-          const el = checkChildren(els, child);
+          const el = queryTabbableElement(child, tabbableSelectors, direction);
 
           if (el) {
             return el as HTMLElement;
@@ -210,16 +123,8 @@ export const getNextTabbableElement = ({
 
         if (hasPassedVisitedElement) {
           if (ignoreElement.some((el) => el === child)) continue;
-          if (child.matches(tabbableSelectors)) {
-            if (isHidden(child as HTMLElement)) continue;
-            const el = queryIframe(child);
-            if (el) return el as HTMLElement;
-            return child as HTMLElement;
-          }
-          const els = child.querySelectorAll(tabbableSelectors);
 
-          const el = checkChildren(els, child, true);
-
+          const el = queryTabbableElement(child, tabbableSelectors, direction);
           if (el) return el as HTMLElement;
           continue;
         }
@@ -256,8 +161,6 @@ export const getNextTabbableElement = ({
   let result = traverseNextSiblingsThenUp(parent, visitedElement);
 
   if (!result && wrap && stopAtRootElement) {
-    // direction = direction === "forwards" ? "backwards" : "forwards";
-
     willWrap = true;
     originalFrom = from as HTMLElement;
     result = getNextTabbableElement({
@@ -302,42 +205,145 @@ const getActiveElement = (el: Element) => {
   return iframeDocument.activeElement || el;
 };
 
-const isHidden = (el: HTMLElement, contentWindow: Window = window) => {
+const isHidden = (el: HTMLElement, windowContext: Window = window) => {
   const checkByStyle = (style: CSSStyleDeclaration) =>
     style.display === "none" || style.visibility === "hidden";
 
   if ((el.style && checkByStyle(el.style)) || el.hidden) return true;
 
-  const style = contentWindow.getComputedStyle(el);
+  const style = windowContext.getComputedStyle(el);
   if (!style || checkByStyle(style)) return true;
 
   return false;
 };
 
-const checkHiddenAncestors = (
-  target: HTMLElement,
-  parent: Element,
-  contentWindow?: Window
-) => {
-  const ancestors = [];
+export const queryTabbableElement = (
+  el: Element,
+  selectors: string = _tabbableSelectors,
+  iterationDirection: "forwards" | "backwards" = "forwards",
+  windowContext: Window = window,
+  init: boolean = true
+): HTMLElement | null => {
+  const queryChild = (
+    el: Element
+  ): { el: Element; matched: boolean; windowContext?: Window } => {
+    if (!el.matches(selectors))
+      return {
+        el,
+        matched: false,
+      };
 
-  let node = target;
-  if (isHidden(node)) return true;
+    const tabindex = el.getAttribute("tabindex");
+    if (isIframe(el) && (!tabindex || tabindex === "-1")) {
+      const iframeWindow = getIframeWindow(
+        el as HTMLIFrameElement
+      ) as unknown as Window;
+      if (!iframeWindow) {
+        return { el, matched: true };
+      }
+      el = iframeWindow.document.documentElement;
+      windowContext = iframeWindow;
 
-  while (true) {
-    node = node.parentElement as HTMLElement;
-    if (!node || node === parent) {
-      break;
+      return { el, matched: false, windowContext: iframeWindow };
     }
-    ancestors.push(node);
+
+    return {
+      el,
+      matched: true,
+    };
+  };
+
+  if (init) {
+    if (isHidden(el as HTMLElement, windowContext)) return null;
+
+    const {
+      el: elResult,
+      matched,
+      windowContext: windowContextResult,
+    } = queryChild(el);
+    el = elResult;
+    if (matched) return el as HTMLElement;
+    windowContext = windowContextResult || windowContext;
+
+    return queryTabbableElement(
+      el,
+      selectors,
+      iterationDirection,
+      windowContext,
+      false
+    );
   }
 
-  for (const node of ancestors) {
-    if (isHidden(node, contentWindow)) {
+  const shadowRoot = el.shadowRoot;
+  if (shadowRoot) el = shadowRoot as unknown as Element;
+
+  const children = el.children;
+  const childrenLength = children.length;
+
+  const iterateChild = (
+    el: Element
+  ): { returnVal?: Element; continue?: boolean } | null => {
+    if (isHidden(el as HTMLElement, windowContext))
+      return {
+        continue: true,
+      };
+
+    const {
+      el: elResult,
+      matched,
+      windowContext: windowContextResult,
+    } = queryChild(el);
+
+    el = elResult;
+    windowContext = windowContextResult || windowContext;
+
+    if (matched) {
+      return { returnVal: el };
+    }
+
+    const foundChild = queryTabbableElement(
+      el,
+      selectors,
+      iterationDirection,
+      windowContext,
+      false
+    );
+    if (foundChild) return { returnVal: foundChild };
+
+    return null;
+  };
+
+  if (iterationDirection === "forwards") {
+    for (let i = 0; i < childrenLength; i++) {
+      let child = children[i];
+      const result = iterateChild(child);
+
+      if (result) {
+        if (result.continue) continue;
+        if (result.returnVal) return result.returnVal as HTMLElement;
+      }
+    }
+  } else {
+    for (let i = childrenLength - 1; i >= 0; i--) {
+      let child = children[i];
+      const result = iterateChild(child);
+
+      if (result) {
+        if (result.continue) continue;
+        if (result.returnVal) return result.returnVal as HTMLElement;
+      }
+    }
+  }
+
+  return null;
+};
+
+const hasShadowParent = (element: Element) => {
+  while (element.parentNode && (element = element.parentNode as Element)) {
+    if (element instanceof ShadowRoot) {
       return true;
     }
   }
-
   return false;
 };
 
