@@ -13,8 +13,6 @@ const _tabbableSelectors = [
 let willWrap = false;
 let originalFrom: HTMLElement | null = null;
 
-// TODO: does this work with web components, due to shadow root
-
 type GetNextTabbableElement = {
   /**
    * Sets the relative position on getting the next tabbable element
