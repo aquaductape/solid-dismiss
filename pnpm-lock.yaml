@@ -5,7 +5,7 @@ specifiers:
   release-it: ^14.10.0
   rollup: ^2.28.2
   rollup-preset-solid: ^0.3.0
-  solid-js: ^1.4.1
+  solid-js: ^1.6.1
   typedoc: ^0.22.4
   typescript: ^4.8.4
 
@@ -14,7 +14,7 @@ devDependencies:
   release-it: 14.11.6
   rollup: 2.58.0
   rollup-preset-solid: 0.3.0
-  solid-js: 1.4.1
+  solid-js: 1.6.1
   typedoc: 0.22.4_typescript@4.8.4
   typescript: 4.8.4
 
@@ -899,6 +899,10 @@ packages:
   /crypto-random-string/2.0.0:
     resolution: {integrity: sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==}
     engines: {node: '>=8'}
+    dev: true
+
+  /csstype/3.1.1:
+    resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
     dev: true
 
   /debug/4.3.2:
@@ -2238,8 +2242,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /solid-js/1.4.1:
-    resolution: {integrity: sha512-ts480PccmUW9WAludSXET2dbBevjv+l6XMmN/OyG/a/xA8ZQoX4hNBN3gGhW785ZZv90fowbUSuSQUwOISm3YA==}
+  /solid-js/1.6.1:
+    resolution: {integrity: sha512-i8OmR419Hr0918Or6sm1ET/cgmxTtAB7Bdz/UwhZ7G2THixrvVSO3jd+C7YqMKKfVwmf8PJ2gUSbKE8NKv28GA==}
+    dependencies:
+      csstype: 3.1.1
     dev: true
 
   /source-map-support/0.5.20:

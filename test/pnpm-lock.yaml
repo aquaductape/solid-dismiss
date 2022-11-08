@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   sass: ^1.38.0
   solid-element: ^1.5.7
-  solid-js: ^1.4.1
+  solid-js: ^1.6.1
   solid-transition-group: ^0.0.8
   testcafe: ^1.16.0
   vite: ^2.4.2
@@ -12,9 +12,9 @@ specifiers:
 
 dependencies:
   sass: 1.42.1
-  solid-element: 1.5.7_solid-js@1.4.1
-  solid-js: 1.4.1
-  solid-transition-group: 0.0.8_solid-js@1.4.1
+  solid-element: 1.5.7_solid-js@1.6.1
+  solid-js: 1.6.1
+  solid-transition-group: 0.0.8_solid-js@1.6.1
 
 devDependencies:
   testcafe: 1.16.0
@@ -1396,6 +1396,7 @@ packages:
 
   /@types/glob/7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
+    requiresBuild: true
     dependencies:
       '@types/minimatch': 3.0.5
       '@types/node': 12.20.27
@@ -1838,6 +1839,9 @@ packages:
       source-map-resolve: 0.5.3
       urix: 0.1.0
     dev: true
+
+  /csstype/3.1.1:
+    resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
 
   /cuint/0.2.2:
     resolution: {integrity: sha1-QICG1AlVDCYxFVYZ6fp7ytw7mRs=}
@@ -3218,32 +3222,34 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /solid-element/1.5.7_solid-js@1.4.1:
+  /solid-element/1.5.7_solid-js@1.6.1:
     resolution: {integrity: sha512-y5b6xhuXHeoXqttfzj724fvV8lNLoAN1y6xt+kAGsP3MH3stsvEiWekXlwDMl6HA8zclTwb5IMZLM5DBH5pEoQ==}
     peerDependencies:
       solid-js: ^1.0.0
     dependencies:
       component-register: 0.8.3
-      solid-js: 1.4.1
+      solid-js: 1.6.1
     dev: false
 
-  /solid-js/1.4.1:
-    resolution: {integrity: sha512-ts480PccmUW9WAludSXET2dbBevjv+l6XMmN/OyG/a/xA8ZQoX4hNBN3gGhW785ZZv90fowbUSuSQUwOISm3YA==}
+  /solid-js/1.6.1:
+    resolution: {integrity: sha512-i8OmR419Hr0918Or6sm1ET/cgmxTtAB7Bdz/UwhZ7G2THixrvVSO3jd+C7YqMKKfVwmf8PJ2gUSbKE8NKv28GA==}
+    dependencies:
+      csstype: 3.1.1
 
-  /solid-refresh/0.2.2_solid-js@1.4.1:
+  /solid-refresh/0.2.2_solid-js@1.6.1:
     resolution: {integrity: sha512-oQN3pUJ8fBd4ldMxZVqK7S4PGzAn1yx1B5bRRfANoxoqmHyY2QLfzrOzXsYnAkhh272K+W24oKgFWlmdUZ6HtQ==}
     peerDependencies:
       solid-js: ^1.0.0
     dependencies:
-      solid-js: 1.4.1
+      solid-js: 1.6.1
     dev: true
 
-  /solid-transition-group/0.0.8_solid-js@1.4.1:
+  /solid-transition-group/0.0.8_solid-js@1.6.1:
     resolution: {integrity: sha512-5cS/Ircfs/Y0J00oEToL+MWd9V07KgQlw+qRD8kpd6azb2Ri5SjXg/ocqT8U8Wgdx1VQPx45HyopQN+UumkVGQ==}
     peerDependencies:
       solid-js: ^1.0.0
     dependencies:
-      solid-js: 1.4.1
+      solid-js: 1.6.1
     dev: false
 
   /source-map-js/0.6.2:
@@ -3666,8 +3672,8 @@ packages:
       '@babel/preset-typescript': 7.15.0_@babel+core@7.15.5
       babel-preset-solid: 1.1.5_@babel+core@7.15.5
       merge-anything: 4.0.1
-      solid-js: 1.4.1
-      solid-refresh: 0.2.2_solid-js@1.4.1
+      solid-js: 1.6.1
+      solid-refresh: 0.2.2_solid-js@1.6.1
       vite: 2.6.2_sass@1.42.1
     transitivePeerDependencies:
       - less
