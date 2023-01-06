@@ -99,8 +99,12 @@ export const getNextTabbableElement = ({
         const child = children[i];
 
         if (hasPassedVisitedElement) {
-          if (ignoreElement.some((el) => el === child)) continue;
-          const el = queryTabbableElement(child, tabbableSelectors, direction);
+          const el = queryTabbableElement(
+            child,
+            tabbableSelectors,
+            direction,
+            ignoreElement
+          );
 
           if (el) {
             return el as HTMLElement;
@@ -120,9 +124,12 @@ export const getNextTabbableElement = ({
         const child = children[i];
 
         if (hasPassedVisitedElement) {
-          if (ignoreElement.some((el) => el === child)) continue;
-
-          const el = queryTabbableElement(child, tabbableSelectors, direction);
+          const el = queryTabbableElement(
+            child,
+            tabbableSelectors,
+            direction,
+            ignoreElement
+          );
           if (el) return el as HTMLElement;
           continue;
         }
@@ -219,6 +226,7 @@ export const queryTabbableElement = (
   el: Element,
   selectors: string = _tabbableSelectors,
   iterationDirection: "forwards" | "backwards" = "forwards",
+  ignoreElement: HTMLElement[] = [],
   windowContext: Window = window,
   init: boolean = true
 ): HTMLElement | null => {
@@ -252,7 +260,11 @@ export const queryTabbableElement = (
   };
 
   if (init) {
-    if (isHidden(el as HTMLElement, windowContext)) return null;
+    if (
+      ignoreElement.some((item) => item === el) ||
+      isHidden(el as HTMLElement, windowContext)
+    )
+      return null;
 
     const {
       el: elResult,
@@ -267,6 +279,7 @@ export const queryTabbableElement = (
       el,
       selectors,
       iterationDirection,
+      ignoreElement,
       windowContext,
       false
     );
@@ -281,7 +294,10 @@ export const queryTabbableElement = (
   const iterateChild = (
     el: Element
   ): { returnVal?: Element; continue?: boolean } | null => {
-    if (isHidden(el as HTMLElement, windowContext))
+    if (
+      ignoreElement.some((item) => item === el) ||
+      isHidden(el as HTMLElement, windowContext)
+    )
       return {
         continue: true,
       };
@@ -303,6 +319,7 @@ export const queryTabbableElement = (
       el,
       selectors,
       iterationDirection,
+      ignoreElement,
       windowContext,
       false
     );
