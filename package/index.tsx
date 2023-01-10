@@ -76,6 +76,15 @@ import { getNextTabbableElement } from "./utils/tabbing";
  *
  */
 
+/**
+ * ### Notes
+ *
+ * In documentation, for menuButton ref, use `createSignal` from now on. Users get to place Dismiss JSX anywhere (including before button element), and pass accessor to their custom Dismiss hooks without any issues.
+ *
+ * When using modals, inform users they must use `roll="dialog"`
+ *
+ */
+
 export type TDismiss = {
   /**
    * sets id attribute for root component
@@ -138,7 +147,7 @@ export type TDismiss = {
    *
    * which element, via selector*, to recieve focus after popup opens.
    *
-   * *CSS string queried from root component, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
+   * *CSS string queried from menuPopup element, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
    *
    * @defaultValue focus remains on `"menuButton"`. But if there's no menu button, focus remains on document's activeElement.
    */
@@ -419,7 +428,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     menuButton,
     menuPopup,
     focusElementOnClose,
-    focusElementOnOpen,
+    focusElementOnOpen = modal ? "menuPopup" : undefined,
     cursorKeys = false,
     closeWhenMenuButtonIsTabbed = false,
     closeWhenMenuButtonIsClicked = true,
