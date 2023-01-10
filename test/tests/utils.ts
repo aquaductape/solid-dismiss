@@ -1,6 +1,27 @@
-import { Selector } from "testcafe";
+import { t, Selector } from "testcafe";
 
 export const exists = (selector: string) => Selector(selector).exists;
+
+export const clientScrollIntoView = async (selector: string) => {
+  const targetHeight = await t.eval(
+    () => {
+      if (selector == null) {
+        console.warn("sclientScrollIntoView: selector is nullish");
+        return 200;
+      }
+      const el = document.querySelector(selector)!;
+
+      if (!el) {
+        console.warn("sclientScrollIntoView: target element wasn't found");
+        return 200;
+      }
+
+      return el.clientHeight;
+    },
+    { dependencies: { selector } }
+  );
+  await t.scrollBy(0, targetHeight);
+};
 
 export const clickOverlay = async (t: TestController) => {
   const hasOverlay = await Selector(".overlay").exists;

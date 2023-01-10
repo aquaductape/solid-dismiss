@@ -21,6 +21,7 @@ import Modal from "./components/Subjects/Modal";
 import Tabbing from "./components/Subjects/Tabbing";
 import "./web-components/Button";
 import "./web-components/Nested";
+import Modal2 from "./components/Subjects/Modal2";
 
 const App: Component = () => {
   const [render, setRender] = createSignal(true);
@@ -47,21 +48,22 @@ const App: Component = () => {
           checkbox refreshes page to update components for testing purpose
         </p>
         <Show when={render()}>
-          <Basic></Basic>
-          <PopupNoFocusableItems></PopupNoFocusableItems>
-          <NestedPopupMounted></NestedPopupMounted>
-          <NestedPopup></NestedPopup>
-          <NestedOverlay></NestedOverlay>
-          <Programmatic></Programmatic>
-          <MultipleMenuButtons></MultipleMenuButtons>
-          <MultipleMenuButtonsCSS></MultipleMenuButtonsCSS>
-          <Scrolling></Scrolling>
-          <Modal></Modal>
-          <Tabbing></Tabbing>
-          <IFramesWithBodyClickListener></IFramesWithBodyClickListener>
-          <IFrames></IFrames>
-          <FocusElementOnClose></FocusElementOnClose>
-          <Mixed></Mixed>
+          <Basic />
+          <PopupNoFocusableItems />
+          <NestedPopupMounted />
+          <NestedPopup />
+          <NestedOverlay />
+          <Programmatic />
+          <MultipleMenuButtons />
+          <MultipleMenuButtonsCSS />
+          <Scrolling />
+          <Modal />
+          <Modal2 />
+          <Tabbing />
+          <IFramesWithBodyClickListener />
+          <IFrames />
+          <FocusElementOnClose />
+          <Mixed />
         </Show>
       </main>
     </>

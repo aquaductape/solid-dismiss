@@ -86,7 +86,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
             Some <a href="javascript:void(0)">random</a> text
           </p>
           <input type="text" placeholder="text input..." class="input-test" />
-          <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+          <div class="grid" style="grid-template-columns: repeat(3, auto)">
             <Popup id={props.id} idx={idx + 1}></Popup>
             <Popup id={props.id} idx={idx + 1}></Popup>
             <Popup id={props.id} idx={idx + 1}></Popup>

@@ -91,7 +91,7 @@ const Popup = () => {
             <IFrame></IFrame>
           </div>
           <input type="text" placeholder="text input..." class="input-test" />
-          <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+          <div class="grid" style="grid-template-columns: repeat(3, auto)">
             <Popup></Popup>
             <Popup></Popup>
             <Popup></Popup>

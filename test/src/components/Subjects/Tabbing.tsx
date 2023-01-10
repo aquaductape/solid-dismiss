@@ -85,7 +85,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
           {/* @ts-ignore */}
           <web-component-button />
           <input type="text" placeholder="text input..." class="input-test" />
-          <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+          <div class="grid" style="grid-template-columns: repeat(3, auto)">
             <Popup id={props.id} idx={idx + 1}></Popup>
             <HiddenTabbableItems></HiddenTabbableItems>
             <Popup id={props.id} idx={idx + 1}></Popup>

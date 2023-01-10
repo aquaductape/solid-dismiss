@@ -5,14 +5,14 @@ import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 import HiddenTabbableItems from "../HiddenTabbableItems";
 
-const id = "modal";
-const Modal = () => {
+const id = "modal2";
+const Modal2 = () => {
   return (
     <section id={id}>
-      <h2 tabindex="0">Modal</h2>
+      <h2 tabindex="0">Modal 2</h2>
       <p>overlay, page is not interactable</p>
-      <p>overlay click to dismiss is disabled</p>
-      <p>focusElementOnOpen is "firstChild"</p>
+      <p>overlay click to dismiss is enabled</p>
+      <p>focusElementOnOpen is not set, which defaults to "menuPopup"</p>
       <p>Focus trap enabled</p>
 
       <div class="grid">
@@ -63,8 +63,6 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         setOpen={setOpen}
         modal
         overlayElement={{ class: "overlay" }}
-        focusElementOnOpen="firstChild"
-        closeWhenOverlayClicked={false}
         ref={containerEl}
         {...toggleAnimation()}
       >
@@ -104,4 +102,4 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
   );
 };
 
-export default Modal;
+export default Modal2;

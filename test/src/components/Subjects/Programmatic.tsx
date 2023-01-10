@@ -96,7 +96,7 @@ const PopupModal: Component<{
               to "some link" link
             </p>
           )}
-          <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+          <div class="grid" style="grid-template-columns: repeat(3, auto)">
             <PopupModal id={props.id} idx={idx + 1}></PopupModal>
           </div>
           <button class="save">Save</button>
@@ -179,7 +179,7 @@ const PopupMounted: Component<{
               be moved to "some link" link
             </p>
           )}
-          <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+          <div class="grid" style="grid-template-columns: repeat(3, auto)">
             <PopupModal id={props.id} idx={idx + 1}></PopupModal>
           </div>
           <button class="save">Save</button>

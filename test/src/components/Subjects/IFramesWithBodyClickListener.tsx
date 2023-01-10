@@ -90,7 +90,7 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
             <IFrame class="f-2" bodyHasClickListener></IFrame>
           </div>
           <input type="text" placeholder="text input..." class="input-test" />
-          <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+          <div class="grid" style="grid-template-columns: repeat(3, auto)">
             <Popup id={props.id} idx={idx + 1}></Popup>
             <Popup id={props.id} idx={idx + 1}></Popup>
             <Popup id={props.id} idx={idx + 1}></Popup>
