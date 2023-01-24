@@ -21,7 +21,7 @@ const IFrame: Component<{
       const message = bodyHasClickListener
         ? "body has click listener"
         : "body doesn't have click listener!!";
-      const interactiveContent = `<button style="display:none;">Hidden Button</button><button id="${id}" >Button</button> <br><br> <a href="#">Link</a> <br><br> <input type="text" placeholder="Text input...">`;
+      const interactiveContent = `<button style="display:none;">Hidden Button</button><button id="${id}" data-visible-button >Button</button> <br><br> <a href="#">Link</a> <br><br> <input type="text" placeholder="Text input...">`;
       doc.write(
         `<html><body style='background: #f5f5df;'><div> <h1 style="font-size: 14px">Same Domain Iframe</h1> <p>${message}</p>${interactiveContent}</body> </html>`
       );

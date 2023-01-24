@@ -13,9 +13,11 @@ import {
   createComputed,
   Show,
   createEffect,
+  ParentComponent,
 } from "solid-js";
 import { insert, Portal } from "solid-js/web";
 import { Transition } from "solid-transition-group";
+import Dismiss from "../../../../package/index";
 
 function nextFrame(fn: () => void) {
   requestAnimationFrame(() => {
@@ -246,6 +248,7 @@ export function CustomPortal<
           ? container.attachShadow({ mode: "open" })
           : container;
 
+    // const containerFirstChild = container.firstChild;
     // originally "_$host"
     Object.defineProperty(container, "host", {
       get() {
@@ -256,6 +259,7 @@ export function CustomPortal<
     // will be "_$portalContainerChild"
     Object.defineProperty(marker, "portalContainerChild", {
       get() {
+        // return containerFirstChild;
         return container.firstChild;
       },
       configurable: true,
@@ -279,7 +283,7 @@ export function CustomPortal<
     mount.appendChild(container);
     (props as any).ref && (props as any).ref(container);
     onCleanup(() => {
-      console.log("Portal cleanup");
+      console.log("onCleanup Portal");
       // @ts-ignore
       if (!marker.willRemove) return;
       mount.removeChild(container);
@@ -344,9 +348,9 @@ const FooComponent = () => {
 
 const CustomStuff = () => {
   const [open, setOpen] = createSignal(false);
-  createEffect(() => {
-    console.log("open", open());
-  });
+  const [open1, setOpen1] = createSignal(false);
+  let btnRef!: HTMLButtonElement;
+
   return (
     <>
       <button onClick={() => setOpen(!open())}>Toggle</button>
@@ -355,6 +359,7 @@ const CustomStuff = () => {
           <CustomPortal>
             <div style="position: fixed; top: 190px; left: 0; background: red;">
               <p>hi</p>
+
               <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi,
                 quisquam. Eos quisquam dicta, illum necessitatibus sapiente iure
@@ -368,11 +373,34 @@ const CustomStuff = () => {
           </CustomPortal>
         </CustomShow>
       </CustomTransition>
-      {/* <Transition name="popup">
-        <Show when={open()}>
-          <FooComponent />
-        </Show>
-      </Transition> */}
+      <hr />
+      <button ref={btnRef}>Toggle Dismiss</button>
+      <Dismiss
+        menuButton={btnRef}
+        open={open1}
+        setOpen={setOpen1}
+        animation={{
+          name: "popup",
+          //
+          appendToElement: "menuPopup",
+        }}
+        overlayElement={{ class: "overlay", animation: { name: "overlay-a" } }}
+        modal
+      >
+        <div style="position: fixed; top: 190px; left: 0; background: red;">
+          {/* <div style="background: red;"> */}
+          <p>hi</p>
+          <input type="text" name="" id="" />
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi,
+            quisquam. Eos quisquam dicta, illum necessitatibus sapiente iure
+            atque inventore perspiciatis, aliquid facilis, excepturi minima a
+            aut molestiae quis fugit fuga voluptatibus possimus. Consequatur
+            fuga est in? Magni facilis animi modi recusandae nemo perferendis
+            itaque laboriosam! Possimus rerum placeat laudantium a.
+          </p>
+        </div>
+      </Dismiss>
     </>
   );
 };

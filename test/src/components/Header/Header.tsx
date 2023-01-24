@@ -9,9 +9,15 @@ const Header = () => {
           <input
             type="checkbox"
             checked={settings.animation.enable}
-            onChange={(e) =>
-              setSettings((s) => (s.animation.enable = e.currentTarget.checked))
-            }
+            onChange={(e) => {
+              const scrollY = window.scrollY;
+              setSettings(
+                (s) => (s.animation.enable = e.currentTarget.checked)
+              );
+              setTimeout(() => {
+                window.scrollTo({ top: scrollY, behavior: "auto" });
+              });
+            }}
           />
         </label>
         <label id="close-menuBtn-reclick">
@@ -19,11 +25,15 @@ const Header = () => {
           <input
             type="checkbox"
             checked={settings.closeMenuBtnReclick}
-            onChange={(e) =>
+            onChange={(e) => {
+              const scrollY = window.scrollY;
               setSettings(
                 (s) => (s.closeMenuBtnReclick = e.currentTarget.checked)
-              )
-            }
+              );
+              setTimeout(() => {
+                window.scrollTo({ top: scrollY, behavior: "auto" });
+              });
+            }}
           />
         </label>
       </div>

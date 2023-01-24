@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@solid-primitives/platform': ^0.0.103
   sass: ^1.38.0
   solid-element: ^1.5.7
   solid-js: ^1.6.1
@@ -11,6 +12,7 @@ specifiers:
   vite-plugin-solid: ^2.0.1
 
 dependencies:
+  '@solid-primitives/platform': 0.0.103_solid-js@1.6.1
   sass: 1.42.1
   solid-element: 1.5.7_solid-js@1.6.1
   solid-js: 1.6.1
@@ -1724,6 +1726,14 @@ packages:
       estree-walker: 2.0.2
       picomatch: 2.3.0
     dev: true
+
+  /@solid-primitives/platform/0.0.103_solid-js@1.6.1:
+    resolution: {integrity: sha512-C/S4STL0cHb3+AOa3uljdph0UVWovDJOF9D/BvNKhin+QGTeHYV5N5Ypsmx8SDG4zgp9ZyuIuV6OOnxSsUzTIg==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
+      solid-js: 1.6.1
+    dev: false
 
   /@types/estree/0.0.39:
     resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}

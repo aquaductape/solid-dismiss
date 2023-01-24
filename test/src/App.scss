@@ -11,6 +11,9 @@ body {
   padding: 80px 5vw;
   padding-bottom: 800px;
 }
+.main {
+  display: flow-root;
+}
 
 p {
   line-height: 1.5;
@@ -193,7 +196,7 @@ section {
   &-enter-to,
   &-exit,
   &-exit-to {
-    transition: transform 300ms, opacity 300ms;
+    transition: transform 1300ms, opacity 1300ms;
     transform-origin: center;
   }
 }
@@ -216,7 +219,7 @@ section {
   &-enter-to,
   &-exit,
   &-exit-to {
-    transition: opacity 300ms;
+    transition: opacity 1300ms;
   }
 }
 .input-test {
@@ -271,6 +274,21 @@ section {
 
 .middle {
   padding: 20px 5px 5px 5px;
+}
+
+.list-box {
+  list-style-type: none;
+  padding: 0;
+  border: 1px solid #555;
+  background: #fff;
+}
+
+.list-box li {
+  padding: 6px;
+}
+
+#combobox > .grid {
+  max-width: 350px;
 }
 
 @media (max-width: 350px) {

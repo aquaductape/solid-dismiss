@@ -45,9 +45,10 @@ const Popup: Component<{
   let id = `${props.id}-level-${idx}`;
   const [open, setOpen] = createSignal(false);
   const [switchBtn, setSwitchBtn] = createSignal(true);
-  const [btnEl, setBtnEls] = createSignal<HTMLElement | null>(null);
+  const [btnEl, setBtnEl] = createSignal<HTMLElement | null>(null);
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
+
   createEffect(
     on(
       open,
@@ -84,11 +85,11 @@ const Popup: Component<{
       style="display: inline-block; position: relative;"
     >
       {switchBtn() ? (
-        <Button open={open()} ref={setBtnEls}>
+        <Button open={open()} ref={setBtnEl}>
           menuButton1
         </Button>
       ) : (
-        <Button open={open()} ref={setBtnEls}>
+        <Button open={open()} ref={setBtnEl}>
           menuButton2
         </Button>
       )}

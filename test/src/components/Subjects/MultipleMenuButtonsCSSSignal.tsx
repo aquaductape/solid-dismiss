@@ -1,22 +1,16 @@
-import {
-  Component,
-  createEffect,
-  createSignal,
-  on,
-  onMount,
-  Show,
-} from "solid-js";
+import { Component, createEffect, createSignal, on } from "solid-js";
 import Dismiss from "../../../../package/index";
 import { getLeft, toggleAnimation } from "../../utils";
 import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 
-const id = "multiple-menu-buttons-css";
+const id = "multiple-menu-buttons-css-signal";
 
-const MultipleMenuButtonsCSS = () => {
+const MultipleMenuButtonsCSSSignal = () => {
   return (
     <section id={id}>
-      <h2 tabindex="0">Multiple Menu Buttons CSS</h2>
+      <h2 tabindex="0">Multiple Menu Buttons CSS Signal</h2>
+      <p>Refs are added via Signals</p>
       <p>
         There are cases where multiple menu buttons toggle the same dropdown.
       </p>
@@ -54,11 +48,16 @@ const Popup: Component<{
   let id = `${props.id}-level-${idx}`;
   const [open, setOpen] = createSignal(false);
   const [switchBtn, setSwitchBtn] = createSignal(true);
-  let btn0El!: HTMLButtonElement;
-  let btn1El!: HTMLButtonElement;
+  const [menuBtnEls, setMenuBtnEls] = createSignal<HTMLElement[]>([]);
   let containerEl!: HTMLElement;
   let dropdownEl!: HTMLDivElement;
   count++;
+
+  const onRefCb = (el: HTMLElement) => {
+    setMenuBtnEls((prev) => {
+      return [...new Set([...prev, el])];
+    });
+  };
 
   createEffect(
     on(
@@ -77,10 +76,8 @@ const Popup: Component<{
 
   createEffect(() => {
     if (!open()) return;
-
-    const btnBCR = (
-      btn0El.offsetHeight ? btn0El : btn1El
-    ).getBoundingClientRect();
+    const btnEl = menuBtnEls().find((el) => el.offsetHeight)!;
+    const btnBCR = btnEl.getBoundingClientRect();
 
     containerEl.style.position = "absolute";
 
@@ -96,7 +93,7 @@ const Popup: Component<{
       <span style={`${switchBtn() ? "" : "display: none;"}`}>
         <Button
           open={open()}
-          ref={btn0El}
+          ref={onRefCb}
           attr={{
             [`data-btn-child-${id}`]: "",
             [`data-btn-child-idx-${count % 3}`]: "",
@@ -108,7 +105,7 @@ const Popup: Component<{
       <span style={`${switchBtn() ? "display: none;" : ""}`}>
         <Button
           open={open()}
-          ref={btn1El}
+          ref={onRefCb}
           attr={{
             [`data-btn-child-${id}`]: "",
             [`data-btn-child-idx-${idx}`]: "",
@@ -118,7 +115,7 @@ const Popup: Component<{
         </Button>
       </span>
       <Dismiss
-        menuButton={[btn0El, btn1El]}
+        menuButton={menuBtnEls}
         open={open}
         setOpen={setOpen}
         mount="body"
@@ -153,4 +150,4 @@ const Popup: Component<{
   );
 };
 
-export default MultipleMenuButtonsCSS;
+export default MultipleMenuButtonsCSSSignal;

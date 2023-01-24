@@ -11,6 +11,7 @@ const NestedPopupMounted = () => {
     <section id={id} class="nested">
       <h2 tabindex="0">Nested mounted body menuPopup</h2>
       <p>No overlay, page is interactable</p>
+      <p>closeWhenDocumentBlurs=true</p>
       <p>
         menuPopups are <strong>mounted</strong> to the body.
       </p>

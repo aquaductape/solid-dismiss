@@ -1,9 +1,16 @@
 import { test } from "testcafe";
-import { exists, loopStacks, pressSequentialKeys } from "./utils";
+import {
+  clientScrollIntoView,
+  exists,
+  loopStacks,
+  pressSequentialKeys,
+} from "./utils";
 
 fixture`iframes`.page`../dist/index.html`;
 const id = "#iframes-bcl";
 const idClass = ".iframes-bcl";
+
+// AUTHOR MUST MANUALLY TEST since main page focusout bubbles when iframe is focused, when it doesn't on non-test browsers.
 
 test("open 3 levels with keyboard", async (t) => {
   await t.click(`${id} h2`);
@@ -19,6 +26,18 @@ test("open 3 levels with keyboard", async (t) => {
   await loopStacks(t, [1, 2, 3], async (t, num) => {
     await t.expect(exists(`${id}-1-level-${num}-popup`)).notOk();
   });
+});
+
+test("dont close when clicking menuPopup's iframe", async (t) => {
+  await t.wait(100); // to solve Firefox iframe rendering issue
+  await t.click(`${idClass}-1-level-1-container button`);
+  await t.expect(exists(`${id}-1-level-1-popup`)).ok();
+  await clientScrollIntoView(`${id}-1-level-1-popup`);
+  await t
+    .switchToIframe(`${id}-1-level-1-popup [data-test-iframe]`)
+    .click("button[data-visible-button]");
+  await t.switchToMainWindow();
+  await t.expect(exists(`${id}-1-level-1-popup`)).ok();
 });
 
 test("close when clicking outside iframe", async (t) => {

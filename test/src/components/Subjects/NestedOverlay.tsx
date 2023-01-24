@@ -16,6 +16,7 @@ const NestedOverlay = () => {
     <section id={id} class="nested">
       <h2 tabindex="0">Nested overlay menuPopup</h2>
       <p>Overlay used, page is not interactable</p>
+      <p>closeWhenDocumentBlurs=true</p>
       <p>
         menuPopups are <strong>mounted</strong> to the body.
       </p>
@@ -39,7 +40,7 @@ const NestedOverlay = () => {
 
 const Popup: Component<{ id: string; idx?: number }> = (props) => {
   const idx = props.idx || 1;
-  let id = `${props.id}-level-${idx}`;
+  const id = `${props.id}-level-${idx}`;
   const [open, setOpen] = createSignal(false);
   let btnEl!: HTMLButtonElement;
   let containerEl!: HTMLElement;
