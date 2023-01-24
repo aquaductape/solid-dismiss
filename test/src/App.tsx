@@ -36,6 +36,7 @@ import MultipleMenuButtonsCSSSignal from "./components/Subjects/MultipleMenuButt
 import ThirdpartyPopupsOnBody from "./components/Subjects/ThirdpartyPopupsOnBody";
 import ModalOverflowOnBody from "./components/Subjects/ModalOverflowOnBody";
 import Combobox from "./components/Subjects/Combobox";
+import SafariBlur from "./components/SafariBlur";
 
 const FireFocusOrder = () => {
   let tabbableContainer1!: HTMLDivElement;
@@ -204,6 +205,7 @@ const App: Component = () => {
           Note: Dismiss animation props are reactive, but "enable animation"
           checkbox refreshes page to update components for testing purpose
         </p>
+        <SafariBlur />
         <CustomStuff />
         <Show when={render()}>
           <Basic />

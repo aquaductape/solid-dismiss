@@ -11,6 +11,18 @@ const initThreeStacks = () =>
     await t.click(`${idClass}-1-level-${num}-container button`);
   });
 
+test("open 1 level with click, click menuPopup item, then focus must remain on that active item even after button switches", async (t) => {
+  await t.click(`${idClass}-2-level-1-container button`);
+  await t.expect(exists(`${id}-2-level-1-popup`)).ok();
+  await t.wait(100);
+  await t.click(`${id}-2-level-1-popup .input-test`);
+  await t.wait(2200);
+  await t
+    .wait(100)
+    .expect(await t.eval(() => document.activeElement?.className))
+    .eql("input-test");
+});
+
 test("open 3 levels with keyboard", async (t) => {
   await t.click(`${id} h2`);
   await t.pressKey("tab").pressKey("enter");
