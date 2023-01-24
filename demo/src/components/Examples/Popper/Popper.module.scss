@@ -1,4 +1,7 @@
 .tooltip {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
   position: relative;
   padding: 15px;
   background: var(--dropdown-bg);
@@ -40,9 +43,68 @@
 
 .container {
   opacity: 0;
-  transition: opacity 200ms;
+  visibility: hidden;
+  transition: opacity 200ms, visibility 200ms;
 }
 
 .container.active {
+  visibility: visible;
   opacity: 1;
+}
+
+.x-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  width: 40px;
+  height: 40px;
+  opacity: 1;
+  background: none;
+  border: 0;
+  opacity: 0.7;
+
+  &:focus {
+    outline: none;
+
+    &:after {
+      position: absolute;
+      content: "";
+      top: -8px;
+      left: -8px;
+      width: calc(100% + 8px + 2px);
+      height: calc(100% + 8px + 2px);
+      border-radius: inherit;
+      pointer-events: none;
+      background: none;
+      border: 3px solid var(--focus);
+      box-shadow: 0 0 8px var(--focus-blur-spread) var(--focus-blur);
+    }
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .inner {
+    position: relative;
+    height: 100%;
+    width: 100%;
+
+    > div {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 2px;
+      width: 100%;
+      background: currentColor;
+    }
+
+    div:nth-child(1) {
+      transform: rotate(45deg);
+    }
+    div:nth-child(2) {
+      transform: rotate(-45deg);
+    }
+  }
 }

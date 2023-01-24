@@ -88,11 +88,13 @@ const Popup = () => {
 
 .container</span> <span class="token punctuation">{</span>
   <span class="token property">opacity</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span>
-  <span class="token property">transition</span><span class="token punctuation">:</span> opacity 200ms<span class="token punctuation">;</span>
+  <span class="token property">visibility</span><span class="token punctuation">:</span> hidden<span class="token punctuation">;</span>
+  <span class="token property">transition</span><span class="token punctuation">:</span> opacity 200ms<span class="token punctuation">,</span> visibility 200ms<span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token selector">.container.active</span> <span class="token punctuation">{</span>
   <span class="token property">opacity</span><span class="token punctuation">:</span> 1<span class="token punctuation">;</span>
+  <span class="token property">visibility</span><span class="token punctuation">:</span> visible<span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>`;
 
   const popperConditionalRenderJSX = `<pre class="  language-jsx" tabindex="0"><code class="  language-jsx"><span class="token keyword">import</span> Dismiss <span class="token keyword">from</span> <span class="token string">"solid-dismiss"</span><span class="token punctuation">;</span>
@@ -197,7 +199,7 @@ const Popup = () => {
 
   return (
     <div class="section">
-      <H3Anchor>Tooltip/Popover</H3Anchor>
+      <H3Anchor>Floating/Popover</H3Anchor>
       <div class="explaination">
         <p>
           Here's how to use{" "}
@@ -232,7 +234,10 @@ const Popup = () => {
           data-simplebar-match-webkit
           ref={scrollContainerEl1}
         >
-          <div class="dropdown-area" style="margin: 500px 0;">
+          <div
+            class="dropdown-area"
+            style="margin: 500px 0; padding-left: 16px"
+          >
             <FocusGutter />
             <_Popper></_Popper>
             <FocusGutter />
@@ -266,7 +271,10 @@ const Popup = () => {
           data-simplebar-match-webkit
           ref={scrollContainerEl2}
         >
-          <div class="dropdown-area" style="margin: 500px 0;">
+          <div
+            class="dropdown-area"
+            style="margin: 500px 0; padding-left: 16px"
+          >
             <FocusGutter />
             <PopperConditionalRender></PopperConditionalRender>
             <FocusGutter />

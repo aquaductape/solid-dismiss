@@ -35,6 +35,10 @@ export const PopperConditionalRender = () => {
     instance.destroy();
   };
 
+  const onClickClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
       <button class="btn-primary" ref={refCb} type="button">
@@ -48,6 +52,12 @@ export const PopperConditionalRender = () => {
       >
         <div class={s("tooltip")} ref={setPopper}>
           This is a tooltip.
+          <button class={s("x-btn")} aria-label="close" onClick={onClickClose}>
+            <div class={s("inner")}>
+              <div></div>
+              <div></div>
+            </div>
+          </button>
         </div>
       </Dismiss>
     </>
@@ -106,6 +116,10 @@ export const Popper = () => {
     }
   };
 
+  const onClickClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
       <button class="btn-primary" ref={refCb} type="button">
@@ -122,6 +136,12 @@ export const Popper = () => {
       >
         <div class={s("tooltip")} ref={setPopper}>
           This is a tooltip.
+          <button class={s("x-btn")} aria-label="close" onClick={onClickClose}>
+            <div class={s("inner")}>
+              <div></div>
+              <div></div>
+            </div>
+          </button>
         </div>
       </Dismiss>
     </>
