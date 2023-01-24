@@ -1,5 +1,5 @@
 import { dismissStack } from "../global/dismissStack";
-import { globalState, onDocumentClick } from "../global/globalEvents";
+import { globalState, onDocumentPointerDown } from "../global/globalEvents";
 import { TLocalState } from "./localState";
 import { removeOutsideFocusEvents } from "./outside";
 import { getNextTabbableElement } from "../utils/tabbing";
@@ -7,8 +7,7 @@ import { checkThenClose } from "../utils/checkThenClose";
 import { hasDisplayNone } from "../utils/hasDisplayNone";
 import { queryElement } from "../utils/queryElement";
 import { TDismiss } from "..";
-
-let mousedownFired = false;
+import isHiddenOrInvisbleShallow from "../utils/isHiddenOrInvisibleShallow";
 
 export const onClickMenuButton = (state: TLocalState, e: Event) => {
   const {
@@ -21,57 +20,26 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     deadMenuButton,
   } = state;
 
+  state.menuBtnMouseDownFired = false;
+
   const menuBtnEl = e.currentTarget as HTMLElement;
 
   globalState.focusedMenuBtns.forEach((item) => (item.el = null));
 
-  document.removeEventListener("click", onClickOutsideRef);
-  setTimeout(() => {
-    document.addEventListener("click", onClickOutsideRef, { once: true });
-  });
-  // globalState.menuBtnEls.clear();
   if (deadMenuButton) {
-    globalState.addedDocumentClick = true;
-    setTimeout(() => {
-      document.addEventListener("click", onDocumentClick, { once: true });
-    });
+    // globalState.addedDocumentClick = true;
+    // setTimeout(() => {
+    //   document.addEventListener("pointerdown", onDocumentClick, { once: true });
+    // });
     return;
   }
 
   state.menuBtnKeyupTabFired = false;
-  if (mousedownFired && !open()) {
-    mousedownFired = false;
-    return;
-  }
 
-  mousedownFired = false;
-  globalState.addedDocumentClick = false;
-  document.removeEventListener("click", onDocumentClick);
-
-  menuBtnEl!.focus();
   focusedMenuBtn.el = menuBtnEl;
   globalState.focusedMenuBtns.add(focusedMenuBtn);
-  clearTimeout(timeouts.containerFocusTimeoutId!);
-  clearTimeout(timeouts.menuButtonBlurTimeoutId!);
-  timeouts.containerFocusTimeoutId = null;
-
-  // iOS triggers refocus i think...
-  if (!open()) {
-    menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
-      once: true,
-    });
-    menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
-    menuBtnEl!.addEventListener("blur", state.onBlurMenuButtonRef);
-  } else {
-    // if (closeWhenMenuButtonIsClicked) {
-    //   state.menuBtnEl!.removeEventListener("focus", state.onFocusMenuButtonRef);
-    //   state.menuBtnEl!.removeEventListener(
-    //     "keydown",
-    //     state.onKeydownMenuButtonRef
-    //   );
-    //   state.menuBtnEl!.removeEventListener("blur", state.onBlurMenuButtonRef);
-    // }
-  }
+  // TODO:?
+  // timeouts.containerFocusTimeoutId = null;
 
   if (!closeWhenMenuButtonIsClicked) {
     setOpen(true);
@@ -82,7 +50,22 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     // focusedMenuBtn.el = null;
     globalState.closedByEvents = true;
   }
+
+  // removeOnBlurTargetMenuButton(state, menuBtnEl);
+
   setOpen(!open());
+};
+
+/**
+ * for animation perf, to reduce potential jank, by not checking if menuButton is visible or not
+ */
+const removeOnBlurTargetMenuButton = (state: TLocalState, el: HTMLElement) => {
+  if (
+    state.focusElementOnOpen &&
+    state.menuBtnEls?.every((el) => el !== state.focusElementOnOpen)
+  ) {
+    el.removeEventListener("blur", state.onBlurMenuButtonRef);
+  }
 };
 
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
@@ -92,66 +75,65 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     overlay,
     setOpen,
     timeouts,
-    closeWhenMenuButtonIsClicked,
+    menuBtnMouseDownFired,
+    closeWhenDocumentBlurs,
   } = state;
+  const currentMenuBtn = e.currentTarget as HTMLButtonElement;
 
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
     return;
   }
 
-  if (mousedownFired && !closeWhenMenuButtonIsClicked) {
+  if (menuBtnMouseDownFired) return;
+  if (containerEl && containerEl.contains(e.relatedTarget as HTMLElement))
     return;
-  }
-
-  if (!e.relatedTarget) {
-    if (!overlay) {
-      if (!globalState.addedDocumentClick) {
-        globalState.addedDocumentClick = true;
-        document.addEventListener("click", onDocumentClick, { once: true });
-      }
-    }
-    return;
-  }
-
-  removeOutsideFocusEvents(state);
-
-  if (!containerEl) return;
-  if (containerEl.contains(e.relatedTarget as HTMLElement)) return;
 
   const run = () => {
+    const activeElement = document.activeElement;
+
+    if (
+      (!e.relatedTarget && activeElement && activeElement.tagName === "IFRAME",
+      containerEl && containerEl.contains(activeElement))
+    )
+      return;
+    if (!closeWhenDocumentBlurs && !document.hasFocus()) return;
+    if (globalState.closedBySetOpen) return;
+    if (!currentMenuBtn.isConnected) return;
+    if (isHiddenOrInvisbleShallow(currentMenuBtn)) {
+      state.menuBtnEls?.some((el) => {
+        if (el === currentMenuBtn) return false;
+        if (isHiddenOrInvisbleShallow(el)) return false;
+        el.focus();
+        return true;
+      });
+      return;
+    }
+
+    if (!state.open()) return;
+
     globalState.closedByEvents = true;
+    // TODO:?
     focusedMenuBtn.el = null;
+
     setOpen(false);
   };
 
   timeouts.menuButtonBlurTimeoutId = window.setTimeout(run);
 };
 
-// When reclicking menuButton for closing intention, Safari will trigger blur upon mousedown, which the click event fires after. This results menuPopup close then reopen. This mousedown event prevents that bug.
 export const onMouseDownMenuButton = (state: TLocalState, e: MouseEvent) => {
   const menuBtnEl = e.currentTarget as HTMLElement;
 
-  if (!state.open()) {
-    checkThenClose(
-      dismissStack,
-      (item) => {
-        if (item.containerEl!.contains(menuBtnEl)) return;
-        return item;
-      },
-      (item) => {
-        globalState.focusedMenuBtns.forEach((item) => (item.el = null));
-        globalState.closedByEvents = true;
-        item.setOpen(false);
-      }
-    );
-
-    mousedownFired = false;
-    return;
-  }
-  mousedownFired = true;
+  state.menuBtnMouseDownFired = true;
+  menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+  menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef);
+  requestAnimationFrame(() => {
+    menuBtnEl.focus();
+  });
 };
 
+// TODO: ?
 export const onClickOutsideMenuButton = (state: TLocalState) => {
   state.focusedMenuBtn.el = null;
 };
@@ -259,15 +241,20 @@ export const onFocusMenuButton = (state: TLocalState) => {
   const { closeWhenMenuButtonIsTabbed, timeouts, deadMenuButton, menuBtnEls } =
     state;
 
+  const menuBtn = getMenuButton(menuBtnEls!);
+  menuBtn.addEventListener("click", state.onClickMenuButtonRef);
+  menuBtn.addEventListener("blur", state.onBlurMenuButtonRef);
+  menuBtn.addEventListener("keydown", state.onKeydownMenuButtonRef);
+
+  // TODO:
   if (deadMenuButton) {
-    const menuBtn = getMenuButton(menuBtnEls!);
     menuBtn.addEventListener("blur", state.onBlurMenuButtonRef);
     menuBtn.addEventListener("keydown", state.onKeydownMenuButtonRef);
 
-    globalState.addedDocumentClick = true;
-    setTimeout(() => {
-      document.addEventListener("click", onDocumentClick, { once: true });
-    });
+    // globalState.addedDocumentClick = true;
+    // setTimeout(() => {
+    //   document.addEventListener("pointerdown", onDocumentClick, { once: true });
+    // });
     return;
   }
 
@@ -316,7 +303,7 @@ export const markFocusedMenuButton = ({
   );
 };
 
-export const addMenuButtonEventsAndAttr = ({
+export const addMenuButtonEventsAndAttributes = ({
   state,
   menuButton,
   open,
@@ -344,16 +331,21 @@ export const addMenuButtonEventsAndAttr = ({
     item.menuBtnEls = state.menuBtnEls;
   }
 
-  if (state.deadMenuButton) {
-    state.menuBtnEls.forEach((menuBtnEl) => {
-      menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
-      menuBtnEl.addEventListener("mousedown", state.onMouseDownMenuButtonRef);
-      menuBtnEl.addEventListener("focus", state.onFocusMenuButtonRef);
-    });
-    return;
-  }
+  // if (state.deadMenuButton) {
+  //   // deadMenuButton doesn't do anything, why is this here
+  //   state.menuBtnEls.forEach((menuBtnEl) => {
+  //     menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
+  //     menuBtnEl.addEventListener("mousedown", state.onMouseDownMenuButtonRef);
+  //     menuBtnEl.addEventListener("focus", state.onFocusMenuButtonRef);
+  //     // menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef);
+  //   });
+  //   return;
+  // }
 
   state.menuBtnEls.forEach((menuBtnEl, _, self) => {
+    addAriaLabels(state, menuBtnEl);
+    menuBtnEl.addEventListener("mousedown", state.onMouseDownMenuButtonRef);
+    menuBtnEl.addEventListener("focus", state.onFocusMenuButtonRef);
     if (
       focusedMenuBtn.el &&
       focusedMenuBtn.el !== menuBtnEl &&
@@ -361,23 +353,40 @@ export const addMenuButtonEventsAndAttr = ({
     ) {
       focusedMenuBtn.el = menuBtnEl;
       menuBtnEl.focus({ preventScroll: true });
-      menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
+      // TODO:?
+      // menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
     }
-    menuBtnEl.setAttribute("type", "button");
-    menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
-    menuBtnEl.addEventListener("mousedown", state.onMouseDownMenuButtonRef);
+  });
+};
 
-    if (
-      open() &&
-      (!state.focusElementOnOpen ||
-        state.focusElementOnOpen === "menuButton" ||
-        state.focusElementOnOpen === state.menuBtnEls) &&
-      !hasDisplayNone(menuBtnEl)
-    ) {
-      menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef, {
-        once: true,
-      });
-    }
+const addAriaLabels = (state: TLocalState, targetEl: HTMLElement) => {
+  const { modal, uniqueId, deadMenuButton } = state;
+  // TODO: maybe just get rid of adding attributes at runtime and tell users to add it themselves
+  if (!deadMenuButton) {
+    targetEl.setAttribute("type", "button");
+    targetEl.setAttribute("aria-expanded", "false");
+  }
+
+  if (modal) {
+    targetEl.setAttribute("aria-controls", uniqueId);
+    targetEl.setAttribute("aria-haspopup", "dialog");
+  }
+};
+
+export const setTargetAriaExpandTrue = (state: TLocalState) => {
+  const { menuBtnEls, deadMenuButton } = state;
+  if (!deadMenuButton) return;
+  if (!menuBtnEls) return;
+  menuBtnEls.forEach((el) => {
+    el.setAttribute("aria-expanded", "true");
+  });
+};
+export const setTargetAriaExpandFalse = (state: TLocalState) => {
+  const { menuBtnEls, deadMenuButton } = state;
+  if (!deadMenuButton) return;
+  if (!menuBtnEls) return;
+  menuBtnEls.forEach((el) => {
+    el.setAttribute("aria-expanded", "false");
   });
 };
 
@@ -387,14 +396,20 @@ export const removeMenuButtonEvents = (
 ) => {
   if (!state || !state.menuBtnEls) return;
 
+  state.menuBtnMouseDownFired = false;
+
   state.menuBtnEls.forEach((menuBtnEl) => {
     if (!state.deadMenuButton) {
-      menuBtnEl.removeEventListener("focus", state.onFocusMenuButtonRef);
+      // menuBtnEl.removeEventListener("focus", state.onFocusMenuButtonRef);
     }
-    menuBtnEl.removeEventListener("blur", state.onBlurMenuButtonRef);
+    // menuBtnEl.removeEventListener("click", state.onClickMenuButtonRef);
 
     if (isCleanup) {
+      menuBtnEl.removeEventListener("blur", state.onBlurMenuButtonRef);
+      menuBtnEl.removeEventListener("keydown", state.onKeydownMenuButtonRef);
+
       menuBtnEl.removeEventListener("click", state.onClickMenuButtonRef);
+      menuBtnEl.removeEventListener("focus", state.onFocusMenuButtonRef);
       menuBtnEl.removeEventListener(
         "mousedown",
         state.onMouseDownMenuButtonRef

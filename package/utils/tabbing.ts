@@ -353,13 +353,4 @@ export const queryTabbableElement = (
   return null;
 };
 
-const hasShadowParent = (element: Element) => {
-  while (element.parentNode && (element = element.parentNode as Element)) {
-    if (element instanceof ShadowRoot) {
-      return true;
-    }
-  }
-  return false;
-};
-
 const isIframe = (el: Element) => el.tagName === "IFRAME";

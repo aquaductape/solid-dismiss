@@ -1,4 +1,3 @@
-import "./browserInfo";
 import { isServer } from "solid-js/web";
 import {
   untrack,
@@ -9,8 +8,8 @@ import {
   on,
   createUniqueId,
   createMemo,
-  createComputed,
   ParentComponent,
+  createComputed,
 } from "solid-js";
 import {
   dismissStack,
@@ -21,18 +20,17 @@ import {
 import {
   addGlobalEvents,
   globalState,
-  onDocumentClick,
+  onDocumentPointerDown,
   removeGlobalEvents,
 } from "./global/globalEvents";
 import { TLocalState } from "./local/localState";
 import {
-  onClickDocument,
   onFocusFromOutsideAppOrTab,
   removeOutsideFocusEvents,
 } from "./local/outside";
 import { addMenuPopupEl, removeMenuPopupEl } from "./local/menuPopup";
 import {
-  addMenuButtonEventsAndAttr,
+  addMenuButtonEventsAndAttributes,
   getMenuButton,
   markFocusedMenuButton,
   onBlurMenuButton,
@@ -42,8 +40,9 @@ import {
   onKeydownMenuButton,
   onMouseDownMenuButton,
   removeMenuButtonEvents,
+  setTargetAriaExpandFalse,
+  setTargetAriaExpandTrue,
 } from "./local/menuButton";
-import CreatePortal from "./components/CreatePortal";
 import { DismissAnimation, Transition } from "./components/Transition";
 import { removeLocalEvents } from "./local/manageLocalEvents";
 import {
@@ -51,30 +50,20 @@ import {
   onFocusOutContainer,
   runFocusOnActive,
 } from "./local/container";
-import { onClickOverlay } from "./local/overlay";
+import {
+  onClickOverlay,
+  onMouseDownOverlay,
+  onMouseUpOverlay,
+} from "./local/overlay";
 import {
   activateLastFocusSentinel,
   onFocusSentinel,
 } from "./local/focusSentinel";
 import { queryElement } from "./utils/queryElement";
 import { getNextTabbableElement } from "./utils/tabbing";
-
-/**
- * ### stack popup bug
- *
- * 1. open 4 stacks
- * 2. click 3rd stack, which removes 1 stack (topmost), leaving 3 stacks left
- * 3. click outside of all stacks
- *
- * ## Expected
- *
- * To close all stacks (remaining 2 stacks), due to none of the stacks containing new focused element, cuz you clicked outside of all stacks
- *
- * ## Actual Result
- *
- * Only the 3rd stack (topmost) gets removed. All stacks should have been removed. Clicking ou and nothing happens.
- *
- */
+import CustomPortal from "./components/CustomPortal";
+import { removeEventsOnActiveMountedPopup } from "./local/thirdPartyPopup";
+import { runToggleScrollbar } from "./utils/runToggleScrollbar";
 
 /**
  * ### Notes
@@ -358,6 +347,19 @@ export type TDismiss = {
    */
   // disableTabbingInMenuPopup?: boolean;
   ignoreMenuPopupWhenTabbing?: boolean;
+  /**
+   * Pass CSS selector strings in array, which then are queried from document, then if those elements are interacted, it won't trigger stacks to close 
+   * 
+   * When there are other popups or interactive tooltips, that are mounted to the
+        body, this library isn't aware of them, so interacting them by clicking
+        them, will close all open stacks and cause other unintended consequences. If that
+        third-party popup is closed by Escape key, the expectation is that only
+        that popup will close, but Dismiss will close its topmost stack which
+        happens to contain that mounted popup, so "2 stacks" will be closed.
+   * 
+   * @defaultValue empty array
+   */
+  mountedPopupsSafeList?: string[];
 };
 // stopComponentEventPropagation?: boolean;
 
@@ -448,10 +450,12 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     onOpen,
     deadMenuButton,
     ignoreMenuPopupWhenTabbing,
+    mountedPopupsSafeList,
   } = props;
 
   const state: TLocalState = {
     mount,
+    modal,
     addedFocusOutAppEvents: false,
     closeWhenOverlayClicked,
     closeWhenDocumentBlurs,
@@ -482,6 +486,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     enableLastFocusSentinel,
     overlay,
     overlayElement,
+    onToggleScrollbar,
     removeScrollbar,
     trapFocus,
     hasFocusSentinels:
@@ -490,10 +495,10 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
       !!overlayElement ||
       trapFocus ||
       enableLastFocusSentinel,
+    mountedPopupsSafeList,
     open: props.open,
     setOpen: props.setOpen,
     onClickOutsideMenuButtonRef: () => onClickOutsideMenuButton(state),
-    onClickDocumentRef: (e) => onClickDocument(state, e),
     onClickOverlayRef: () => onClickOverlay(state),
     onFocusInContainerRef: (e) => onFocusInContainer(state, e),
     onFocusOutContainerRef: (e) => onFocusOutContainer(state, e),
@@ -511,18 +516,23 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           el.style.position = "relative";
 
           const setDialogElStyle = (el: HTMLElement) => {
+            el.id = state.uniqueId;
             el.style.pointerEvents = "all";
+            el.setAttribute("role", "dialog");
           };
+          // setDialogElStyle(el);
           requestAnimationFrame(() => {
             const dialog = el.querySelector('[role="dialog"]') as HTMLElement;
             if (!dialog) {
               const children = el.children;
               if (!children) return;
-              const child = children[1];
-              const dialog = child.firstElementChild as HTMLElement;
+              const dialog = children[1] as HTMLElement;
+              // const child = children[1];
+              // const dialog = child.firstElementChild as HTMLElement;
               setDialogElStyle(dialog);
               return;
             }
+
             setDialogElStyle(dialog);
           });
         }
@@ -549,224 +559,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     },
   };
 
-  let marker: Text | null =
-    mount && !isServer ? document.createTextNode("") : null;
   const initDefer = !props.open();
-
-  let containerEl: HTMLElement | null;
-  let mountEl: Element | Node | null;
-  let endExitTransitionRef: () => void;
-  let endEnterTransitionRef: () => void;
-  let endExitTransitionOverlayRef: () => void;
-  let endEnterTransitionOverlayRef: () => void;
-  let exitRunning = false;
-
-  function getElement(
-    el: Element,
-    appendToElement?: "menuPopup" | JSX.Element
-  ) {
-    if (overlayElement) {
-      el = el.nextElementSibling!;
-    }
-    if (appendToElement) {
-      if (appendToElement === "menuPopup") {
-        return queryElement(
-          { containerEl: el as HTMLDivElement },
-          { inputElement: null, type: "menuPopup" }
-        );
-      }
-
-      return typeof appendToElement === "string"
-        ? el.querySelector(appendToElement)!
-        : (appendToElement as Element);
-    }
-
-    return el;
-  }
-
-  function enterTransition(type: "popup" | "overlay", el: Element) {
-    // @ts-ignore
-    if (type === "overlay" && (!props.overlay || !props.overlay.animation))
-      return;
-    const animation: DismissAnimation =
-      type === "popup"
-        ? props.animation // @ts-ignore
-        : props.overlay.animation;
-
-    if (!animation) return;
-    if (!animation.appear && !initDefer) return;
-    exitRunning = false;
-
-    el = getElement(el, animation.appendToElement);
-
-    const name = animation.name;
-    let {
-      onBeforeEnter,
-      onEnter,
-      onAfterEnter,
-      enterActiveClass = name + "-enter-active",
-      enterClass = name + "-enter",
-      enterToClass = name + "-enter-to",
-      exitActiveClass = name + "-exit-active",
-      exitClass = name + "-exit",
-      exitToClass = name + "-exit-to",
-    } = animation;
-
-    const enterClasses = enterClass!.split(" ");
-    const enterActiveClasses = enterActiveClass!.split(" ");
-    const enterToClasses = enterToClass!.split(" ");
-    const exitClasses = exitClass!.split(" ");
-    const exitActiveClasses = exitActiveClass!.split(" ");
-    const exitToClasses = exitToClass!.split(" ");
-
-    if (type === "popup") {
-      el.removeEventListener("transitionend", endExitTransitionRef);
-      el.removeEventListener("animationend", endExitTransitionRef);
-    } else {
-      el.removeEventListener("transitionend", endExitTransitionOverlayRef);
-      el.removeEventListener("animationend", endExitTransitionOverlayRef);
-    }
-
-    onBeforeEnter && onBeforeEnter(el);
-    el.classList.remove(...exitClasses, ...exitActiveClasses, ...exitToClasses);
-    el.classList.add(...enterClasses);
-    el.classList.add(...enterActiveClasses);
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        el.classList.remove(...enterClasses);
-        el.classList.add(...enterToClasses);
-        onEnter && onEnter(el, endTransition);
-        if (!onEnter || onEnter!.length < 2) {
-          if (type === "popup") {
-            endEnterTransitionRef = endTransition;
-          } else {
-            endEnterTransitionOverlayRef = endTransition;
-          }
-          el.addEventListener("transitionend", endTransition, {
-            once: true,
-          });
-          el.addEventListener("animationend", endTransition, {
-            once: true,
-          });
-        }
-      });
-    });
-
-    function endTransition() {
-      if (el) {
-        el.classList.remove(...enterActiveClasses);
-        el.classList.remove(...enterToClasses);
-        onAfterEnter && onAfterEnter(el);
-      }
-    }
-  }
-
-  function exitTransition(type: "overlay" | "popup", el: Element) {
-    if (!props.animation) {
-      mountEl?.removeChild(containerEl!);
-      containerEl = null;
-      mountEl = null;
-      return;
-    }
-    // @ts-ignore
-    if (type === "overlay" && (!props.overlay || !props.overlay.animation))
-      return;
-    // @ts-ignore
-    const animation: TAnimation =
-      type === "popup"
-        ? props.animation
-        : // @ts-ignore
-          props.overlay.animation;
-    exitRunning = true;
-
-    el = getElement(el, animation.appendToElement);
-
-    const name = animation.name;
-    let {
-      onBeforeExit,
-      onExit,
-      onAfterExit,
-      exitActiveClass = name + "-exit-active",
-      exitClass = name + "-exit",
-      exitToClass = name + "-exit-to",
-    } = animation;
-
-    const exitClasses = exitClass!.split(" ");
-    const exitActiveClasses = exitActiveClass!.split(" ");
-    const exitToClasses = exitToClass!.split(" ");
-
-    if (type === "popup") {
-      el.removeEventListener("transitionend", endEnterTransitionRef);
-      el.removeEventListener("animationend", endEnterTransitionRef);
-    } else {
-      el.removeEventListener("transitionend", endEnterTransitionOverlayRef);
-      el.removeEventListener("animationend", endEnterTransitionOverlayRef);
-    }
-
-    if (!el.parentNode) return endTransition();
-    onBeforeExit && onBeforeExit(el);
-    el.classList.add(...exitClasses);
-    el.classList.add(...exitActiveClasses);
-    requestAnimationFrame(() => {
-      el.classList.remove(...exitClasses);
-      el.classList.add(...exitToClasses);
-    });
-    onExit && onExit(el, endTransition);
-    if (!onExit || onExit.length < 2) {
-      if (type === "popup") {
-        endExitTransitionRef = endTransition;
-      } else {
-        endExitTransitionOverlayRef = endTransition;
-      }
-      el.addEventListener("transitionend", endTransition, { once: true });
-      el.addEventListener("animationend", endTransition, { once: true });
-    }
-
-    function endTransition() {
-      exitRunning = false;
-      mountEl?.removeChild(containerEl!);
-      runToggleScrollbar(false);
-      globalState.closedBySetOpen = false;
-
-      if (state.menuBtnEls && (overlay || overlayElement)) {
-        if (document.activeElement === document.body) {
-          const menuBtnEl = getMenuButton(state.menuBtnEls);
-
-          menuBtnEl.focus();
-        }
-      }
-
-      onAfterExit && onAfterExit(el);
-      containerEl = null;
-      mountEl = null;
-    }
-  }
-
-  const runToggleScrollbar = (open: boolean) => {
-    if (onToggleScrollbar) {
-      if (open) {
-        if (dismissStack.length > 1) return;
-        onToggleScrollbar.onRemove();
-      } else {
-        if (dismissStack.length) return;
-        onToggleScrollbar.onRestore();
-      }
-      return;
-    }
-
-    if (!removeScrollbar) return;
-
-    if (dismissStack.length > 1) return;
-
-    const el = document.scrollingElement as HTMLElement;
-
-    if (open) {
-      el.style.overflow = "hidden";
-    } else {
-      el.style.overflow = "";
-    }
-  };
 
   const resetFocusOnClose = () => {
     const activeElement = document.activeElement;
@@ -794,9 +587,14 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     if (el) {
       el.focus();
       if (el === menuBtnEl) {
-        markFocusedMenuButton({ focusedMenuBtn, timeouts, el });
+        // TODO:?
+        // markFocusedMenuButton({ focusedMenuBtn, timeouts, el });
       }
     }
+  };
+
+  const getMountNode = () => {
+    return typeof mount === "string" ? document.querySelector(mount)! : mount!;
   };
 
   const programmaticRemoval = () => {
@@ -816,8 +614,6 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     }
 
     if (!globalState.closedBySetOpen) {
-      globalState.addedDocumentClick = false;
-      document.removeEventListener("click", onDocumentClick);
       globalState.closedBySetOpen = true;
 
       setTimeout(() => {
@@ -826,42 +622,6 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
       });
     }
   };
-
-  createEffect(
-    on(
-      () =>
-        typeof props.menuButton === "function"
-          ? props.menuButton()
-          : props.menuButton,
-      (menuButton) => {
-        addMenuButtonEventsAndAttr({
-          state,
-          menuButton,
-          open: props.open,
-        });
-
-        onCleanup(() => {
-          if (!state || isServer) return;
-
-          removeMenuButtonEvents(state, true);
-        });
-      }
-    )
-  );
-
-  if (show && mount) {
-    CreatePortal({
-      mount:
-        typeof mount === "string" ? document.querySelector(mount)! : mount!,
-      popupChildren: render(props.children),
-      overlayChildren: overlayElement ? renderOverlay() : null,
-      marker,
-      onCreate: (mount, container) => {
-        mountEl = mount;
-        containerEl = container;
-      },
-    });
-  }
 
   createComputed(
     on(
@@ -875,34 +635,30 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           }
           programmaticRemoval();
         }
-
-        if (!mount || show) return;
-
-        if (open) {
-          if (!mountEl) {
-            CreatePortal({
-              mount:
-                typeof mount === "string"
-                  ? document.querySelector(mount)!
-                  : mount!,
-              popupChildren: render(props.children),
-              overlayChildren: overlayElement ? renderOverlay() : null,
-              marker,
-              onCreate: (mount, container) => {
-                mountEl = mount;
-                containerEl = container;
-              },
-            });
-          }
-
-          enterTransition("popup", containerEl?.firstElementChild!);
-          enterTransition("overlay", state.overlayEl!);
-        } else {
-          exitTransition("popup", containerEl?.firstElementChild!);
-          exitTransition("overlay", state.overlayEl!);
-        }
       },
       { defer: initDefer as any }
+    )
+  );
+
+  createEffect(
+    on(
+      () =>
+        typeof props.menuButton === "function"
+          ? props.menuButton()
+          : props.menuButton,
+      (menuButton) => {
+        addMenuButtonEventsAndAttributes({
+          state,
+          menuButton,
+          open: props.open,
+        });
+
+        onCleanup(() => {
+          if (!state || isServer) return;
+
+          // removeMenuButtonEvents(state, true);
+        });
+      }
     )
   );
 
@@ -916,12 +672,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           globalState.closedByEvents = false;
           addMenuPopupEl(state);
           runFocusOnActive(state);
-
-          // if (!state.menuBtnEls) {
-          //   state.enableLastFocusSentinel = !!state.mount;
-          //   globalState.addedDocumentClick = true;
-          //   document.addEventListener("click", onDocumentClick, { once: true });
-          // }
+          setTargetAriaExpandTrue(state);
 
           addGlobalEvents(closeWhenScrolling);
 
@@ -949,13 +700,16 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
             upperStackRemovedByFocusOut: false,
             detectIfMenuButtonObscured: false,
             queueRemoval: false,
+            mountedPopupsSafeList: state.mountedPopupsSafeList,
             timeouts: state.timeouts,
           });
 
           onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
-          runToggleScrollbar(open);
+          runToggleScrollbar(state, open);
           activateLastFocusSentinel(state);
         } else {
+          setTargetAriaExpandFalse(state);
+          // TODO?:
           globalState.closedByEvents = false;
           removeLocalEvents(state);
 
@@ -963,9 +717,10 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           removeMenuPopupEl(state);
           removeDismissStack(state.uniqueId);
           removeGlobalEvents();
+          removeEventsOnActiveMountedPopup();
           onOpen && onOpen(open, { uniqueId: state.uniqueId, dismissStack });
           if (!props.animation) {
-            runToggleScrollbar(open);
+            runToggleScrollbar(state, open);
           }
         }
       },
@@ -982,11 +737,6 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     removeOutsideFocusEvents(state);
     removeDismissStack(state.uniqueId);
     removeGlobalEvents();
-
-    if (!show && mount && mountEl && !exitRunning) {
-      exitTransition("popup", containerEl?.firstElementChild!);
-      exitTransition("overlay", state.overlayEl!);
-    }
   });
 
   function renderOverlay() {
@@ -1004,6 +754,8 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
         }
         role="presentation"
         onClick={state.onClickOverlayRef}
+        onMouseDown={onMouseDownOverlay}
+        onMouseUp={onMouseUpOverlay}
         ref={state.refOverlayCb}
       ></div>
     );
@@ -1018,6 +770,8 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
         onFocusIn={state.onFocusInContainerRef}
         onFocusOut={state.onFocusOutContainerRef}
         ref={state.refContainerCb}
+        // id={props.overlayElement ? state.uniqueId : state.id}
+        // role={props.overlayElement ? "dialog" : undefined}
       >
         <div
           tabindex={props.open() ? "0" : "-1"}
@@ -1042,21 +796,33 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     );
   }
 
-  if (mount) return marker;
-  if (show) return render(props.children);
+  // if (mount) return marker;
+  // if (show) return render(props.children);
 
+  // basically <Show>
+  // why custom Show??
   let strictEqual = false;
   const condition = createMemo<boolean>(() => props.open(), false, {
     equals: (a, b) => (strictEqual ? a === b : !a === !b),
   });
-
   const finalRender = createMemo(() => {
     const c = condition();
     if (c) {
       const child = props.children;
-      return (strictEqual = typeof child === "function" && child.length > 0)
-        ? untrack(() => (child as any)(c))
-        : render(child);
+      const fn = typeof child === "function" && child.length > 0;
+      strictEqual = fn;
+      return fn ? (
+        untrack(() => (child as any)(c))
+      ) : mount ? (
+        <CustomPortal
+          mount={getMountNode()}
+          overlayChildren={overlayElement ? renderOverlay() : null}
+        >
+          {render(child)}
+        </CustomPortal>
+      ) : (
+        render(child)
+      );
     }
   });
 
@@ -1072,6 +838,12 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
         exitActiveClass={props.animation.exitActiveClass}
         exitToClass={props.animation.exitToClass}
         appear={props.animation.appear}
+        overlay={
+          typeof props.overlayElement === "object"
+            ? props.overlayElement.animation!
+            : undefined
+        }
+        state={state}
       >
         {finalRender()}
       </Transition>

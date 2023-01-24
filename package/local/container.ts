@@ -1,67 +1,74 @@
 import { dismissStack } from "../global/dismissStack";
-import { globalState, onDocumentClick } from "../global/globalEvents";
+import { globalState } from "../global/globalEvents";
+import { checkThenClose } from "../utils/checkThenClose";
 import { queryElement } from "../utils/queryElement";
 import { TLocalState } from "./localState";
+import {
+  addEventsToActiveMountedPopup,
+  getActiveMountedPopupFromSafeList,
+  removeEventsOnActiveMountedPopup,
+} from "./thirdPartyPopup";
 
-// Safari, if relatedTarget is not contained within focusout, it will be null
 export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   const {
-    overlay,
     overlayElement,
-    open,
-    mount,
-    setOpen,
+    trapFocus,
     timeouts,
-    stopComponentEventPropagation,
-    focusedMenuBtn,
-    menuButton,
-    deadMenuButton,
+    closeWhenDocumentBlurs,
+    mountedPopupsSafeList,
   } = state;
-  const relatedTarget = e.relatedTarget as HTMLElement | null;
 
-  if (overlay) return;
-  if (overlayElement) return;
+  timeoutFocusOutFired = false;
 
-  if (!open()) return;
-
-  if (globalState.closedBySetOpen) {
-    return;
+  if (globalState.thirdPartyPopupEl) {
+    removeEventsOnActiveMountedPopup();
   }
+  if (globalState.closedBySetOpen) return;
+  if (globalState.overlayMouseDown) return;
+  if (overlayElement && trapFocus) return;
+  if (!closeWhenDocumentBlurs && !document.hasFocus()) return;
 
-  if (mount && stopComponentEventPropagation) {
-    if (!globalState.addedDocumentClick) {
-      globalState.addedDocumentClick = true;
-      document.addEventListener("click", onDocumentClick, { once: true });
+  setTimeoutFocusOut(timeouts, () => {
+    if (mountedPopupsSafeList) {
+      if (getActiveMountedPopupFromSafeList(mountedPopupsSafeList)) {
+        addEventsToActiveMountedPopup();
+        return;
+      }
     }
-    return;
-  }
 
-  if (!relatedTarget) {
-    if (dismissStack.find((item) => item.overlay)) return;
-
-    if (!globalState.addedDocumentClick) {
-      globalState.addedDocumentClick = true;
-      document.addEventListener("click", onDocumentClick, { once: true });
-    }
-    return;
-  }
-
-  if (relatedTarget === menuButton && deadMenuButton) {
-    return;
-  }
-
-  timeouts.containerFocusTimeoutId = window.setTimeout(() => {
     globalState.closedByEvents = true;
-    setOpen(false);
+
+    checkThenClose(
+      dismissStack,
+      (item) => {
+        const { containerEl } = item;
+
+        if (
+          globalState.clickTarget &&
+          containerEl.contains(globalState.clickTarget)
+        ) {
+          return { continue: false };
+        }
+
+        if (containerEl.contains(document.activeElement)) {
+          return { continue: false };
+        }
+
+        return { item, continue: true };
+      },
+      (item) => {
+        const { setOpen } = item;
+        setOpen(false);
+      }
+    );
   });
 };
 
 export const onFocusInContainer = (state: TLocalState, e: FocusEvent) => {
   const { timeouts } = state;
+
   clearTimeout(timeouts.containerFocusTimeoutId!);
   clearTimeout(timeouts.menuButtonBlurTimeoutId!);
-
-  timeouts.containerFocusTimeoutId = null;
 };
 
 export const runFocusOnActive = (state: TLocalState) => {
@@ -77,8 +84,20 @@ export const runFocusOnActive = (state: TLocalState) => {
 
   if (el) {
     setTimeout(() => {
-      el.focus();
+      el.focus({ preventScroll: el === state.menuPopupEl });
       focusedMenuBtn.el = null;
     });
   }
+};
+
+let timeoutFocusOutFired = false;
+const setTimeoutFocusOut = (
+  timeouts: TLocalState["timeouts"],
+  cb: () => void
+) => {
+  timeouts.containerFocusTimeoutId = window.setTimeout(() => {
+    if (timeoutFocusOutFired) return;
+    timeoutFocusOutFired = true;
+    cb();
+  });
 };

@@ -1,8 +1,13 @@
 import { dismissStack, TDismissStack } from "./dismissStack";
-import { getMenuButton, markFocusedMenuButton } from "../local/menuButton";
+import { getMenuButton } from "../local/menuButton";
 import { getNextTabbableElement } from "../utils/tabbing";
 import { checkThenClose } from "../utils/checkThenClose";
 import { queryElement } from "../utils/queryElement";
+import {
+  getFirstVisibleMountedPopupFromSafeList,
+  removeEventsOnActiveMountedPopup,
+} from "../local/thirdPartyPopup";
+import isHiddenOrInvisbleShallow from "../utils/isHiddenOrInvisibleShallow";
 
 let scrollEventAddedViaTouch = false;
 let scrollEventAdded = false;
@@ -20,6 +25,10 @@ export const globalState: {
   focusedMenuBtns: Set<{ el: HTMLElement | null }>;
   closedByEvents: boolean;
   cursorKeysPrevEl: HTMLElement | null;
+  clickTarget: HTMLElement | null;
+  overlayMouseDown: boolean;
+  thirdPartyPopupEl: HTMLElement | null;
+  thirdPartyPopupElPressedEscape: boolean;
 } = {
   closeByFocusSentinel: false,
   closedBySetOpen: false,
@@ -28,34 +37,21 @@ export const globalState: {
   closedByEvents: false,
   focusedMenuBtns: new Set(),
   cursorKeysPrevEl: null,
+  clickTarget: null,
+  overlayMouseDown: false,
+  thirdPartyPopupEl: null,
+  thirdPartyPopupElPressedEscape: false,
 };
 
-export const onDocumentClick = (e: Event) => {
+export const onDocumentPointerUp = () => {
+  globalState.addedDocumentClick = false;
+  globalState.clickTarget = null;
+};
+
+export const onDocumentPointerDown = (e: Event) => {
   const target = e.target as HTMLElement;
 
-  checkThenClose(
-    dismissStack,
-    (item) => {
-      const menuButton = getMenuButton(item.menuBtnEls);
-
-      if (
-        item.overlay ||
-        item.overlayElement ||
-        (menuButton && menuButton.contains(target)) ||
-        item.containerEl.contains(target)
-      )
-        return;
-
-      return item;
-    },
-    (item) => {
-      const { setOpen } = item;
-      globalState.closedByEvents = true;
-      setOpen(false);
-    }
-  );
-
-  globalState.addedDocumentClick = false;
+  globalState.clickTarget = target;
 };
 
 export const onWindowBlur = (e: Event) => {
@@ -68,7 +64,7 @@ export const onWindowBlur = (e: Event) => {
       if (difference < 50) {
         checkThenClose(
           dismissStack,
-          (item) => item,
+          (item) => ({ item, continue: true }),
           (item) => {
             const { setOpen } = item;
             globalState.closedByEvents = true;
@@ -97,7 +93,7 @@ export const onWindowBlur = (e: Event) => {
     if (!activeElement || activeElement.tagName !== "IFRAME") {
       checkThenClose(
         dismissStack,
-        (item) => item,
+        (item) => ({ item, continue: true }),
         (item) => onBlurWindow(item)
       );
       return;
@@ -114,10 +110,10 @@ export const onWindowBlur = (e: Event) => {
           pollingIframe();
 
           document.addEventListener("visibilitychange", onVisibilityChange);
-          return;
+          return { continue: false };
         }
 
-        return item;
+        return { item, continue: true };
       },
       (item) => {
         const { setOpen } = item;
@@ -140,6 +136,7 @@ export const onKeyDown = (e: KeyboardEvent) => {
     ignoreMenuPopupWhenTabbing,
     focusSentinelAfterEl,
     focusSentinelBeforeEl,
+    mountedPopupsSafeList,
   } = dismissStack[dismissStack.length - 1];
 
   if (e.key === "Tab") {
@@ -169,26 +166,48 @@ export const onKeyDown = (e: KeyboardEvent) => {
 
   if (e.key !== "Escape" || !closeWhenEscapeKeyIsPressed) return;
 
-  const menuBtnEl = getMenuButton(menuBtnEls);
+  if (globalState.thirdPartyPopupElPressedEscape) {
+    globalState.thirdPartyPopupElPressedEscape = false;
+    removeEventsOnActiveMountedPopup();
+    return;
+  }
 
-  const el =
-    queryElement(
-      {},
-      {
-        inputElement: focusElementOnClose,
-        type: "focusElementOnClose",
-        subType: "escapeKey",
-      }
-    ) || menuBtnEl;
-
-  if (el) {
-    el.focus();
-    if (el === menuBtnEl) {
-      markFocusedMenuButton({ focusedMenuBtn, timeouts, el });
+  if (mountedPopupsSafeList && mountedPopupsSafeList.length) {
+    const el = getFirstVisibleMountedPopupFromSafeList(mountedPopupsSafeList);
+    if (el) {
+      window.setTimeout(() => {
+        if (!el.isConnected || isHiddenOrInvisbleShallow(el)) return;
+        close();
+      }, 100);
+      return;
     }
   }
-  globalState.closedByEvents = true;
-  setOpen(false);
+
+  function close() {
+    const menuBtnEl = getMenuButton(menuBtnEls);
+
+    const el =
+      queryElement(
+        {},
+        {
+          inputElement: focusElementOnClose,
+          type: "focusElementOnClose",
+          subType: "escapeKey",
+        }
+      ) || menuBtnEl;
+
+    if (el) {
+      el.focus();
+      if (el === menuBtnEl) {
+        // TODO:?
+        // markFocusedMenuButton({ focusedMenuBtn, timeouts, el });
+      }
+    }
+    globalState.closedByEvents = true;
+    setOpen(false);
+  }
+
+  close();
 };
 
 export const onScrollClose = (e: Event) => {
@@ -203,10 +222,10 @@ export const onScrollClose = (e: Event) => {
 
       if (menuPopupEl!.contains(target)) {
         cachedScrollTarget = target;
-        return null;
+        return { continue: false };
       }
 
-      return item;
+      return { item, continue: true };
     },
     (item) => {
       const { setOpen, focusElementOnClose, menuBtnEls } = item;
@@ -247,6 +266,8 @@ export const addGlobalEvents = (closeWhenScrolling: boolean) => {
 
   if (dismissStack.length) return;
 
+  document.addEventListener("pointerdown", onDocumentPointerDown);
+  document.addEventListener("pointerup", onDocumentPointerUp);
   document.addEventListener("keydown", onKeyDown);
   window.addEventListener("blur", onWindowBlur);
 };
@@ -261,7 +282,8 @@ export const removeGlobalEvents = () => {
   window.clearTimeout(globalState.documentClickTimeout!);
   globalState.documentClickTimeout = null;
   document.removeEventListener("keydown", onKeyDown);
-  document.removeEventListener("click", onDocumentClick);
+  document.removeEventListener("pointerdown", onDocumentPointerDown);
+  document.removeEventListener("pointerup", onDocumentPointerUp);
   window.removeEventListener("blur", onWindowBlur);
   window.removeEventListener("wheel", onScrollClose, {
     capture: true,
@@ -401,12 +423,18 @@ const pollingIframe = () => {
 
         if (activeElement.tagName === "IFRAME") {
           if (containerEl && !containerEl.contains(activeElement)) {
-            return item;
+            return { item, continue: true };
           }
           cachedPolledElement = activeElement;
           pollTimeoutId = window.setTimeout(poll, duration);
+          return { continue: false };
         }
-        return;
+
+        if (containerEl && !containerEl.contains(activeElement)) {
+          return { item, continue: true };
+        }
+
+        return { continue: false };
       },
       (item) => {
         const { setOpen } = item;

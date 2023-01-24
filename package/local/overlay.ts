@@ -5,6 +5,13 @@ import { queryElement } from "../utils/queryElement";
 import { TLocalState } from "./localState";
 import { getMenuButton } from "./menuButton";
 
+export const onMouseDownOverlay = () => {
+  globalState.overlayMouseDown = true;
+};
+export const onMouseUpOverlay = () => {
+  globalState.overlayMouseDown = false;
+};
+
 export const onClickOverlay = (state: TLocalState) => {
   const {
     closeWhenOverlayClicked,
@@ -12,9 +19,11 @@ export const onClickOverlay = (state: TLocalState) => {
     focusElementOnClose,
     menuBtnEls,
   } = state;
+  globalState.overlayMouseDown = false;
 
   if (!closeWhenOverlayClicked) {
-    menuPopupEl!.focus();
+    menuPopupEl!.focus({ preventScroll: true });
+
     return;
   }
 
@@ -34,8 +43,8 @@ export const onClickOverlay = (state: TLocalState) => {
   checkThenClose(
     dismissStack,
     (item) => {
-      if (item.overlayElement) return;
-      return item;
+      if (item.overlayElement) return { continue: false };
+      return { item, continue: true };
     },
     (item) => {
       const { setOpen } = item;

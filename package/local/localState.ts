@@ -18,6 +18,7 @@ export type TLocalState = Omit<
   menuBtnId: string;
   addedFocusOutAppEvents: boolean;
   menuBtnKeyupTabFired: boolean;
+  menuBtnMouseDownFired?: boolean;
   prevFocusedEl?: HTMLElement | null;
   stopComponentEventPropagation?: boolean;
   timeouts: {
@@ -31,7 +32,6 @@ export type TLocalState = Omit<
   onFocusInContainerRef: (e: FocusEvent) => void;
   onFocusOutContainerRef: (e: FocusEvent) => void;
   onFocusFromOutsideAppOrTabRef: (e: FocusEvent) => void;
-  onClickDocumentRef: (e: MouseEvent) => void;
   onKeydownMenuButtonRef: (e: KeyboardEvent) => void;
   onClickMenuButtonRef: (e: Event) => void;
   onBlurMenuButtonRef: (e: FocusEvent) => void;

@@ -75,24 +75,14 @@ export const onFocusSentinel = (
             getMenuButton(item.menuBtnEls) === el &&
             !item.closeWhenMenuButtonIsTabbed
           ) {
-            menuBtnEl!.addEventListener("focus", state.onFocusMenuButtonRef, {
-              once: true,
-            });
-            menuBtnEl!.addEventListener(
-              "keydown",
-              state.onKeydownMenuButtonRef
-            );
-            menuBtnEl!.addEventListener("blur", state.onBlurMenuButtonRef, {
-              once: true,
-            });
-            return;
+            return { continue: false };
           }
         }
         if (item.uniqueId === uniqueId || !item.containerEl.contains(el)) {
-          return item;
+          return { item, continue: true };
         }
 
-        return;
+        return { continue: false };
       },
       (item) => {
         globalState.closedByEvents = true;

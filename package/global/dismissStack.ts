@@ -1,9 +1,14 @@
 import { TDismiss } from "..";
 import { TLocalState } from "../local/localState";
+import { globalState } from "./globalEvents";
 
 export type TDismissStack = Pick<
   TDismiss,
-  "focusElementOnClose" | "overlayElement" | "open" | "setOpen"
+  | "focusElementOnClose"
+  | "overlayElement"
+  | "open"
+  | "setOpen"
+  | "mountedPopupsSafeList"
 > &
   Pick<
     TLocalState,
@@ -43,4 +48,17 @@ export const removeDismissStack = (id: string) => {
   dismissStack.splice(foundIdx, 1);
 
   return foundStack;
+};
+
+export const loopDismissStack = () => {
+  const { clickTarget } = globalState;
+  const length = dismissStack.length - 1;
+  const containerDoesNotContainIdx = dismissStack.findIndex(
+    (stack) => !stack.containerEl.contains(clickTarget)
+  );
+
+  if (containerDoesNotContainIdx === -1) return;
+
+  const { setOpen } = dismissStack[containerDoesNotContainIdx];
+  setOpen(false);
 };
