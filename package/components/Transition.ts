@@ -242,7 +242,7 @@ export const Transition: Component<
             runToggleScrollbar(state, false);
           }
 
-          s1() === prev && set1(undefined);
+          s1() === _prev && set1(undefined);
         }
         onAfterExit && onAfterExit(prev);
         if (props.mode === "outin") enterTransition(type, el, prev);
