@@ -506,7 +506,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     onClickMenuButtonRef: (e) => onClickMenuButton(state, e),
     onMouseDownMenuButtonRef: (e) => onMouseDownMenuButton(state, e),
     onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
-    onFocusMenuButtonRef: () => onFocusMenuButton(state),
+    onFocusMenuButtonRef: (e) => onFocusMenuButton(state, e),
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
     refContainerCb: (el: HTMLElement) => {
       if (overlayElement) {
@@ -516,7 +516,10 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           el.style.position = "relative";
 
           const setDialogElStyle = (el: HTMLElement) => {
-            el.id = state.uniqueId;
+            // TODO if it already has id, then update button with aria-controls value
+            if (!el.id) {
+              el.id = state.uniqueId;
+            }
             el.style.pointerEvents = "all";
             el.setAttribute("role", "dialog");
           };
@@ -548,7 +551,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
       el.style.top = "0";
       el.style.left = "0";
       el.style.width = "100%";
-      el.style.height = "100%";
+      el.style.height = "calc(100% + 65px)";
       el.style.zIndex = "1000";
 
       if (typeof overlayElement === "object" && overlayElement.ref) {

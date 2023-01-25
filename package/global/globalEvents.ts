@@ -18,7 +18,6 @@ let cachedPolledElement: Element | null = null;
 
 export const globalState: {
   closeByFocusSentinel: boolean;
-  addedDocumentClick: boolean;
   closedBySetOpen: boolean;
   documentClickTimeout: number | null;
   menuBtnEl?: HTMLElement | null;
@@ -32,7 +31,6 @@ export const globalState: {
 } = {
   closeByFocusSentinel: false,
   closedBySetOpen: false,
-  addedDocumentClick: false,
   documentClickTimeout: null,
   closedByEvents: false,
   focusedMenuBtns: new Set(),
@@ -44,14 +42,15 @@ export const globalState: {
 };
 
 export const onDocumentPointerUp = () => {
-  globalState.addedDocumentClick = false;
   globalState.clickTarget = null;
+  document.removeEventListener("pointerup", onDocumentPointerUp);
 };
 
 export const onDocumentPointerDown = (e: Event) => {
   const target = e.target as HTMLElement;
 
   globalState.clickTarget = target;
+  document.addEventListener("pointerup", onDocumentPointerUp);
 };
 
 export const onWindowBlur = (e: Event) => {
@@ -276,14 +275,13 @@ export const removeGlobalEvents = () => {
   if (dismissStack.length) return;
 
   scrollEventAdded = false;
-  globalState.addedDocumentClick = false;
   globalState.cursorKeysPrevEl = null;
+  globalState.clickTarget = null;
   // globalState.menuBtnEl = null;
   window.clearTimeout(globalState.documentClickTimeout!);
   globalState.documentClickTimeout = null;
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("pointerdown", onDocumentPointerDown);
-  document.removeEventListener("pointerup", onDocumentPointerUp);
   window.removeEventListener("blur", onWindowBlur);
   window.removeEventListener("wheel", onScrollClose, {
     capture: true,

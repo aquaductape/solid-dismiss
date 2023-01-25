@@ -89,6 +89,8 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   if (containerEl && containerEl.contains(e.relatedTarget as HTMLElement))
     return;
 
+  const clickedTarget = globalState.clickTarget;
+
   const run = () => {
     const activeElement = document.activeElement;
 
@@ -101,13 +103,21 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     if (globalState.closedBySetOpen) return;
     if (!currentMenuBtn.isConnected) return;
     if (isHiddenOrInvisbleShallow(currentMenuBtn)) {
+      let clickIsOutside = false;
       state.menuBtnEls?.some((el) => {
         if (el === currentMenuBtn) return false;
         if (isHiddenOrInvisbleShallow(el)) return false;
+        if (clickedTarget && !el.contains(clickedTarget)) {
+          clickIsOutside = true;
+          return false;
+        }
+
         el.focus();
         return true;
       });
-      return;
+      if (!clickIsOutside) {
+        return;
+      }
     }
 
     if (!state.open()) return;
@@ -237,14 +247,33 @@ export const onKeydownMenuButton = (state: TLocalState, e: KeyboardEvent) => {
   menuBtnEl!.removeEventListener("blur", onBlurMenuButtonRef);
 };
 
-export const onFocusMenuButton = (state: TLocalState) => {
-  const { closeWhenMenuButtonIsTabbed, timeouts, deadMenuButton, menuBtnEls } =
-    state;
+export const onFocusMenuButton = (state: TLocalState, e: Event) => {
+  const {
+    closeWhenMenuButtonIsTabbed,
+    timeouts,
+    deadMenuButton,
+    menuBtnEls,
+    focusedMenuBtn,
+  } = state;
 
   const menuBtn = getMenuButton(menuBtnEls!);
   menuBtn.addEventListener("click", state.onClickMenuButtonRef);
   menuBtn.addEventListener("blur", state.onBlurMenuButtonRef);
   menuBtn.addEventListener("keydown", state.onKeydownMenuButtonRef);
+  focusedMenuBtn.el = e.currentTarget as HTMLButtonElement;
+
+  // solution to Safari/Mac/iOS
+
+  window.setTimeout(() => {
+    // check if menuButton arg is an array of at least two items(buttons)
+    // check if currentTarget focused
+    // if yes, check if it's hidden
+    // if yes, mark a variable
+    // then on blur event, if that variable is true
+    // if yes, check if currentTarget is hidden
+    // then allow blur to continue and close stacks, rather than focus on other button bug
+    // if()
+  });
 
   // TODO:
   if (deadMenuButton) {
@@ -314,7 +343,7 @@ export const addMenuButtonEventsAndAttributes = ({
 }) => {
   if (Array.isArray(menuButton) && !menuButton.length) return;
 
-  const { focusedMenuBtn } = state;
+  const { focusedMenuBtn, containerEl } = state;
   const menuBtnEls = queryElement(state, {
     inputElement: menuButton,
     type: "menuButton",
@@ -344,6 +373,9 @@ export const addMenuButtonEventsAndAttributes = ({
 
   state.menuBtnEls.forEach((menuBtnEl, _, self) => {
     addAriaLabels(state, menuBtnEl);
+    // menuBtnEl.removeAttribute("type");
+    // menuBtnEl.setAttribute("role", 'div');
+    // menuBtnEl.setAttribute("tabindex", 'div');
     menuBtnEl.addEventListener("mousedown", state.onMouseDownMenuButtonRef);
     menuBtnEl.addEventListener("focus", state.onFocusMenuButtonRef);
     if (
@@ -352,6 +384,10 @@ export const addMenuButtonEventsAndAttributes = ({
       (self.length > 1 ? !hasDisplayNone(menuBtnEl) : true)
     ) {
       focusedMenuBtn.el = menuBtnEl;
+
+      // TODO: will fail on other stacks
+      if (containerEl && containerEl.contains(document.activeElement)) return;
+
       menuBtnEl.focus({ preventScroll: true });
       // TODO:?
       // menuBtnEl!.addEventListener("keydown", state.onKeydownMenuButtonRef);
