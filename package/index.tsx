@@ -792,8 +792,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     );
   }
 
-  // if (mount) return marker;
-  // if (show) return render(props.children);
+  if (show) return render(props.children);
 
   // basically <Show>
   // why custom Show??
