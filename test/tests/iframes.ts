@@ -67,10 +67,13 @@ test("open 2 stacks, click topmost iframe, then click outside, all stacks should
   await t.click(`${idClass}-1-level-1-container button`);
   await t.click(`${idClass}-1-level-2-container button`);
   await t.wait(100); // to solve Firefox iframe rendering issue
-  await t.click(`${id}-1-level-2-popup [data-test-iframe]`);
+  await t
+    .switchToIframe(`${id}-1-level-2-popup [data-test-iframe]`)
+    .click("button[data-visible-button]");
+  await t.switchToMainWindow();
   await t.expect(exists(`${id}-1-level-1-popup`)).ok();
   await t.expect(exists(`${id}-1-level-2-popup`)).ok();
-  await t.click(`${id}`);
+  await t.click(`${idClass}-1-level-1-container button`, { offsetY: -100 });
   await t.expect(exists(`${id}-1-level-1-popup`)).notOk();
   await t.expect(exists(`${id}-1-level-2-popup`)).notOk();
 });
@@ -109,6 +112,7 @@ test("open 2 stacks, click topmost iframe, then click neighbor iframe, then clic
   await t.click(`${id}-1-level-2-popup [data-test-iframe].f-1`);
   await t.wait(400);
   await t.click(`${id}-1-level-2-popup [data-test-iframe].f-2`);
+
   await t.wait(400);
   await t.expect(exists(`${id}-1-level-2-popup`)).ok();
   await t.click(`${idClass}-1-level-3-container button`);

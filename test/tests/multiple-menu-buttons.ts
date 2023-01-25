@@ -34,6 +34,44 @@ test("open 1 level with click, click menuPopup item, then focus must remain on t
     .eql("input-test");
 });
 
+test("open 1 level with click, click outside, menuPopup should close and other switching button shouldn't be focused. Then repeat steps except don't click outside. menuPopup should remain open", async (t) => {
+  await t.click(`${idClass}-2-level-1-container button`);
+  await t.wait(2200);
+  await t.expect(exists(`${id}-2-level-1-popup`)).ok();
+  await t.click(`${idClass}-2-level-1-container button`, { offsetY: -100 });
+  await t.expect(exists(`${id}-2-level-1-popup`)).notOk();
+  await t.wait(2200);
+  await t
+    .expect(
+      await t.eval(() => {
+        const activeElement = document.activeElement;
+        if (!activeElement || activeElement === document.body) return true;
+        return activeElement.nodeName !== "button";
+      })
+    )
+    .ok();
+  await t.click(`${idClass}-2-level-1-container button`);
+  await t.wait(2200);
+  await t.expect(exists(`${id}-2-level-1-popup`)).ok();
+});
+
+test("open 1 level with click, click outside, menuPopup should close and other switching button shouldn't be focused", async (t) => {
+  await t.click(`${idClass}-2-level-1-container button`);
+  await t.expect(exists(`${id}-2-level-1-popup`)).ok();
+  await t.click(`${idClass}-2-level-1-container button`, { offsetY: -100 });
+  await t.expect(exists(`${id}-2-level-1-popup`)).notOk();
+  await t.wait(2200);
+  await t
+    .expect(
+      await t.eval(() => {
+        const activeElement = document.activeElement;
+        if (!activeElement || activeElement === document.body) return true;
+        return activeElement.nodeName !== "button";
+      })
+    )
+    .ok();
+});
+
 test("open 3 levels with keyboard", async (t) => {
   await t.click(`${id} h2`);
   await t.pressKey("tab").pressKey("enter");

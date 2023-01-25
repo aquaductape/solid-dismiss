@@ -1,6 +1,6 @@
 import { createSignal, For } from "solid-js";
 
-const SafariBlur = () => {
+const HideFocusedElement = () => {
   const [toggle, setToggle] = createSignal(false);
   const [logs, setLogs] = createSignal<string[]>([]);
   let inputEl!: HTMLInputElement;
@@ -65,14 +65,18 @@ const SafariBlur = () => {
   return (
     <div style="padding-bottom: 200px;">
       <p>
-        In Safari, if focused elements become hidden, via "display: none;" or
-        "visibility: hidden;" it won't blur, and still retains its focus.
+        In Chrome, if focused element becomes hidden, via "display: none;" or
+        "visibility: hidden;", it will blur, losing its focus.
+      </p>
+      <p>
+        In Safari and Firefox, if focused element becomes hidden, via "display:
+        none;" or "visibility: hidden;" it won't blur, and still retains its
+        focus.
       </p>
       <button
         onClick={() => {
           setToggle(false);
           setLogs([]);
-          inputEl.blur();
         }}
       >
         Reset
@@ -82,17 +86,28 @@ const SafariBlur = () => {
         <For each={logs()}>{(log) => <div>{log}</div>}</For>
       </div>
       <p>Click this text input below to focus VVVV</p>
-      <div style={`display: ${toggle() ? "none" : "block"}`}>
-        <input
-          type="text"
-          value="Text input ..."
-          ref={inputEl}
-          onBlur={onBlurInput}
-          onFocus={() => triggerEvents({ byButtonClick: false })}
-        />
+      <div
+        onFocusOut={() => {
+          setLogs((_prev) => {
+            const prev = [..._prev];
+            prev.push("container focusout fired");
+            return prev;
+          });
+        }}
+      >
+        <div style={`display: ${toggle() ? "none" : "block"}`}>
+          <input
+            type="text"
+            value="Text input ..."
+            ref={inputEl}
+            onBlur={onBlurInput}
+            onFocus={() => triggerEvents({ byButtonClick: false })}
+          />
+        </div>
+        <button>btn</button>
       </div>
     </div>
   );
 };
 
-export default SafariBlur;
+export default HideFocusedElement;
