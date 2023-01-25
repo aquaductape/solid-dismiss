@@ -5,7 +5,7 @@
 <img src="assets/logo.svg" width="40px" height="35px" style="position: relative; top: 5px; pointer-events: none;">
 </h1>
 
-<img src="https://img.shields.io/badge/size%20(gzip)-~7kb-brightgreen" alt="size of package gzip" />
+[![size](https://img.shields.io/bundlephobia/minzip/solid-dismiss?style=for-the-badge&label=size)](https://bundlephobia.com/package/solid-dismiss)
 
 Handles "click outside" behavior for popup menu. Closing is triggered by click/focus outside of popup element or pressing "Escape" key. It can also deal with stacks/layers of popups.
 
@@ -17,6 +17,10 @@ npm i solid-dismiss
 
 ```
 yarn add solid-dismiss
+```
+
+```
+pnpm add solid-dismiss
 ```
 
 ## Example
