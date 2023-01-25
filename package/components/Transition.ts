@@ -185,9 +185,9 @@ export const Transition: Component<
           el.classList.remove(...enterActiveClasses);
           el.classList.remove(...enterToClasses);
           batch(() => {
-            const _el = isPortal ? (portalMarker as unknown as Element) : el;
-            s1() !== _el && set1(_el);
-            s2() === _el && set2(undefined);
+            const el_ = isPortal ? (portalMarker as unknown as Element) : _el;
+            s1() !== el_ && set1(el_);
+            s2() === el_ && set2(undefined);
           });
           onAfterEnter && onAfterEnter(el);
           if (props.mode === "inout") exitTransition(type, el, prev!);
@@ -195,7 +195,7 @@ export const Transition: Component<
       }
     }
     if (type === "content") {
-      const el_ = isPortal ? (portalMarker as unknown as Element) : el;
+      const el_ = isPortal ? (portalMarker as unknown as Element) : _el;
       prev && !props.mode ? set2(el_) : set1(el_);
     }
   }
@@ -230,8 +230,10 @@ export const Transition: Component<
       if (!e || e.target === prev) {
         prev.removeEventListener("transitionend", endTransition);
         prev.removeEventListener("animationend", endTransition);
-        prev.classList.remove(...exitActiveClasses);
-        prev.classList.remove(...exitToClasses);
+        if (type === "content") {
+          prev.classList.remove(...exitActiveClasses);
+          prev.classList.remove(...exitToClasses);
+        }
 
         if (type === "content") {
           if (isPortal) {
@@ -257,6 +259,7 @@ export const Transition: Component<
   createComputed<Element>((prev) => {
     el = resolved() as Element;
     while (typeof el === "function") el = (el as Function)();
+
     if (el && el.nodeType === 3) {
       isPortal = true;
       portalMarker = el as unknown as Text;
@@ -276,6 +279,7 @@ export const Transition: Component<
       }
       el = portalContainerChild;
     }
+
     return untrack(() => {
       if (el && el !== prev) {
         if (props.mode !== "outin") {
