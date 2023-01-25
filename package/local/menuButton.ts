@@ -49,21 +49,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     globalState.closedByEvents = true;
   }
 
-  // removeOnBlurTargetMenuButton(state, menuBtnEl);
-
   setOpen(!open());
-};
-
-/**
- * for animation perf, to reduce potential jank, by not checking if menuButton is visible or not
- */
-const removeOnBlurTargetMenuButton = (state: TLocalState, el: HTMLElement) => {
-  if (
-    state.focusElementOnOpen &&
-    state.menuBtnEls?.every((el) => el !== state.focusElementOnOpen)
-  ) {
-    el.removeEventListener("blur", state.onBlurMenuButtonRef);
-  }
 };
 
 export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
