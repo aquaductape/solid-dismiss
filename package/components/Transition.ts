@@ -134,7 +134,7 @@ export const Transition: Component<
       }
 
       return typeof appendToElement === "string"
-        ? el.querySelector(appendToElement)!
+        ? el && el.querySelector(appendToElement)!
         : (appendToElement as Element);
     }
     return el;
