@@ -31,7 +31,6 @@ export type TLocalState = Omit<
   onClickOutsideMenuButtonRef: () => void;
   onFocusInContainerRef: (e: FocusEvent) => void;
   onFocusOutContainerRef: (e: FocusEvent) => void;
-  onFocusFromOutsideAppOrTabRef: (e: FocusEvent) => void;
   onKeydownMenuButtonRef: (e: KeyboardEvent) => void;
   onClickMenuButtonRef: (e: Event) => void;
   onBlurMenuButtonRef: (e: FocusEvent) => void;

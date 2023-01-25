@@ -24,10 +24,6 @@ import {
   removeGlobalEvents,
 } from "./global/globalEvents";
 import { TLocalState } from "./local/localState";
-import {
-  onFocusFromOutsideAppOrTab,
-  removeOutsideFocusEvents,
-} from "./local/outside";
 import { addMenuPopupEl, removeMenuPopupEl } from "./local/menuPopup";
 import {
   addMenuButtonEventsAndAttributes,
@@ -505,7 +501,6 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     onBlurMenuButtonRef: (e) => onBlurMenuButton(state, e),
     onClickMenuButtonRef: (e) => onClickMenuButton(state, e),
     onMouseDownMenuButtonRef: (e) => onMouseDownMenuButton(state, e),
-    onFocusFromOutsideAppOrTabRef: (e) => onFocusFromOutsideAppOrTab(state, e),
     onFocusMenuButtonRef: (e) => onFocusMenuButton(state, e),
     onKeydownMenuButtonRef: (e) => onKeydownMenuButton(state, e),
     refContainerCb: (el: HTMLElement) => {
@@ -716,7 +711,6 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
           globalState.closedByEvents = false;
           removeLocalEvents(state);
 
-          removeOutsideFocusEvents(state);
           removeMenuPopupEl(state);
           removeDismissStack(state.uniqueId);
           removeGlobalEvents();
@@ -737,7 +731,6 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     removeLocalEvents(state, { isCleanup: true });
 
     removeMenuPopupEl(state);
-    removeOutsideFocusEvents(state);
     removeDismissStack(state.uniqueId);
     removeGlobalEvents();
   });

@@ -1,9 +1,7 @@
 import { dismissStack } from "../global/dismissStack";
 import { globalState, onDocumentPointerDown } from "../global/globalEvents";
 import { TLocalState } from "./localState";
-import { removeOutsideFocusEvents } from "./outside";
 import { getNextTabbableElement } from "../utils/tabbing";
-import { checkThenClose } from "../utils/checkThenClose";
 import { hasDisplayNone } from "../utils/hasDisplayNone";
 import { queryElement } from "../utils/queryElement";
 import { TDismiss } from "..";
@@ -435,11 +433,6 @@ export const removeMenuButtonEvents = (
   state.menuBtnMouseDownFired = false;
 
   state.menuBtnEls.forEach((menuBtnEl) => {
-    if (!state.deadMenuButton) {
-      // menuBtnEl.removeEventListener("focus", state.onFocusMenuButtonRef);
-    }
-    // menuBtnEl.removeEventListener("click", state.onClickMenuButtonRef);
-
     if (isCleanup) {
       menuBtnEl.removeEventListener("blur", state.onBlurMenuButtonRef);
       menuBtnEl.removeEventListener("keydown", state.onKeydownMenuButtonRef);

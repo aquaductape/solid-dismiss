@@ -125,13 +125,11 @@ export const onWindowBlur = (e: Event) => {
 
 export const onKeyDown = (e: KeyboardEvent) => {
   const {
-    focusedMenuBtn,
     setOpen,
     menuBtnEls,
     cursorKeys,
     closeWhenEscapeKeyIsPressed,
     focusElementOnClose,
-    timeouts,
     ignoreMenuPopupWhenTabbing,
     focusSentinelAfterEl,
     focusSentinelBeforeEl,

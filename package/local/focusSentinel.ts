@@ -58,15 +58,11 @@ export const onFocusSentinel = (
   } = state;
   const menuBtnEl = getMenuButton(menuBtnEls!);
 
-  // clearTimeout(containerFocusTimeoutId!);
-  // if (mount) {
   dismissStack.forEach((item) =>
     window.clearTimeout(item.timeouts.containerFocusTimeoutId!)
   );
-  // }
 
   const runIfMounted = (el: HTMLElement, isFirst?: boolean) => {
-    // globalState.closeByFocusSentinel = true;
     checkThenClose(
       dismissStack,
       (item) => {
