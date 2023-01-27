@@ -12,7 +12,7 @@ specifiers:
   prismjs: ^1.29.0
   sass: ^1.57.1
   simplebar: ^6.2.0
-  solid-dismiss: ^1.5.7
+  solid-dismiss: ^1.6.0
   solid-js: ^1.6.9
   solid-popper: ^0.2.1
   solid-transition-group: ^0.0.12
@@ -31,7 +31,7 @@ dependencies:
   prismjs: 1.29.0
   sass: 1.57.1
   simplebar: 6.2.0
-  solid-dismiss: 1.5.7_solid-js@1.6.9
+  solid-dismiss: 1.6.0_solid-js@1.6.9
   solid-js: 1.6.9
   solid-popper: 0.2.1_4d4c2ryvs4cd2topoga5pasuua
   solid-transition-group: 0.0.12_solid-js@1.6.9
@@ -1021,8 +1021,8 @@ packages:
       simplebar-core: 1.2.0
     dev: false
 
-  /solid-dismiss/1.5.7_solid-js@1.6.9:
-    resolution: {integrity: sha512-VYew73A25PXhmlhLlVtbRbxw4yNxPzSL9uYkvR/OK2P287UdKACV1ruBTQUBbfLFzyrtxQucZDPHm4kivh7Jag==}
+  /solid-dismiss/1.6.0_solid-js@1.6.9:
+    resolution: {integrity: sha512-wIE12KIovh9yMSDv0+V7/YqsroC/JoBp+UQE2nc23DLbJoqUQOjitHgsMCYkwVrHSusbso7DE7/r/XdixZfhtg==}
     peerDependencies:
       solid-js: '1'
     dependencies:

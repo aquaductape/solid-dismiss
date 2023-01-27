@@ -21,6 +21,7 @@ import Caveat from "./components/Docs/Caveat";
 import Popper from "./components/ExamplesSection/Popper";
 import { H2Anchor, H3Anchor } from "./components/HeaderAnchor/HeaderAnchor";
 import UsingSSR from "./components/Docs/UsingSSR";
+import ModalOverflowingViewportHeight from "./components/ExamplesSection/ModalOverflowingViewportHeight";
 
 const App: Component = () => {
   onMount(() => {
@@ -34,31 +35,34 @@ const App: Component = () => {
     <>
       <Navbar />
       <main class="main">
-        <section>
-          <Hero />
-        </section>
-        <section>
-          <H2Anchor>Examples</H2Anchor>
-          <Popup />
-          <BasicDropdown />
-          <DropdownMounted />
-          <DropdownOverlay />
-          <Modal />
-          <Animation />
-          <NavbarEx />
-          <Popper />
-          <MultipleButtons />
-          <Stacks />
-        </section>
-        <section>
-          <H2Anchor>Docs</H2Anchor>
-          <UsingSSR />
-          <Caveat />
-          <H3Anchor>Types</H3Anchor>
-          <Docs />
-        </section>
+        <div class="main-inner">
+          <section>
+            <Hero />
+          </section>
+          <section>
+            <H2Anchor>Examples</H2Anchor>
+            <Popup />
+            <BasicDropdown />
+            <DropdownMounted />
+            <DropdownOverlay />
+            <Modal />
+            <ModalOverflowingViewportHeight />
+            <Animation />
+            <NavbarEx />
+            <Popper />
+            <MultipleButtons />
+            <Stacks />
+          </section>
+          <section>
+            <H2Anchor>Docs</H2Anchor>
+            <UsingSSR />
+            <Caveat />
+            <H3Anchor>Types</H3Anchor>
+            <Docs />
+          </section>
+        </div>
       </main>
-      <svg>
+      <svg style="position: absolute; height: 0;">
         <defs>
           <linearGradient
             id="dismiss-logo-a"

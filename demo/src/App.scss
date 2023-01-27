@@ -4,6 +4,9 @@ $hamburger-layer-height: 3px !default;
 
 @import "./hamburgers/hamburgers.scss";
 
+:root {
+  --slide-exit-y: 100vh;
+}
 // :root {
 //   --main-blue: #142cb0;
 //   --secondary-blue: #00bcd4;
@@ -216,7 +219,7 @@ li {
   list-style-type: none;
 }
 
-.main {
+.main-inner {
   padding-top: 10vh;
   width: 85%;
   max-width: 1200px;
@@ -972,5 +975,26 @@ p {
     > div {
       transition: transform 200ms;
     }
+  }
+}
+
+.slide-modal {
+  &-enter {
+    transform: translateY(100vh);
+  }
+  &-enter-to {
+    transform: translateY(0);
+  }
+  &-exit {
+    transform: translateY(0);
+  }
+  &-exit-to {
+    transform: translateY(var(--slide-exit-y));
+  }
+
+  &-enter-to,
+  &-exit,
+  &-exit-to {
+    transition: transform 300ms;
   }
 }

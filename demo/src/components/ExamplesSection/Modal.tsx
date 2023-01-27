@@ -1,4 +1,3 @@
-import { createSignal, Show, createEffect, onMount } from "solid-js";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import _Modal from "../Examples/Modal";
 import ModalToggleScrollbar from "../Examples/ModalToggleScrollbar";
