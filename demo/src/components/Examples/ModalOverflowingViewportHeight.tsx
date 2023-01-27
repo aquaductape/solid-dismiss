@@ -8,6 +8,7 @@ import targetedContentHasMarginsPaddingImg from "../../assets/targeted-content-h
 import targetedContentHasBleedingMarginsImg from "../../assets/targeted-content-has-bleeding-margins.png";
 import targetedContentContainsMarginsImg from "../../assets/targeted-content-contains-margins.png";
 import targetedContentAncestorPaddingRelativeUnitsImg from "../../assets/targeted-content-ancestor-padding-relative-units.png";
+import iOSSafariNavigationBarImg from "../../assets/iOS-safari-navigation-bar.jpg";
 import { Component } from "solid-js";
 
 const s = scopeModuleClasses(c);
@@ -36,7 +37,7 @@ const ModalOverflowingViewportHeight = () => {
     // rootApp.style.right = `${documentWidth - rootAppBCR.right}px`;
 
     prevScrollY = scrollY;
-    window.scrollTo({ top: 0 });
+    window.scrollTo({ top: 1 });
   };
 
   const restorePageLayout = () => {
@@ -117,25 +118,27 @@ const ModalOverflowingViewportHeight = () => {
           <p>
             This is similar on how Netflix displays their movie info modals.
           </p>
-          <video
-            autoplay
-            loop
-            muted
-            playsinline
-            controls={false}
-            onLoadStart={(e) => {
-              const target = e.currentTarget;
-              target.style.opacity = "0";
-            }}
-            onLoadedData={(e) => {
-              const target = e.currentTarget;
-              target.animate([{ opacity: 0 }, { opacity: 1 }], {
-                duration: 200,
-              });
-              target.style.opacity = "";
-            }}
-            src={netflixModalOverflowPageViewportMP4}
-          ></video>
+          <div class={s("video-container")}>
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              controls={false}
+              onLoadStart={(e) => {
+                const target = e.currentTarget;
+                target.style.opacity = "0";
+              }}
+              onLoadedData={(e) => {
+                const target = e.currentTarget;
+                target.animate([{ opacity: 0 }, { opacity: 1 }], {
+                  duration: 200,
+                });
+                target.style.opacity = "";
+              }}
+              src={netflixModalOverflowPageViewportMP4}
+            />
+          </div>
 
           <p>
             The trick to preserve main content position and make Modal
@@ -223,6 +226,29 @@ right = document.documentElement.clientWidth - rootApp.getBoundingClientRect().r
             position values are removed, there could be a flash of mismatched
             layout.
           </p>
+          <p>
+            Also you might be wondering why when setting the target element to
+            fixed, we scroll to top of page at 1 pixel instead of zero
+          </p>
+          <pre>
+            {`
+window.scrollTo({ top: 1 });`}
+          </pre>
+          <p>
+            It's to prevent iOS Safari navigation bar to fully expand if it was
+            previously collapsed.
+          </p>
+          <p>
+            Scroll inputs initiated by user touch is the only way to toggle
+            navigation bar, except by programmatically setting page scroll to
+            zero which expands the bar
+          </p>
+          <p>
+            Therefore this keeps the continuity of collapsed navigation bar when
+            toggling this Modal
+          </p>
+          <img src={iOSSafariNavigationBarImg} alt="" />
+
           <button class={s("dismiss-btn")} onClick={onClickClose}>
             Dismiss
           </button>
@@ -262,7 +288,7 @@ const codeSnippet1 = `
   rootApp<span class="token punctuation">.</span>style<span class="token punctuation">.</span>right <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">\`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">\${</span>documentWidth <span class="token operator">-</span> rootAppBCR<span class="token punctuation">.</span>right<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">px</span><span class="token template-punctuation string">\`</span></span><span class="token punctuation">;</span>
 
   prevScrollY <span class="token operator">=</span> scrollY<span class="token punctuation">;</span>
-  window<span class="token punctuation">.</span><span class="token function">scrollTo</span><span class="token punctuation">(</span><span class="token punctuation">{</span> top<span class="token operator">:</span> <span class="token number">0</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  window<span class="token punctuation">.</span><span class="token function">scrollTo</span><span class="token punctuation">(</span><span class="token punctuation">{</span> top<span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">const</span> <span class="token function-variable function">restore</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
@@ -288,7 +314,7 @@ const codeSnippet2 = `
   rootApp<span class="token punctuation">.</span>style<span class="token punctuation">.</span>right <span class="token operator">=</span> <span class="token string">"0"</span><span class="token punctuation">;</span>
 
   prevScrollY <span class="token operator">=</span> scrollY<span class="token punctuation">;</span>
-  window<span class="token punctuation">.</span><span class="token function">scrollTo</span><span class="token punctuation">(</span><span class="token punctuation">{</span> top<span class="token operator">:</span> <span class="token number">0</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  window<span class="token punctuation">.</span><span class="token function">scrollTo</span><span class="token punctuation">(</span><span class="token punctuation">{</span> top<span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">const</span> <span class="token function-variable function">restore</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
