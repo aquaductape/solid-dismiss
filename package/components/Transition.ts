@@ -148,6 +148,7 @@ export const Transition: Component<
     _el: Element,
     prev: Element | undefined
   ) {
+    // TODO: refactor this
     if (isExiting) {
       if (type === "content") {
         endExitTransitionRef();
@@ -228,6 +229,7 @@ export const Transition: Component<
 
     function endTransition(e?: Event) {
       if (!e || e.target === prev) {
+        isExiting = false;
         prev.removeEventListener("transitionend", endTransition);
         prev.removeEventListener("animationend", endTransition);
         if (type === "content") {
