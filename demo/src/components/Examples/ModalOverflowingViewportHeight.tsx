@@ -157,7 +157,7 @@ const ModalOverflowingViewportHeight = () => {
           </p>
           <p>Following code:</p>
 
-          <CodeSnippet code={codeSnippet1} />
+          <CodeSnippet code={codeLeftAndRightIsZero} />
 
           <img src={fixedContentOnFrameworkRootImg} alt="" />
           <p>
@@ -189,7 +189,7 @@ const ModalOverflowingViewportHeight = () => {
 right = document.documentElement.clientWidth - rootApp.getBoundingClientRect().right`}
           </pre>
 
-          <CodeSnippet code={codeSnippet2} />
+          <CodeSnippet code={codeLeftAndRightSetToBCR} />
           <img src={targetedContentHasMarginsPaddingImg} alt="" />
           <p>
             Make sure that root container doesn't have any bleeding margins,
@@ -275,7 +275,7 @@ const CodeSnippet: Component<{ code: string }> = ({ code }) => {
   return <div class={s("code-editor")} innerHTML={code}></div>;
 };
 
-const codeSnippet1 = `
+const codeLeftAndRightSetToBCR = `
 <pre class="language-tsx" tabindex="0"><code class="language-tsx"><span class="token keyword">const</span> rootApp <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"root"</span><span class="token punctuation">)</span><span class="token operator">!</span><span class="token punctuation">;</span>
 <span class="token keyword">let</span> prevScrollY <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 
@@ -302,7 +302,7 @@ const codeSnippet1 = `
   window<span class="token punctuation">.</span><span class="token function">scrollTo</span><span class="token punctuation">(</span><span class="token punctuation">{</span> top<span class="token operator">:</span> prevScrollY <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>`;
 
-const codeSnippet2 = `
+const codeLeftAndRightIsZero = `
 <pre class="language-tsx" tabindex="0"><code class="language-tsx"><span class="token keyword">const</span> rootApp <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"root"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">let</span> prevScrollY <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 
