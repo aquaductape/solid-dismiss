@@ -143,7 +143,9 @@ const ModalOverflowingViewportHeight = () => {
           <p>
             The trick to preserve main content position and make Modal
             scrollable by body scroll, is by setting the main content position
-            fixed and its top value based current scroll position.
+            fixed and its top value based current scroll position. Modal is
+            scrollable by body scroll because its position not fixed instead is
+            static therefore part of document flow.
           </p>
           <p>
             This current Modal example that you are viewing and scrolling
