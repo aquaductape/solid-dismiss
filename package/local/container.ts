@@ -28,6 +28,8 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   if (overlayElement && trapFocus) return;
   if (!closeWhenDocumentBlurs && !document.hasFocus()) return;
 
+  const dismissStackLength = dismissStack.length;
+
   setTimeoutFocusOut(timeouts, () => {
     if (mountedPopupsSafeList) {
       if (getActiveMountedPopupFromSafeList(mountedPopupsSafeList)) {
@@ -36,6 +38,10 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
       }
     }
 
+    // fixes issue where race condition of new item mounts before timeout focusout fires
+    // therefore focused item which is menuButton, the new container doesn't contain, so removes stack
+    if (dismissStackLength < dismissStack.length) return;
+
     globalState.closedByEvents = true;
 
     checkThenClose(
@@ -43,10 +49,8 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
       (item) => {
         const { containerEl } = item;
 
-        if (
-          globalState.clickTarget &&
-          containerEl.contains(globalState.clickTarget)
-        ) {
+        const clickTarget = globalState.clickTarget;
+        if (clickTarget && containerEl.contains(clickTarget)) {
           return { continue: false };
         }
 
