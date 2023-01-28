@@ -1,10 +1,10 @@
-import { Component } from "solid-js";
+import { Component, ParentComponent } from "solid-js";
 import { scopeModuleClasses } from "../../utils/scopeModuleClasses";
 import c from "./Checkbox.module.scss";
 
 const s = scopeModuleClasses(c);
 
-const Checkbox: Component<{
+const Checkbox: ParentComponent<{
   onChange: (value: boolean) => void;
   checked: boolean;
 }> = (props) => {
