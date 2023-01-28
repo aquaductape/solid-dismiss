@@ -1,7 +1,7 @@
 import { createIntersectionObserver } from "@solid-primitives/intersection-observer";
 import { createEffect, createSignal } from "solid-js";
 import { Component, onMount, Show } from "solid-js";
-import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../utils/scopeModuleClasses";
 import c from "./CodeEditor.module.scss";
 
 const s = scopeModuleClasses(c);

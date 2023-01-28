@@ -1,5 +1,5 @@
 import c from "./Popper.module.scss";
-import { scopeModuleClasses } from "../../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../../utils/scopeModuleClasses";
 const s = scopeModuleClasses(c);
 
 import Dismiss, { OnOpenHandler } from "solid-dismiss";

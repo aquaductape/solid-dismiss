@@ -1,5 +1,5 @@
 import c from "./Dropdown.module.scss";
-import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../utils/scopeModuleClasses";
 
 const s = scopeModuleClasses(c);
 import { createSignal } from "solid-js";

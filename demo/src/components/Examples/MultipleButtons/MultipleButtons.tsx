@@ -1,5 +1,5 @@
 import c from "./MultipleButtons.module.scss";
-import { scopeModuleClasses } from "../../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../../utils/scopeModuleClasses";
 import { createSignal, onMount, Show } from "solid-js";
 import { Collapse } from "bootstrap";
 import Dismiss from "solid-dismiss";

@@ -1,4 +1,4 @@
-import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../utils/scopeModuleClasses";
 import Anchor from "../Anchor/Anchor";
 import c from "../CodeEditor/CodeEditor.module.scss";
 import { H3Anchor } from "../HeaderAnchor/HeaderAnchor";

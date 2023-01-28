@@ -10,7 +10,7 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import c from "./Select.module.scss";
-import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../utils/scopeModuleClasses";
 import Dismiss from "solid-dismiss";
 
 const classM = scopeModuleClasses(c);

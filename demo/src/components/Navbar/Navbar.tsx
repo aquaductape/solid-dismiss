@@ -1,5 +1,5 @@
 import c from "./Navbar.module.scss";
-import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../utils/scopeModuleClasses";
 
 const s = scopeModuleClasses(c);
 import { Icon } from "@amoutonbrady/solid-heroicons";

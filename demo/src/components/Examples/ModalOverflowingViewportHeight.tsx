@@ -1,7 +1,7 @@
 import Dismiss from "solid-dismiss";
 import c from "./Modal.module.scss";
 import { createComputed, createSignal, onMount } from "solid-js";
-import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../utils/scopeModuleClasses";
 import netflixModalOverflowPageViewportMP4 from "../../assets/netflix-modal-overflow-page-viewport-height.mp4";
 import fixedContentOnFrameworkRootImg from "../../assets/fixed-content-on-framework-root.png";
 import targetedContentHasMarginsPaddingImg from "../../assets/targeted-content-has-margins-padding.png";

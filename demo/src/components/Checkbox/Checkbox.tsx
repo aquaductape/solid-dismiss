@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import { scopeModuleClasses } from "../../utils/scopModuleClasses";
+import { scopeModuleClasses } from "../../utils/scopeModuleClasses";
 import c from "./Checkbox.module.scss";
 
 const s = scopeModuleClasses(c);
