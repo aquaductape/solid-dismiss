@@ -48,7 +48,7 @@ export const queryElement = (
     }
     const component = inputElement();
     if (typeof component === "string") {
-      return state.containerEl?.querySelector(inputElement) as HTMLElement;
+      return state.containerEl?.querySelector(component) as HTMLElement;
     }
     return component;
   }
