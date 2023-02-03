@@ -46,7 +46,11 @@ export const queryElement = (
     if (inputElement instanceof Element) {
       return inputElement as HTMLElement;
     }
-    return inputElement();
+    const component = inputElement();
+    if (typeof component === "string") {
+      return state.containerEl?.querySelector(inputElement) as HTMLElement;
+    }
+    return component;
   }
   if (inputElement == null && type === "menuPopup") {
     if (!state.containerEl) return null as any;
