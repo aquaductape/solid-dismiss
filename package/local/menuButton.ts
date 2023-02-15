@@ -383,6 +383,7 @@ const addAriaLabels = (state: TLocalState, targetEl: HTMLElement) => {
   const { modal, uniqueId, deadMenuButton } = state;
   // TODO: maybe just get rid of adding attributes at runtime and tell users to add it themselves
   if (!deadMenuButton) {
+    if (targetEl.hasAttribute("type")) return;
     targetEl.setAttribute("type", "button");
     targetEl.setAttribute("aria-expanded", "false");
   }
