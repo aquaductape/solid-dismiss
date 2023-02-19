@@ -300,6 +300,7 @@ export type TDismiss = {
         class?: string;
         classList?: { [key: string]: boolean };
         animation?: DismissAnimation;
+        element?: JSX.Element;
       };
   /**
    * Shorthand for `Dismiss.overlay` to `true`, `Dismiss.overlayElement` to `true`, `Dismiss.trapFocus` to `true`, `Dismiss.removeScrollbar` to `true`, and `Dismiss.mount` to `"body"`. Does not override the values of already setted properties.
@@ -736,6 +737,13 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
   });
 
   function renderOverlay() {
+    if (
+      typeof props.overlayElement === "object" &&
+      props.overlayElement.element
+    ) {
+      return props.overlayElement.element;
+    }
+
     return (
       <div
         class={
