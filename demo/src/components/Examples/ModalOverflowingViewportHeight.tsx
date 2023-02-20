@@ -194,7 +194,7 @@ right = document.documentElement.clientWidth - rootApp.getBoundingClientRect().r
           <p>
             Make sure that root container doesn't have any bleeding margins,
             because it will result in incorrect top position when setting the
-            root to fixed position
+            root to fixed position.
           </p>
           <img src={targetedContentHasBleedingMarginsImg} alt="" />
           <p>
@@ -208,11 +208,11 @@ right = document.documentElement.clientWidth - rootApp.getBoundingClientRect().r
             >
               new block formatting context
             </a>
-            , causing the child margins to be part of content size
+            , causing the child margins to be part of content size.
           </p>
           <p>
-            To avoid this make sure root container has padding or has "display:
-            flow-root;"
+            To avoid this, make sure root container has padding or has "display:
+            flow-root;".
           </p>
           <img src={targetedContentContainsMarginsImg} alt="" />
           <p>
@@ -230,7 +230,7 @@ right = document.documentElement.clientWidth - rootApp.getBoundingClientRect().r
           </p>
           <p>
             Also you might be wondering why when setting the target element to
-            fixed, we scroll to top of page at 1 pixel instead of zero
+            fixed, we scroll to top of page at 1 pixel instead of zero.
           </p>
           <pre>
             {`
@@ -243,11 +243,11 @@ window.scrollTo({ top: 1 });`}
           <p>
             Scroll inputs initiated by user touch is the only way to toggle
             navigation bar, except by programmatically setting page scroll to
-            zero which expands the bar
+            zero which expands the bar.
           </p>
           <p>
             Therefore this keeps the continuity of collapsed navigation bar when
-            toggling this Modal
+            toggling this Modal.
           </p>
           <img src={iOSSafariNavigationBarImg} alt="" />
 
