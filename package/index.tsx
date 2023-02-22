@@ -132,13 +132,14 @@ export type TDismiss = {
    *
    * which element, via selector*, to recieve focus after popup opens.
    *
-   * *CSS string queried from menuPopup element, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
+   * *CSS string queried from menuPopup element. If string value is `"menuPopup"` uses menuPopup element. `"firstChild"` uses first tabbable element inside menuPopup. `"none"` focus remains on `"menuButton"`, even if `Dismiss.modal` is true.
    *
    * @defaultValue focus remains on `"menuButton"`. But if there's no menu button, focus remains on document's activeElement.
    */
   focusElementOnOpen?:
     | "menuPopup"
     | "firstChild"
+    | "none"
     | JSX.Element
     | (() => JSX.Element);
   /**
@@ -204,6 +205,12 @@ export type TDismiss = {
          */
         scrolling?: "menuButton" | JSX.Element;
       };
+  /**
+   * @default `true`
+   *
+   * Set to `false` if you want to switch focus from menuButton to menuPopup input element while keeping virtual keyboard opened in iOS. However end-user must also provide additional logic to fire inside menuButton onclick for behavior to work.
+   */
+  focusMenuButtonOnMouseDown?: boolean;
   /**
    * When `true`, clicking or focusing on menuButton doesn't toggle menuPopup. However the menuButton is still used as reference from `focusElementOnClose`
    *
@@ -428,6 +435,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     menuPopup,
     focusElementOnClose,
     focusElementOnOpen = modal ? "menuPopup" : undefined,
+    focusMenuButtonOnMouseDown = true,
     cursorKeys = false,
     closeWhenMenuButtonIsTabbed = false,
     closeWhenMenuButtonIsClicked = true,
@@ -462,6 +470,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     closeWhenScrolling,
     cursorKeys,
     focusElementOnClose,
+    focusMenuButtonOnMouseDown,
     deadMenuButton,
     focusElementOnOpen,
     ignoreMenuPopupWhenTabbing,

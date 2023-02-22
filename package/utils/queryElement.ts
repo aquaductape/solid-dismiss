@@ -34,6 +34,7 @@ export const queryElement = (
     return getMenuButton(state.menuBtnEls!);
   }
   if (type === "focusElementOnOpen") {
+    if (inputElement === "none") return null as any;
     if (inputElement === "firstChild") {
       return getNextTabbableElement({
         from: state.focusSentinelBeforeEl!,

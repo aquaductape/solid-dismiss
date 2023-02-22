@@ -117,14 +117,19 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
 };
 
 export const onMouseDownMenuButton = (state: TLocalState, e: MouseEvent) => {
+  const { focusMenuButtonOnMouseDown } = state;
   const menuBtnEl = e.currentTarget as HTMLElement;
 
   state.menuBtnMouseDownFired = true;
   menuBtnEl.addEventListener("click", state.onClickMenuButtonRef);
-  menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef);
-  requestAnimationFrame(() => {
-    menuBtnEl.focus();
-  });
+
+  // if `false`, enables switching focus from menuButton to menuPopup input element while keeping virtual keyboard opened in iOS. However end-user must also provide additional logic to fire inside menuButton onclick for behavior to work.
+  if (focusMenuButtonOnMouseDown) {
+    menuBtnEl.addEventListener("blur", state.onBlurMenuButtonRef);
+    requestAnimationFrame(() => {
+      menuBtnEl.focus();
+    });
+  }
 };
 
 // TODO: ?
