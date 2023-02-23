@@ -4,7 +4,7 @@ const path = "tests";
 module.exports = {
   skipJsErrors: false,
   hostname: os.hostname(),
-  browsers: ["safari"],
+  browsers: ["chrome"],
   src: [
     `${path}/basic-dropdown.ts`,
     `${path}/popup-no-focusable-items.ts`,
