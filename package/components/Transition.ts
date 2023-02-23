@@ -119,8 +119,10 @@ export const Transition: Component<
     };
     const name = getName() || "s";
     const propStr = camelize(type) + "Class";
+    const classAnimationStates =
+      animatedElType === "content" ? props : props.overlay;
     // @ts-ignore
-    const classState = props[propStr] as string;
+    const classState = classAnimationStates[propStr] as string;
     return classState ? classState.split(" ") : [`${name}-${type}`];
   }
 
