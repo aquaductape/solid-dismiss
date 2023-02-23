@@ -1,5 +1,6 @@
 import { TLocalState } from "../local/localState";
 import { getMenuButton } from "../local/menuButton";
+import { isObjectLiteral } from "./isObjectLiteral";
 import { getNextTabbableElement } from "./tabbing";
 
 export const queryElement = (
@@ -34,6 +35,12 @@ export const queryElement = (
     return getMenuButton(state.menuBtnEls!);
   }
   if (type === "focusElementOnOpen") {
+    if (isObjectLiteral(inputElement)) {
+      return queryElement(state, {
+        inputElement: inputElement.target,
+        type: "focusElementOnOpen",
+      });
+    }
     if (inputElement === "none") return null as any;
     if (inputElement === "firstChild") {
       return getNextTabbableElement({
