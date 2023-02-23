@@ -141,7 +141,16 @@ export type TDismiss = {
     | "firstChild"
     | "none"
     | JSX.Element
-    | (() => JSX.Element);
+    | (() => JSX.Element)
+    | {
+        target:
+          | "menuPopup"
+          | "firstChild"
+          | "none"
+          | JSX.Element
+          | (() => JSX.Element);
+        preventScroll?: boolean;
+      };
   /**
    *
    * Which element, via selector*, to recieve focus after popup closes.

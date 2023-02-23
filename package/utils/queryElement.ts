@@ -47,6 +47,12 @@ export const queryElement = (
     if (inputElement instanceof Element) {
       return inputElement as HTMLElement;
     }
+    if (typeof inputElement === "object") {
+      return queryElement(state, {
+        inputElement: inputElement.target,
+        type: "focusElementOnOpen",
+      });
+    }
     const component = inputElement();
     if (typeof component === "string") {
       return state.containerEl?.querySelector(component) as HTMLElement;

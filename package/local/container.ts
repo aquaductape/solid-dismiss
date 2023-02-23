@@ -1,6 +1,7 @@
 import { dismissStack } from "../global/dismissStack";
 import { globalState } from "../global/globalEvents";
 import { checkThenClose } from "../utils/checkThenClose";
+import { isObjectLiteral } from "../utils/isObjectLiteral";
 import { queryElement } from "../utils/queryElement";
 import { TLocalState } from "./localState";
 import {
@@ -88,7 +89,11 @@ export const runFocusOnActive = (state: TLocalState) => {
 
   if (el) {
     setTimeout(() => {
-      el.focus({ preventScroll: el === state.menuPopupEl });
+      const preventScroll = isObjectLiteral(focusElementOnOpen)
+        ? // @ts-ignore
+          !!focusElementOnOpen.preventScroll
+        : el === state.menuPopupEl;
+      el.focus({ preventScroll });
       focusedMenuBtn.el = null;
     });
   }
