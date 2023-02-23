@@ -87,6 +87,7 @@ export const Transition: Component<
     onBeforeExit: onBeforeExitOverlay,
     onExit: onExitOverlay,
     onAfterExit: onAfterExitOverlay,
+    appendToElement: appendToElementOverlay,
   } = props.overlay || {};
 
   type TAnimatedEl = "overlay" | "content";
@@ -124,17 +125,20 @@ export const Transition: Component<
   }
 
   const getElement = (type: TAnimatedEl, el: Element) => {
-    if (appendToElement) {
-      if (appendToElement === "menuPopup" && type !== "overlay") {
+    const appendToElement_ =
+      type === "content" ? appendToElement : appendToElementOverlay;
+
+    if (appendToElement_) {
+      if (appendToElement_ === "menuPopup" && type !== "overlay") {
         return queryElement(
           { containerEl: el as HTMLDivElement },
           { inputElement: null, type: "menuPopup" }
         );
       }
 
-      return typeof appendToElement === "string"
-        ? el && el.querySelector(appendToElement)!
-        : (appendToElement as Element);
+      return typeof appendToElement_ === "string"
+        ? el && el.querySelector(appendToElement_)!
+        : (appendToElement_ as Element);
     }
     return el;
   };
