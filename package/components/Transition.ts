@@ -124,9 +124,8 @@ export const Transition: Component<
   }
 
   const getElement = (type: TAnimatedEl, el: Element) => {
-    if (type === "overlay") return el;
     if (appendToElement) {
-      if (appendToElement === "menuPopup") {
+      if (appendToElement === "menuPopup" && type !== "overlay") {
         return queryElement(
           { containerEl: el as HTMLDivElement },
           { inputElement: null, type: "menuPopup" }
