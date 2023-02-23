@@ -100,6 +100,30 @@ const doc = iframeEl.contentWindow.document;
 doc.body.addEventListener("click", () => {});
 ```
 
+## Other
+
+For better visual user experience, when using custom overlay elements in overlayElement prop,
+
+```js
+<Dismiss
+  // ...
+  modal
+  overlayElement={{
+    element: <div style="position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.5)"/>
+  }}
+```
+
+extend the overlay's height (that has the value of viewport height either 100% or 100vh) by 65px or more. What happens is that on mobile devices, there's a lag of updating viewport dimensions when dynamic URL bar toggles, therefore showing a large gap at bottom of the page that the overlay doesn't cover. So the overlay's height should be `calc(100vh + 65px)` or `calc(100% + 65px)`, depending how you style the overlay, tailwind equivalent would be `h-[calc(100vh+65px)]`.
+
+```js
+<Dismiss
+ // ...
+ modal
+ overlayElement={{
+   element: <div style="position: fixed; inset: 0; height: calc(100vh + 65px); z-index: 1000; background: rgba(0, 0, 0, 0.5)"/>
+ }}
+```
+
 ## Docs
 
 Dismiss
