@@ -113,7 +113,7 @@ For better visual user experience, when using custom overlay elements in overlay
   }}
 ```
 
-extend the overlay's height (that has the value of viewport height either 100% or 100vh) by 65px or more. What happens is that on mobile devices, there's a lag of updating viewport dimensions when dynamic URL bar toggles, therefore showing a large gap at bottom of the page that the overlay doesn't cover. So the overlay's height should be `calc(100vh + 65px)` or `calc(100% + 65px)`, depending how you style the overlay, tailwind equivalent would be `h-[calc(100vh+65px)]`.
+extend the overlay's height (that has the value of viewport height either 100% or 100vh) by 100px or more. What happens is that on mobile devices, there's a lag of updating viewport dimensions when dynamic URL bar toggles, therefore showing a large gap at bottom of the page that the overlay doesn't cover. So the overlay's height should be `calc(100vh + 100px)` or `calc(100% + 100px)`, depending how you style the overlay, tailwind equivalent would be `h-[calc(100vh+100px)]`.
 
 ```js
 <Dismiss

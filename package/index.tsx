@@ -565,7 +565,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
       el.style.top = "0";
       el.style.left = "0";
       el.style.width = "100%";
-      el.style.height = "calc(100% + 65px)";
+      el.style.height = "calc(100% + 100px)";
       el.style.zIndex = "1000";
 
       if (typeof overlayElement === "object" && overlayElement.ref) {
