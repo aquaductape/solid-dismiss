@@ -5,7 +5,7 @@ specifiers:
   release-it: ^14.10.0
   rollup: ^2.28.2
   rollup-preset-solid: ^0.3.0
-  solid-js: ^1.6.1
+  solid-js: ^1.7.0
   typedoc: ^0.22.4
   typescript: ^4.8.4
 
@@ -14,7 +14,7 @@ devDependencies:
   release-it: 14.11.6
   rollup: 2.58.0
   rollup-preset-solid: 0.3.0
-  solid-js: 1.6.1
+  solid-js: 1.7.0
   typedoc: 0.22.4_typescript@4.8.4
   typescript: 4.8.4
 
@@ -2195,6 +2195,11 @@ packages:
       randombytes: 2.1.0
     dev: true
 
+  /seroval/0.5.1:
+    resolution: {integrity: sha512-ZfhQVB59hmIauJG5Ydynupy8KHyr5imGNtdDhbZG68Ufh1Ynkv9KOYOAABf71oVbQxJ8VkWnMHAjEHE7fWkH5g==}
+    engines: {node: '>=10'}
+    dev: true
+
   /shebang-command/2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
     engines: {node: '>=8'}
@@ -2242,10 +2247,11 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /solid-js/1.6.1:
-    resolution: {integrity: sha512-i8OmR419Hr0918Or6sm1ET/cgmxTtAB7Bdz/UwhZ7G2THixrvVSO3jd+C7YqMKKfVwmf8PJ2gUSbKE8NKv28GA==}
+  /solid-js/1.7.0:
+    resolution: {integrity: sha512-tLG68KWlVRgzYeAW003G3E70emZqTcqCKJR9QoGr0rcuiLIuKrlUoezT8jLME1YSl3Wfu35jzgeY10iLEY4YQQ==}
     dependencies:
       csstype: 3.1.1
+      seroval: 0.5.1
     dev: true
 
   /source-map-support/0.5.20:

@@ -323,5 +323,5 @@ export const Transition: Component<
     });
   });
 
-  return [s1, s2];
+  return [s1, s2] as unknown as JSX.Element;
 };

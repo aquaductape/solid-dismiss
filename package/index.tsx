@@ -829,7 +829,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
   const finalRender = createMemo(() => {
     const c = condition();
     if (c) {
-      const child = props.children;
+      const child = props.children as JSX.Element & (() => { length: number });
       const fn = typeof child === "function" && child.length > 0;
       strictEqual = fn;
       return fn ? (
@@ -871,7 +871,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     );
   }
 
-  return finalRender;
+  return finalRender as unknown as JSX.Element;
 };
 
 export { getNextTabbableElement };
