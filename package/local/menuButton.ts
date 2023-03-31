@@ -361,7 +361,7 @@ export const addMenuButtonEventsAndAttributes = ({
   // }
 
   state.menuBtnEls.forEach((menuBtnEl, _, self) => {
-    addAriaLabels(state, menuBtnEl);
+    // addAriaLabels(state, menuBtnEl);
     // menuBtnEl.removeAttribute("type");
     // menuBtnEl.setAttribute("role", 'div');
     // menuBtnEl.setAttribute("tabindex", 'div');

@@ -531,9 +531,9 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
 
           const setDialogElStyle = (el: HTMLElement) => {
             // TODO if it already has id, then update button with aria-controls value
-            if (!el.id) {
-              el.id = state.uniqueId;
-            }
+            // if (!el.id) {
+            //   el.id = state.uniqueId;
+            // }
             el.style.pointerEvents = "all";
             el.setAttribute("role", "dialog");
           };
