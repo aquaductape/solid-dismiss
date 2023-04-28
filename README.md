@@ -120,7 +120,7 @@ extend the overlay's height (that has the value of viewport height either 100% o
  // ...
  modal
  overlayElement={{
-   element: <div style="position: fixed; inset: 0; height: calc(100vh + 65px); z-index: 1000; background: rgba(0, 0, 0, 0.5)"/>
+   element: <div style="position: fixed; inset: 0; height: calc(100vh + 100px); z-index: 1000; background: rgba(0, 0, 0, 0.5)"/>
  }}
 ```
 
