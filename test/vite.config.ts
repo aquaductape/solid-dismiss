@@ -6,20 +6,23 @@ export default defineConfig({
   plugins: [solidPlugin(), viteSingleFile()],
   build: {
     target: "esnext",
-    // polyfillDynamicImport: false,
     assetsInlineLimit: 100000000,
     chunkSizeWarningLimit: 100000000,
     cssCodeSplit: false,
-    brotliSize: false,
+    // polyfillDynamicImport: false,
+    modulePreload: {
+      polyfill: false,
+    },
     rollupOptions: {
-      inlineDynamicImports: true,
+      // inlineDynamicImports: true,
       output: {
-        manualChunks: () => "everything.js",
+        inlineDynamicImports: true,
       },
     },
   },
   server: {
     fs: {
+      strict: false,
       // Allow serving files from one level up to the project root
       allow: [".."],
     },
