@@ -66,8 +66,8 @@ function CustomPortal<
           ? container.attachShadow({ mode: "open" })
           : container;
 
-    // originally "_$host"
-    Object.defineProperty(container, "host", {
+    // switched "host" back to "_$host"
+    Object.defineProperty(container, "_$host", {
       get() {
         return marker.parentNode;
       },
