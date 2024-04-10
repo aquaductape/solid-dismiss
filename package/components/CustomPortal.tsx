@@ -66,13 +66,14 @@ function CustomPortal<
           ? container.attachShadow({ mode: "open" })
           : container;
 
-    // switched "host" back to "_$host"
-    Object.defineProperty(container, "_$host", {
+    const containerObjectValue = {
       get() {
         return marker.parentNode;
       },
       configurable: true,
-    });
+    };
+    Object.defineProperty(container, "host", containerObjectValue);
+    Object.defineProperty(container, "_$host", containerObjectValue);
     // will be "_$portalContainerChild"
     Object.defineProperty(marker, "portalContainerChild", {
       get() {
