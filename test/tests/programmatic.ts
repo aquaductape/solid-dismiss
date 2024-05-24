@@ -2,10 +2,12 @@ import { exists } from "./utils";
 
 fixture`Programmatic`.page`../dist/index.html`;
 
-const id = "#modal";
-const idClass = ".modal";
+const id = "#programmatic-modal";
+const idClass = ".programmatic-modal";
 test("Modal (overlay) closing, along with focusing outside page link, will close stack and keep focus", async (t) => {
-  const linkId = await t.eval(() => document.getElementById("some-link")!.id);
+  const linkId = await t.eval(
+    () => document.getElementById("programmatic-some-link")!.id
+  );
   await t.click(`${idClass}-1-level-1-container button`);
   await t.expect(exists(`${id}-1-level-1-popup`)).ok();
   await t
@@ -21,10 +23,12 @@ test("Modal (overlay) closing, along with focusing outside page link, will close
   await t.expect(activeElementId).eql(linkId);
 });
 
-const idMounted = "#mounted";
-const idMountedClass = ".mounted";
+const idMounted = "#programmatic-mounted";
+const idMountedClass = ".programmatic-mounted";
 test("Mounted closing, along with focusing outside page link, will close stack and keep focus", async (t) => {
-  const linkId = await t.eval(() => document.getElementById("some-link")!.id);
+  const linkId = await t.eval(
+    () => document.getElementById("programmatic-some-link")!.id
+  );
   await t.click(`${idMountedClass}-2-level-1-container button`);
   await t.expect(exists(`${idMounted}-2-level-1-popup`)).ok();
   await t

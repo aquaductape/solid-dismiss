@@ -37,6 +37,8 @@ import ThirdpartyPopupsOnBody from "./components/Subjects/ThirdpartyPopupsOnBody
 import ModalOverflowOnBody from "./components/Subjects/ModalOverflowOnBody";
 import Combobox from "./components/Subjects/Combobox";
 import HideFocusedElement from "./components/HideFocusedElement";
+import NoMenuButton from "./components/Subjects/NoMenuButton";
+import DontCloseWhenClickingOutside from "./components/Subjects/DontCloseWhenClickingOutside";
 
 const FireFocusOrder = () => {
   let tabbableContainer1!: HTMLDivElement;
@@ -214,6 +216,8 @@ const App: Component = () => {
           <NestedPopup />
           <NestedOverlay />
           <Programmatic />
+          {/* <NoMenuButton /> */}
+          <DontCloseWhenClickingOutside />
           <MultipleMenuButtons />
           <MultipleMenuButtonsCSS />
           <MultipleMenuButtonsCSSSignal />

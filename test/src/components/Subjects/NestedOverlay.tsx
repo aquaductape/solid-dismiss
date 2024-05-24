@@ -76,6 +76,9 @@ const Popup: Component<{ id: string; idx?: number }> = (props) => {
         open={open}
         setOpen={setOpen}
         mount="body"
+        // modal
+        // doesn't work unless modal prop is included
+        // closeWhenOverlayClicked={false}
         overlayElement={{ class: "overlay" }}
         closeWhenMenuButtonIsClicked={settings.closeMenuBtnReclick}
         closeWhenDocumentBlurs

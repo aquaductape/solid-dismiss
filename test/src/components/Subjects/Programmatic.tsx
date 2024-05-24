@@ -4,8 +4,8 @@ import { getLeft, getWidth, reflow, toggleAnimation } from "../../utils";
 import settings from "../../utils/globalSettings";
 import Button from "../Button/Button";
 
-const id = "modal";
-const idMounted = "mounted";
+const id = "programmatic-modal";
+const idMounted = "programmatic-mounted";
 
 const Programmatic = () => {
   return (
@@ -15,7 +15,7 @@ const Programmatic = () => {
         menuPopups are <strong>mounted</strong> to the body.
       </p>
       <p>
-        <a id="some-link" href="javascript:void()">
+        <a id="programmatic-some-link" href="javascript:void()">
           some link
         </a>
       </p>
@@ -46,7 +46,7 @@ const PopupModal: Component<{
 
   createEffect(() => {
     if (!open()) return;
-    const linkEl = document.getElementById("some-link")!;
+    const linkEl = document.getElementById("programmatic-some-link")!;
 
     if (props.closeTimeout) {
       setTimeout(() => {
@@ -129,7 +129,7 @@ const PopupMounted: Component<{
 
   createEffect(() => {
     if (!open()) return;
-    const linkEl = document.getElementById("some-link")!;
+    const linkEl = document.getElementById("programmatic-some-link")!;
 
     if (props.closeTimeout) {
       setTimeout(() => {
