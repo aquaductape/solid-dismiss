@@ -1,5 +1,9 @@
 import { dismissStack } from "../global/dismissStack";
-import { globalState } from "../global/globalEvents";
+import {
+  globalState,
+  onKeyDownFocusIn,
+  runLastAfterEvents,
+} from "../global/globalEvents";
 import { checkThenClose } from "../utils/checkThenClose";
 import { isObjectLiteral } from "../utils/isObjectLiteral";
 import { queryElement } from "../utils/queryElement";
@@ -20,6 +24,10 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
   } = state;
 
   timeoutFocusOutFired = false;
+
+  queueMicrotask(() => {
+    runLastAfterEvents();
+  });
 
   if (globalState.thirdPartyPopupEl) {
     removeEventsOnActiveMountedPopup();
@@ -48,9 +56,13 @@ export const onFocusOutContainer = (state: TLocalState, e: FocusEvent) => {
     checkThenClose(
       dismissStack,
       (item) => {
-        const { containerEl } = item;
+        const { containerEl, closeWhenClickingOutside } = item;
 
         const clickTarget = globalState.clickTarget;
+        if (!closeWhenClickingOutside && clickTarget) {
+          document.addEventListener("keydown", onKeyDownFocusIn);
+          return { continue: false };
+        }
         if (clickTarget && containerEl.contains(clickTarget)) {
           return { continue: false };
         }

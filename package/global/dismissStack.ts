@@ -17,6 +17,7 @@ export type TDismissStack = Pick<
     | "closeWhenDocumentBlurs"
     | "closeWhenMenuButtonIsTabbed"
     | "closeWhenEscapeKeyIsPressed"
+    | "closeWhenClickingOutside"
     | "upperStackRemovedByFocusOut"
     | "menuPopupEl"
     | "overlayEl"

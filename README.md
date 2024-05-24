@@ -143,7 +143,7 @@ setOpen: (v: boolean) => void;
  */
 onOpen?: OnOpenHandler;
 /**
- * css selector, queried from document, to get menu button element. Or pass JSX element
+ * CSS selector, queried from document, to get menu button element. Or pass JSX element
  *
  * @remark There are situations where there are multiple JSX menu buttons that open the same menu popup, but only one of them is rendered based on device width. Use signal if JSX menu buttons are conditionally rendered. Use array if all menu buttons are rendered, when all but one, are hidden via CSS `display: none;` declaration.
  */
@@ -154,7 +154,7 @@ menuButton:
   | (string | JSX.Element)[];
 /**
  *
- * css selector, queried from document, to get menu popup element. Or pass JSX element
+ * CSS selector, queried from document, to get menu popup element. Or pass JSX element
  *
  * @defaultValue root component element queries first child element
  */
@@ -165,7 +165,20 @@ menuPopup?: string | JSX.Element | (() => JSX.Element);
  *
  * @defaultValue `false`
  */
-cursorKeys?: boolean;
+cursorKeys?:
+  | boolean
+  | {
+      /**
+       * When focused on the last dropdown item, when continueing in the same direction, the first item will be focused.
+       *
+       * @defaultValue `false`
+       */
+      wrap: boolean;
+      onKeyDown?: (props: {
+        currentEl: HTMLElement | null;
+        prevEl: HTMLElement | null;
+      }) => void;
+    };
 /**
  *
  * Focus will remain inside menuPopup when pressing Tab key
@@ -177,21 +190,30 @@ trapFocus?: boolean;
  *
  * which element, via selector*, to recieve focus after popup opens.
  *
- * *css string queried from root component, or if string value is `"menuPopup"` uses menuPopup element, or if string value is `"firstChild"` uses first tabbable element inside menuPopup.
+ * *CSS string queried from menuPopup element. If string value is `"menuPopup"` uses menuPopup element. `"firstChild"` uses first tabbable element inside menuPopup. `"none"` focus remains on `"menuButton"`, even if `Dismiss.modal` is true.
  *
- * @defaultValue focus remains on `"menuButton"`
+ * @defaultValue focus remains on `"menuButton"`. But if there's no menu button, focus remains on document's activeElement.
  */
 focusElementOnOpen?:
   | "menuPopup"
   | "firstChild"
-  | string
+  | "none"
   | JSX.Element
-  | (() => JSX.Element);
+  | (() => JSX.Element)
+  | {
+      target:
+        | "menuPopup"
+        | "firstChild"
+        | "none"
+        | JSX.Element
+        | (() => JSX.Element);
+      preventScroll?: boolean;
+    };
 /**
  *
  * Which element, via selector*, to recieve focus after popup closes.
  *
- * *selector: css string queried from document, or if string value is `"menuButton"` uses menuButton element
+ * *CSS string queried from document, or if string value is `"menuButton"` uses menuButton element
  *
  * @remarks
  *
@@ -204,10 +226,64 @@ focusElementOnOpen?:
  */
 focusElementOnClose?:
   | "menuButton"
-  | string
   | JSX.Element
-  | FocusElementOnCloseOptions;
-
+  | {
+      /**
+       *
+       * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
+       *
+       * @defaultValue `"menuButton"`
+       *
+       */
+      tabBackwards?: "menuButton" | JSX.Element;
+      /**
+       *
+       * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
+       *
+       * @remarks
+       *
+       *  If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
+       *
+       * @defaultValue next tabbable element after menuButton;
+       */
+      tabForwards?: "menuButton" | JSX.Element;
+      /**
+       * focus on element when exiting menuPopup via click outside popup.
+       *
+       * If mounted overlay present, and popup closes via click, then menuButton will be focused.
+       *
+       * @remarks
+       *
+       * When clicking, user-agent determines which element recieves focus.
+       */
+      click?: "menuButton" | JSX.Element;
+      /**
+       *
+       * focus on element when exiting menuPopup via "Escape" key
+       *
+       * @defaultValue `"menuButton"`
+       */
+      escapeKey?: "menuButton" | JSX.Element;
+      /**
+       *
+       * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
+       *
+       * @dafaultValue `"menuButton"`
+       */
+      scrolling?: "menuButton" | JSX.Element;
+    };
+/**
+ * @default `true`
+ *
+ * Set to `false` if you want to switch focus from menuButton to menuPopup input element while keeping virtual keyboard opened in iOS. However end-user must also provide additional logic to fire inside menuButton onclick for behavior to work.
+ */
+focusMenuButtonOnMouseDown?: boolean;
+/**
+ * When `true`, clicking or focusing on menuButton doesn't toggle menuPopup. However the menuButton is still used as reference from `focusElementOnClose`
+ *
+ * @defaultValue `false`
+ */
+deadMenuButton?: boolean;
 /**
  *
  * When `true`, after focusing within menuPopup, if focused back to menu button via keyboard (Tab key), the menuPopup will close.
@@ -250,9 +326,24 @@ closeWhenOverlayClicked?: boolean;
 closeWhenEscapeKeyIsPressed?: boolean;
 /**
  *
- * Closes when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications.
+ * If `true`, closes menuPopup when the document "blurs". This would happen when interacting outside of the page such as Devtools, changing browser tabs, or switch different applications. Also if the page with the menuPopup, is inside an iframe, interacting outside the iframe, will close it.
+ *
+ * @remarks This doesn't effect overlays, if `Dimsiss.overlay` or `Dismiss.overlayElement` are set.
+ *
+ * @defaultValue `false`
+ *
  */
 closeWhenDocumentBlurs?: boolean;
+/**
+ * If `false`, when clicking outside, menuPopup remains open.
+ *
+ * Clicking other menuButtons that aren't part of the menuPopup stack will close those menuPopups.
+ *
+ * Only to be used with non overlay/modal popups, for them use `closeWhenOverlayClicked`.
+ *
+ * @defaultValue `true`
+ */
+closeWhenClickingOutside?: boolean;
 /**
  *
  * If `true`, sets "overflow: hidden" declaration to Document.scrollingElement.
@@ -293,6 +384,7 @@ overlayElement?:
       class?: string;
       classList?: { [key: string]: boolean };
       animation?: DismissAnimation;
+      element?: JSX.Element;
     };
 /**
  * Shorthand for `Dismiss.overlay` to `true`, `Dismiss.overlayElement` to `true`, `Dismiss.trapFocus` to `true`, `Dismiss.removeScrollbar` to `true`, and `Dismiss.mount` to `"body"`. Does not override the values of already setted properties.
@@ -329,54 +421,26 @@ animation?: DismissAnimation;
  * @defaultValue `false`, children are conditionally rendered based on `Dismiss.open` value.
  */
 show?: boolean;
-```
-
-FocusElementOnCloseOptions
-
-```ts
 /**
+ * If `true`, when pressing Tab key, all tabbable elements in menuPopup are ignored, and the next focusable element is based on `focusElementOnClose`.
  *
- * focus on element when exiting menuPopup via tabbing backwards ie "Shift + Tab".
- *
- * @defaultValue `"menuButton"`
- *
+ * @defaultValue `false`
  */
-tabBackwards?: "menuButton" | string | JSX.Element;
+// disableTabbingInMenuPopup?: boolean;
+ignoreMenuPopupWhenTabbing?: boolean;
 /**
+ * Pass CSS selector strings in array, which then are queried from document, then if those elements are interacted, it won't trigger stacks to close
  *
- * focus on element when exiting menuPopup via tabbing forwards ie "Tab".
- *
- * @remarks
- *
- *  If popup is mounted elsewhere in the DOM, when tabbing outside, this library is able to grab the correct next tabbable element after menuButton, except for tabbable elements inside iframe with cross domain.
- *
- * @defaultValue next tabbable element after menuButton;
- */
-tabForwards?: "menuButton" | string | JSX.Element;
-/**
- * focus on element when exiting menuPopup via click outside popup.
- *
- * If mounted overlay present, and popup closes via click, then menuButton will be focused.
- *
- * @remarks
- *
- * When clicking, user-agent determines which element recieves focus.
- */
-click?: "menuButton" | string | JSX.Element;
-/**
- *
- * focus on element when exiting menuPopup via "Escape" key
- *
- * @defaultValue `"menuButton"`
- */
-escapeKey?: "menuButton" | string | JSX.Element;
-/**
- *
- * focus on element when exiting menuPopup via scrolling, from scrollable container that contains menuButton
- *
- * @dafaultValue `"menuButton"`
- */
-scrolling?: "menuButton" | string | JSX.Element;
+ * When there are other popups or interactive tooltips, that are mounted to the
+      body, this library isn't aware of them, so interacting them by clicking
+      them, will close all open stacks and cause other unintended consequences. If that
+      third-party popup is closed by Escape key, the expectation is that only
+      that popup will close, but Dismiss will close its topmost stack which
+      happens to contain that mounted popup, so "2 stacks" will be closed.
+  *
+  * @defaultValue empty array
+  */
+mountedPopupsSafeList?: string[];
 ```
 
 DismissAnimation

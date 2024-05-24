@@ -1,11 +1,16 @@
 import { dismissStack } from "../global/dismissStack";
-import { globalState, onDocumentPointerDown } from "../global/globalEvents";
+import {
+  globalState,
+  onKeyDownFocusIn,
+  runLastAfterEvents,
+} from "../global/globalEvents";
 import { TLocalState } from "./localState";
 import { getNextTabbableElement } from "../utils/tabbing";
 import { hasDisplayNone } from "../utils/hasDisplayNone";
 import { queryElement } from "../utils/queryElement";
 import { TDismiss } from "..";
 import isHiddenOrInvisbleShallow from "../utils/isHiddenOrInvisibleShallow";
+import { checkThenClose } from "../utils/checkThenClose";
 
 export const onClickMenuButton = (state: TLocalState, e: Event) => {
   const {
@@ -16,6 +21,7 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
     setOpen,
     open,
     deadMenuButton,
+    closeWhenClickingOutside,
   } = state;
 
   state.menuBtnMouseDownFired = false;
@@ -39,6 +45,26 @@ export const onClickMenuButton = (state: TLocalState, e: Event) => {
   // TODO:?
   // timeouts.containerFocusTimeoutId = null;
 
+  if (!closeWhenClickingOutside) {
+    const stackItem = dismissStack[dismissStack.length - 1];
+    if (
+      stackItem &&
+      !stackItem.menuBtnEls.includes(menuBtnEl) &&
+      !stackItem.containerEl.contains(menuBtnEl)
+    ) {
+      checkThenClose(
+        dismissStack,
+        (item) => {
+          return { item, continue: true };
+        },
+        (item) => {
+          const { setOpen } = item;
+          setOpen(false);
+        }
+      );
+    }
+  }
+
   if (!closeWhenMenuButtonIsClicked) {
     setOpen(true);
     return;
@@ -61,8 +87,15 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
     timeouts,
     menuBtnMouseDownFired,
     closeWhenDocumentBlurs,
+    closeWhenClickingOutside,
+
+    open,
   } = state;
   const currentMenuBtn = e.currentTarget as HTMLButtonElement;
+
+  queueMicrotask(() => {
+    runLastAfterEvents();
+  });
 
   if (state.menuBtnKeyupTabFired) {
     state.menuBtnKeyupTabFired = false;
@@ -72,6 +105,11 @@ export const onBlurMenuButton = (state: TLocalState, e: FocusEvent) => {
   if (menuBtnMouseDownFired) return;
   if (containerEl && containerEl.contains(e.relatedTarget as HTMLElement))
     return;
+
+  if (!closeWhenClickingOutside && open()) {
+    document.addEventListener("keydown", onKeyDownFocusIn);
+    return;
+  }
 
   const clickedTarget = globalState.clickTarget;
 

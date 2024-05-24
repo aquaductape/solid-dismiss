@@ -277,6 +277,16 @@ export type TDismiss = {
    */
   closeWhenDocumentBlurs?: boolean;
   /**
+   * If `false`, when clicking outside, menuPopup remains open.
+   *
+   * Clicking other menuButtons that aren't part of the menuPopup stack will close those menuPopups.
+   *
+   * Only to be used with non overlay/modal popups, for them use `closeWhenOverlayClicked`.
+   *
+   * @defaultValue `true`
+   */
+  closeWhenClickingOutside?: boolean;
+  /**
    *
    * If `true`, sets "overflow: hidden" declaration to Document.scrollingElement.
    *
@@ -452,6 +462,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     closeWhenDocumentBlurs = false,
     closeWhenOverlayClicked = true,
     closeWhenEscapeKeyIsPressed = true,
+    closeWhenClickingOutside = true,
     overlay = modal,
     overlayElement = modal,
     trapFocus = modal,
@@ -477,6 +488,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
     closeWhenMenuButtonIsClicked,
     closeWhenMenuButtonIsTabbed,
     closeWhenScrolling,
+    closeWhenClickingOutside,
     cursorKeys,
     focusElementOnClose,
     focusMenuButtonOnMouseDown,
@@ -708,6 +720,7 @@ const Dismiss: ParentComponent<TDismiss> = (props) => {
             closeWhenDocumentBlurs,
             closeWhenEscapeKeyIsPressed,
             closeWhenMenuButtonIsTabbed,
+            closeWhenClickingOutside,
             overlayElement,
             cursorKeys,
             focusElementOnClose,

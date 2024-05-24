@@ -41,8 +41,20 @@ export const globalState: {
   thirdPartyPopupElPressedEscape: false,
 };
 
+let runLastAfterEventsTimerId = null as any as number;
+export const runLastAfterEvents = () => {
+  clearTimeout(runLastAfterEventsTimerId);
+
+  runLastAfterEventsTimerId = window.setTimeout(() => {
+    globalState.clickTarget = null;
+  });
+};
+
 export const onDocumentPointerUp = () => {
-  globalState.clickTarget = null;
+  // clearing clickTarget inside pointerup event doesn't work because the focusout events fire many tasks later. In Desktop pointerup is fine, in Chrome mobile it fires a few tasks later, in iOS it fires many many tasks later.
+  // so instead its cleared inside debounced focusout callback
+  // globalState.clickTarget = null;
+  // runLastAfterEvents()
   document.removeEventListener("pointerup", onDocumentPointerUp);
 };
 
@@ -120,6 +132,33 @@ export const onWindowBlur = (e: Event) => {
         setOpen(false);
       }
     );
+  });
+};
+
+export const onKeyDownFocusIn = (e: KeyboardEvent) => {
+  if (e.key !== "Tab") return;
+
+  setTimeout(() => {
+    const activeElement = document.activeElement as HTMLElement;
+
+    const stackItem = dismissStack[0];
+
+    document.removeEventListener("keydown", onKeyDownFocusIn);
+
+    if (
+      stackItem &&
+      !stackItem.menuBtnEls.some((el) => el && el.contains(activeElement))
+    ) {
+      checkThenClose(
+        dismissStack,
+        (item) => ({ item, continue: true }),
+        (item) => {
+          const { setOpen } = item;
+          // globalState.closedByEvents = true;
+          setOpen(false);
+        }
+      );
+    }
   });
 };
 
@@ -280,6 +319,7 @@ export const removeGlobalEvents = () => {
   globalState.documentClickTimeout = null;
   document.removeEventListener("keydown", onKeyDown);
   document.removeEventListener("pointerdown", onDocumentPointerDown);
+  document.removeEventListener("keydown", onKeyDownFocusIn);
   window.removeEventListener("blur", onWindowBlur);
   window.removeEventListener("wheel", onScrollClose, {
     capture: true,
